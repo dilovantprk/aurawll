@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Aura | Daily Wellness Spacer</title>
+  <meta name="description" content="A calm, minimal space to check in with your nervous system and regulate.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=64">
+</head>
+<body>
+  <script>
+    function showErrorOnScreen(msg) {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => appendError(msg));
+      } else {
+        appendError(msg);
+      }
+    }
+    function appendError(msg) {
+      const errDiv = document.createElement('div');
+      errDiv.style.cssText = 'color:red; background:white; position:absolute; top:50px; left:10px; z-index:99999; padding:10px; border:2px solid red; font-family:sans-serif;';
+      errDiv.textContent = 'APP ERR: ' + msg;
+      document.body.appendChild(errDiv);
+    }
+    window.addEventListener('error', function(e) {
+      showErrorOnScreen(e.message + ' at ' + e.filename + ':' + e.lineno);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      showErrorOnScreen('Promise Error: ' + (e.reason ? e.reason.message || e.reason : 'Unknown'));
+    });
+  </script>
+
+  <!-- App Wrapper -->
+  <div id="app" class="app-container">
+    
+    <!-- Top Header Navigation -->
+    <header id="main-header" class="fade-in-up">
+      <div class="logo">Aura.</div>
+      <div id="headerActions" class="header-actions">
+        <button id="globalMuteBtn" class="glass-btn small-btn hidden" aria-label="Mute" style="margin-right: 0.5rem;" title="Toggle Sounds">
+          <svg id="muteIconOn" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+          <svg id="muteIconOff" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        </button>
+        <button id="globalInfoBtn" class="glass-btn small-btn hidden" aria-label="Info">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- WELCOME VIEW (also serves as initial loading screen) -->
+    <section id="view-welcome" class="view active">
+      <div class="aw-content">
+        <h1 class="aw-title">Aura.</h1>
+        <p class="aw-tagline" data-i18n="welcome_tagline">nefes al · gözlemle · düzenle</p>
+      </div>
+
+      <div class="aw-orbits">
+        <div class="aw-orbit aw-orbit--outer"></div>
+        <div class="aw-orbit aw-orbit--mid"></div>
+        <div class="aw-orbit aw-orbit--inner"></div>
+        <div class="aw-core"></div>
+        <p class="aw-gesture-prompt" id="awGesturePrompt" data-i18n="welcome_prompt">Odaklanmak için basılı tut</p>
+        
+        <!-- Redesigned 'True Aura' Login Action -->
+        <div class="welcome-auth-container fade-in" style="animation-delay: 1.5s;">
+           <button class="aura-action-btn hidden" id="aw-login">
+              <span class="btn-text" data-i18n-html="btn_login_link">Zaten hesabın var mı? Giriş yap</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+           </button>
+        </div>
+      </div>
+      
+      <div class="aw-actions">
+        <!-- Welcome Back (conditionally visible) -->
+        <div id="awWelcomeBack" class="aw-welcome-back hidden"></div>
+      </div>
+    </section>
+
+    <!-- ONBOARDING VIEW -->
+    <section id="view-onboarding" class="view hidden center-content" style="padding-top: 5vh; justify-content: center;">
+      <button id="onbSkipBtn" class="ghost-btn onb-skip-btn" data-i18n="onb_skip">Skip</button>
+      
+      <div id="onbScreensContainer" class="onb-screens-container">
+        <!-- Screen 1: Hook -->
+        <div class="onb-screen active">
+          <div class="breath-circle mb-4" style="animation: softPulse 4s infinite ease-in-out; width:80px; height:80px; border-width: 2px; box-shadow: 0 0 20px rgba(133,141,255,0.2);"></div>
+          <h1 data-i18n="onb_1_title">Your nervous system is always talking.</h1>
+          <p data-i18n="onb_1_sub">Aura helps you listen — and respond.</p>
+        </div>
+
+
+        <!-- Screen 3: Method -->
+        <div class="onb-screen hidden" style="opacity: 0; position: absolute;">
+          <div class="mb-4" style="font-size: 2.5rem; display: flex; gap: 1.5rem; justify-content: center;">
+            <span style="opacity: 0.9;">✅</span>
+            <span style="opacity: 0.9;">🫁</span>
+            <span style="opacity: 0.9;">✨</span>
+          </div>
+          <h1 data-i18n="onb_3_title">Check in. Regulate. Absorb.</h1>
+          <p data-i18n="onb_3_sub" style="font-size: 1.1rem; line-height: 1.6; color: var(--text-muted); padding: 0 1rem;"></p>
+        </div>
+
+        <!-- Screen 4: Invitation -->
+        <div class="onb-screen hidden" style="opacity: 0; position: absolute;">
+          <h1 data-i18n="onb_4_title" class="mb-4">Ready to check in?</h1>
+          <p data-i18n="onb_4_sub" class="mb-4" style="font-size: 1.1rem; color: var(--text-muted);"></p>
+          <button id="onbLetsGoBtn" class="primary-btn pulse-hover" data-i18n="onb_lets_go">Let's go</button>
+        </div>
+      </div>
+
+      <div class="onb-dots">
+        <span class="onb-dot active"></span>
+        <span class="onb-dot"></span>
+        <span class="onb-dot"></span>
+      </div>
+    </section>
+
+    <!-- AUTH VIEW (Aura Entry v3) -->
+    <section id="view-auth" class="view hidden">
+      <div class="auth-card glass-panel liquid-border stagger-1">
+        <div class="auth-header mb-8 text-center">
+            <h1 class="logo-large mb-2">Aura</h1>
+            <p class="subtitle text-sm text-white/40 tracking-widest uppercase" data-i18n="auth_subtitle">A quiet space for your mind.</p>
+        </div>
+        
+        <div class="auth-tabs">
+          <div id="tabs-pill" class="tabs-pill"></div>
+          <button id="tabLogin" class="auth-tab active" data-i18n="btn_login">Log In</button>
+          <button id="tabRegister" class="auth-tab" data-i18n="btn_register">Register</button>
+        </div>
+
+        <form id="authForm" class="auth-form mt-8">
+          <div id="nameInputGroup" class="input-group hidden stagger-2">
+            <input type="text" id="nameInput" placeholder="Name" data-i18n-prop="placeholder:auth_name" autocomplete="name">
+          </div>
+          <div class="input-group stagger-3">
+            <input type="email" id="emailInput" placeholder="Email address" data-i18n-prop="placeholder:auth_email" required autocomplete="email">
+          </div>
+          <div class="input-group stagger-4">
+            <input type="password" id="passwordInput" placeholder="Password" data-i18n-prop="placeholder:auth_pass" required autocomplete="current-password">
+          </div>
+          
+          <button type="submit" id="authSubmitBtn" class="primary-btn mt-8 w-full stagger-5" data-i18n="btn_enter">Enter</button>
+          
+          <p id="authError" class="error-text hidden mt-4"></p>
+          
+          <!-- Guest Access Shortcut -->
+          <div class="mt-8 text-center stagger-6">
+             <button id="skipAuthBtn" class="text-[10px] uppercase tracking-[3px] text-white/30 hover:text-white transition-colors" data-i18n="btn_skip">Skip for now</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- DESKTOP TOP NAVIGATION (Glass Island) -->
+    <nav id="desktop-nav" class="desktop-nav">
+      <div class="nav-island">
+        <div class="nav-brand">Aura.</div>
+        <div class="nav-links">
+           <button class="nav-link active" data-view="dashboard" data-i18n="nav_home">Home</button>
+           <button class="nav-link" data-view="meditations" data-i18n="nav_breathe">Breathe</button>
+           <button class="nav-link" data-view="notebook" data-i18n="nav_notebook">Notes</button>
+           <button class="nav-link" data-view="insight" data-i18n="nav_insight">Insight</button>
+           <button class="nav-link" data-view="settings" data-i18n="nav_profile">Profile</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- DASHBOARD VIEW -->
+    <section id="view-dashboard" class="view hidden">
+      <div class="dashboard-content dashboard-view-content fade-in-up">
+        
+        <div class="dash-grid-wrapper">
+          <!-- Welcome Section (Aligned to top-left) -->
+          <div class="welcome-box">
+            <h2 id="greetingText" data-i18n="dash_morning">Good morning.</h2>
+            <p data-i18n="dash_take_moment">Take a moment for yourself today.</p>
+          </div>
+
+          <!-- Left Column: CTA + Weekly Patterns -->
+          <div class="dash-main">
+
+            <!-- Big CTA for Check-In -->
+            <button id="startCheckinBtn" class="hero-btn glass-panel pulse-hover">
+              <div class="hero-icon">✨</div>
+              <h3 data-i18n="dash_start">Start Check-in</h3>
+              <p data-i18n="dash_start_desc">3-5 minutes intended for you.</p>
+            </button>
+
+            <!-- Weekly Patterns Section -->
+            <div class="history-section fade-in-up delay-1">
+              <h3 data-i18n="dash_weekly" class="section-title">Weekly Patterns</h3>
+              <div class="weekly-patterns-card glass-panel">
+
+                <!-- Vagal Plasticity / Resilience Bar -->
+                <div id="resilienceBar" class="resilience-bar hidden">
+                  <div class="resilience-header">
+                    <span class="resilience-label" data-i18n="dash_resilience">Esneklik</span>
+                    <span id="resilienceLevel" class="resilience-level">—</span>
+                  </div>
+                  <div class="resilience-track">
+                    <div id="resilienceFill" class="resilience-fill"></div>
+                  </div>
+                </div>
+
+                <!-- Polyvagal Heatmap (Mini Map) -->
+                <div id="vagalHeatmapCard" class="vagal-heatmap-card hidden">
+                  <div class="vagal-triangle-container">
+                    <div class="vagal-vertex v-ventral" data-i18n="vagal_ventral">Ventral</div>
+                    <div class="vagal-vertex v-dorsal" data-i18n="vagal_dorsal">Dorsal</div>
+                    <div class="vagal-vertex v-sympathetic" data-i18n="vagal_symp">Sympathetic</div>
+                    
+                    <div id="vagalMetaballContainer" class="vagal-metaball-container">
+                      <div id="vagalBlob" class="vagal-blob"></div>
+                      <div id="vagalTraces" class="vagal-traces"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="weeklyTimeline" class="timeline-container">
+                  <!-- Rendered by JS -->
+                </div>
+                
+                <div id="weeklyInsight" class="insight-row hidden">
+                  <div class="insight-icon">💭</div>
+                  <div class="insight-text-col">
+                    <p id="insightText" class="insight-text"></p>
+                  </div>
+                </div>
+                
+                <div id="weeklyExercise" class="insight-row hidden mt-2">
+                  <div class="insight-icon">🫁</div>
+                  <div class="insight-text-col">
+                    <span class="insight-label" data-i18n="dash_exercise_title">Most Used Exercise</span>
+                    <strong id="insightExText">...</strong>
+                  </div>
+                </div>
+                
+                <div id="weeklyEmpty" class="empty-state hidden" data-i18n="dash_no_weekly">
+                  Complete a few more loops to unlock your patterns.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Recent Moments -->
+          <div class="dash-side">
+            <div class="history-section fade-in-up delay-2">
+              <h3 data-i18n="dash_recent" class="section-title">Recent Moments</h3>
+              <div id="historyList" class="history-list">
+                <!-- Populated by JS -->
+                <div class="empty-state" data-i18n="dash_empty">No check-ins yet. Begin your journey above.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 1: STATE PICKER -->
+    <section id="view-state-picker" class="view hidden center-content">
+      <div class="step-header fade-in">
+        <span class="step-indicator" data-i18n="step_1">Step 1 of 6</span>
+        <h2 data-i18n="picker_title">How does your body feel right now?</h2>
+      </div>
+
+      <div class="state-options fade-in-up delay-1">
+        
+        <button class="state-card glass-panel vagal-reactive" data-state="wired">
+          <div class="state-icon wired-icon">⚡️</div>
+          <div class="state-card-info">
+            <h3 data-i18n="state_wired">Wired</h3>
+            <p data-i18n="state_wired_desc">Overstimulated, racing thoughts, restless.</p>
+          </div>
+        </button>
+
+        <button class="state-card glass-panel vagal-reactive" data-state="foggy">
+          <div class="state-icon foggy-icon">☁️</div>
+          <div class="state-card-info">
+            <h3 data-i18n="state_foggy">Foggy</h3>
+            <p data-i18n="state_foggy_desc">Understimulated, heavy, disconnected.</p>
+          </div>
+        </button>
+
+        <button class="state-card glass-panel vagal-reactive" data-state="okay">
+          <div class="state-icon okay-icon">🌱</div>
+          <div class="state-card-info">
+            <h3 data-i18n="state_okay">Okay</h3>
+            <p data-i18n="state_okay_desc">Regulated, present, calm.</p>
+          </div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- STEP 2: SUB-EMOTION PICKER -->
+    <section id="view-sub-emotion" class="view hidden center-content">
+      <div class="step-header fade-in">
+        <span class="step-indicator" data-i18n="step_2">Step 2 of 6</span>
+        <h2 id="subEmotionTitle">You feel Wired. Can you pinpoint it?</h2>
+      </div>
+
+      <!-- dynamic chips -->
+      <div id="subEmotionContainer" class="sub-emotion-grid fade-in-up delay-1">
+        <!-- Rendered by JS -->
+      </div>
+      
+      <!-- 'Other' Custom Input -->
+      <div id="otherInputContainer" class="hidden other-input-wrap fade-in-up delay-1">
+        <input type="text" id="customSubEmotionInput" data-i18n-prop="placeholder:sub_custom_placeholder" class="glass-input" placeholder="Describe what you feel...">
+        <button id="customSubEmotionBtn" class="primary-btn mt-4" data-i18n="sub_btn_continue">Continue to Exercise</button>
+      </div>
+    </section>
+
+    <!-- STEP 2.5: MEDITATION LOADING -->
+    <section id="view-meditation-loading" class="view hidden center-content">
+      <div class="aw-bg"></div>
+      <div class="loading-prep-container fade-in-up">
+        
+        <div class="loading-circle-box">
+          <!-- Circular Progress SVG -->
+          <svg class="loading-svg" viewBox="0 0 100 100">
+            <circle class="loading-circle-bg" cx="50" cy="50" r="45"></circle>
+            <circle id="loadingCircleProgress" class="loading-circle-fill" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div class="loading-icon">🧘</div>
+        </div>
+
+        <div class="loading-text-box mt-4">
+          <h2 id="meditationLoadingTitle">Protocol...</h2>
+          <p data-i18n="meditation_loading_desc">Hazırlanıyoruz...</p>
+        </div>
+
+        <button id="skipLoadingBtn" class="ghost-btn mt-4" data-i18n="btn_skip_loading">Atla</button>
+      </div>
+    </section>
+
+    <!-- STEP 3: REGULATION EXERCISE -->
+    <section id="view-exercise" class="view hidden center-content">
+      <div class="step-header fade-in">
+        <span class="step-indicator" data-i18n="step_3">Step 3 of 6</span>
+        <h2 id="exerciseTitle">Breathe</h2>
+        <p id="exerciseMicrocopy" class="exercise-microcopy"></p>
+        <p id="exerciseDesc" data-i18n="ex_follow">Follow the circle.</p>
+      </div>
+
+      <!-- Breathing Visualizer -->
+      <div class="breathing-container fade-in delay-1">
+        <div id="breathCircle" class="breath-circle">
+          <span id="breathInstruction" data-i18n="ex_ready">Ready</span>
+        </div>
+      </div>
+
+      <div class="exercise-controls fade-in delay-2">
+        <button id="startExerciseBtn" class="primary-btn hidden" style="display: none !important;">Begin (<span id="exerciseDuration">3:00</span>)</button>
+        <button id="skipExerciseBtn" class="ghost-btn" data-i18n="btn_skip">Skip for now</button>
+      </div>
+    </section>
+
+    <!-- STEP 4: MARINATION & SAVORING LOG -->
+    <section id="view-savoring" class="view hidden center-content">
+      <div class="step-header fade-in">
+        <span id="savoringStepIndicator" class="step-indicator" data-i18n="step_4">Step 4 of 6</span>
+      </div>
+
+      <!-- Phase 1: Body Scan Prompt (5s) -->
+      <div id="marPhase1" class="marination-phase fade-in-up">
+        <h2 class="soft-pulse" data-i18n="mar_notice">Notice what's shifted in your body right now.</h2>
+      </div>
+
+      <!-- Phase 2: Sensation Selector -->
+      <div id="marPhase2" class="marination-phase fade-in-up hidden">
+        <h2 data-i18n="mar_what_do_you_feel" style="margin-bottom:1.5rem">What do you feel?</h2>
+        <div class="sensation-pills">
+          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_lighter" data-i18n="mar_lighter">Lighter</button>
+          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_slower" data-i18n="mar_slower">Slower</button>
+          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_warmer" data-i18n="mar_warmer">Warmer</button>
+          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_clearer" data-i18n="mar_clearer">Clearer</button>
+          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_calmer" data-i18n="mar_calmer">Calmer</button>
+          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_tense" data-i18n="mar_tense">Still tense</button>
+        </div>
+        <button id="marContinueBtn" class="primary-btn mt-4" data-i18n="mar_continue">Continue</button>
+      </div>
+
+      <!-- Phase 2b: Meditation Offer -->
+      <div id="marPhaseOffer" class="marination-phase fade-in-up hidden" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        <h3 style="margin-bottom: 2rem; font-weight: 500; opacity: 0.9;" data-i18n="mar_offer_title">Derinleşmek ister misin?</h3>
+      </div>
+
+      <!-- Phase 2c: Body Scan Meditation (Step 5 continued) -->
+      <div id="marPhaseScan" class="marination-phase hidden" style="width: 100%; min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; background: transparent;">
+        
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;">
+          <p id="scanText" class="scan-text-fade soft-pulse" style="font-size: 1.4rem; font-weight: 400; line-height: 1.6; text-align: center; max-width: 85%; color: #f8fafc; text-shadow: 0 4px 20px rgba(255,255,255,0.5); opacity: 0; transition: opacity 1s ease-in-out;"></p>
+        </div>
+
+        <button id="scanExitBtn" class="ghost-btn" style="opacity: 0.6; margin-bottom: 3rem;" data-i18n="mar_offer_done">Egzersizi Bitir</button>
+      </div>
+
+      <!-- Phase 3: Savoring Log (Step 6) -->
+      <div id="marPhase3" class="marination-phase fade-in-up hidden">
+        <h2 data-i18n="sav_title" style="margin-bottom: 0.5rem">What's one good thing you noticed today?</h2>
+        <p data-i18n="sav_desc" style="margin-bottom: 1.5rem; color: var(--text-muted)">A savoring moment to complete the loop.</p>
+        <form id="savoringForm" class="savoring-form">
+          <textarea id="savoringInput" class="glass-input" rows="4" data-i18n-prop="placeholder:sav_placeholder" placeholder="(e.g. the smell of coffee, a warm breeze...)" required></textarea>
+          <button type="submit" id="finishLoopBtn" class="primary-btn" data-i18n="btn_complete">Complete & Save</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Completion Overlay -->
+    <section id="view-completion" class="view hidden center-content">
+      <div class="completion-box fade-in-up">
+        <div class="success-icon">✨</div>
+        <h2 data-i18n="done_title">Well done.</h2>
+        <p data-i18n="done_desc">Your nervous system thanks you.</p>
+        <button id="returnHomeBtn" class="ghost-btn mt-4" data-i18n="btn_return">Return Home</button>
+      </div>
+    </section>
+
+    <!-- MEDITATIONS VIEW -->
+    <section id="view-meditations" class="view hidden">
+      <div class="meditations-content standard-view-content fade-in-up">
+        <div class="view-header">
+          <h2 data-i18n="nav_breathe">Breathe</h2>
+          <p data-i18n="med_desc">Select a protocol for your current state.</p>
+        </div>
+        <div id="meditationsList" class="meditations-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- NOTEBOOK VIEW -->
+    <section id="view-notebook" class="view hidden">
+      <div class="notebook-content standard-view-content fade-in-up">
+        <div class="view-header">
+          <h2 data-i18n="nav_notebook">Notes</h2>
+          <p data-i18n="notebook_desc">Your wellness journey history.</p>
+        </div>
+        <div id="notebookEntries" class="notebook-entries">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- INSIGHT VIEW (The Vagal Mirror) -->
+    <section id="view-insight" class="view hidden">
+      <div class="standard-view-content">
+        <div class="view-header stagger-1">
+            <h2 id="insight-hero-title">Sistemin Dinleniyor</h2>
+            <p data-i18n="insight_hero_desc">Haftalık Biyometrik Pusula</p>
+        </div>
+
+        <!-- Vagal Heatmap Card -->
+        <div class="glass-panel liquid-border stagger-2" style="padding: 2rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;">
+            <div id="macro-heatmap" class="heatmap-container" style="position: relative; height: 320px;">
+                <div class="vagal-triangle-container" style="margin: 0 auto;">
+                   <div class="vagal-vertex v-ventral" data-i18n="vagal_ventral">Ventral</div>
+                   <div class="vagal-vertex v-dorsal" data-i18n="vagal_dorsal">Dorsal</div>
+                   <div class="vagal-vertex v-sympathetic" data-i18n="vagal_symp">Sympathetic</div>
+                   
+                   <div id="macroMetaballContainer" class="vagal-metaball-container">
+                     <div id="macroBlob" class="vagal-blob"></div>
+                     <div id="macroTraces" class="vagal-traces"></div>
+                   </div>
+                   <svg id="energy-path-svg" class="vagal-energy-path"></svg>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <span class="section-title" data-i18n="insight_path_label" style="margin: 0;">Sinir Sistemi Rotan</span>
+            </div>
+        </div>
+
+        <!-- Resilience Flow Card -->
+        <div class="glass-panel liquid-border stagger-3" style="padding: 1.5rem 2rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+                <h4 class="section-title" style="margin: 0;" data-i18n="insight_resilience_flow">Esneklik Akışı</h4>
+                <span id="resilience-score-large" style="color: var(--vagal-accent, #A8E6CF); font-size: 1.5rem; font-weight: 500;">—</span>
+            </div>
+            <div id="insight-resilience-bar">
+              <!-- Filled dynamically -->
+            </div>
+        </div>
+
+        <!-- Insight Summary Card -->
+        <div id="insight-summary-card" class="glass-panel liquid-border stagger-4" style="padding: 1.5rem 2rem; margin-bottom: 2rem;">
+            <h4 class="section-title" style="margin: 0 0 0.8rem 0;" data-i18n="insight_summary_title">Özet</h4>
+            <p id="insight-summary-text" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.7;">—</p>
+        </div>
+
+      </div>
+    </section>
+    <!-- SETTINGS / PROFILE VIEW (The Neuro-Cockpit v3.2) -->
+    <section id="view-settings" class="view hidden">
+      <div class="settings-content standard-view-content fade-in-up">
+        
+        <div class="view-header">
+          <h2 data-i18n="nav_profile">Profile</h2>
+          <p data-i18n="prof_desc">Manage your wellness identity and senses.</p>
+        </div>
+
+        <!-- IDENTITY CARD: High-Density Aura Core -->
+        <div class="identity-card-v2 glass-panel p-8 mb-8 stagger-1 liquid-border text-center relative overflow-hidden flex flex-col items-center">
+             <div class="aura-core-v2-container mb-6">
+                <div id="aura-core-sphere" class="aura-core-v2"></div>
+             </div>
+             
+             <div class="identity-info-v2">
+                <h2 id="user-display-name" class="text-2xl font-light mb-2 tracking-tight">Explorer</h2>
+                <div id="unique-days-stats" class="px-4 py-1.5 bg-white/5 rounded-full border border-white/10 text-[10px] uppercase tracking-[2px] text-white/50 inline-block">
+                   <!-- Replaced dynamically by App (e.g. 7 Gündür Aktif) -->
+                   <span data-i18n="prof_active_days">Active Days</span>
+                </div>
+                <p class="premium-header mt-4" style="padding-left:0.5rem;" data-i18n="prof_identity">Bio-Identity</p>
+             </div>
+        </div>
+
+        <!-- SENSORY ENGINE -->
+        <div class="stagger-2 mb-8 max-w-[440px]">
+           <h3 class="premium-header" data-i18n="prof_sensory_title">Sensory Controls</h3>
+           
+           <div class="glass-panel overflow-hidden">
+             <!-- Haptic -->
+             <div class="settings-row p-4 flex justify-between items-center">
+                <div class="flex items-center gap-3" style="display: flex; align-items: center; gap: 0.75rem;">
+                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white/40"><path d="m2 8 2 2 4-4 4 4 4-4 4 4 2-2"></path><path d="m2 16 2 2 4-4 4 4 4-4 4 4 2-2"></path></svg>
+                   <span class="text-sm font-light text-white/70" data-i18n="prof_haptic">Haptic Feedback</span>
+                </div>
+                <label class="toggle-switch">
+                   <input type="checkbox" id="hapticToggle">
+                   <span class="slider"></span>
+                </label>
+             </div>
+
+             <!-- Drone -->
+             <div class="settings-row p-4 flex justify-between items-center border-t border-white/5">
+                <div class="flex items-center gap-3" style="display: flex; align-items: center; gap: 0.75rem;">
+                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white/40"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                   <span class="text-sm font-light text-white/70" data-i18n="prof_drone">Bio-Acoustic Drone</span>
+                </div>
+                <label class="toggle-switch">
+                   <input type="checkbox" id="droneToggle" checked>
+                   <span class="slider"></span>
+                </label>
+             </div>
+
+             <!-- Nudges (Notifications) -->
+             <div class="settings-row p-4 flex justify-between items-center border-t border-white/5">
+                <div class="flex items-center gap-3" style="display: flex; align-items: center; gap: 0.75rem;">
+                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white/40"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                   <span class="text-sm font-light text-white/70" data-i18n="dash_daily_nudges">Daily Nudges</span>
+                </div>
+                <label class="toggle-switch">
+                   <input type="checkbox" id="notifToggleCheckbox">
+                   <span class="slider"></span>
+                </label>
+             </div>
+
+             <!-- Volume -->
+             <div class="settings-row p-4 border-t border-white/5">
+                <div class="flex justify-between items-center mb-3" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                   <div class="flex items-center gap-3" style="display: flex; align-items: center; gap: 0.75rem;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white/40"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                      <span class="text-sm font-light text-white/70" data-i18n="prof_volume">Acoustic Depth</span>
+                   </div>
+                   <span id="volume-val-label" class="text-[10px] text-white/30 font-mono">50%</span>
+                </div>
+                <input type="range" id="volumeSlider" min="0" max="100" value="50" class="glass-range">
+             </div>
+           </div>
+        </div>
+
+        <!-- DATA -->
+        <div class="stagger-3 mb-8 max-w-[440px]">
+           <h3 class="premium-header" data-i18n="prof_data_title">Data Sovereignty</h3>
+           
+           <div class="glass-panel overflow-hidden">
+             <div class="p-4 flex flex-col gap-3" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                
+                <div class="flex items-center gap-2 mb-2 opacity-50" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400/60"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                   <span class="text-[9px] text-white/40 tracking-[2px] uppercase" data-i18n="prof_data_safe">Secured locally.</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                   <button id="exportJsonBtn" class="glass-btn text-[10px] py-4 flex flex-col items-center gap-2" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                      <span data-i18n="prof_export" class="tracking-[1px]">JSON</span>
+                   </button>
+                   <button id="exportTxtBtn" class="glass-btn text-[10px] py-4 flex flex-col items-center gap-2" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                      <span data-i18n="prof_export_report" class="tracking-[1px]">Report</span>
+                   </button>
+                </div>
+
+                <button id="resetMemoryBtn" class="glass-btn danger-text danger-glow text-[9px] py-4 mt-2 tracking-[3px] uppercase font-medium">
+                   <span data-i18n="prof_reset">Format Neural History</span>
+                </button>
+             </div>
+         <div class="stagger-4 mb-8 max-w-[440px]">
+            <h3 class="premium-header" data-i18n="prof_system_title">System</h3>
+           
+           <div class="flex flex-col gap-3" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <!-- Language Toggle -->
+              <button id="langToggleBtn" class="glass-btn py-4 flex items-center justify-center gap-3 w-full">
+                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white/40"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                 <span class="text-sm font-light tracking-[1px]">TR / EN</span>
+              </button>
+
+              <!-- Dynamic Logout / Login -->
+              <button id="logoutBtn" class="glass-btn py-4 flex items-center justify-center gap-3 w-full group hover:bg-red-500/10 transition-all duration-300">
+                 <svg id="logoutIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white/40 group-hover:text-red-400"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                 <span id="logoutText" class="text-sm font-light tracking-[1px]" data-i18n="prof_logout">Çıkış Yap</span>
+              </button>
+           </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Custom Notification Permission Modal -->
+    <div id="notifModal" class="notif-modal-wrapper hidden fade-in">
+      <div class="notif-modal-card glass-panel fade-in-up">
+        <div class="notif-icon">🌬️</div>
+        <h3 data-i18n="notif_modal_title">Want a daily nudge from Aura?</h3>
+        <p data-i18n="notif_modal_desc">We'll gently reach out around the time you checked in today. No streaks, no guilt.</p>
+        <button id="notifAcceptBtn" class="primary-btn mt-4" data-i18n="btn_im_in">Yes, I'm in</button>
+        <button id="notifDenyBtn" class="ghost-btn" data-i18n="btn_not_now">Not now</button>
+      </div>
+    </div>
+
+    <!-- Scientific Info Modal -->
+    <div id="infoBackdrop" class="info-backdrop"></div>
+    <div id="infoModal" class="info-bottom-sheet">
+      <button id="closeInfoBtn" class="info-close-btn" aria-label="Close">✕</button>
+      <div class="info-sheet-content">
+        <div id="infoIcon" class="info-sheet-icon">🧬</div>
+        <h3 id="infoTitle" class="info-sheet-title">Science</h3>
+        <p id="infoBody" class="info-sheet-body">Explanation...</p>
+        <p id="infoRef" class="info-sheet-ref">Ref...</p>
+      </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav id="mobile-nav" class="mobile-nav nav-hidden">
+      <button id="navHome" class="nav-item active" data-view="dashboard" aria-label="Home">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <span class="nav-label" data-i18n="nav_home">Home</span>
+      </button>
+      <button id="navMeditations" class="nav-item" data-view="meditations" aria-label="Breathe">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 12h8"></path><path d="M12 8v8"></path>
+          </svg>
+        </div>
+        <span class="nav-label" data-i18n="nav_breathe">Breathe</span>
+      </button>
+      <button id="navNotebook" class="nav-item" data-view="notebook" aria-label="Notes">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </div>
+        <span class="nav-label" data-i18n="nav_notebook">Notes</span>
+      </button>
+      <button id="navInsight" class="nav-item" data-view="insight" aria-label="Insight">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <span class="nav-label">Insight</span>
+      </button>
+      <button id="navProfile" class="nav-item" data-view="settings" aria-label="Profile">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <span class="nav-label" data-i18n="nav_profile">Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Vagal Deep Dive Modal -->
+  <div id="vagalModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content glass-panel">
+      <button id="closeVagalModal" class="info-close-btn">✕</button>
+      <div class="modal-body">
+        <h2 id="vagalModalTitle" class="vagal-modal-title">...</h2>
+        <div id="vagalModalHeatmap" class="vagal-heatmap-large"></div>
+        <div id="vagalModalAnalysis" class="vagal-modal-analysis mt-4"></div>
+        <div id="vagalModalRec" class="vagal-modal-recommendation mt-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js?v=111"></script>
+</body>
+</html>

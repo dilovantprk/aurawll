@@ -1,0 +1,16 @@
+{
+  "name": "Aura Wellness",
+  "short_name": "Aura",
+  "description": "A calm, minimal space to check in with your nervous system and regulate.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0F1218",
+  "theme_color": "#0F1218",
+  "icons": [
+    {
+      "src": "icon.svg", 
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
