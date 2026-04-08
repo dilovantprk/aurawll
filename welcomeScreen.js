@@ -6,7 +6,6 @@ import { SensoryEngine } from './audio-engine.js';
 export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null }) {
   const screen = document.getElementById('view-welcome');
   const welcomeBack = document.getElementById('awWelcomeBack');
-  const loginLink = document.getElementById('aw-login');
   const core = screen?.querySelector('.aw-core');
   const prompt = document.getElementById('awGesturePrompt');
 
@@ -24,11 +23,9 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
 
   // --- State Setup ---
   if (user && welcomeBack) {
-    if (loginLink) loginLink.classList.add('hidden');
     welcomeBack.classList.remove('hidden');
     welcomeBack.innerHTML = `Tekrar hoş geldin, <strong>${user.displayName || (lang === 'tr' ? 'Dostum' : 'Friend')}</strong>`;
   } else if (welcomeBack) {
-    if (loginLink) loginLink.classList.remove('hidden');
     welcomeBack.classList.add('hidden');
   }
 
@@ -127,13 +124,4 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
   window.addEventListener('touchend', onEnd);
   window.addEventListener('touchcancel', onEnd);
   core.addEventListener('mouseleave', onEnd);
-
-  if (loginLink) {
-    loginLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (onComplete && typeof onComplete === 'function') {
-        onComplete({ mode: 'login' });
-      }
-    });
-  }
 }

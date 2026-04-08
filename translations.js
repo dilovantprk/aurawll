@@ -44,6 +44,8 @@ export const locales = {
     "auth_pass": "Password",
 
     // Profile & Settings Cockpit
+    "guest_cta_title": "Save Your Journey",
+    "guest_cta_desc": "Create an account to securely sync your neuro-history and personalized insights across devices.",
     "prof_active_days": "{count} Days Active",
     "prof_identity": "Bio-Identity",
     "prof_sensory_title": "Sensory Controls",
@@ -353,6 +355,8 @@ export const locales = {
     "auth_pass": "Şifre",
 
     // Profile & Settings Cockpit
+    "guest_cta_title": "Yolculuğunu Kaydet",
+    "guest_cta_desc": "Nöro-geçmişini ve kişiselleştirilmiş analizlerini tüm cihazlarında eşzamanlamak için ücretsiz bir hesap oluştur.",
     "prof_active_days": "{count} Gündür Aktif",
     "prof_identity": "Biyo-Kimlik",
     "prof_sensory_title": "Duyusal Kontroller",

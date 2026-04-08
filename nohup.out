@@ -1417,3 +1417,222 @@ BrokenPipeError: [Errno 32] Broken pipe
 ::1 - - [08/Apr/2026 11:55:29] code 404, message File not found
 ::1 - - [08/Apr/2026 11:55:29] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
 ::1 - - [08/Apr/2026 11:58:33] "GET /firebase-messaging-sw.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET / HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /app.js?v=111 HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /style.css?v=64 HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /welcomeScreen.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /translations.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /weeklyInsight.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /settings.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /vagal-logic.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /audio-engine.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] "GET /authService.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:42] code 404, message File not found
+::1 - - [09/Apr/2026 01:46:42] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:46:42] "GET /icon.svg HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:46:43] code 404, message File not found
+::1 - - [09/Apr/2026 01:46:43] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:46:44] "GET /sw.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:50:00] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:50:00] code 404, message File not found
+::1 - - [09/Apr/2026 01:50:00] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:51:20] code 404, message File not found
+::1 - - [09/Apr/2026 01:51:20] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:51:54] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:51:54] code 404, message File not found
+::1 - - [09/Apr/2026 01:51:54] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:51:55] code 404, message File not found
+::1 - - [09/Apr/2026 01:51:55] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:52:06] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:52:06] code 404, message File not found
+::1 - - [09/Apr/2026 01:52:06] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:52:07] code 404, message File not found
+::1 - - [09/Apr/2026 01:52:07] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:53:08] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:53:08] code 404, message File not found
+::1 - - [09/Apr/2026 01:53:08] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:53:09] code 404, message File not found
+::1 - - [09/Apr/2026 01:53:09] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:59:30] "GET / HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:59:30] code 404, message File not found
+::1 - - [09/Apr/2026 01:59:30] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:59:30] "GET /style.css?v=64 HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 01:59:30] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 01:59:30] code 404, message File not found
+::1 - - [09/Apr/2026 01:59:30] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:59:30] code 404, message File not found
+::1 - - [09/Apr/2026 01:59:30] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 01:59:31] "GET /sw.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 02:00:00] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:00:00] code 404, message File not found
+::1 - - [09/Apr/2026 02:00:00] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:00:01] code 404, message File not found
+::1 - - [09/Apr/2026 02:00:01] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:02:08] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:08] code 404, message File not found
+::1 - - [09/Apr/2026 02:02:08] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:02:09] code 404, message File not found
+::1 - - [09/Apr/2026 02:02:09] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:02:53] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:02:53] code 404, message File not found
+::1 - - [09/Apr/2026 02:02:53] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:02:54] code 404, message File not found
+::1 - - [09/Apr/2026 02:02:54] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:03:33] "GET /firebase-messaging-sw.js HTTP/1.1" 304 -
+::1 - - [09/Apr/2026 02:04:57] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:04:57] code 404, message File not found
+::1 - - [09/Apr/2026 02:04:57] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:04:58] code 404, message File not found
+::1 - - [09/Apr/2026 02:04:58] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:06:48] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:48] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:06:49] "GET /firebase.js HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [09/Apr/2026 02:06:49] code 404, message File not found
+::ffff:127.0.0.1 - - [09/Apr/2026 02:06:49] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:06:50] code 404, message File not found
+::1 - - [09/Apr/2026 02:06:50] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:08:48] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:08:48] code 404, message File not found
+::1 - - [09/Apr/2026 02:08:48] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:08:50] code 404, message File not found
+::1 - - [09/Apr/2026 02:08:50] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:10:12] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:10:12] code 404, message File not found
+::1 - - [09/Apr/2026 02:10:12] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:10:13] code 404, message File not found
+::1 - - [09/Apr/2026 02:10:13] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:13:49] "GET / HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /app.js?v=111 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /style.css?v=64 HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /manifest.json HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /welcomeScreen.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /settings.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /translations.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /weeklyInsight.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /audio-engine.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /authService.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /vagal-logic.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] "GET /firebase.js HTTP/1.1" 200 -
+::1 - - [09/Apr/2026 02:13:49] code 404, message File not found
+::1 - - [09/Apr/2026 02:13:49] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [09/Apr/2026 02:13:51] code 404, message File not found
+::1 - - [09/Apr/2026 02:13:51] "GET /favicon.ico HTTP/1.1" 404 -

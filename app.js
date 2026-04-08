@@ -3,7 +3,7 @@ import { locales } from './translations.js';
 import { getWeeklyInsight } from './weeklyInsight.js';
 // import { startMeditation } from './meditation.js'; // Missing file in current project
 import { initWelcomeScreen } from './welcomeScreen.js';
-import { signInAsGuest, isGuestUser } from './authService.js';
+import { signInAsGuest, isGuestUser, upgradeGuestWithGoogle } from './authService.js';
 import { renderGuestBanner } from './settings.js';
 import {
   calculateVagalState,
@@ -239,6 +239,8 @@ const elements = {
     auraCoreSphere: document.getElementById('aura-core-sphere'),
     userDisplayName: document.getElementById('user-display-name'),
     uniqueDaysStats: document.getElementById('unique-days-stats'),
+    guestCtaBox: document.getElementById('guest-cta-box'),
+    guestCtaRegisterBtn: document.getElementById('guest-cta-register-btn'),
     hapticToggle: document.getElementById('hapticToggle'),
     droneToggle: document.getElementById('droneToggle'),
     volumeSlider: document.getElementById('volumeSlider'),
@@ -641,7 +643,6 @@ function navigateTo(viewId, skipHistory = false) {
   updateActiveNavLink(viewId);
 
   try {
-    if (viewId === 'view-dashboard') loadDashboard();
     if (viewId === 'view-meditations') renderMeditationsList();
     if (viewId === 'view-notebook') loadNotebook();
     if (viewId === 'view-insight') {
@@ -655,9 +656,12 @@ function navigateTo(viewId, skipHistory = false) {
         const oldBanners = container.querySelectorAll('.settings-guest-banner, .settings-account-status');
         oldBanners.forEach(b => b.remove());
         if (typeof renderGuestBanner === 'function') renderGuestBanner(AppState.user, container, t);
-        const logoutBtn = target.querySelector('#logoutBtn');
-        if (logoutBtn) {
-          logoutBtn.textContent = isGuestUser(AppState.user) ? t('btn_exit_guest') : t('btn_logout');
+        if (elements.guestCtaBox) {
+          if (isGuestUser(AppState.user)) {
+            elements.guestCtaBox.classList.remove('hidden');
+          } else {
+            elements.guestCtaBox.classList.add('hidden');
+          }
         }
       }
     }
@@ -1926,6 +1930,11 @@ function initSettingsListeners() {
       window.location.reload();
     }
   });
+
+  elements.guestCtaRegisterBtn?.addEventListener('click', () => {
+     navigateTo('view-auth');
+     if (elements.guestCtaBox) elements.guestCtaBox.classList.add('hidden');
+  });
 }
 
 function updateSettingsView() {
@@ -1954,6 +1963,7 @@ function updateSettingsView() {
     elements.uniqueDaysStats.textContent = t('prof_active_days').replace('{count}', uniqueDays);
   }
 
+  const latest = mergedHistory[0];
   if (latest && elements.auraCoreSphere) {
     const weights = getWeightsFromState(latest.state);
     const stateData = calculateVagalState(weights.wV, weights.wS, weights.wD);
@@ -2669,9 +2679,10 @@ elements.tabRegister.addEventListener('click', () => {
   document.getElementById('nameInputGroup')?.classList.remove('hidden');
 });
 
-elements.skipAuthBtn?.addEventListener('click', () => {
+elements.skipAuthBtn?.addEventListener('click', (e) => {
+  e.preventDefault();
   AppState.user = { uid: 'guest_' + Date.now(), guest: true };
-  loadDashboard();
+  navigateTo('view-dashboard');
 });
 
 elements.authForm.addEventListener('submit', async (e) => {
@@ -2709,13 +2720,24 @@ elements.authForm.addEventListener('submit', async (e) => {
 });
 
 elements.logoutBtn.addEventListener('click', () => {
+  const isGuest = !AppState.user || AppState.user.guest || isGuestUser?.(AppState.user);
+  if (isGuest) {
+    navigateTo('view-auth');
+    return;
+  }
+
   if (fb.isInitialized && fb.auth && fb.auth.currentUser) {
     fb.signOut(fb.auth).catch(err => console.error("Sign out error:", err));
   }
   
   // Force local clear and redirect immediately for better UX
   AppState.user = null;
-  localStorage.removeItem('aura_user'); // If saved
+  AppState.mockHistory = [];
+  localStorage.removeItem('aura_user');
+  localStorage.removeItem('aura_history');
+  localStorage.removeItem('aura_guest_name');
+  localStorage.removeItem('aura_custom_emotions');
+  
   startAppFlow(null);
 });
 

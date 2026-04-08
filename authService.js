@@ -39,5 +39,5 @@ export async function upgradeGuestWithGoogle() {
 
 export function isGuestUser(user) {
   if (!user) return true;
-  return user.isAnonymous === true;
+  return user.isAnonymous === true || user.guest === true;
 }

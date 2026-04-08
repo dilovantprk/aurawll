@@ -65,13 +65,7 @@
         <div class="aw-core"></div>
         <p class="aw-gesture-prompt" id="awGesturePrompt" data-i18n="welcome_prompt">Odaklanmak için basılı tut</p>
         
-        <!-- Redesigned 'True Aura' Login Action -->
-        <div class="welcome-auth-container fade-in" style="animation-delay: 1.5s;">
-           <button class="aura-action-btn hidden" id="aw-login">
-              <span class="btn-text" data-i18n-html="btn_login_link">Zaten hesabın var mı? Giriş yap</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-           </button>
-        </div>
+        <!-- Removed 'True Aura' Login Action as per fresh Guest-first workflow -->
       </div>
       
       <div class="aw-actions">
@@ -150,7 +144,7 @@
           
           <!-- Guest Access Shortcut -->
           <div class="mt-8 text-center stagger-6">
-             <button id="skipAuthBtn" class="text-[10px] uppercase tracking-[3px] text-white/30 hover:text-white transition-colors" data-i18n="btn_skip">Skip for now</button>
+             <button id="skipAuthBtn" type="button" class="text-[10px] uppercase tracking-[3px] text-white/30 hover:text-white transition-colors" data-i18n="btn_skip">Skip for now</button>
           </div>
         </form>
       </div>
@@ -519,6 +513,15 @@
                 </div>
                 <p class="premium-header mt-4" style="padding-left:0.5rem;" data-i18n="prof_identity">Bio-Identity</p>
              </div>
+        </div>
+
+        <!-- GUEST CTA BOX -->
+        <div id="guest-cta-box" class="guest-cta-box hidden mb-8 stagger-1 max-w-[440px]">
+           <div class="glass-panel text-center relative overflow-hidden" style="padding: 2rem;">
+              <h3 class="premium-header text-white/90 mb-2" data-i18n="guest_cta_title" style="margin-bottom: 0.5rem; color: #fff;">Save Your Journey</h3>
+              <p class="text-sm text-white/50 mb-6" data-i18n="guest_cta_desc" style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">Create an account to securely sync your neuro-history and personalized insights across devices.</p>
+              <button id="guest-cta-register-btn" class="primary-btn pulse-hover w-full mx-auto" data-i18n="btn_register" style="padding: 1rem 2rem;">Create Account</button>
+           </div>
         </div>
 
         <!-- SENSORY ENGINE -->

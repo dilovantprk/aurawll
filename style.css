@@ -2399,3 +2399,13 @@ body.crystal-entry .app-container {
   to { transform: rotate(360deg); }
 }
 
+
+/* Guest CTA Box */
+.guest-cta-box {
+  transition: all 0.5s ease-in-out;
+  margin: 0 auto 2rem auto;
+}
+.guest-cta-box .glass-panel {
+  border-color: rgba(133, 141, 255, 0.3);
+  box-shadow: 0 0 20px rgba(133, 141, 255, 0.1), inset 0 0 10px rgba(133, 141, 255, 0.05);
+}
