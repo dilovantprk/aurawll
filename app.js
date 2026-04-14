@@ -275,6 +275,8 @@ const elements = {
 
   // Meditations View
   meditationsList: document.getElementById('meditationsList'),
+  filterChips: document.getElementById('filterChips'),
+  recommendationsContainer: document.getElementById('recommendationsContainer'),
 
   // Notebook View
   notebookEntries: document.getElementById('notebookEntries')
@@ -297,6 +299,11 @@ if (elements.langToggleBtn) elements.langToggleBtn.addEventListener('click', () 
   if(!document.getElementById('view-sub-emotion').classList.contains('hidden')) {
     renderSubEmotions(AppState.currentCheckIn.state);
   }
+  
+  // Re-render filter chips for meditations view
+  renderFilterChips();
+  renderRecommendations();
+
   // Re-load dashboard to re-translate the dynamic patterns if it is active
   if(!document.getElementById('view-dashboard').classList.contains('hidden') && AppState.user) {
     loadDashboard();
@@ -330,6 +337,7 @@ const emojiMap = {
 const protocols = {
   p_478: {
     title: "4-7-8 Relaxing Breath",
+    category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
       { name: "Hold", class: "breathe-hold", duration: 7000 },
@@ -339,6 +347,7 @@ const protocols = {
   },
   p_sigh: {
     title: "Deep Sigh (Cooling)",
+    category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
       { name: "Exhale", class: "breathe-empty", duration: 8000 }
@@ -347,6 +356,7 @@ const protocols = {
   },
   p_bellows: {
     title: "Energizing Bellows",
+    category: "energize",
     phases: [
       { name: "In", class: "breathe-inhale", duration: 2000 },
       { name: "Out", class: "breathe-exhale", duration: 2000 }
@@ -355,6 +365,7 @@ const protocols = {
   },
   p_resonance: {
     title: "Resonance Frequency",
+    category: "focus",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 5500 },
       { name: "Exhale", class: "breathe-exhale", duration: 5500 }
@@ -363,14 +374,72 @@ const protocols = {
   },
   p_grounding: {
     title: "Grounding Breath",
+    category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
       { name: "Exhale", class: "breathe-exhale", duration: 6000 }
     ],
     totalDuration: 120
   },
+  p_phys_sigh: {
+    title: "Physiological Sigh",
+    category: "calm",
+    phases: [
+      { name: "Inhale", class: "breathe-inhale", duration: 2000 },
+      { name: "Inhale Top-Up", class: "breathe-inhale-top-up", duration: 1000 },
+      { name: "Exhale", class: "breathe-exhale", duration: 6000 }
+    ],
+    totalDuration: 60
+  },
+  p_coherent: {
+    title: "Coherent Breathing",
+    category: "focus",
+    phases: [
+      { name: "Inhale", class: "breathe-inhale", duration: 5500 },
+      { name: "Exhale", class: "breathe-exhale", duration: 5500 }
+    ],
+    totalDuration: 300
+  },
+  p_ext_exhale: {
+    title: "Extended Exhale (4-8)",
+    category: "calm",
+    phases: [
+      { name: "Inhale", class: "breathe-inhale", duration: 4000 },
+      { name: "Exhale", class: "breathe-exhale", duration: 8000 }
+    ],
+    totalDuration: 120
+  },
+  p_cyclic_sigh: {
+    title: "Cyclic Sighing",
+    category: "calm",
+    phases: [
+      { name: "Inhale", class: "breathe-inhale", duration: 3000 },
+      { name: "Inhale Top-Up", class: "breathe-inhale-top-up", duration: 1000 },
+      { name: "Exhale", class: "breathe-exhale", duration: 8000 }
+    ],
+    totalDuration: 300
+  },
+  p_fire: {
+    title: "Breath of Fire",
+    category: "energize",
+    phases: [
+      { name: "In", class: "breathe-inhale", duration: 250 },
+      { name: "Out", class: "breathe-exhale", duration: 250 }
+    ],
+    totalDuration: 120
+  },
+  p_nadi: {
+    title: "Nadi Shodhana",
+    category: "focus",
+    phases: [
+      { name: "Inhale", class: "breathe-inhale", duration: 4000 },
+      { name: "Exhale", class: "breathe-exhale", duration: 4000 }
+    ],
+    totalDuration: 240
+  },
   p_box: {
     title: "Box Breathing",
+    category: "focus",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
       { name: "Hold", class: "breathe-hold", duration: 4000 },
@@ -490,10 +559,19 @@ function showInfoModal(type) {
   if (isModalOpen) return;
   isModalOpen = true;
 
-  elements.infoIcon.textContent = getInfoIcon(type);
-  elements.infoTitle.textContent = getInfoTitle(type);
-  elements.infoBody.innerHTML = t(`info_${type}_body`);
-  elements.infoRef.textContent = t(`info_${type}_ref`);
+  // Contextual modal population
+  if (type === 'breathing' && exerciseParams && exerciseParams.id) {
+    const pId = exerciseParams.id;
+    elements.infoIcon.textContent = '🧬';
+    elements.infoTitle.textContent = t(`sci_${pId}_title`);
+    elements.infoBody.innerHTML = t(`sci_${pId}_desc`);
+    elements.infoRef.textContent = t(`sci_${pId}_ref`);
+  } else {
+    elements.infoIcon.textContent = getInfoIcon(type);
+    elements.infoTitle.textContent = getInfoTitle(type);
+    elements.infoBody.innerHTML = t(`info_${type}_body`);
+    elements.infoRef.textContent = t(`info_${type}_ref`);
+  }
 
   elements.infoBackdrop.classList.add('active');
   elements.infoModal.classList.add('active');
@@ -643,7 +721,12 @@ function navigateTo(viewId, skipHistory = false) {
   updateActiveNavLink(viewId);
 
   try {
-    if (viewId === 'view-meditations') renderMeditationsList();
+    if (viewId === 'view-dashboard') loadDashboard();
+    if (viewId === 'view-meditations') {
+      renderMeditationsList();
+      renderFilterChips();
+      renderRecommendations();
+    }
     if (viewId === 'view-notebook') loadNotebook();
     if (viewId === 'view-insight') {
       const historyItems = AppState.user ? (AppState.user.history || []) : AppState.mockHistory;
@@ -773,36 +856,267 @@ document.querySelectorAll('.nav-link').forEach(link => {
   });
 });
 
+function renderRecommendations() {
+  if (!elements.recommendationsContainer) return;
+
+  // Pattern: Priority to Firebase/User history, fallback to mock if empty
+  const historyItems = (AppState.user && AppState.user.history && AppState.user.history.length > 0) 
+    ? AppState.user.history 
+    : (AppState.mockHistory || []);
+    
+  const lastEntry = historyItems.length > 0 ? historyItems[0] : null;
+
+  if (!lastEntry || !lastEntry.state) {
+    elements.recommendationsContainer.classList.add('hidden');
+    return;
+  }
+
+  // State-to-protocol mapping
+  const recMap = {
+    wired: ['p_coherent', 'p_box'],
+    okay: ['p_cyclic_sigh', 'p_nadi'],
+    foggy: ['p_fire', 'p_bellows'] // Default for foggy
+  };
+
+  // Nuance: Distinguish between High Stress and Low Energy within foggy state
+  let recIds = recMap[lastEntry.state] || [];
+  if (lastEntry.state === 'foggy') {
+    const isHighStressSub = ['se_overwhelmed', 'se_anxious', 'se_other'].includes(lastEntry.subEmotion);
+    if (isHighStressSub) {
+      recIds = ['p_phys_sigh', 'p_478'];
+    }
+  } else if (lastEntry.state === 'wired') {
+     // Check if it's very high activation/anger
+     const isExtremeWired = ['se_angry', 'se_restless'].includes(lastEntry.subEmotion);
+     if (isExtremeWired) {
+       recIds = ['p_coherent', 'p_box']; // Already defaults, but consistent
+     }
+  }
+
+  if (recIds.length === 0) {
+    elements.recommendationsContainer.classList.add('hidden');
+    return;
+  }
+
+  elements.recommendationsContainer.classList.remove('hidden');
+  
+  const label = AppState.lang === 'tr' ? 'SİZİN İÇİN ÖNERİLER' : 'RECOMMENDED FOR YOU';
+  const badgeText = AppState.lang === 'tr' ? '★ Önerilen' : '★ Recommended';
+
+  // We reuse the protocolMeta defined inside renderMeditationsList or define it here
+  // For consistency and scoping, let's redefine locally the ones we need or use a global one
+  const protocolMeta = {
+    p_478: { icon: '🌙', accent: 'rgba(133, 141, 255, 0.4)', benefit: AppState.lang === 'tr' ? 'Vagal tonu aktive eder' : 'Activates vagal tone' },
+    p_phys_sigh: { icon: '😮‍💨', accent: 'rgba(168, 230, 207, 0.4)', benefit: AppState.lang === 'tr' ? 'Anında stres tahliyesi' : 'Instant stress offloading' },
+    p_coherent: { icon: '🌊', accent: 'rgba(200, 140, 255, 0.4)', benefit: AppState.lang === 'tr' ? 'Biyolojik rezonans' : 'Biological resonance' },
+    p_box: { icon: '📦', accent: 'rgba(133, 141, 255, 0.4)', benefit: AppState.lang === 'tr' ? 'Sinir sistemi dengeleme' : 'Nervous system regulation' },
+    p_fire: { icon: '⚡️', accent: 'rgba(255, 160, 100, 0.4)', benefit: AppState.lang === 'tr' ? 'Zihinsel netlik ve ateş' : 'Mental clarity & fire' },
+    p_bellows: { icon: '🔥', accent: 'rgba(255, 160, 100, 0.4)', benefit: AppState.lang === 'tr' ? 'Enerji ve odak yükseltir' : 'Boosts energy & focus' },
+    p_cyclic_sigh: { icon: '🌀', accent: 'rgba(168, 230, 207, 0.4)', benefit: AppState.lang === 'tr' ? 'Ruh hali iyileştirme' : 'Potent mood enhancement' },
+    p_nadi: { icon: '☯️', accent: 'rgba(200, 140, 255, 0.4)', benefit: AppState.lang === 'tr' ? 'Beyin küre dengesi' : 'Hemispheric balance' }
+  };
+
+  elements.recommendationsContainer.innerHTML = `
+    <span class="rec-label">${label}</span>
+    <div class="rec-scroll-row">
+      ${recIds.map(id => {
+        const p = protocols[id];
+        const meta = protocolMeta[id];
+        const mins = Math.ceil(p.totalDuration / 60);
+        return `
+          <button class="meditation-card" data-protocol="${id}" style="border-left: 3px solid ${meta.accent};">
+            <span class="rec-card-badge">${badgeText}</span>
+            <div class="meditation-card-icon">${meta.icon}</div>
+            <div class="meditation-card-info">
+              <span class="meditation-card-title">${p.title}</span>
+              <span class="meditation-card-meta">${mins} ${t('meditations_duration')} · ${meta.benefit}</span>
+            </div>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  // Attach listeners to recommendation cards
+  elements.recommendationsContainer.querySelectorAll('.meditation-card').forEach(card => {
+    card.addEventListener('click', () => prepareExerciseStandalone(card.getAttribute('data-protocol')));
+  });
+}
+
+function renderFilterChips() {
+  if (!elements.filterChips) return;
+
+  const categories = [
+    { id: 'all', label: AppState.lang === 'tr' ? 'Hepsi' : 'All' },
+    { id: 'calm', label: AppState.lang === 'tr' ? 'Sakinleş' : 'Calm' },
+    { id: 'focus', label: AppState.lang === 'tr' ? 'Odaklan' : 'Focus' },
+    { id: 'energize', label: AppState.lang === 'tr' ? 'Canlan' : 'Energize' }
+  ];
+
+  AppState._activeFilter = AppState._activeFilter || 'all';
+
+  elements.filterChips.innerHTML = categories.map(cat => `
+    <button class="filter-chip ${AppState._activeFilter === cat.id ? 'active' : ''}" 
+            data-category="${cat.id}">
+      ${cat.label}
+    </button>
+  `).join('');
+
+  elements.filterChips.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const filter = chip.getAttribute('data-category');
+      AppState._activeFilter = filter;
+      
+      // Update chip UI
+      elements.filterChips.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      
+      // Filter list
+      filterMeditations(filter);
+    });
+  });
+}
+
+function filterMeditations(filter) {
+  if (!elements.meditationsList) return;
+  
+  const cards = elements.meditationsList.querySelectorAll('.meditation-card');
+  cards.forEach(card => {
+    const protocolId = card.getAttribute('data-protocol');
+    const protocol = protocols[protocolId];
+    
+    if (filter === 'all' || protocol.category === filter) {
+      card.classList.remove('hidden-protocol');
+    } else {
+      card.classList.add('hidden-protocol');
+    }
+  });
+
+  // SMART REORDERING: Move hidden cards to the end to eliminate grid gaps
+  const container = elements.meditationsList;
+  const cardArray = Array.from(cards);
+  
+  cardArray.sort((a, b) => {
+    const aHidden = a.classList.contains('hidden-protocol');
+    const bHidden = b.classList.contains('hidden-protocol');
+    if (aHidden && !bHidden) return 1;
+    if (!aHidden && bHidden) return -1;
+    return 0;
+  });
+
+  cardArray.forEach(card => container.appendChild(card));
+}
+
 /* --- MEDITATIONS LIST RENDERER --- */
 function renderMeditationsList() {
   if (!elements.meditationsList) return;
+
+  // Consistent data source logic
+  const historyItems = (AppState.user && AppState.user.history && AppState.user.history.length > 0) 
+    ? AppState.user.history 
+    : (AppState.mockHistory || []);
   
+  const lastEntry = historyItems.length > 0 ? historyItems[0] : null;
+
   // Show loader if nothing rendered yet
   if (elements.meditationsList.children.length === 0) {
      elements.meditationsList.innerHTML = '<div class="loader-circle"></div>';
   }
 
-  const protocolIcons = {
-    p_478: '🌙',
-    p_sigh: '💨',
-    p_bellows: '🔥',
-    p_resonance: '🎵',
-    p_grounding: '🌿',
-    p_box: '📦'
+  const protocolMeta = {
+    p_478: { 
+      icon: '🌙', 
+      accent: 'rgba(133, 141, 255, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Vagal tonu aktive eder' : 'Activates vagal tone'
+    },
+    p_sigh: { 
+      icon: '💨', 
+      accent: 'rgba(168, 230, 207, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Hızlı sakinleşme refleksi' : 'Rapid calming reflex'
+    },
+    p_bellows: { 
+      icon: '🔥', 
+      accent: 'rgba(255, 160, 100, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Enerji ve odak yükseltir' : 'Boosts energy & focus'
+    },
+    p_resonance: { 
+      icon: '🫀', 
+      accent: 'rgba(200, 140, 255, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Kalp-beyin senkronizasyonu' : 'Heart-brain coherence'
+    },
+    p_grounding: { 
+      icon: '🌿', 
+      accent: 'rgba(133, 141, 255, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Bedeni şimdiye taşır' : 'Grounds you in the present'
+    },
+    p_box: { 
+      icon: '📦', 
+      accent: 'rgba(133, 141, 255, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Sinir sistemi dengeleme' : 'Nervous system regulation'
+    },
+    p_phys_sigh: { 
+      icon: '😮‍💨', 
+      accent: 'rgba(168, 230, 207, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Anında stres tahliyesi' : 'Instant stress offloading'
+    },
+    p_coherent: { 
+      icon: '🌊', 
+      accent: 'rgba(200, 140, 255, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Biyolojik rezonans' : 'Biological resonance'
+    },
+    p_ext_exhale: { 
+      icon: '🌬️', 
+      accent: 'rgba(133, 141, 255, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Derin parasempatik fren' : 'Deep parasympathetic brake'
+    },
+    p_cyclic_sigh: { 
+      icon: '🌀', 
+      accent: 'rgba(168, 230, 207, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Ruh hali iyileştirme' : 'Potent mood enhancement'
+    },
+    p_fire: { 
+      icon: '⚡️', 
+      accent: 'rgba(255, 160, 100, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Zihinsel netlik ve ateş' : 'Mental clarity & fire'
+    },
+    p_nadi: { 
+      icon: '☯️', 
+      accent: 'rgba(200, 140, 255, 0.4)', 
+      benefit: AppState.lang === 'tr' ? 'Beyin küre dengesi' : 'Hemispheric balance'
+    }
   };
+
+  // Dynamic header prompt based on last check-in state
+  const headerDesc = document.querySelector('#view-meditations .view-header p');
+  if (headerDesc) {
+    if (lastEntry && lastEntry.state) {
+      const statePrompts = {
+        wired: AppState.lang === 'tr' 
+          ? '⚡ Son durumun gergin — sakinleştirici protokoller önerilir' 
+          : '⚡ You were wired — calming protocols recommended',
+        foggy: AppState.lang === 'tr' 
+          ? '☁️ Son durumun durgun — enerji veren nefes dene' 
+          : '☁️ You felt foggy — try an energizing breath',
+        okay: AppState.lang === 'tr' 
+          ? '🌱 Dengeli görünüyorsun — derinleştirmek için seç' 
+          : '🌱 You seem balanced — choose to deepen'
+      };
+      headerDesc.textContent = statePrompts[lastEntry.state] || (AppState.lang === 'tr' ? 'Durumuna göre bir protokol seç' : 'Select a protocol for your current state.');
+    }
+  }
 
   elements.meditationsList.innerHTML = Object.keys(protocols).map(id => {
     const p = protocols[id];
-    const icon = protocolIcons[id] || '🫁';
+    const meta = protocolMeta[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)', benefit: '' };
     const mins = Math.ceil(p.totalDuration / 60);
-    const phaseNames = p.phases.map(ph => ph.name).join(' · ');
 
     return `
-      <button class="meditation-card" data-protocol="${id}">
-        <div class="meditation-card-icon">${icon}</div>
+      <button class="meditation-card ${AppState._activeFilter && AppState._activeFilter !== 'all' && p.category !== AppState._activeFilter ? 'hidden-protocol' : ''}" 
+              data-protocol="${id}" style="border-left: 3px solid ${meta.accent};">
+        <div class="meditation-card-icon">${meta.icon}</div>
         <div class="meditation-card-info">
           <span class="meditation-card-title">${p.title}</span>
-          <span class="meditation-card-meta">${mins} ${t('meditations_duration')} · ${phaseNames}</span>
+          <span class="meditation-card-meta">${mins} ${t('meditations_duration')} · ${meta.benefit}</span>
         </div>
         <svg class="meditation-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6"></polyline>
@@ -823,6 +1137,7 @@ function renderMeditationsList() {
 // Launch a breathing exercise directly from the meditations tab (standalone, no check-in)
 function prepareExerciseStandalone(protocolId) {
   exerciseParams = protocols[protocolId];
+  exerciseParams.id = protocolId; // Save ID for science modal lookups
   elements.exerciseTitle.textContent = exerciseParams.title;
   
   if(elements.exerciseMicrocopy) {
@@ -1872,9 +2187,10 @@ function updateInsightView(history) {
     }
 
     // 3. Trace & Blob for Macro Heatmap
-    const latest = history[history.length - 1];
+    const latest = history.length > 0 ? history[history.length - 1] : { state: 'okay' };
     const weights = getWeightsFromState(latest.state);
     const point = calculateVagalPoint(weights.wV, weights.wS, weights.wD);
+    
     if (elements.macroBlob) {
         elements.macroBlob.style.left = point.x;
         elements.macroBlob.style.top = point.y;
@@ -2279,15 +2595,17 @@ function runPhase(customDuration = null) {
   phaseStartTime = Date.now();
   remainingPhaseDuration = duration;
 
-  elements.breathCircle.className = `breath-circle ${phase.class}`;
+  // Add rapid class for high-frequency breathing (Breath of Fire)
+  const isRapid = duration < 600;
+  elements.breathCircle.className = `breath-circle ${phase.class} ${isRapid ? 'breathe-rapid' : ''}`;
   elements.breathCircle.style.transitionDuration = `${duration / 1000}s`;
   document.documentElement.style.setProperty('--breath-duration', `${duration / 1000}s`);
   
   const lookupKey = `ex_${phase.name.toLowerCase().replace(' ', '_')}`;
   elements.breathInstruction.textContent = t(lookupKey) !== lookupKey ? t(lookupKey) : phase.name;
   
-  if (phase.name.toLowerCase().includes('in')) {
-    AudioEngine.playBell('start');
+  if (phase.name.toLowerCase().includes('in') || phase.name.toLowerCase() === 'inhale top-up') {
+    AudioEngine.playBell(phase.name.toLowerCase() === 'inhale top-up' ? 'soft' : 'start');
     SensoryEngine.setBreathingPhase('inhale');
     document.documentElement.style.setProperty('--bg-brightness', 1);
   } else if (phase.name.toLowerCase().includes('out') || phase.name.toLowerCase().includes('ex')) {
@@ -2428,6 +2746,10 @@ if (elements.marContinueBtn) {
 
 // 2b-2. Final Savoring Phase Entry
 function goToSavoring(fromPhase) {
+  // Capture protocolId if coming from exercise
+  if (exerciseParams && exerciseParams.id) {
+    AppState.currentCheckIn.protocol = exerciseParams.id;
+  }
   fromPhase.classList.add('opacity-0');
   setTimeout(() => {
       fromPhase.classList.add('hidden');
@@ -2679,10 +3001,9 @@ elements.tabRegister.addEventListener('click', () => {
   document.getElementById('nameInputGroup')?.classList.remove('hidden');
 });
 
-elements.skipAuthBtn?.addEventListener('click', (e) => {
-  e.preventDefault();
+elements.skipAuthBtn?.addEventListener('click', () => {
   AppState.user = { uid: 'guest_' + Date.now(), guest: true };
-  navigateTo('view-dashboard');
+  loadDashboard();
 });
 
 elements.authForm.addEventListener('submit', async (e) => {
@@ -2765,4 +3086,284 @@ window.addEventListener('popstate', (e) => {
       navigateTo('view-welcome', true);
     }
   }
+});
+
+/* --- COMMUNITY & STATS LOGIC --- */
+let galaxyAnimationId = null;
+
+function calculatePersonalStats() {
+  const history = (AppState.user && AppState.user.history && AppState.user.history.length > 0) 
+    ? AppState.user.history 
+    : (AppState.mockHistory || []);
+
+  const totalCheckins = history.length;
+  if (totalCheckins === 0) return { total: 0, streak: 0, state: '-', protocol: '-', avg: 0, memberSince: '-' };
+
+  // Streak calculation
+  let streak = 0;
+  const today = new Date().setHours(0,0,0,0);
+  const distinctDays = [...new Set(history.map(e => new Date(e.timestamp).setHours(0,0,0,0)))].sort((a,b) => b - a);
+  
+  if (distinctDays.includes(today) || distinctDays.includes(today - 86400000)) {
+    let currentDay = distinctDays.includes(today) ? today : today - 86400000;
+    for (let day of distinctDays) {
+       if (day === currentDay) {
+         streak++;
+         currentDay -= 86400000;
+       } else if (day < currentDay) break;
+    }
+  }
+
+  // Most frequent state (last 30 days)
+  const last30Days = Date.now() - (30 * 86400000);
+  const recentHistory = history.filter(e => e.timestamp > last30Days);
+  const stateCounts = recentHistory.reduce((acc, e) => {
+    acc[e.state] = (acc[e.state] || 0) + 1;
+    return acc;
+  }, {});
+  const dominantState = Object.keys(stateCounts).reduce((a, b) => stateCounts[a] > stateCounts[b] ? a : b, 'okay');
+
+  // Most used protocol
+  const protocolCounts = history.reduce((acc, e) => {
+    if (e.protocol) acc[e.protocol] = (acc[e.protocol] || 0) + 1;
+    return acc;
+  }, {});
+  const dominantProtocol = Object.keys(protocolCounts).reduce((a, b) => protocolCounts[a] > protocolCounts[b] ? a : b, null);
+  const protocolName = dominantProtocol ? (protocols[dominantProtocol] ? protocols[dominantProtocol].title : 'Egzersiz') : '-';
+  const protocolIcon = dominantProtocol ? (protocols[dominantProtocol] ? 
+    (AppState.lang === 'tr' ? '✨ En Sevdiğin' : '⭐ Favorite') : '') : '';
+
+  // Avg per week
+  const firstEntry = history[history.length - 1].timestamp;
+  const weeksDiff = Math.max(1, Math.ceil((Date.now() - firstEntry) / (7 * 86400000)));
+  const avgPerWeek = (totalCheckins / weeksDiff).toFixed(1);
+
+  // Member Since
+  const options = { year: 'numeric', month: 'long' };
+  const memberSince = new Date(firstEntry).toLocaleDateString(AppState.lang === 'tr' ? 'tr-TR' : 'en-US', options);
+
+  return {
+    total: totalCheckins,
+    streak,
+    state: dominantState,
+    protocol: protocolName,
+    protocolIcon,
+    avg: avgPerWeek,
+    memberSince
+  };
+}
+
+async function fetchCommunityStats() {
+  if (fb.isInitialized && fb.db) {
+    try {
+      const docRef = fb.doc(fb.db, "community_stats", "global");
+      const snap = await fb.getDoc(docRef);
+      if (snap.exists()) return snap.data();
+    } catch (e) {
+      console.warn("Community stats fetch failed:", e);
+    }
+  }
+  // Placeholder fallback
+  return {
+    total_users: 1248,
+    checkins_today: 247,
+    state_distribution: { ventral: 45, sympathetic: 30, dorsal: 25 },
+    top_protocol: 'p_coherent',
+    active_now: 12,
+    pending: true
+  };
+}
+
+function initGalaxyAnimation(dist) {
+  const canvas = document.getElementById('galaxyCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  let w = canvas.offsetWidth;
+  let h = canvas.offsetHeight;
+  canvas.width = w * window.devicePixelRatio;
+  canvas.height = h * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const particles = [];
+  const particleCount = 200;
+  
+  // Colors
+  const colors = {
+    ventral: '#6ee7c7',
+    sympathetic: '#f4a24a',
+    dorsal: '#7b9ccc'
+  };
+
+  const states = ['ventral', 'sympathetic', 'dorsal'];
+  const distribution = dist || { ventral: 33, sympathetic: 33, dorsal: 34 };
+
+  for (let i = 0; i < particleCount; i++) {
+    // Pick state based on distribution
+    const rand = Math.random() * 100;
+    let state = 'ventral';
+    if (rand > distribution.ventral) state = 'sympathetic';
+    if (rand > (distribution.ventral + distribution.sympathetic)) state = 'dorsal';
+
+    // Galaxy position (3 spirals)
+    const arm = i % 3;
+    const angle = (arm / 3) * Math.PI * 2 + (Math.random() * 0.5);
+    const distance = 10 + Math.random() * 80;
+    const spiralAngle = distance * 0.15 + angle;
+
+    particles.push({
+      x: w/2,
+      y: h/2,
+      angle: spiralAngle,
+      dist: distance,
+      radius: Math.random() * 1.5 + 0.5,
+      color: colors[state],
+      speed: 0.005 + Math.random() * 0.008,
+      pulse: Math.random() * Math.PI,
+      pulseSpeed: 0.02 + Math.random() * 0.03
+    });
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    
+    // Subtle center glow
+    const gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, 100);
+    gradient.addColorStop(0, 'rgba(133, 141, 255, 0.08)');
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, w, h);
+
+    particles.forEach(p => {
+      p.angle += p.speed;
+      const x = w/2 + Math.cos(p.angle) * p.dist;
+      const y = h/2 + Math.sin(p.angle) * p.dist;
+      
+      const opacity = 0.3 + Math.sin(p.pulse) * 0.4;
+      ctx.beginPath();
+      ctx.arc(x, y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = opacity;
+      ctx.fill();
+      
+      p.pulse += p.pulseSpeed;
+    });
+    
+    ctx.globalAlpha = 1;
+    galaxyAnimationId = requestAnimationFrame(animate);
+  }
+  
+  animate();
+}
+
+async function showCommunityModal() {
+  const stats = calculatePersonalStats();
+  const personalGrid = document.getElementById('personalStatsGrid');
+  
+  if (personalGrid) {
+    const stateColorMap = { wired: '#f4a24a', okay: '#6ee7c7', foggy: '#7b9ccc' };
+    const stateLabelMap = { 
+      wired: AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
+      okay: AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
+      foggy: AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal'
+    };
+
+    personalGrid.innerHTML = `
+      <div class="stat-card">
+        <span class="stat-label">${AppState.lang === 'tr' ? 'Yolculuk Serisi' : 'Vagal Streak'}</span>
+        <span class="stat-value">${stats.streak}</span>
+        <span class="stat-sub">${AppState.lang === 'tr' ? 'Gün aktif' : 'Days active'}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">${AppState.lang === 'tr' ? 'Toplam Kayıt' : 'Total Records'}</span>
+        <span class="stat-value">${stats.total}</span>
+        <span class="stat-sub">${AppState.lang === 'tr' ? 'Check-in kaydı' : 'Neural check-ins'}</span>
+      </div>
+      <div class="stat-card" style="border-left: 2px solid ${stateColorMap[stats.state]}">
+        <span class="stat-label">${AppState.lang === 'tr' ? 'Baskın Durum' : 'Dominant State'}</span>
+        <span class="stat-value" style="color: ${stateColorMap[stats.state]}">${stateLabelMap[stats.state]}</span>
+        <span class="stat-sub">${AppState.lang === 'tr' ? 'Son 30 gün' : 'Last 30 days'}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">${AppState.lang === 'tr' ? 'Sıkça Yapılan' : 'Top Protocol'}</span>
+        <span class="stat-value" style="font-size: 1.1rem">${stats.protocol}</span>
+        <span class="stat-sub">${stats.protocolIcon}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">${AppState.lang === 'tr' ? 'Haftalık Ort.' : 'Avg / Week'}</span>
+        <span class="stat-value">${stats.avg}</span>
+        <span class="stat-sub">${AppState.lang === 'tr' ? 'Senans / Hafta' : 'Sessions / week'}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">${AppState.lang === 'tr' ? 'Aura Yolculuğu' : 'Aura Voyage'}</span>
+        <span class="stat-value" style="font-size: 0.9rem">${stats.memberSince}</span>
+        <span class="stat-sub">${AppState.lang === 'tr' ? 'Başlangıç' : 'Commenced'}</span>
+      </div>
+    `;
+  }
+
+  // Show Modal
+  document.getElementById('communityBackdrop').classList.add('active');
+  document.getElementById('communityModal').classList.add('active');
+  
+  // Set default tab
+  switchCommTab('ben');
+}
+
+async function switchCommTab(tabId) {
+  const panes = document.querySelectorAll('.comm-tab-pane');
+  const buttons = document.querySelectorAll('.comm-tab-btn');
+  const indicator = document.querySelector('.comm-tab-indicator');
+  
+  panes.forEach(p => p.classList.toggle('active', p.id === `commTab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`));
+  buttons.forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-tab') === tabId);
+    if (b.classList.contains('active')) {
+       indicator.style.width = `${b.offsetWidth}px`;
+       indicator.style.left = `${b.offsetLeft}px`;
+    }
+  });
+
+  if (tabId === 'topluluk') {
+    const commData = await fetchCommunityStats();
+    
+    // UI Update
+    const checkinText = AppState.lang === 'tr' 
+      ? `Bugün <span>${commData.checkins_today}</span> kişi check-in yaptı` 
+      : `<span>${commData.checkins_today}</span> people checked in today`;
+    document.getElementById('commCheckinCount').innerHTML = checkinText;
+    
+    const dist = commData.state_distribution;
+    document.getElementById('distVentral').style.width = `${dist.ventral}%`;
+    document.getElementById('distSympathetic').style.width = `${dist.sympathetic}%`;
+    document.getElementById('distDorsal').style.width = `${dist.dorsal}%`;
+    
+    const topProt = commData.top_protocol;
+    document.getElementById('commTopProtocol').textContent = protocols[topProt] ? protocols[topProt].title : '-';
+    document.getElementById('commActiveNow').textContent = commData.active_now;
+    
+    if (commData.pending) document.getElementById('commPlaceholderNote').classList.remove('hidden');
+    else document.getElementById('commPlaceholderNote').classList.add('hidden');
+
+    if (galaxyAnimationId) cancelAnimationFrame(galaxyAnimationId);
+    initGalaxyAnimation(dist);
+  } else {
+    if (galaxyAnimationId) cancelAnimationFrame(galaxyAnimationId);
+  }
+}
+
+function hideCommunityModal() {
+  document.getElementById('communityBackdrop').classList.remove('active');
+  document.getElementById('communityModal').classList.remove('active');
+  if (galaxyAnimationId) cancelAnimationFrame(galaxyAnimationId);
+}
+
+// Event Listeners for Community
+if (elements.auraCoreSphere) {
+  elements.auraCoreSphere.addEventListener('click', showCommunityModal);
+}
+document.getElementById('closeCommunityBtn')?.addEventListener('click', hideCommunityModal);
+document.getElementById('communityBackdrop')?.addEventListener('click', hideCommunityModal);
+document.querySelectorAll('.comm-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchCommTab(btn.getAttribute('data-tab')));
 });
