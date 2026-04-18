@@ -1,19 +1,10 @@
 // Dynamic import for Firebase — races against a 3s timeout to prevent CDN hang
-<<<<<<< HEAD
 import { locales } from './translations.js?v=202';
 import { getWeeklyInsight } from './weeklyInsight.js?v=202';
 import { startMeditation, stopMeditation, MEDITATION_PROTOCOLS } from './meditation.js?v=202';
 import { initWelcomeScreen } from './welcomeScreen.js?v=202';
 import { signInAsGuest, isGuestUser, upgradeGuestWithGoogle } from './authService.js?v=202';
 import { renderGuestBanner } from './settings.js?v=202';
-=======
-import { locales } from './translations.js';
-import { getWeeklyInsight } from './weeklyInsight.js';
-// import { startMeditation } from './meditation.js'; // Missing file in current project
-import { initWelcomeScreen } from './welcomeScreen.js';
-import { signInAsGuest, isGuestUser, upgradeGuestWithGoogle } from './authService.js';
-import { renderGuestBanner } from './settings.js';
->>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
 import {
   calculateVagalState,
   getWeightsFromState,
