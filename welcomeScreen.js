@@ -87,11 +87,13 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
     if (navigator.vibrate) navigator.vibrate(0);
   };
 
-  const completeFocus = async () => {
+  const completeFocus = async (force = false) => {
     const wasActive = focusActive;
-    onEnd(); // Clear timers immediately
     
-    if (!wasActive) return;
+    if (!wasActive && !force) return;
+
+    window.removeEventListener('keydown', onKeydown);
+    onEnd(); // Clean up timers and haptics
 
     // Transition Animation
     core.style.transition = 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease';
@@ -111,13 +113,23 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
         // Reset if failed
         core.style.transform = 'scale(1)';
         core.style.opacity = '1';
+        window.addEventListener('keydown', onKeydown);
       }
+    }
+  };
+
+  // --- Desktop Keyboard Shortcut: Enter to Skip ---
+  const onKeydown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      completeFocus(true); // force bypass focus requirement
     }
   };
 
   // --- Event Listeners (Zero Error Approach) ---
   core.addEventListener('mousedown', onStart);
   core.addEventListener('touchstart', onStart, { passive: false });
+  window.addEventListener('keydown', onKeydown);
   
   // Global resets to prevent "sticky" haptics
   window.addEventListener('mouseup', onEnd);

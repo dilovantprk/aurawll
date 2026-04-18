@@ -7,7 +7,10 @@ export const locales = {
     "nav_notebook": "Notes",
     "nav_insight": "Insight",
     "nav_profile": "Profile",
+    "med_title": "Breathe",
     "med_desc": "Select a protocol for your current state.",
+    "med_recommended_title": "Recommended Breathing",
+    "med_journeys_title": "Deep Journeys",
     "meditations_title": "Breathing Methods",
     "meditations_desc": "Choose a technique to practice.",
     "meditations_duration": "min",
@@ -15,6 +18,12 @@ export const locales = {
     "notebook_empty": "No entries yet. Complete a check-in to start your journal.",
     "notebook_today": "Today",
     "notebook_yesterday": "Yesterday",
+    "time_now": "Just now",
+    "time_mins_ago": "mins ago",
+    "time_today_morning": "Today, Morning",
+    "time_today_afternoon": "Today, Afternoon",
+    "time_today_evening": "Today, Evening",
+    "time_yesterday": "Yesterday",
 
     // Global
     "btn_logout": "Log out",
@@ -80,6 +89,7 @@ export const locales = {
     "dash_evening": "Good evening",
     "dash_greeting": "{greeting}, {name}.",
     "dash_take_moment": "Take a moment for yourself today.",
+    "dash_start_label": "PROTOCOL",
     "dash_start": "Start Check-in",
     "dash_start_desc": "3-5 minutes intended for you.",
     "dash_recent": "Recent Moments",
@@ -87,6 +97,7 @@ export const locales = {
 
     // Weekly Patterns
     "dash_weekly": "Weekly Patterns",
+    "dash_resilience_flow": "RESILIENCE FLOW",
     "dash_insight_title": "Your Body's Voice",
     "dash_exercise_title": "Most Used Exercise",
     "dash_no_weekly": "Complete a few more loops to unlock your patterns.",
@@ -94,7 +105,9 @@ export const locales = {
     "dash_focus": "Physiological Focus",
     "insight_path_label": "Your Nervous System Navigation",
     "insight_resilience_flow": "Resilience Waveform",
+    "vagal_router_label": "NERVOUS SYSTEM NAVIGATION",
     "insight_hero_desc": "Weekly Biometric Compass",
+    "dash_summary": "SUMMARY",
     "insight_summary_title": "Summary",
     "insight_summary_empty": "Complete a few check-ins to generate your weekly summary.",
     "tod_morning": "morning",
@@ -119,6 +132,52 @@ export const locales = {
     "vagal_intensity_light": "Light",
     "vagal_intensity_medium": "Moderate",
     "vagal_intensity_chronic": "Chronic",
+    
+    // Info Buttons (Dashboard)
+    "info_heatmap_title": "Neural State Distribution",
+    "info_heatmap_body": "Maps the longitudinal frequency of your nervous system states. This visualization identifies your primary autonomic baseline and regulatory trends over time.",
+    "info_heatmap_ref": "Russell (1980) / Porges (2011)",
+
+    "info_resilience_title": "Vagal Plasticity Flow",
+    "info_resilience_body": "Measures your physiological resilience—the ease with which your system transitions between states. High plasticity indicates a robust and flexible nervous system.",
+    "info_resilience_ref": "Porges (2007)",
+
+    "info_insight_title": "AI Neural Analysis",
+    "info_insight_body": "Antigravity's neural engine analyzes your biometric checkpoints to identify circadian patterns and suggest optimal regulatory paths.",
+    "info_insight_ref": "Antigravity Neural Engine v2",
+
+    "info_exercise_title": "Vagal Regulation Protocol",
+    "info_exercise_body": "Your most effective physiological leverage point. This protocol is selected based on your biological response frequency and success rate.",
+    "info_exercise_ref": "Zaccaro et al. (2018)",
+
+    // Info Buttons (Check-in Steps)
+    "info_step1_title": "Somatic Signal Entry",
+    "info_step1_body": "Tuning into physical sensations (heart rate, muscle tension, temperature) bypasses cognitive shortcuts to accurately reveal your current biological state.",
+    "info_step1_ref": "Levine (1997) / Gendlin (1982)",
+
+    "info_step2_title": "Affective Mapping",
+    "info_step2_body": "Locating your state on the valence-arousal grid provides a multi-dimensional snapshot of your energy levels and psychological ease.",
+    "info_step2_ref": "Russell (1980)",
+
+    "info_step2b_title": "Neural Affect Labeling",
+    "info_step2b_body": "Transforming abstract sensations into language activates the prefrontal cortex, effectively downregulating amygdala-driven stress responses.",
+    "info_step2b_ref": "Lieberman et al. (2007)",
+
+    "info_step3_title": "Vagal Regulation",
+    "info_step3_body": "Targeted breathing protocols exert physical pressure on the vagus nerve and stretch receptors, forcing a direct shift in your autonomic physiology.",
+    "info_step3_ref": "Porges (2011)",
+
+    "info_step4_title": "Signal Integration",
+    "info_step4_body": "Consciously noticing the 'after-effect' of regulation strengthens the interoceptive pathways required for faster future recovery.",
+    "info_step4_ref": "Craig (2003) / Pollatos (2007)",
+
+    "info_step5_title": "Sensation Refinement",
+    "info_step5_body": "Categorizing biological shifts allows the brain to integrate systemic changes into long-term self-regulation models.",
+    "info_step5_ref": "Damasio (2010)",
+
+    "info_step6_title": "Neural Savoring",
+    "info_step6_body": "Anchor your regulated state by focusing on a specific positive signal. This intentional hold counters the brain's innate negativity bias.",
+    "info_step6_ref": "Hanson (2013) / Bryant (2006)",
 
     // 3x3x2 Deterministic Insight Matrix (Antigravity v2)
     "insight_okay_light_day": "Your system is naturally balanced and engaged. A great time for focus.",
@@ -157,6 +216,82 @@ export const locales = {
     "step_4": "Step 4 of 6",
     "step_5": "Step 5 of 6",
     "step_6": "Step 6 of 6",
+    "step_2b": "Step 2B of 6",
+
+    "somatic_title": "What do you notice in your body right now?",
+    "somatic_subtitle": "Select up to 3 sensations.",
+    "som_chest_heavy": "Weight in my chest",
+    "som_muscle_tense": "Muscles feel tense",
+    "som_stomach_knot": "Knot in my stomach",
+    "som_light_relaxed": "Light and relaxed",
+    "som_heavy_tired": "Feeling heavy and tired",
+    "som_shallow_breath": "Breath is shallow",
+    "som_high_energy_restless": "High energy, restless",
+    "som_calm_grounded": "Calm and grounded",
+
+    "som_chest_tightness": "Tightness",
+    "som_chest_burning": "Burning",
+    "som_chest_pressure": "Pressure",
+    "som_chest_hollowness": "Hollowness",
+    "som_muscle_tension_ref": "Tension",
+    "som_muscle_rigidity": "Rigidity",
+    "som_muscle_trembling": "Trembling",
+    "som_muscle_tingling": "Tingling",
+    "som_stomach_turning": "Turning",
+    "som_stomach_knot_ref": "Knot",
+    "som_stomach_empty": "Hollow",
+    "som_stomach_turbulence": "Turbulence",
+    "som_light_flow": "Flow",
+    "som_light_expansion": "Expansion",
+    "som_light_softness": "Softness",
+    "som_light_floating": "Floating",
+    "som_heavy_sinking": "Sinking",
+    "som_heavy_numbness": "Numbness",
+    "som_heavy_fatigue": "Fatigue",
+    "som_heavy_stone": "Stone-like",
+    "som_breath_constricted": "Constricted",
+    "som_breath_shallow_ref": "Shallow",
+    "som_breath_rapid": "Rapid",
+    "som_breath_irregular": "Irregular",
+    "som_energy_bursting": "Bursting",
+    "som_energy_restless_ref": "Restless",
+    "som_energy_electric": "Electric",
+    "som_energy_overflow": "Overflow",
+    "som_calm_grounded_ref": "Grounded",
+    "som_calm_quiet": "Quiet",
+    "som_calm_rooted": "Rooted",
+    "som_calm_whole": "Whole",
+
+    "grid_title": "Tap to pinpoint your energy",
+    "grid_label_high_energy": "High Energy",
+    "grid_label_low_energy": "Low Energy",
+    "grid_label_hard": "Resistance",
+    "grid_label_easy": "Flow",
+    "grid_quad_tr": "Exultation / Flow",
+    "grid_quad_tl": "Vigilance / Tension",
+    "grid_quad_bl": "Heaviness / Fog",
+    "grid_quad_br": "Serenity / Rest",
+
+    "emotion_title": "How would you name this?",
+    "emotion_subtitle": "Pick what resonates most (max 3)",
+    "emo_grateful": "Grateful",
+    "emo_curious": "Curious",
+    "emo_peaceful": "Peaceful",
+    "emo_joyful": "Joyful",
+    "emo_compassionate": "Compassionate",
+    "emo_connected": "Connected",
+    "emo_anxious": "Anxious",
+    "emo_angry": "Angry",
+    "emo_overwhelmed": "Overwhelmed",
+    "emo_excited": "Excited",
+    "emo_tense": "Tense",
+    "emo_impatient": "Impatient",
+    "emo_numb": "Numb",
+    "emo_tired": "Tired",
+    "emo_sad": "Sad",
+    "emo_empty": "Empty",
+    "emo_hopeless": "Hopeless",
+    "emo_dull": "Dull",
 
     // State Picker (Step 1)
     "picker_title": "How does your body feel right now?",
@@ -197,6 +332,39 @@ export const locales = {
     "se_grounded": "Grounded",
     
     "se_other": "Other...",
+    
+    // Body Signals (Somatic Entry - Step 1)
+    // Ventral
+    "bs_ventral_shoulders": "Shoulders are relaxed / down",
+    "bs_ventral_belly": "Belly rises as I breathe",
+    "bs_ventral_settling": "Quiet settling interiorly",
+    "bs_ventral_belong": "I belong here, in this body",
+    "bs_ventral_jaw": "Face and jaw are soft",
+    // Sympathetic
+    "bs_symp_jaw": "Clenching my jaw (unconscious)",
+    "bs_symp_shoulders": "Shoulders close to my ears",
+    "bs_symp_chest": "Tightness / shallow breathing",
+    "bs_symp_hands": "Cold or sweaty palms",
+    "bs_symp_legs": "Restless legs / want to move",
+    "bs_symp_heart": "Heart racing / chest tension",
+    "bs_symp_spring": "Coiled spring ready to snap",
+    // Dorsal
+    "bs_dorsal_distant": "Everything feels far away",
+    "bs_dorsal_heavy": "Heavy body, hard to move",
+    "bs_dorsal_numb": "Feeling nothing (numbness)",
+    "bs_dorsal_eyes": "Heavy eyes (not sleepy)",
+    "bs_dorsal_vulnerable": "Wanting to hide / shrink away",
+    "bs_dorsal_voice": "Voice feels stuck inside",
+    // Neutral / Awareness
+    "bs_neutral_deep": "Deep and steady breathing",
+    "bs_neutral_weight": "Feeling grounded weight",
+    "bs_neutral_cold": "Hands are cold",
+    "bs_neutral_face": "Tension in my face",
+    // Digestion
+    "bs_digest_throat": "Lump in my throat",
+    "bs_digest_appetite": "No appetite",
+    "bs_digest_stomach": "Overfull / bloated belly",
+    "bs_digest_head": "Slight headache",
 
     // Exercise (Step 3)
     "ex_breathe": "Breathe",
@@ -291,9 +459,9 @@ export const locales = {
     "onb_lets_go": "Let's go",
 
     // Savoring (Step 4)
-    "sav_title": "What's one good thing you noticed today?",
-    "sav_desc": "A savoring moment to complete the loop.",
-    "sav_placeholder": "(e.g. the smell of coffee, a warm breeze, finishing a tiny task...)",
+    "mar_savor_title": "What's one good thing you noticed today?",
+    "mar_savor_subtitle": "A moment of focus to complete the loop.",
+    "mar_savor_placeholder": "(e.g. the smell of coffee, a warm breeze, finishing a tiny task...)",
 
     // Completion
     "done_title": "Well done.",
@@ -313,7 +481,7 @@ export const locales = {
 
     // Body Scan Meditation
     "mar_offer_continue": "Continue",
-    "mar_offer_done": "I'm done",
+    "mar_offer_done": "Skip Meditation",
     
     "scan_478_0": "You don't have to do anything right now. Just arrive.",
     "scan_478_1": "Notice your hands. Are they holding anything? Let them soften.",
@@ -368,7 +536,24 @@ export const locales = {
     "info_meditation_ref": "(LeDoux, 2015)",
     "info_savoring_title": "Countering Negativity Bias",
     "info_savoring_body": "Your brain automatically records negative experiences and lets positive ones slip by — negativity bias. Holding a good experience for 15-30 seconds intentionally transfers it into long-term neural structure.",
-    "info_savoring_ref": "(Hanson, 2013 / Rozin & Royzman, 2001)"
+    "info_savoring_ref": "(Hanson, 2013 / Rozin & Royzman, 2001)",
+
+    // --- DEEP JOURNEY PROMPTS ---
+    "med_nsdr_1": "Arrive. There is nowhere else to be.",
+    "med_nsdr_2": "Feel the weight of your body settling against the surface.",
+    "med_nsdr_3": "Relax the eyes. Relax the jaw. Let the tongue rest.",
+    "med_nsdr_4": "Scan down from your forehead to your collarbone.",
+    "med_nsdr_5": "Observe the rise and fall of the breath without controlling it.",
+    "med_nsdr_6": "You are exactly where you need to be. Drift.",
+
+    "med_vagal_1": "Center your attention on the gut and heart.",
+    "med_vagal_2": "Inhale deeply into the belly, feeling the expansion.",
+    "med_vagal_3": "Exhale with a long, silent 'Haaaa' sound.",
+    "med_vagal_4": "Balance and safety. Your system is whole.",
+
+    "med_presence_1": "Open your awareness to the room around you.",
+    "med_presence_2": "Stay with one sensation. Cold, warmth, texture.",
+    "med_presence_3": "You are the observer of the thoughts, not the thoughts themselves."
   },
 
   tr: {
@@ -379,7 +564,10 @@ export const locales = {
     "nav_notebook": "Notlar",
     "nav_insight": "İçgörü",
     "nav_profile": "Profil",
-    "med_desc": "Durumunu düzenlemek için bir protokol seç.",
+    "med_title": "Nefes",
+    "med_desc": "Durumuna göre bir protokol seç.",
+    "med_recommended_title": "Önerilen Nefes Egzersizleri",
+    "med_journeys_title": "Deep Journeys",
     "meditations_title": "Nefes Teknikleri",
     "meditations_desc": "Pratik yapmak için bir teknik seç.",
     "meditations_duration": "dk",
@@ -387,6 +575,12 @@ export const locales = {
     "notebook_empty": "Henüz kayıt yok. Günlüğünü başlatmak için bir check-in tamamla.",
     "notebook_today": "Bugün",
     "notebook_yesterday": "Dün",
+    "time_now": "Şimdi",
+    "time_mins_ago": "dk önce",
+    "time_today_morning": "Bugün, Sabah",
+    "time_today_afternoon": "Bugün, Öğleden Sonra",
+    "time_today_evening": "Bugün, Akşamüstü",
+    "time_yesterday": "Dün",
 
     // Global
     "btn_logout": "Çıkış Yap",
@@ -452,21 +646,25 @@ export const locales = {
     "dash_evening": "İyi akşamlar",
     "dash_greeting": "{greeting}, {name}.",
     "dash_take_moment": "Bugün kendin için bir an ayır.",
+    "dash_start_label": "PROTOKOL",
     "dash_start": "Check-in Başlat",
     "dash_start_desc": "Sadece senin için ayrılmış 3-5 dakika.",
     "dash_recent": "Geçmiş Anlar",
     "dash_empty": "Henüz kayıt yok. Yukarıdan yolculuğa başla.",
 
     // Weekly Patterns
-    "dash_weekly": "Haftalık Örüntüler",
+    "dash_weekly": "Haftalık Modeller",
+    "dash_resilience_flow": "ESNEKLİK AKIŞI",
     "dash_insight_title": "Bedeninin Sesi",
     "dash_exercise_title": "Sık Kullanılan Egzersiz",
     "dash_no_weekly": "Örüntünü görebilmek için birkaç check-in daha tamamla.",
     "dash_strength": "Örüntü Gücü",
     "dash_focus": "Fizyolojik Odak",
     "insight_resilience_flow": "Esneklik Akışı",
+    "vagal_router_label": "SINIR SİSTEMİ ROTAN",
     "insight_hero_desc": "Haftalık Biyometrik Pusula",
     "insight_path_label": "Sinir Sistemi Rotan",
+    "dash_summary": "ÖZET",
     "insight_summary_title": "Özet",
     "insight_summary_empty": "Haftalık özetini oluşturmak için birkaç check-in tamamla.",
     "tod_morning": "sabahları",
@@ -491,6 +689,52 @@ export const locales = {
     "vagal_intensity_light": "Hafif",
     "vagal_intensity_medium": "Orta",
     "vagal_intensity_chronic": "Kronik",
+    
+    // Info Buttons (Dashboard)
+    "info_heatmap_title": "Nöral Durum Dağılımı",
+    "info_heatmap_body": "Sinir sistemi durumlarınızın (Ventral, Sempatik, Dorsal) uzun vadeli dağılımını haritalandırır. Bu analiz, temel fizyolojik eşiğinizi ve zaman içindeki regülasyon eğilimlerinizi belirler.",
+    "info_heatmap_ref": "Russell (1980) / Porges (2011)",
+
+    "info_resilience_title": "Vagal Plastisite Akışı",
+    "info_resilience_body": "Fizyolojik esnekliğinizi ölçer; sisteminizin durumlar arası geçiş yapabilme hızını ve kolaylığını gösterir. Yüksek plastisite, dayanıklı bir sinir sistemine işaret eder.",
+    "info_resilience_ref": "Porges (2007)",
+
+    "info_insight_title": "AI Nöral Analiz",
+    "info_insight_body": "Aura'nın nöral motoru, biyometrik verilerinizi analiz ederek sirkadiyen ritimlerinizi tanımlar ve size özel en etkili regülasyon yollarını önerir.",
+    "info_insight_ref": "Antigravity Neural Engine v2",
+
+    "info_exercise_title": "Vagal Protokol Analizi",
+    "info_exercise_body": "Sisteminiz için en etkili fizyolojik kaldıraç noktasıdır. Bu protokol, biyolojik tepki sıklığınıza ve başarı oranınıza göre dinamik olarak seçilir.",
+    "info_exercise_ref": "Zaccaro et al. (2018)",
+
+    // Info Buttons (Check-in Adımları)
+    "info_step1_title": "Somatik Sinyal Girişi",
+    "info_step1_body": "Fiziksel duyumlara (kalp hızı, kas gerginliği vb.) odaklanmak, bilişsel önyargıları devre dışı bırakarak gerçek biyolojik durumunuzu hassasiyetle belirler.",
+    "info_step1_ref": "Levine (1997) / Gendlin (1982)",
+
+    "info_step2_title": "Affektif Haritalama",
+    "info_step2_body": "Enerji ve rahatlık düzeyinizi Russell'ın döngüsel modeli üzerinde işaretlemek, o anki fizyolojik konumunuzun çok boyutlu bir anlık görüntüsünü çıkarır.",
+    "info_step2_ref": "Russell (1980)",
+
+    "info_step2b_title": "Nöral Duygu Etiketleme",
+    "info_step2b_body": "Soyut duyumları dile dökmek, ön frontal korteksi aktive ederek amigdaladan gelen stres tepkilerini doğrudan yönetir ve yatıştırır.",
+    "info_step2b_ref": "Lieberman et al. (2007)",
+
+    "info_step3_title": "Vagal Regülasyon",
+    "info_step3_body": "Hedef odaklı nefes protokolleri, vagus siniri ve akciğer reseptörleri üzerinde fiziksel baskı kurarak otonom sinir sisteminde anlık bir değişim zorlar.",
+    "info_step3_ref": "Porges (2011)",
+
+    "info_step4_title": "Sinyal Entegrasyonu",
+    "info_step4_body": "Regülasyon sonrası bedendeki değişimi bilinçli olarak fark etmek, gelecekteki iyileşme hızını artıran interoseptif nöro-yolları güçlendirir.",
+    "info_step4_ref": "Craig (2003) / Pollatos (2007)",
+
+    "info_step5_title": "Duyum Rafinesi",
+    "info_step5_body": "Biyolojik değişimleri kategorize etmek, beynin bu sistemik dönüşümleri uzun vadeli öz-regülasyon modellerine entegre etmesini sağlar.",
+    "info_step5_ref": "Damasio (2010)",
+
+    "info_step6_title": "Nöral Sabitleme (Savoring)",
+    "info_step6_body": "Regüle olmuş durumu, olumlu bir sinyale odaklanarak sabitleyin. Bu kasıtlı odak, beynin doğuştan gelen olumsuzluk önyargısını (negativity bias) kırar.",
+    "info_step6_ref": "Hanson (2013) / Bryant (2006)",
 
     // 3x3x2 Deterministic Insight Matrix (Antigravity v2)
     "insight_okay_light_day": "Sisteminiz dengede ve aktif. Odaklanmak için harika bir zaman.",
@@ -529,6 +773,82 @@ export const locales = {
     "step_4": "Adım 4 / 6",
     "step_5": "Adım 5 / 6",
     "step_6": "Adım 6 / 6",
+    "step_2b": "Adım 2B / 6",
+
+    "somatic_title": "Şu an vücudunda ne fark ediyorsun?",
+    "somatic_subtitle": "En fazla 3 seçenek belirle.",
+    "som_chest_heavy": "Göğsümde bir ağırlık var",
+    "som_muscle_tense": "Kaslarımda gerginlik hissediyorum",
+    "som_stomach_knot": "Midem burkuluyor",
+    "som_light_relaxed": "Hafif ve rahat hissediyorum",
+    "som_heavy_tired": "Yorgun, ağır hissediyorum",
+    "som_shallow_breath": "Nefesim yüzeysel",
+    "som_high_energy_restless": "Enerjim yüksek, huzursuzum",
+    "som_calm_grounded": "Sakin, yerde hissediyorum",
+
+    "som_chest_tightness": "Sıkışma",
+    "som_chest_burning": "Yanma",
+    "som_chest_pressure": "Basınç",
+    "som_chest_hollowness": "Boşluk",
+    "som_muscle_tension_ref": "Gerginlik",
+    "som_muscle_rigidity": "Katılık",
+    "som_muscle_trembling": "Titreme",
+    "som_muscle_tingling": "Karıncalanma",
+    "som_stomach_turning": "Burkulma",
+    "som_stomach_knot_ref": "Düğüm",
+    "som_stomach_empty": "Boşluk",
+    "som_stomach_turbulence": "Çalkantı",
+    "som_light_flow": "Akış",
+    "som_light_expansion": "Genişleme",
+    "som_light_softness": "Yumuşaklık",
+    "som_light_floating": "Süzülme",
+    "som_heavy_sinking": "Çökme",
+    "som_heavy_numbness": "Uyuşukluk",
+    "som_heavy_fatigue": "Yorgunluk",
+    "som_heavy_stone": "Taş Kesilme",
+    "som_breath_constricted": "Daralma",
+    "som_breath_shallow_ref": "Sığlık",
+    "som_breath_rapid": "Hızlı",
+    "som_breath_irregular": "Düzensiz",
+    "som_energy_bursting": "Patlama",
+    "som_energy_restless_ref": "Huzursuzluk",
+    "som_energy_electric": "Elektrik",
+    "som_energy_overflow": "Taşkınlık",
+    "som_calm_grounded_ref": "Topraklanma",
+    "som_calm_quiet": "Sessiz",
+    "som_calm_rooted": "Köklü",
+    "som_calm_whole": "Tamamlanmış",
+
+    "grid_title": "Noktaya dokunarak yerini belirle",
+    "grid_label_high_energy": "Yüksek Enerji",
+    "grid_label_low_energy": "Düşük Enerji",
+    "grid_label_hard": "Direnç",
+    "grid_label_easy": "Akış",
+    "grid_quad_tr": "Coşku / Akış",
+    "grid_quad_tl": "Teyakkuz / Gerginlik",
+    "grid_quad_bl": "Ağırlık / Sis",
+    "grid_quad_br": "Dinginlik / Dinlenme",
+
+    "emotion_title": "Bu hissi nasıl isimlendirirsin?",
+    "emotion_subtitle": "Sana en yakın olanları seç (max 3)",
+    "emo_grateful": "Minnettar",
+    "emo_curious": "Meraklı",
+    "emo_peaceful": "Huzurlu",
+    "emo_joyful": "Neşeli",
+    "emo_compassionate": "Şefkatli",
+    "emo_connected": "Bağlantıda",
+    "emo_anxious": "Endişeli",
+    "emo_angry": "Sinirli",
+    "emo_overwhelmed": "Bunalmış",
+    "emo_excited": "Heyecanlı",
+    "emo_tense": "Gergin",
+    "emo_impatient": "Sabırsız",
+    "emo_numb": "Uyuşmuş",
+    "emo_tired": "Yorgun",
+    "emo_sad": "Mutsuz",
+    "emo_empty": "Boş",
+    "emo_hopeless": "Umutsuz",
+    "emo_dull": "Donuk",
 
     // State Picker (Step 1)
     "picker_title": "Şu an bedenin nasıl hissediyor?",
@@ -569,6 +889,39 @@ export const locales = {
     "se_grounded": "Dengeli",
 
     "se_other": "Diğer...",
+
+    // Body Signals (Somatic Entry - Step 1)
+    // Ventral
+    "bs_ventral_shoulders": "Omuzlarım rahat / aşağıda",
+    "bs_ventral_belly": "Nefes alınca karnım yükseliyor",
+    "bs_ventral_settling": "İçimde sessiz bir yerleşme hissi",
+    "bs_ventral_belong": "Buraya aitim, bedenimde varım",
+    "bs_ventral_jaw": "Yüzüm ve çenem gevşek",
+    // Sympathetic
+    "bs_symp_jaw": "Çenemi sıkıyorum (farkında olmadan)",
+    "bs_symp_shoulders": "Omuzlarım kulaklarıma yakın",
+    "bs_symp_chest": "Göğsümde bir sıkışma / dar nefes",
+    "bs_symp_hands": "Ellerim soğuk / terli",
+    "bs_symp_legs": "Bacaklarım huzursuz / hareket istiyor",
+    "bs_symp_heart": "Kalbim hızlı / göğsüm gergin",
+    "bs_symp_spring": "İçimde gerilmiş bir yay gibi",
+    // Dorsal
+    "bs_dorsal_distant": "Her şey uzaktan geliyor / burada değilim",
+    "bs_dorsal_heavy": "Bedenim çok ağır, kalkmak zor",
+    "bs_dorsal_numb": "Hiçbir şey hissetmiyorum (boşluk)",
+    "bs_dorsal_eyes": "Gözlerim ağır (ama uyku değil)",
+    "bs_dorsal_vulnerable": "Bir yere yaslanmak / küçülmek istiyorum",
+    "bs_dorsal_voice": "Sesim içimde kalmış gibi",
+    // Neutral / Awareness
+    "bs_neutral_deep": "Nefesim derin ve düzenli",
+    "bs_neutral_weight": "Bedenimde bir ağırlık hissediyorum",
+    "bs_neutral_cold": "Ellerim soğuk",
+    "bs_neutral_face": "Yüzümde bir gerginlik var",
+    // Digestion
+    "bs_digest_throat": "Boğazımda bir düğüm var",
+    "bs_digest_appetite": "İştahım yok",
+    "bs_digest_stomach": "Midem aşırı dolu / şiş",
+    "bs_digest_head": "Başım hafifçe ağrıyor",
 
     // Exercise (Step 3)
     "ex_breathe": "Nefes",
@@ -663,9 +1016,9 @@ export const locales = {
     "onb_lets_go": "Başlayalım",
 
     // Savoring (Step 4)
-    "sav_title": "Bugün fark ettiğin iyi bir şey neydi?",
-    "sav_desc": "Döngüyü tamamlamak için bir odaklanma anı.",
-    "sav_placeholder": "(örn. kahvenin kokusu, sıcak bir esinti, küçük bir işi bitirmek...)",
+    "mar_savor_title": "Bugün fark ettiğin iyi bir şey neydi?",
+    "mar_savor_subtitle": "Döngüyü tamamlamak için bir odaklanma anı.",
+    "mar_savor_placeholder": "(örn. kahvenin kokusu, sıcak bir esinti, küçük bir işi bitirmek...)",
 
     // Completion
     "done_title": "Harikasın.",
@@ -685,7 +1038,7 @@ export const locales = {
 
     // Body Scan Meditation
     "mar_offer_continue": "Devam Et",
-    "mar_offer_done": "Bitirdim",
+    "mar_offer_done": "Meditasyonu Atla",
     
     "scan_478_0": "Şu an hiçbir şey yapman gerekmiyor. Sadece gel.",
     "scan_478_1": "Ellerine dikkat et. Bir şey tutuyorlar mı? Bırakabilirler.",
@@ -740,6 +1093,23 @@ export const locales = {
     "info_meditation_ref": "(LeDoux, 2015)",
     "info_savoring_title": "Olumsuzluk Önyargısını Kırmak",
     "info_savoring_body": "Beyin olumsuz deneyimleri otomatik kaydeder, olumluları geçirir — olumsuzluk önyargısı. İyi bir deneyimi 15-30 saniye kasıtlı tutmak onu uzun dönem nöral yapıya işler.",
-    "info_savoring_ref": "(Hanson, 2013 / Rozin & Royzman, 2001)"
+    "info_savoring_ref": "(Hanson, 2013 / Rozin & Royzman, 2001)",
+
+    // --- DERİN YOLCULUK PROMLARI ---
+    "med_nsdr_1": "Buraya var. Olman gereken başka hiçbir yer yok.",
+    "med_nsdr_2": "Bedeninin ağırlığının zemine yerleştiğini hisset.",
+    "med_nsdr_3": "Gözlerini gevşet. Çeneni rahatlat. Dilini serbest bırak.",
+    "med_nsdr_4": "Alnından köprücük kemiğine kadar bir gevşeme dalgası hisset.",
+    "med_nsdr_5": "Nefesin yükselişini ve düşüşünü kontrol etmeden izle.",
+    "med_nsdr_6": "Tam olman gereken yerdesin. Dinlen.",
+
+    "med_vagal_1": "Dikkati mide ve kalp bölgesine odakla.",
+    "med_vagal_2": "Karnına derin bir nefes al, genişlemeyi hisset.",
+    "med_vagal_3": "Uzun, sessiz bir 'Haaaa' sesiyle nefesi serbest bırak.",
+    "med_vagal_4": "Denge ve güven. Sistemin tam ve bütün.",
+
+    "med_presence_1": "Farkındalığını etrafındaki odaya aç.",
+    "med_presence_2": "Tek bir duyumla kal. Soğuk, sıcaklık veya doku.",
+    "med_presence_3": "Düşüncelerin kendisi değil, onları izleyensin."
   }
 };

@@ -1,7 +1,7 @@
 export const VAGAL_VERTICES = {
-  VENTRAL: { x: 50, y: 10, color: { r: 168, g: 230, b: 207 }, label: 'ventral' },
-  SYMP: { x: 10, y: 90, color: { r: 255, g: 170, b: 117 }, label: 'symp' },
-  DORSAL: { x: 90, y: 90, color: { r: 162, g: 209, b: 255 }, label: 'dorsal' }
+  VENTRAL: { x: 50, y: 10, color: { r: 16, g: 185, b: 129 }, label: 'ventral' },
+  SYMP: { x: 10, y: 90, color: { r: 245, g: 158, b: 11 }, label: 'symp' },
+  DORSAL: { x: 90, y: 90, color: { r: 59, g: 130, b: 246 }, label: 'dorsal' }
 };
 
 export function calculateVagalState(wV, wS, wD) {

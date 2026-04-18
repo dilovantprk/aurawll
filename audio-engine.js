@@ -16,6 +16,11 @@ export const SensoryEngine = {
   dorsalGain: null,
   dorsalLFO: null,
   
+  // Breath Sync Nodes
+  breathNoise: null,
+  breathGain: null,
+  breathFilter: null,
+  
   hapticInterval: null,
   currentPattern: null,
   isMuted: false,
@@ -33,8 +38,11 @@ export const SensoryEngine = {
     
     // Master Chain
     this.masterGain = this.audioCtx.createGain();
-    const volScale = (this.appVolume / 100) * 0.2; // Max gain of 0.2 for safety
+    const volScale = (this.appVolume / 100) * 0.6; // Increased from 0.2 to 0.6 for higher base volume
     this.masterGain.gain.value = (this.isMuted || !this.droneEnabled) ? 0 : volScale;
+    
+    // Safety: ensure context is resumed
+    this.resumeAudio();
     
     // Biquad Filter for Breathing Sync
     this.biquadFilter = this.audioCtx.createBiquadFilter();
@@ -103,6 +111,32 @@ export const SensoryEngine = {
     this.sympTremoloLFO.start();
     this.dorsalOsc.start();
     this.dorsalLFO.start();
+
+    // 4. Breath Noise Layer (Wind/Breath Effect)
+    this.breathGain = this.audioCtx.createGain();
+    this.breathGain.gain.value = 0;
+    
+    this.breathFilter = this.audioCtx.createBiquadFilter();
+    this.breathFilter.type = 'lowpass';
+    this.breathFilter.frequency.value = 1000;
+    
+    // Create soft noise buffer
+    const bufferSize = 2 * this.audioCtx.sampleRate;
+    const noiseBuffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+    }
+    
+    this.breathNoise = this.audioCtx.createBufferSource();
+    this.breathNoise.buffer = noiseBuffer;
+    this.breathNoise.loop = true;
+    
+    this.breathNoise.connect(this.breathFilter);
+    this.breathFilter.connect(this.breathGain);
+    this.breathGain.connect(this.masterGain);
+    
+    this.breathNoise.start();
   },
 
   resumeAudio() {
@@ -153,15 +187,33 @@ export const SensoryEngine = {
     }
   },
 
-  setBreathingPhase(phase) {
+  setBreathingPhase(phase, durationMs = 2000) {
       if (!this.audioCtx || this.isMuted) return;
       const now = this.audioCtx.currentTime;
+      const durationSec = durationMs / 1000;
+
       if (phase === 'inhale') {
-          // Brighten up (High-pass feel)
-          this.biquadFilter.frequency.setTargetAtTime(2500, now, 1.5);
-      } else if (phase === 'exhale' || phase === 'hold' || phase === 'empty') {
-          // Deepen (Low-pass feel)
-          this.biquadFilter.frequency.setTargetAtTime(300, now, 2.5);
+          // Increase Filter Cutoff & Volume for "Inhale" (Swell)
+          this.biquadFilter.frequency.exponentialRampToValueAtTime(3500, now + durationSec);
+          this.breathFilter.type = 'bandpass'; // Bandpass for more focused "air" sound
+          this.breathFilter.frequency.exponentialRampToValueAtTime(2800, now + durationSec);
+          this.breathGain.gain.linearRampToValueAtTime(0.12, now + durationSec);
+          
+          // Subtle Ventral Drone Swell
+          if (this.ventralGain) this.ventralGain.gain.linearRampToValueAtTime(1.0, now + durationSec);
+      } else if (phase === 'exhale') {
+          // Decrease Filter Cutoff & Volume for "Exhale" (Release)
+          this.biquadFilter.frequency.exponentialRampToValueAtTime(300, now + durationSec);
+          this.breathFilter.type = 'lowpass';
+          this.breathFilter.frequency.exponentialRampToValueAtTime(800, now + durationSec);
+          this.breathGain.gain.linearRampToValueAtTime(0.02, now + durationSec);
+          
+          // Subtle Ventral Drone Dip
+          if (this.ventralGain) this.ventralGain.gain.linearRampToValueAtTime(0.4, now + durationSec);
+      } else {
+          // Hold / Empty (Neutral Static)
+          this.breathGain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+          if (this.ventralGain) this.ventralGain.gain.linearRampToValueAtTime(0.6, now + 0.5);
       }
   },
 
@@ -230,6 +282,17 @@ export const SensoryEngine = {
   stopHaptics() {
     if (this.hapticInterval) clearInterval(this.hapticInterval);
     if ('vibrate' in navigator) { try { navigator.vibrate(0); } catch(e) {} }
+  },
+  
+  stopProtocol() {
+    // Reset any active breathing/meditation audio parameters if needed
+    // For now, ensure haptics stop as they are the primary background protocol
+    this.stopHaptics();
+    if (this.audioCtx) {
+      const now = this.audioCtx.currentTime;
+      // Reset breath gains to silence
+      if (this.breathGain) this.breathGain.gain.setTargetAtTime(0, now, 0.1);
+    }
   },
 
   mute(state) {

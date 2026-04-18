@@ -1,18 +1,27 @@
 // Dynamic import for Firebase — races against a 3s timeout to prevent CDN hang
+<<<<<<< HEAD
+import { locales } from './translations.js?v=202';
+import { getWeeklyInsight } from './weeklyInsight.js?v=202';
+import { startMeditation, stopMeditation, MEDITATION_PROTOCOLS } from './meditation.js?v=202';
+import { initWelcomeScreen } from './welcomeScreen.js?v=202';
+import { signInAsGuest, isGuestUser, upgradeGuestWithGoogle } from './authService.js?v=202';
+import { renderGuestBanner } from './settings.js?v=202';
+=======
 import { locales } from './translations.js';
 import { getWeeklyInsight } from './weeklyInsight.js';
 // import { startMeditation } from './meditation.js'; // Missing file in current project
 import { initWelcomeScreen } from './welcomeScreen.js';
 import { signInAsGuest, isGuestUser, upgradeGuestWithGoogle } from './authService.js';
 import { renderGuestBanner } from './settings.js';
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
 import {
   calculateVagalState,
   getWeightsFromState,
   calculateVagalPoint,
   calculatePlasticity,
   getPoeticTimeLabel
-} from './vagal-logic.js';
-import { SensoryEngine } from './audio-engine.js';
+} from './vagal-logic.js?v=202';
+import { SensoryEngine } from './audio-engine.js?v=202';
 
 window.GEMINI_API_KEY = "AIzaSyD_7M1V_wTGgNuPInVYoj7ODQZgVfVWPIo";
 let fb;
@@ -37,15 +46,20 @@ function safeSetItem(key, val) {
 /* --- STATE MANAGEMENT --- */
 const AppState = {
   user: null,
-  lang: safeGetItem('aura_lang') || 'en',
+  lang: safeGetItem('aura_lang') || 'tr',
   isMuted: safeGetItem('aura_muted') === 'true',
   hapticEnabled: safeGetItem('aura_haptic') !== 'false', // Default true
   droneEnabled: safeGetItem('aura_drone') !== 'false', // Default true
   appVolume: parseInt(safeGetItem('aura_volume')) || 50, // Default 50
   currentCheckIn: {
-    state: null, // 'wired', 'foggy', 'okay'
-    subEmotion: null, // e.g. 'se_anxious', 'se_other'
-    customEmotion: '', // text if 'se_other'
+    state: null, 
+    polyvagal_state: null,
+    pre_arousal: null,
+    pre_valence: null,
+    somatic_selections: [],
+    selected_emotions: [],
+    subEmotion: null, 
+    customEmotion: '', 
     sensations: [],
     savoringText: '',
     timestamp: null
@@ -65,6 +79,74 @@ const AppState = {
 
 function saveHistoryToLocal() {
   localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+}
+
+/* --- SOMATIC & POLYVAGAL CONSTANTS --- */
+const SOMATIC_MAP = {
+    // Ventral
+    "bs_ventral_shoulders": { a: 0.3, v: 0.8, state: 'ventral' },
+    "bs_ventral_belly": { a: 0.4, v: 0.8, state: 'ventral' },
+    "bs_ventral_settling": { a: 0.3, v: 0.7, state: 'ventral' },
+    "bs_ventral_belong": { a: 0.4, v: 0.9, state: 'ventral' },
+    "bs_ventral_jaw": { a: 0.3, v: 0.8, state: 'ventral' },
+    // Sympathetic
+    "bs_symp_jaw": { a: 0.8, v: 0.4, state: 'sympathetic' },
+    "bs_symp_shoulders": { a: 0.8, v: 0.3, state: 'sympathetic' },
+    "bs_symp_chest": { a: 0.7, v: 0.3, state: 'sympathetic' },
+    "bs_symp_hands": { a: 0.7, v: 0.4, state: 'sympathetic' },
+    "bs_symp_legs": { a: 0.9, v: 0.4, state: 'sympathetic' },
+    "bs_symp_heart": { a: 0.9, v: 0.3, state: 'sympathetic' },
+    "bs_symp_spring": { a: 0.8, v: 0.4, state: 'sympathetic' },
+    // Dorsal
+    "bs_dorsal_distant": { a: 0.2, v: 0.2, state: 'dorsal' },
+    "bs_dorsal_heavy": { a: 0.2, v: 0.3, state: 'dorsal' },
+    "bs_dorsal_numb": { a: 0.1, v: 0.2, state: 'dorsal' },
+    "bs_dorsal_eyes": { a: 0.3, v: 0.3, state: 'dorsal' },
+    "bs_dorsal_vulnerable": { a: 0.3, v: 0.2, state: 'dorsal' },
+    "bs_dorsal_voice": { a: 0.2, v: 0.4, state: 'dorsal' },
+    // Neutral
+    "bs_neutral_deep": { a: 0.4, v: 0.7, state: 'ventral' },
+    "bs_neutral_weight": { a: 0.3, v: 0.4, state: 'dorsal' },
+    "bs_neutral_cold": { a: 0.6, v: 0.4, state: 'sympathetic' },
+    "bs_neutral_face": { a: 0.7, v: 0.4, state: 'sympathetic' },
+    // Digestion
+    "bs_digest_throat": { a: 0.7, v: 0.3, state: 'sympathetic' },
+    "bs_digest_appetite": { a: 0.2, v: 0.3, state: 'dorsal' },
+    "bs_digest_stomach": { a: 0.6, v: 0.3, state: 'sympathetic' },
+    "bs_digest_head": { a: 0.7, v: 0.4, state: 'sympathetic' }
+};
+
+const EMOTION_OPTIONS = {
+    ventral: ["emo_grateful", "emo_curious", "emo_peaceful", "emo_joyful", "emo_compassionate", "emo_connected"],
+    sympathetic: ["emo_anxious", "emo_angry", "emo_overwhelmed", "emo_excited", "emo_tense", "emo_impatient"],
+    dorsal: ["emo_numb", "emo_tired", "emo_sad", "emo_empty", "emo_hopeless", "emo_dull"]
+};
+
+const stateLegacyMap = { ventral: "Okay", sympathetic: "Wired", dorsal: "Foggy" };
+
+function normalizeCheckinData(data) {
+    if (!data) return data;
+    if (data.pre_arousal === undefined) {
+        const legacyMap = {
+            "Wired": { a: 0.8, v: 0.2, state: "sympathetic" },
+            "Foggy": { a: 0.2, v: 0.2, state: "dorsal" },
+            "Okay":  { a: 0.5, v: 0.8, state: "ventral" }
+        };
+        const mapped = legacyMap[data.state] || legacyMap["Okay"];
+        return {
+            ...data,
+            pre_arousal: mapped.a,
+            pre_valence: mapped.v,
+            polyvagal_state: mapped.state,
+            is_legacy: true
+        };
+    }
+    return data;
+}
+
+function calculatePolyvagalState(a, v) {
+    if (v >= 0.5) return "ventral";
+    return a >= 0.5 ? "sympathetic" : "dorsal";
 }
 
 async function migrateGuestData(uid) {
@@ -146,6 +228,19 @@ const elements = {
   authSubmitBtn: document.getElementById('authSubmitBtn'),
   skipAuthBtn: document.getElementById('skipAuthBtn'),
 
+  // Somatic & Grid
+  viewSomaticEntry: document.getElementById('view-somatic-entry'),
+  somaticContainer: document.getElementById('somaticContainer'),
+  somaticNextBtn: document.getElementById('somaticNextBtn'),
+  viewAffectGrid: document.getElementById('view-affect-grid'),
+  gridTouchArea: document.getElementById('grid-touch-area'),
+  suggestionDot: document.getElementById('suggestion-dot'),
+  userDot: document.getElementById('user-dot'),
+  gridNextBtn: document.getElementById('gridNextBtn'),
+  viewEmotionRefinement: document.getElementById('view-emotion-refinement'),
+  emotionRefinementContainer: document.getElementById('emotionRefinementContainer'),
+  emotionNextBtn: document.getElementById('emotionNextBtn'),
+
   // Dashboard
   greetingText: document.getElementById('greetingText'),
   startCheckinBtn: document.getElementById('startCheckinBtn'),
@@ -162,33 +257,21 @@ const elements = {
   vagalBlob: document.getElementById('vagalBlob'),
   vagalTraces: document.getElementById('vagalTraces'),
   vagalModal: document.getElementById('vagalModal'),
+  resilienceScore: document.getElementById('resilienceScore'),
+  resilienceStatus: document.getElementById('resilienceStatus'),
+  resilienceFill: document.getElementById('resilienceFill'),
   vagalModalTitle: document.getElementById('vagalModalTitle'),
   vagalModalAnalysis: document.getElementById('vagalModalAnalysis'),
   vagalModalRec: document.getElementById('vagalModalRec'),
   vagalModalHeatmap: document.getElementById('vagalModalHeatmap'),
   closeVagalModal: document.getElementById('closeVagalModal'),
 
-  // Insight View
-  viewInsight: document.getElementById('view-insight'),
-  insightHeroTitle: document.getElementById('insight-hero-title'),
-  macroBlob: document.getElementById('macroBlob'),
-  macroTraces: document.getElementById('macroTraces'),
-  energyPathSvg: document.getElementById('energy-path-svg'),
-  resilienceScoreLarge: document.getElementById('resilience-score-large'),
-  resilienceWaveCanvas: document.getElementById('resilience-wave-canvas'),
-  insightNarratives: document.getElementById('insight-narratives'),
-  insightSummaryText: document.getElementById('insight-summary-text'),
-  insightResilienceBar: document.getElementById('insight-resilience-bar'),
+  // Step 1: Picker
 
   // Step 1: Picker
   stateCards: document.querySelectorAll('.state-card'),
 
-  // Step 2: Sub-Emotions
-  subEmotionTitle: document.getElementById('subEmotionTitle'),
-  subEmotionContainer: document.getElementById('subEmotionContainer'),
-  otherInputContainer: document.getElementById('otherInputContainer'),
-  customSubEmotionInput: document.getElementById('customSubEmotionInput'),
-  customSubEmotionBtn: document.getElementById('customSubEmotionBtn'),
+  // Step 2 is now Somatic & Grid (handled above)
 
   // Step 3: Exercise
   exerciseTitle: document.getElementById('exerciseTitle'),
@@ -212,8 +295,11 @@ const elements = {
   scanText: document.getElementById('scanText'),
   marPhase3: document.getElementById('marPhase3'),
   marContinueBtn: document.getElementById('marContinueBtn'),
+  marSensationContainer: document.getElementById('marSensationContainer'),
+  marinationHUD: document.getElementById('marinationHUD'),
   savoringForm: document.getElementById('savoringForm'),
   savoringInput: document.getElementById('savoringInput'),
+  savoringInfoBtn: document.getElementById('savoringInfoBtn'),
 
   // Step 2.5: Meditation Loading
   viewMeditationLoading: document.getElementById('view-meditation-loading'),
@@ -228,6 +314,8 @@ const elements = {
 
   // Completion
   returnHomeBtn: document.getElementById('returnHomeBtn'),
+  globalHUD: document.getElementById('globalHUD'),
+  globalHUDBtn: document.getElementById('globalHUDBtn'),
 
   // Notifications
     notifToggleCheckbox: document.getElementById('notifToggleCheckbox'),
@@ -262,7 +350,7 @@ const elements = {
   muteIconOn: document.getElementById('muteIconOn'),
   muteIconOff: document.getElementById('muteIconOff'),
 
-  // Mobile  // Navigation
+  // Navigation
   mobileNav: document.getElementById('mobile-nav'),
   desktopNav: document.getElementById('desktop-nav'),
   navLinks: document.querySelectorAll('.nav-link'),
@@ -308,12 +396,13 @@ if (elements.langToggleBtn) elements.langToggleBtn.addEventListener('click', () 
   if(!document.getElementById('view-dashboard').classList.contains('hidden') && AppState.user) {
     loadDashboard();
   }
-  // Re-render exercise values if active
+  // Re-render exercise labels if active
   if(!document.getElementById('view-exercise').classList.contains('hidden')) {
     const mins = Math.floor(timeRemaining / 60);
     const secs = (timeRemaining % 60).toString().padStart(2, '0');
-    if (!elements.startExerciseBtn.disabled) {
-       elements.startExerciseBtn.innerHTML = `${t('ex_begin')} (<span id="exerciseDuration">${mins}:${secs}</span>)`;
+    // Circle instruction update is the new standard
+    if (elements.breathInstruction) {
+        elements.breathInstruction.innerHTML = `${t("ex_ready")}<br><span style="font-size: 1.1rem; opacity: 0.9; font-weight: 300; text-transform: none; letter-spacing: 0; display: block; margin-top: 0.3rem;">${mins}:${secs}</span>`;
     }
   }
 
@@ -490,6 +579,11 @@ function updateEmbodiedUI(stateId) {
     document.documentElement.style.setProperty('--vagal-y', point.y);
     document.documentElement.style.setProperty('--vagal-color', vagalState.color);
     document.documentElement.style.setProperty('--vagal-color-rgb', vagalState.colorRgb || '255, 255, 255');
+    
+    // Explicitly update individual vertex colors for CSS gradients if they are used as variables
+    document.documentElement.style.setProperty('--vagal-ventral-rgb', '16, 185, 129');
+    document.documentElement.style.setProperty('--vagal-symp-rgb', '245, 158, 11');
+    document.documentElement.style.setProperty('--vagal-dorsal-rgb', '59, 130, 246');
   }
   
   // Body state class management (drives all bio-reactive CSS)
@@ -548,6 +642,7 @@ let currentPhaseIndex = 0;
 let exerciseTimer = null;
 let scanTimeouts = [];
 let meditationLoadingTimeout = null;
+let currentMeditationId = null;
 
 // Settings
 // (Settings btn removed)
@@ -555,10 +650,44 @@ let meditationLoadingTimeout = null;
 /* --- SCIENTIFIC INFO MODAL LOGIC --- */
 let isModalOpen = false;
 
-function showInfoModal(type) {
-  if (isModalOpen) return;
-  isModalOpen = true;
+function getAuraSVGIcon(type) {
+  // Ultra-thin schematic symbols for the Neural Archives
+  const iconMap = {
+    // Dashboard Cards
+    'heatmap': `<rect x="18" y="18" width="8" height="8" rx="1" fill="white" opacity="0.6"/><rect x="28" y="18" width="8" height="8" rx="1" fill="white" opacity="0.3"/><rect x="38" y="18" width="8" height="8" rx="1" fill="white" opacity="0.8"/><rect x="18" y="28" width="8" height="8" rx="1" fill="white" opacity="0.2"/><rect x="28" y="28" width="8" height="8" rx="1" fill="white" opacity="0.9"/><rect x="38" y="28" width="8" height="8" rx="1" fill="white" opacity="0.4"/><rect x="18" y="38" width="8" height="8" rx="1" fill="white" opacity="0.5"/><rect x="28" y="38" width="8" height="8" rx="1" fill="white" opacity="0.1"/><rect x="38" y="38" width="8" height="8" rx="1" fill="white" opacity="0.7"/>`,
+    'resilience': `<path d="M12 32 C 18 12, 26 52, 32 32 C 38 12, 46 52, 52 32" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/><path d="M12 32 L 52 32" stroke="white" stroke-width="0.5" opacity="0.2"/>`,
+    'insight': `<circle cx="32" cy="32" r="12" stroke="white" stroke-width="1.5"/><circle cx="32" cy="32" r="22" stroke="white" stroke-width="0.5" stroke-dasharray="2 4"/><path d="M32 20V12M32 52V44M44 32H52M12 32H20" stroke="white" stroke-width="1" opacity="0.6"/>`,
+    'exercise': `<path d="M22 32L28 32L32 20L36 44L40 32L46 32" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="32" cy="32" r="25" stroke="white" stroke-width="0.5" opacity="0.2"/>`,
+    
+    // Core Journey Steps
+    'step1': `<circle cx="32" cy="32" r="6" fill="white" opacity="0.9"><animate attributeName="r" values="6;10;6" dur="3s" repeatCount="indefinite"/></circle><path d="M32 10V54M10 32H54" stroke="white" stroke-width="0.5" opacity="0.3"/>`,
+    'step2': `<path d="M32 12V52M12 32H52" stroke="white" stroke-width="1" opacity="0.4"/><rect x="22" y="22" width="20" height="20" stroke="white" stroke-width="1.5"/><circle cx="37" cy="27" r="3" fill="white"/>`,
+    'step2b': `<path d="M20 20H44V36H28L20 44V20Z" stroke="white" stroke-width="1.5" fill="none"/><circle cx="32" cy="28" r="1" fill="white"/><circle cx="28" cy="28" r="1" fill="white"/><circle cx="36" cy="28" r="1" fill="white"/>`,
+    'step3': `<path d="M18 48C18 48 12 40 12 30C12 20 20 12 32 12C44 12 52 20 52 30C52 40 46 48 46 48" stroke="white" stroke-width="1.5" fill="none"/><path d="M32 28V44" stroke="white" stroke-width="1" opacity="0.5"/>`,
+    'step4': `<circle cx="32" cy="32" r="4" fill="white"/><circle cx="32" cy="32" r="12" stroke="white" stroke-width="1" opacity="0.4"/><circle cx="32" cy="32" r="24" stroke="white" stroke-width="0.5" opacity="0.2"/>`,
+    'step5': `<path d="M20 44L32 20L44 44H20Z" stroke="white" stroke-width="1.5" fill="none"/><circle cx="32" cy="34" r="2" fill="white"/>`,
+    'step6': `<path d="M32 48C32 48 12 36 12 24C12 16 18 12 24 12C28 12 32 15 32 15C32 15 36 12 40 12C46 12 52 16 52 24C52 36 32 48 32 48Z" stroke="white" stroke-width="1.5" fill="none"/><path d="M22 24H42" stroke="white" stroke-width="0.5" opacity="0.4"/>`,
 
+<<<<<<< HEAD
+    'breathing': `<circle cx="32" cy="32" r="14" stroke="white" stroke-width="1.5" fill="none"><animate attributeName="r" values="12;16;12" dur="4s" repeatCount="indefinite"/></circle><circle cx="32" cy="32" r="24" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>`
+  };
+  
+  const innerContent = iconMap[type] || `<circle cx="32" cy="32" r="10" fill="white" opacity="0.8"/><circle cx="32" cy="32" r="22" stroke="rgba(255,255,255,0.2)" fill="none"/>`;
+  
+  return `
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="auraGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      <g filter="url(#auraGlow)">
+        ${innerContent}
+      </g>
+    </svg>
+  `;
+=======
   // Contextual modal population
   if (type === 'breathing' && exerciseParams && exerciseParams.id) {
     const pId = exerciseParams.id;
@@ -583,7 +712,46 @@ function showInfoModal(type) {
   if (scanTimeouts.length > 0 && !isMeditationPaused) {
     pauseMeditation();
   }
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
 }
+
+function openInfoArchive(key) {
+  if (!elements.vagalModal) return;
+
+  const type = key.replace('info_', '').replace('_desc', '').replace('_title', '').replace('_body', '');
+  
+  // Content extraction
+  const title = t(`info_${type}_title`);
+  const body = t(`info_${type}_body`);
+  const ref = t(`info_${type}_ref`);
+
+  // Hide other modal children
+  if (elements.vagalModalTitle) elements.vagalModalTitle.style.display = 'none';
+  if (elements.vagalModalHeatmap) elements.vagalModalHeatmap.style.display = 'none';
+  if (elements.vagalModalRec) elements.vagalModalRec.style.display = 'none';
+
+  if (elements.vagalModalAnalysis) {
+    elements.vagalModalAnalysis.innerHTML = `
+      <div class="info-sheet-content">
+        <div class="info-sheet-icon">${getAuraSVGIcon(type)}</div>
+        <h2 class="info-sheet-title">${title}</h2>
+        <div class="info-sheet-body">${body}</div>
+        <div class="info-sheet-ref">Source: ${ref}</div>
+      </div>
+    `;
+  }
+
+  elements.vagalModal.classList.add('open');
+  
+  // Pause exercises if active
+  if (typeof isTimerPaused !== 'undefined' && !isTimerPaused && typeof pauseExercise === 'function') pauseExercise();
+  if (typeof isMeditationPaused !== 'undefined' && !isMeditationPaused && typeof pauseMeditation === 'function') pauseMeditation();
+}
+
+function showInfoModal(type) {
+  openInfoArchive(`info_${type}`);
+}
+
 
 function hideInfoModal() {
   isModalOpen = false;
@@ -694,29 +862,63 @@ function navigateTo(viewId, skipHistory = false) {
     navTimeout = null;
   }
 
-  // Instantly hide all views
-  elements.views.forEach(v => {
-    v.classList.add('hidden');
-    v.classList.remove('active', 'opacity-100', 'translate-y-0');
-  });
+  // Lazy Hiding: Only hide the current active view
+  if (currentView) {
+    currentView.classList.add('hidden');
+    currentView.classList.remove('active', 'opacity-100', 'translate-y-0');
+  } else {
+    // Fallback for safety if somehow multiple active
+    elements.views.forEach(v => {
+      v.classList.add('hidden');
+      v.classList.remove('active', 'opacity-100', 'translate-y-0');
+    });
+  }
 
   // Show target
   target.classList.remove('hidden');
   target.scrollTop = 0;
-  void target.offsetHeight; // force reflow
 
+  // Immersive Check-in Logic
+  const checkinViews = [
+    'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 
+    'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'
+  ];
+  if (checkinViews.includes(viewId)) {
+    document.body.classList.add('in-checkin');
+  } else {
+    document.body.classList.remove('in-checkin');
+  }
+
+  // Replaced void target.offsetHeight with a passive animation frame
   requestAnimationFrame(() => {
-    target.classList.add('active', 'opacity-100', 'translate-y-0');
+    requestAnimationFrame(() => {
+      target.classList.add('active', 'opacity-100', 'translate-y-0');
+    });
   });
 
   // Toggle navbar visibility based on view
   const ritualViews = ['view-welcome', 'view-auth', 'view-onboarding'];
   const isRitual = ritualViews.includes(viewId);
-  const isCheckin = viewId.includes('picker') || viewId.includes('breathing') || viewId.includes('savoring');
+  const isCheckin = viewId.includes('picker') || viewId.includes('breathing') || viewId.includes('savoring') || viewId.includes('somatic') || viewId.includes('grid') || viewId.includes('emotion');
   
   // Show nav only if we have a user AND we aren't in a ritual screen
   const showNav = AppState.user && !isRitual && !isCheckin;
   document.body.classList.toggle('is-authenticated', !!showNav);
+
+  // IMMERSION MODE: Hide global navs during check-in
+  const immersionViews = ['view-welcome', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
+  const isImmersion = immersionViews.includes(viewId);
+  
+  if (elements.header) {
+      elements.header.classList.toggle('hidden', isImmersion);
+      elements.header.style.display = isImmersion ? 'none' : 'flex';
+  }
+  if (elements.desktopNav) elements.desktopNav.classList.toggle('nav-hidden', isImmersion);
+  const mobileNav = document.getElementById('mobile-nav');
+  if (mobileNav) mobileNav.classList.toggle('nav-hidden', isImmersion);
+
+  // RESET HUD: Always hide global HUD on view change unless explicitly shown by the next logic
+  if (elements.globalHUD) elements.globalHUD.classList.remove('active');
 
   updateActiveNavLink(viewId);
 
@@ -980,11 +1182,24 @@ function renderFilterChips() {
 function filterMeditations(filter) {
   if (!elements.meditationsList) return;
   
+<<<<<<< HEAD
+  // Merge both protocol sets to ensure filter looks everywhere
+  const allProtocols = { ...protocols, ...(MEDITATION_PROTOCOLS || {}) };
+  const cards = elements.meditationsList.querySelectorAll('.meditation-card');
+  
+  cards.forEach(card => {
+    const protocolId = card.getAttribute('data-protocol');
+    const protocol = allProtocols[protocolId];
+    
+    if (!protocol) return; // Safety check
+
+=======
   const cards = elements.meditationsList.querySelectorAll('.meditation-card');
   cards.forEach(card => {
     const protocolId = card.getAttribute('data-protocol');
     const protocol = protocols[protocolId];
     
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
     if (filter === 'all' || protocol.category === filter) {
       card.classList.remove('hidden-protocol');
     } else {
@@ -1083,6 +1298,39 @@ function renderMeditationsList() {
       icon: '☯️', 
       accent: 'rgba(200, 140, 255, 0.4)', 
       benefit: AppState.lang === 'tr' ? 'Beyin küre dengesi' : 'Hemispheric balance'
+<<<<<<< HEAD
+    },
+    // Immersive Journeys Meta
+    m_nsdr: {
+      icon: '🧘',
+      accent: 'rgba(133, 141, 255, 0.6)',
+      benefit: AppState.lang === 'tr' ? 'Derin Dinlenme (Non-Sleep Deep Rest)' : 'Non-Sleep Deep Rest'
+    },
+    m_vagal_tone: {
+      icon: '🫀',
+      accent: 'rgba(168, 230, 207, 0.6)',
+      benefit: AppState.lang === 'tr' ? 'Vagal Tonu Dengeleme' : 'Vagal Tone Balance'
+    },
+    m_presence: {
+      icon: '✨',
+      accent: 'rgba(255, 160, 100, 0.6)',
+      benefit: AppState.lang === 'tr' ? 'Farkındalık ve Genişleme' : 'Deep Mindful Expansion'
+    }
+  };
+
+  const headerDesc = document.querySelector('#view-meditations .view-header p');
+  const breatheProtocols = protocols || {};
+  const journeyProtocols = MEDITATION_PROTOCOLS || {};
+  
+  if (headerDesc && lastEntry && lastEntry.state) {
+    const statePrompts = {
+      wired: AppState.lang === 'tr' ? '⚡ Son durumun gergin — sakinleştirici protokoller önerilir' : '⚡ You were wired — calming protocols recommended',
+      foggy: AppState.lang === 'tr' ? '☁️ Son durumun durgun — enerji veren nefes dene' : '☁️ You felt foggy — try an energizing breath',
+      okay: AppState.lang === 'tr' ? '🌱 Dengeli görünüyorsun — derinleştirmek için seç' : '🌱 You seem balanced — choose to deepen'
+    };
+    headerDesc.textContent = statePrompts[lastEntry.state] || (AppState.lang === 'tr' ? 'Durumuna göre bir protokol seç' : 'Select a protocol for your current state.');
+  }
+=======
     }
   };
 
@@ -1109,9 +1357,19 @@ function renderMeditationsList() {
     const p = protocols[id];
     const meta = protocolMeta[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)', benefit: '' };
     const mins = Math.ceil(p.totalDuration / 60);
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
 
+  // Helper for rendering cards
+  const renderCard = (id, p) => {
+    const isMeditation = id.startsWith('m_');
+    const meta = protocolMeta[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)', benefit: '' };
+    const mins = Math.ceil(p.totalDuration / 60000) || Math.ceil(p.totalDuration / 60);
     return `
+<<<<<<< HEAD
+      <button class="meditation-card ${AppState._activeFilter && AppState._activeFilter !== 'all' && p.category !== AppState._activeFilter ? 'hidden-protocol' : ''} ${isMeditation ? 'deep-journey-card' : ''}" 
+=======
       <button class="meditation-card ${AppState._activeFilter && AppState._activeFilter !== 'all' && p.category !== AppState._activeFilter ? 'hidden-protocol' : ''}" 
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
               data-protocol="${id}" style="border-left: 3px solid ${meta.accent};">
         <div class="meditation-card-icon">${meta.icon}</div>
         <div class="meditation-card-info">
@@ -1121,15 +1379,38 @@ function renderMeditationsList() {
         <svg class="meditation-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
-      </button>
-    `;
-  }).join('');
+      </button>`;
+  };
+
+  // 1. Render Breathing Exercises (Sorted by state priority if available)
+  const sortedBreathIds = Object.keys(breatheProtocols).sort((a, b) => {
+    if (!lastEntry || !lastEntry.state) return 0;
+    const aMatch = breatheProtocols[a].state_match === lastEntry.state;
+    const bMatch = breatheProtocols[b].state_match === lastEntry.state;
+    if (aMatch && !bMatch) return -1;
+    if (!aMatch && bMatch) return 1;
+    return 0;
+  });
+
+  const breathHTML = sortedBreathIds.map(id => renderCard(id, breatheProtocols[id])).join('');
+  const journeyHTML = Object.keys(journeyProtocols).map(id => renderCard(id, journeyProtocols[id])).join('');
+
+  elements.meditationsList.innerHTML = `
+    <h3 class="meditation-section-header">${t('med_recommended_title')}</h3>
+    ${breathHTML}
+    <h3 class="meditation-section-header">${t('med_journeys_title')}</h3>
+    ${journeyHTML}
+  `;
 
   // Attach listeners
   elements.meditationsList.querySelectorAll('.meditation-card').forEach(card => {
     card.addEventListener('click', () => {
       const protocolId = card.getAttribute('data-protocol');
-      prepareExerciseStandalone(protocolId);
+      if (protocolId.startsWith('m_')) {
+        prepareDeepJourney(protocolId);
+      } else {
+        prepareExerciseStandalone(protocolId);
+      }
     });
   });
 }
@@ -1152,12 +1433,78 @@ function prepareExerciseStandalone(protocolId) {
   elements.breathCircle.className = 'breath-circle';
   elements.breathCircle.style.transitionDuration = '0.5s';
   elements.breathInstruction.innerHTML = `${t("ex_ready")}<br><span style="font-size: 1.1rem; opacity: 0.9; font-weight: 300; text-transform: none; letter-spacing: 0; display: block; margin-top: 0.3rem;">${mins}:${secs}</span>`;
-  elements.startExerciseBtn.innerHTML = `${t('ex_begin')} (<span id="exerciseDuration">${mins}:${secs}</span>)`;
-  elements.startExerciseBtn.disabled = false;
+  
+  // Connect to Global HUD instead of deprecated button
+  setHUD('arrow', () => startExercise());
+  if (elements.globalHUD) elements.globalHUD.classList.add('active');
 
   // Mark this as standalone so skip/finish returns to meditations instead of marination
   AppState._standaloneExercise = true;
   navigateTo('view-exercise');
+}
+
+function prepareDeepJourney(protocolId) {
+  currentMeditationId = protocolId;
+  const p = MEDITATION_PROTOCOLS[protocolId];
+  if (!p) return;
+
+  elements.meditationLoadingTitle.textContent = p.title;
+  elements.loadingCircleProgress.style.strokeDashoffset = '283'; // Reset circle
+  
+  navigateTo('view-meditation-loading');
+
+  // Skip button listener
+  elements.skipLoadingBtn.onclick = () => {
+    clearTimeout(meditationLoadingTimeout);
+    startDeepMeditationSession(protocolId);
+  };
+
+  // Auto-start after 3s
+  meditationLoadingTimeout = setTimeout(() => {
+    startDeepMeditationSession(protocolId);
+  }, 3000);
+}
+
+function startDeepMeditationSession(protocolId) {
+  navigateTo('view-savoring');
+  
+  // Hide standard savoring phases, show specialized scan view
+  elements.marPhase1.classList.add('hidden');
+  elements.marPhase2.classList.add('hidden');
+  elements.marPhase3.classList.add('hidden');
+  elements.marPhaseOffer.classList.add('hidden');
+  elements.marPhaseScan.classList.remove('hidden');
+  
+  // Update step indicator
+  const stepInd = document.getElementById('savoringStepIndicator');
+  if (stepInd) stepInd.textContent = t('nav_meditations');
+
+  startMeditation(protocolId, {
+    SensoryEngine: AppState.audioEngine,
+    onPhase: (phase, index, total) => {
+      elements.scanText.style.opacity = '0';
+      setTimeout(() => {
+        elements.scanText.textContent = t(phase.prompt);
+        elements.scanText.style.opacity = '1';
+        
+        // Sensory update if needed
+        if (AppState.audioEngine && AppState.hapticEnabled) {
+          AppState.audioEngine.triggerHaptic('light');
+        }
+      }, 500);
+    },
+    onComplete: (result) => {
+      elements.scanText.textContent = t('done_title');
+      setTimeout(() => {
+        navigateTo('view-completion');
+      }, 2000);
+    }
+  });
+
+  elements.scanExitBtn.onclick = () => {
+    const result = stopMeditation({ SensoryEngine: AppState.audioEngine });
+    navigateTo('view-meditations');
+  };
 }
 
 /* --- NOTEBOOK RENDERER --- */
@@ -1194,69 +1541,121 @@ async function loadNotebook() {
   renderNotebook(merged);
 }
 
-function renderNotebook(entries) {
+// --- HUMANIZED TIME & MINI-DELTA HELPERS ---
+function getHumanizedTime(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now - date;
+
+  const isToday = date.toDateString() === now.toDateString();
+  const isYesterday = new Date(now - 86400000).toDateString() === date.toDateString();
+
+  const timeStr = date.toLocaleTimeString(AppState.lang === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+
+  if (diffMs < 60000) return t('time_now');
+  if (diffMs < 3600000) return `${Math.floor(diffMs/60000)} ${t('time_mins_ago')}`;
+  
+  if (isToday) {
+    if (date.getHours() < 12) return `${t('time_today_morning')}, ${timeStr}`;
+    if (date.getHours() < 17) return `${t('time_today_afternoon')}, ${timeStr}`;
+    return `${t('time_today_evening')}, ${timeStr}`;
+  }
+  
+  if (isYesterday) return `${t('time_yesterday')}, ${timeStr}`;
+  
+  return date.toLocaleDateString(AppState.lang === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'short' }) + `, ${timeStr}`;
+}
+
+function renderMiniDeltaSVG(entry) {
+  const preA = entry.pre_arousal || 0.5;
+  const preV = entry.pre_valence || 0.5;
+  const postA = entry.post_arousal || preA;
+  const postV = entry.post_valence || preV;
+
+  const size = 60;
+  const pX = preV * size;
+  const pY = (1 - preA) * size;
+  const tX = postV * size;
+  const tY = (1 - postA) * size;
+
+  const stateColor = {
+    ventral: '#22c55e',
+    sympathetic: '#ef4444',
+    dorsal: '#3b82f6'
+  }[entry.polyvagal_state || 'ventral'];
+
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 4px;">
+      <line x1="${size/2}" y1="0" x2="${size/2}" y2="${size}" stroke="white" stroke-opacity="0.1" />
+      <line x1="0" y1="${size/2}" x2="${size}" y2="${size/2}" stroke="white" stroke-opacity="0.1" />
+      <line x1="${pX}" y1="${pY}" x2="${tX}" y2="${tY}" stroke="${stateColor}" stroke-width="2.5" stroke-linecap="round" />
+      <circle cx="${tX}" cy="${tY}" r="3" fill="${stateColor}" />
+    </svg>
+  `;
+}
+
+function renderNotebook(providedEntries) {
   if (!elements.notebookEntries) return;
 
-  if (entries.length === 0) {
-    elements.notebookEntries.innerHTML = `<div class="notebook-empty-state">${t('notebook_empty')}</div>`;
-    return;
-  }
-
-  // Group by day
-  const groups = {};
-  const today = new Date().toDateString();
-  const yesterday = new Date(Date.now() - 86400000).toDateString();
-
-  entries.forEach(entry => {
-    const dateStr = new Date(entry.timestamp).toDateString();
-    if (!groups[dateStr]) groups[dateStr] = [];
-    groups[dateStr].push(entry);
-  });
-
+  const history = providedEntries || (AppState.user && AppState.user.history ? AppState.user.history : (AppState.mockHistory || []));
   let html = '';
-  for (const [dateStr, dayEntries] of Object.entries(groups)) {
-    let label;
-    if (dateStr === today) {
-      label = t('notebook_today');
-    } else if (dateStr === yesterday) {
-      label = t('notebook_yesterday');
-    } else {
-      const d = new Date(dayEntries[0].timestamp);
-      label = d.toLocaleDateString(AppState.lang === 'tr' ? 'tr-TR' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-    }
 
-    html += `<div class="notebook-day-group">`;
-    html += `<div class="notebook-day-label">${label}</div>`;
-
-    dayEntries.forEach(entry => {
-      const timeStr = new Date(entry.timestamp).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-      
-      let stateEmoji = '💭';
-      if (entry.state === 'wired') stateEmoji = '⚡️';
-      else if (entry.state === 'foggy') stateEmoji = '☁️';
-      else if (entry.state === 'okay') stateEmoji = '🌱';
+  if (history.length === 0) {
+    html = `<div class="empty-state">${t('notebook_empty')}</div>`;
+  } else {
+    html = `<div class="notebook-list">`;
+    history.forEach(entry => {
+      const timeStr = getHumanizedTime(entry.timestamp);
+      const stateName = {
+        'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
+        'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal',
+        'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral'
+      }[entry.state] || '...';
 
       let emotionLabel = entry.customEmotion || (entry.subEmotion ? t(entry.subEmotion) : '');
+      if (emotionLabel === 'null' || !emotionLabel || emotionLabel === entry.subEmotion) {
+        emotionLabel = stateName; 
+      }
 
-      const sensationsHTML = (entry.sensations && entry.sensations.length > 0)
-        ? `<div class="notebook-entry-sensations">${entry.sensations.map(s => `<span class="notebook-sensation-tag">${t(s)}</span>`).join('')}</div>`
+      const tags = [];
+      if (entry.somatic_selections) {
+        entry.somatic_selections.forEach(s => {
+          const trans = t(s);
+          if (trans && trans !== s && trans !== 'null') tags.push(trans);
+        });
+      }
+      if (entry.sensations) {
+        entry.sensations.forEach(s => {
+          const trans = t(s);
+          if (trans && trans !== s && trans !== 'null') tags.push(trans);
+        });
+      }
+
+      const tagsHTML = tags.length > 0
+        ? `<div class="card-footer">${tags.map(tag => `<span class="somatic-tag">${tag}</span>`).join('')}</div>`
         : '';
 
       html += `
-        <div class="notebook-entry">
-          <div class="notebook-entry-header">
-            <span class="notebook-entry-time">${timeStr}</span>
-            <span class="notebook-entry-badge ${entry.state || ''}">${stateEmoji} ${emotionLabel}</span>
+        <div class="aura-card fade-in-up">
+          <div class="card-header">
+            <div class="aura-orb ${entry.polyvagal_state || 'ventral'}"></div>
+            <div class="time-meta">${timeStr}</div>
+            <div class="state-label">${emotionLabel}</div>
           </div>
-          ${entry.savoringText ? `<div class="notebook-entry-savoring">"${entry.savoringText}"</div>` : ''}
-          ${sensationsHTML}
+
+          <div class="card-body">
+            <p class="user-note">${entry.savoringText ? `"${entry.savoringText}"` : '...'}</p>
+            <div class="delta-mini-grid">
+              ${renderMiniDeltaSVG(entry)}
+            </div>
+          </div>
+
+          ${tagsHTML}
         </div>
       `;
     });
-
     html += '</div>';
   }
-
   elements.notebookEntries.innerHTML = html;
 }
 
@@ -1265,6 +1664,28 @@ const AudioEngine = {
   ctx: null,
   init() {
     if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  },
+  setBreathingPhase(phase, durationMs = 2000) {
+      if (!this.ctx || this.isMuted) return;
+      const now = this.ctx.currentTime;
+      const durationSec = durationMs / 1000;
+
+      // Safe anchor for ramping to prevent pops or silent nodes
+      this.biquadFilter.frequency.setValueAtTime(this.biquadFilter.frequency.value, now);
+      this.breathFilter.frequency.setValueAtTime(this.breathFilter.frequency.value, now);
+      this.breathGain.gain.setValueAtTime(this.breathGain.gain.value, now);
+
+      if (phase === 'inhale') {
+          this.biquadFilter.frequency.linearRampToValueAtTime(3000, now + durationSec);
+          this.breathFilter.frequency.linearRampToValueAtTime(2500, now + durationSec);
+          this.breathGain.gain.linearRampToValueAtTime(0.08, now + durationSec);
+      } else if (phase === 'exhale') {
+          this.biquadFilter.frequency.linearRampToValueAtTime(400, now + durationSec);
+          this.breathFilter.frequency.linearRampToValueAtTime(800, now + durationSec);
+          this.breathGain.gain.linearRampToValueAtTime(0.01, now + durationSec);
+      } else {
+          this.breathGain.gain.linearRampToValueAtTime(0.02, now + 1);
+      }
   },
   playBell(type = 'soft') {
     if (!this.ctx) return;
@@ -1478,7 +1899,7 @@ function startOnboardingFlow() {
 
   const finish = () => {
     safeSetItem('aura_onboarded', 'true');
-    AppState.currentCheckIn = { state: null, subEmotion: null, customEmotion: '', sensations: [], savoringText: '', timestamp: null };
+    AppState.currentCheckIn = { state: null, subEmotion: null, selected_emotions: [], customEmotion: '', sensations: [], savoringText: '', timestamp: null };
     navigateTo('view-state-picker'); // Dropped into check-in exactly per requirements
   };
 
@@ -1552,31 +1973,52 @@ function renderHistory(data) {
     return;
   }
 
-  elements.historyList.innerHTML = data.map(item => {
-    const rawDateStr = new Date(item.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    const poeticTag = getPoeticTimeLabel(item.timestamp, item.state);
-    const dateStr = `${rawDateStr} — <span style="color:var(--text-muted);font-style:italic;font-size:0.85em">${poeticTag}</span>`;
-    
-    let stateEmoji = '💭';
-    if (item.state === 'wired') stateEmoji = '⚡️';
-    else if (item.state === 'foggy') stateEmoji = '☁️';
-    else if (item.state === 'okay') stateEmoji = '🌱';
+  elements.historyList.innerHTML = data.map(doc => {
+    const item = normalizeCheckinData(doc);
+    const timeStr = getHumanizedTime(item.timestamp);
+    const stateName = {
+      'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
+      'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal',
+      'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral'
+    }[item.state] || '...';
 
-    let emotionLabel = item.customEmotion;
-    if (!emotionLabel) {
-       emotionLabel = item.subEmotion ? t(item.subEmotion) : '...';
+    let emotionLabel = item.customEmotion || (item.subEmotion ? t(item.subEmotion) : '');
+    if (emotionLabel === 'null' || !emotionLabel || emotionLabel === item.subEmotion) {
+      emotionLabel = stateName; 
     }
-    
-    // Clear and compact badge format: "⚡️ Dağınık"
-    const badgeStr = `${stateEmoji} ${emotionLabel}`;
-    
+
+    const tags = [];
+    if (item.somatic_selections) {
+      item.somatic_selections.forEach(s => {
+        const trans = t(s);
+        if (trans && trans !== s && trans !== 'null') tags.push(trans);
+      });
+    }
+    if (item.sensations) {
+      item.sensations.forEach(s => {
+        const trans = t(s);
+        if (trans && trans !== s && trans !== 'null') tags.push(trans);
+      });
+    }
+
     return `
-      <div class="history-item fade-in-up">
-        <div class="history-header">
-          <span>${dateStr}</span>
-          <span class="state-badge ${item.state}">${badgeStr}</span>
+      <div class="aura-card fade-in-up">
+        <div class="card-header">
+          <div class="aura-orb ${item.polyvagal_state || 'ventral'}"></div>
+          <div class="time-meta">${timeStr}</div>
+          <div class="state-label">${emotionLabel}</div>
         </div>
-        <div class="history-savoring">"${item.savoringText}"</div>
+
+        <div class="card-body">
+          <p class="user-note">${item.savoringText ? `"${item.savoringText}"` : '...'}</p>
+          <div class="delta-mini-grid">
+            ${renderMiniDeltaSVG(item)}
+          </div>
+        </div>
+
+        ${tags.length > 0 ? `
+          <div class="card-footer">${tags.map(tag => `<span class="somatic-tag">${tag}</span>`).join('')}</div>
+        ` : ''}
       </div>
     `;
   }).join('');
@@ -1705,9 +2147,10 @@ function renderVagalHeatmap(data, isModal = false) {
 
 function renderPlasticityBar(plasticity) {
   const bar = document.getElementById('resilienceBar');
-  const fill = document.getElementById('resilienceFill');
-  const label = document.getElementById('resilienceLevel');
-  if (!bar || !fill || !label) return;
+  const fill = elements.resilienceFill;
+  const score = elements.resilienceScore;
+  const status = elements.resilienceStatus;
+  if (!bar || !fill || !score || !status) return;
 
   bar.classList.remove('hidden');
   
@@ -1719,8 +2162,8 @@ function renderPlasticityBar(plasticity) {
   
   fill.style.background = colors[plasticity.level];
   fill.style.width = `${plasticity.score}%`;
-  label.textContent = t(`plasticity_${plasticity.level}`);
-  label.className = `resilience-level resilience-${plasticity.level}`;
+  score.textContent = plasticity.score;
+  status.textContent = t(`plasticity_${plasticity.level}`);
 }
 
 function checkCompassionateIntervention(weeklyData) {
@@ -1837,12 +2280,12 @@ function analyzeWeeklyPatterns(historyData) {
      elements.weeklyInsight.classList.remove('hidden');
      
      const exId = subEmotionMap[dominantSubEmotion].protocol;
-     elements.insightExText.textContent = protocols[exId].title;
-     elements.weeklyExercise.classList.remove('hidden');
+     if (elements.insightExText) elements.insightExText.textContent = protocols[exId].title;
+     if (elements.weeklyExercise) elements.weeklyExercise.classList.remove('hidden');
   } else {
-     elements.weeklyInsight.classList.remove('compassion-mode');
-     elements.insightText.textContent = t('insight_no_dominant');
-     elements.weeklyInsight.classList.remove('hidden');
+     if (elements.weeklyInsight) elements.weeklyInsight.classList.remove('compassion-mode');
+     if (elements.insightText) elements.insightText.textContent = t('insight_no_dominant');
+     if (elements.weeklyInsight) elements.weeklyInsight.classList.remove('hidden');
   }
 
   // Layer 5: AI Insight Generation
@@ -1894,7 +2337,8 @@ function analyzeWeeklyPatterns(historyData) {
   })();
 }
 
-// Vagal Modal Logic
+// Vagal Modal Logic (Interaction removed per user request)
+/*
 if (elements.vagalHeatmapCard) {
   elements.vagalHeatmapCard.addEventListener('click', () => {
     const report = AppState.latestVagalAnalysis;
@@ -1913,126 +2357,352 @@ if (elements.vagalHeatmapCard) {
     setTimeout(() => renderVagalHeatmap(report.heatmap_data, true), 10);
   });
 }
+*/
 
 if (elements.closeVagalModal) {
   elements.closeVagalModal.addEventListener('click', () => {
-    elements.vagalModal.classList.add('hidden');
+    elements.vagalModal.classList.remove('open');
   });
 }
 
+// Info Box Logic (Neural Archive Integration)
+document.addEventListener('click', (e) => {
+  const infoBtn = e.target.closest('.cockpit-info-btn') || e.target.closest('.checkin-info-btn');
+  if (infoBtn) {
+    e.stopPropagation();
+    const infoKey = infoBtn.getAttribute('data-info');
+    if (infoKey) openInfoArchive(infoKey);
+  }
+});
+
 /* --- CORE LOOP --- */
 elements.startCheckinBtn.addEventListener('click', () => {
-  AppState.currentCheckIn = { state: null, subEmotion: null, customEmotion: '', sensations: [], savoringText: '', timestamp: null };
-  navigateTo('view-state-picker');
+  AppState.currentCheckIn = { 
+    state: null, 
+    polyvagal_state: null,
+    pre_arousal: null,
+    pre_valence: null,
+    somatic_selections: [],
+    selected_emotions: [],
+    subEmotion: null, 
+    customEmotion: '', 
+    sensations: [], 
+    savoringText: '', 
+    timestamp: null 
+  };
+  renderSomaticEntry();
 });
 
-// Step 1: Picking State
-elements.stateCards.forEach(card => {
-  card.addEventListener('click', () => {
-    const state = card.getAttribute('data-state');
-    AppState.currentCheckIn.state = state;
-    
-    // Antigravity (v2) Sensory Shift
-    updateEmbodiedUI(state);
-    
-    renderSubEmotions(state);
-    navigateTo('view-sub-emotion');
-  });
-});
-
-// Step 2: Sub-Emotions
-function renderSubEmotions(state) {
-  elements.subEmotionTitle.textContent = t(`sub_title_${state}`);
-  elements.otherInputContainer.classList.add('hidden');
-  elements.customSubEmotionInput.value = '';
-
-  const chips = Object.keys(subEmotionMap)
-    .filter(k => subEmotionMap[k].list === state);
-    
-  // Load custom emotions for this state
-  let customEmotions = [];
-  try {
-    const storedEmotions = JSON.parse(localStorage.getItem('aura_custom_emotions') || '{}');
-    if (storedEmotions[state]) {
-      customEmotions = storedEmotions[state];
-    }
-  } catch(e) {}
-
-  let htmlStr = chips.map(key => `
-      <button class="emotion-card ${state}-tint" data-sub="${key}">
-        <span class="emotion-emoji">${emojiMap[key] || '💭'}</span>
-        <span class="emotion-text">${t(key)}</span>
-      </button>
-  `).join('');
+// Phase 1: Somatic Entry
+function renderSomaticEntry() {
+  navigateTo('view-somatic-entry');
+  const container = elements.somaticContainer;
+  const nextBtn = elements.somaticNextBtn;
+  const hud = document.getElementById('somaticHUD');
   
-  htmlStr += customEmotions.map(emotionText => `
-      <button class="emotion-card ${state}-tint" data-sub="custom" data-text="${emotionText.replace(/"/g, '&quot;')}">
-        <span class="emotion-emoji">📝</span>
-        <span class="emotion-text">${emotionText}</span>
+  if (!container) return;
+  
+  // Shuffle SOMATIC_MAP keys for a "slightly mixed" feel
+  const shuffledKeys = Object.keys(SOMATIC_MAP).sort(() => Math.random() - 0.5);
+  
+  const somaticHTML = shuffledKeys.map((key) => {
+    const data = SOMATIC_MAP[key];
+    return `
+      <button class="rhizome-chip ${data.state}" data-key="${key}" data-state="${data.state}">
+        ${t(key)}
       </button>
-  `).join('');
+    `;
+  }).join('');
+  
+  container.innerHTML = somaticHTML;
+  
+  if (hud) hud.classList.remove('active');
+  container.classList.remove('has-selection');
 
-  htmlStr += `
-      <button class="emotion-card ${state}-tint emotion-other-span" data-sub="se_other">
-        <span class="emotion-emoji">📝</span>
-        <span class="emotion-text">${t('se_other')}</span>
-      </button>
-  `;
+  const chips = container.querySelectorAll('.rhizome-chip');
 
-  elements.subEmotionContainer.innerHTML = htmlStr;
+  const applyDynamicFilter = () => {
+    const selectedKeys = AppState.currentCheckIn.somatic_selections;
+    
+    // FLIP Step 1: Record initial positions
+    const firstPositions = new Map();
+    chips.forEach(chip => {
+      firstPositions.set(chip, chip.getBoundingClientRect());
+    });
 
-  // Attach events
-  document.querySelectorAll('.emotion-card').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const selected = btn.getAttribute('data-sub');
-      const customText = btn.getAttribute('data-text');
+    if (selectedKeys.length === 0) {
+      chips.forEach(c => c.classList.remove('dimmed', 'highlighted'));
+      container.classList.remove('has-selection', 'selected-category-ventral', 'selected-category-sympathetic', 'selected-category-dorsal');
+    } else {
+      // Get the states of currently selected chips
+      const activeStates = [...new Set(selectedKeys.map(k => SOMATIC_MAP[k]?.state))];
       
-      // Visual select
-      document.querySelectorAll('.emotion-card').forEach(b => {
-         b.classList.remove('selected');
-         b.style.opacity = '0.5';
+      // Manage container-level category classes
+      container.classList.remove('selected-category-ventral', 'selected-category-sympathetic', 'selected-category-dorsal');
+      activeStates.forEach(state => {
+        if (state) container.classList.add(`selected-category-${state}`);
       });
-      btn.style.opacity = '1';
-      btn.classList.add('selected');
 
-      AppState.currentCheckIn.subEmotion = selected;
+      chips.forEach(chip => {
+        const chipState = chip.getAttribute('data-state');
+        if (activeStates.includes(chipState)) {
+          chip.classList.add('highlighted');
+          chip.classList.remove('dimmed');
+        } else {
+          chip.classList.add('dimmed');
+          chip.classList.remove('highlighted');
+        }
+      });
 
-      if (selected === 'se_other') {
-        elements.otherInputContainer.classList.remove('hidden');
-        elements.customSubEmotionInput.focus();
-      } else if (selected === 'custom') {
-        AppState.currentCheckIn.customEmotion = customText;
-        prepareExercise(subEmotionMap['se_other'].protocol);
+      // Clustering Logic: Reorder DOM
+      const sortedChips = Array.from(chips).sort((a, b) => {
+        const stateA = a.getAttribute('data-state');
+        const stateB = b.getAttribute('data-state');
+        const isSelA = a.classList.contains('selected');
+        const isSelB = b.classList.contains('selected');
+        const isActiveA = activeStates.includes(stateA);
+        const isActiveB = activeStates.includes(stateB);
+
+        // 1. Selected chips go first
+        if (isSelA && !isSelB) return -1;
+        if (!isSelA && isSelB) return 1;
+
+        // 2. Chips of any currently active state (same color) follow
+        if (isActiveA && !isActiveB) return -1;
+        if (!isActiveA && isActiveB) return 1;
+
+        // 3. Keep other states grouped alphabetically for stability
+        if (stateA !== stateB) {
+          return stateA.localeCompare(stateB);
+        }
+        return 0;
+      });
+
+      // Appending existing elements moves them in the DOM
+      sortedChips.forEach(chip => container.appendChild(chip));
+    }
+
+    // FLIP Step 2: Record last positions and play animation
+    chips.forEach(chip => {
+      const first = firstPositions.get(chip);
+      const last = chip.getBoundingClientRect();
+      
+      const dx = first.left - last.left;
+      const dy = first.top - last.top;
+      
+      if (dx !== 0 || dy !== 0) {
+        chip.animate([
+          { transform: `translate(${dx}px, ${dy}px)` },
+          { transform: 'none' }
+        ], {
+          duration: 600,
+          easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+        });
+      }
+    });
+
+    // Auto-Scroll: Follow the action to keep clusters in view
+    if (selectedKeys.length > 0 && elements.viewSomaticEntry) {
+      elements.viewSomaticEntry.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const key = chip.getAttribute('data-key');
+      const index = AppState.currentCheckIn.somatic_selections.indexOf(key);
+      
+      if (index > -1) {
+        AppState.currentCheckIn.somatic_selections.splice(index, 1);
+        chip.classList.remove('selected');
+      } else if (AppState.currentCheckIn.somatic_selections.length < 3) {
+        AppState.currentCheckIn.somatic_selections.push(key);
+        chip.classList.add('selected');
+      }
+      
+      // Update dynamic visuals
+      applyDynamicFilter();
+
+      // Dynamic HUD activation
+      const count = AppState.currentCheckIn.somatic_selections.length;
+      if (count > 0) {
+        container.classList.add('has-selection');
+        setHUD('arrow', () => {
+          const coords = calculateInitialCoords();
+          AppState.currentCheckIn.pre_arousal = coords.a;
+          AppState.currentCheckIn.pre_valence = coords.v;
+          renderAffectGrid();
+        });
+        if (elements.globalHUD) elements.globalHUD.classList.add('active');
       } else {
-        AppState.currentCheckIn.customEmotion = ''; 
-        prepareExercise(subEmotionMap[selected].protocol);
+        container.classList.remove('has-selection');
+        if (elements.globalHUD) elements.globalHUD.classList.remove('active');
       }
     });
   });
 }
 
-// "Other" Continue Button
-elements.customSubEmotionBtn.addEventListener('click', () => {
-  const text = elements.customSubEmotionInput.value.trim();
-  if(!text) return;
-  AppState.currentCheckIn.customEmotion = text;
+function calculateInitialCoords() {
+  const selections = AppState.currentCheckIn.somatic_selections;
+  if (selections.length === 0) return { a: 0.5, v: 0.5 };
   
-  // Save to Custom Emotions history
-  const state = AppState.currentCheckIn.state;
-  try {
-      const storedEmotions = JSON.parse(localStorage.getItem('aura_custom_emotions') || '{}');
-      if (!storedEmotions[state]) storedEmotions[state] = [];
-      if (!storedEmotions[state].includes(text)) {
-          storedEmotions[state].unshift(text); // Add to beginning
-          if (storedEmotions[state].length > 5) {
-              storedEmotions[state].pop(); // Limit to 5 custom emotions per state
-          }
-          localStorage.setItem('aura_custom_emotions', JSON.stringify(storedEmotions));
-      }
-  } catch(e) {}
+  let totalA = 0, totalV = 0;
+  selections.forEach(key => {
+    totalA += SOMATIC_MAP[key].a;
+    totalV += SOMATIC_MAP[key].v;
+  });
+  
+  return {
+    a: totalA / selections.length,
+    v: totalV / selections.length
+  };
+}
 
-  prepareExercise(subEmotionMap['se_other'].protocol); // Default to resonance for unknown emotions
-});
+// Phase 2: Affect Grid
+function renderAffectGrid() {
+  navigateTo('view-affect-grid');
+  
+  const a = AppState.currentCheckIn.pre_arousal;
+  const v = AppState.currentCheckIn.pre_valence;
+  
+  // Position suggested dot
+  elements.suggestionDot.style.left = `${v * 100}%`;
+  elements.suggestionDot.style.top = `${(1 - a) * 100}%`;
+  
+  elements.userDot.classList.add('hidden');
+  const hud = document.getElementById('gridHUD');
+  if (hud) hud.classList.remove('active'); // Hide initially
+  
+  initGridTouchListener();
+}
+
+function initGridTouchListener() {
+  const area = elements.gridTouchArea;
+  const userDot = elements.userDot;
+  const nextBtn = elements.gridNextBtn;
+  const hud = document.getElementById('gridHUD');
+  
+  const handleTouch = (e) => {
+    const rect = area.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    let v = x / rect.width;
+    let a = 1 - (y / rect.height);
+    
+    v = Math.max(0, Math.min(1, v));
+    a = Math.max(0, Math.min(1, a));
+    
+    AppState.currentCheckIn.pre_arousal = a;
+    AppState.currentCheckIn.pre_valence = v;
+    
+    userDot.style.left = `${v * 100}%`;
+    userDot.style.top = `${(1 - a) * 100}%`;
+    userDot.classList.remove('hidden');
+    
+    // Quadrant Highlight Logic
+    const quads = {
+      tr: document.querySelector('.grid-quad_tr'),
+      tl: document.querySelector('.grid-quad_tl'),
+      bl: document.querySelector('.grid-quad_bl'),
+      br: document.querySelector('.grid-quad_br')
+    };
+    
+    // Dynamic Bio-Glow Background Shift
+    const quadColors = {
+      tr: '251, 160, 68',  // Amber/Gold (Flow)
+      tl: '255, 107, 107', // Red/Rose (Tension)
+      bl: '98, 164, 255',  // Blue/Indigo (Fog)
+      br: '100, 228, 159'  // Green/Emerald (Rest)
+    };
+
+    Object.values(quads).forEach(q => q && q.classList.remove('active'));
+    
+    let activeQuad = '';
+    if (v >= 0.5 && a >= 0.5) activeQuad = 'tr';
+    else if (v < 0.5 && a >= 0.5) activeQuad = 'tl';
+    else if (v < 0.5 && a < 0.5) activeQuad = 'bl';
+    else if (v >= 0.5 && a < 0.5) activeQuad = 'br';
+
+    if (activeQuad) {
+      quads[activeQuad]?.classList.add('active');
+      document.documentElement.style.setProperty('--vagal-color-rgb', quadColors[activeQuad]);
+      document.documentElement.style.setProperty('--bg-brightness', '1.2');
+    }
+
+    // NEW: Dynamic HUD emergence
+    setHUD('arrow', () => {
+      const state = calculatePolyvagalState(AppState.currentCheckIn.pre_arousal, AppState.currentCheckIn.pre_valence);
+      AppState.currentCheckIn.polyvagal_state = state;
+      AppState.currentCheckIn.state = stateLegacyMap[state]; 
+      renderEmotionRefinement(state);
+    });
+    if (elements.globalHUD) elements.globalHUD.classList.add('active');
+  };
+  
+  area.onclick = handleTouch;
+}
+
+// Phase 2B: Emotion Refinement
+function renderEmotionRefinement(state) {
+  navigateTo('view-emotion-refinement');
+  const container = elements.emotionRefinementContainer;
+  const nextBtn = elements.emotionNextBtn;
+  const hud = document.getElementById('emotionHUD');
+  
+  const emotions = EMOTION_OPTIONS[state];
+  container.innerHTML = emotions.map(emoKey => {
+    return `
+      <button class="rhizome-chip" data-emo="${emoKey}">
+        ${t(emoKey)}
+      </button>
+    `;
+  }).join('');
+  
+  if (hud) hud.classList.remove('active');
+  container.classList.remove('has-selection');
+
+  AppState.currentCheckIn.selected_emotions = [];
+  
+  container.querySelectorAll('.rhizome-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const emo = chip.getAttribute('data-emo');
+      const index = AppState.currentCheckIn.selected_emotions.indexOf(emo);
+      
+      if (index > -1) {
+        AppState.currentCheckIn.selected_emotions.splice(index, 1);
+        chip.classList.remove('selected');
+      } else if (AppState.currentCheckIn.selected_emotions.length < 3) {
+        AppState.currentCheckIn.selected_emotions.push(emo);
+        chip.classList.add('selected');
+      }
+      
+      // NEW: Dynamic HUD emergence
+      const count = AppState.currentCheckIn.selected_emotions.length;
+      if (count > 0) {
+        container.classList.add('has-selection');
+        setHUD('arrow', () => {
+            const protocolMap = {
+              ventral: 'p_resonance',
+              sympathetic: 'p_478',
+              dorsal: 'p_bellows'
+            };
+            prepareExercise(protocolMap[state]);
+        });
+        if (elements.globalHUD) elements.globalHUD.classList.add('active');
+      } else {
+        container.classList.remove('has-selection');
+        if (elements.globalHUD) elements.globalHUD.classList.remove('active');
+      }
+    });
+  });
+}
+
+function advanceFromExercise() {
+  stopExercise();
+  // We can still pass the state for context, but we move to savoring
+  startMarinationFlow();
+}
 
 // Step 3: Exercise Setup & Engine
 function prepareExercise(protocolId) {
@@ -2051,14 +2721,45 @@ function prepareExercise(protocolId) {
   elements.breathCircle.className = 'breath-circle';
   elements.breathCircle.style.transitionDuration = '0.5s';
   elements.breathInstruction.innerHTML = `${t("ex_ready")}<br><span style="font-size: 1.1rem; opacity: 0.9; font-weight: 300; text-transform: none; letter-spacing: 0; display: block; margin-top: 0.3rem;">${mins}:${secs}</span>`;
-  elements.startExerciseBtn.innerHTML = `${t('ex_begin')} (<span id="exerciseDuration">${mins}:${secs}</span>)`;
-  elements.startExerciseBtn.disabled = false;
 
   AppState._standaloneExercise = false; // Normal check-in flow
   navigateTo('view-exercise');
+  
+  // THE FIX: Trigger liquid emergence after transition
+  setTimeout(() => {
+    setHUD('skip', () => advanceFromExercise());
+    if (elements.globalHUD) elements.globalHUD.classList.add('active');
+  }, 1000);
 }
 
 let meditationCountdownInterval = null;
+let marinationTimer = null; 
+
+/**
+ * NEW: Unified HUD Controller
+ * Standardizes the "Neural Cockpit" interaction button across all steps.
+ * @param {string} mode - 'arrow' (next), 'check' (finish), 'skip' (fast-forward)
+ * @param {Function} onClick - Action handler
+ */
+function setHUD(mode, onClick) {
+  if (!elements.globalHUD || !elements.globalHUDBtn) return;
+
+  // Clear previous icon and set SVG based on mode
+  let svg = '';
+  if (mode === 'arrow') {
+    svg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+  } else if (mode === 'check') {
+    svg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+  } else if (mode === 'skip') {
+    svg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>`;
+  }
+
+  elements.globalHUDBtn.innerHTML = svg;
+  elements.globalHUDBtn.onclick = (e) => {
+    if (e) e.preventDefault();
+    if (onClick) onClick();
+  };
+}
 
 function startMeditationLoading(protocolId) {
   const protocol = protocols[protocolId];
@@ -2070,9 +2771,11 @@ function startMeditationLoading(protocolId) {
   elements.loadingCircleProgress.style.transition = 'none';
   elements.loadingCircleProgress.style.strokeDashoffset = '283';
   const iconEl = document.querySelector('.loading-icon');
-  iconEl.textContent = "5";
-  iconEl.style.opacity = '1';
-  iconEl.style.transform = 'scale(1)';
+  if (iconEl) {
+    iconEl.textContent = "5";
+    iconEl.style.opacity = '1';
+    iconEl.style.transform = 'scale(1)';
+  }
   
   navigateTo('view-meditation-loading');
   
@@ -2130,8 +2833,8 @@ function startMeditationLoading(protocolId) {
 /* --- INSIGHT VIEW CORE LOGIC --- */
 
 function updateInsightView(history) {
-    // Robust Default: Ensure we don't return early if empty, but use defaults
-    const safeHistory = (history && history.length > 0) ? history : [{ state: 'okay', timestamp: Date.now() }];
+    const normalizedHistory = history.map(h => normalizeCheckinData(h));
+    const safeHistory = (normalizedHistory.length > 0) ? normalizedHistory : [{ state: 'okay', timestamp: Date.now() }];
     
     const plasticity = calculatePlasticity(safeHistory);
     const dominantState = getDominantState(safeHistory);
@@ -2167,8 +2870,9 @@ function updateInsightView(history) {
         };
         elements.insightResilienceBar.innerHTML = `
             <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden;">
-                <div style="height: 100%; width: ${plasticity.score}%; background: ${colors[plasticity.level]}; border-radius: 100px; transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);"></div>
+                <div style="height: 100%; width: ${plasticity.score}%; background: ${colors[plasticity.level]}; border-radius: 100px; transition: background 2.5s cubic-bezier(0.16, 1, 0.3, 1), filter 2.5s ease-in-out;"></div>
             </div>
+            <p class="subtitle" data-i18n="somatic_subtitle" style="opacity: 0.6; margin-top: 0.5rem;">Select up to 3 options.</p>
             <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
                 <span style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase;">${t('dash_resilience')}</span>
                 <span style="font-size: 0.7rem; color: var(--text-muted);">${t('plasticity_' + plasticity.level)}</span>
@@ -2307,7 +3011,7 @@ function updateSettingsView() {
       logoutText.textContent = t('prof_logout');
       logoutBtn.classList.add('hover:bg-red-500/10');
       logoutBtn.classList.remove('hover:bg-emerald-500/10');
-      logoutIcon.innerHTML = `<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>`;
+      logoutIcon.innerHTML = `<path d="M9 21H5a2 2 0 0 1 2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>`;
       logoutIcon.classList.add('group-hover:text-red-400');
       logoutIcon.classList.remove('group-hover:text-emerald-400');
     }
@@ -2381,19 +3085,31 @@ function generatePoeticInsight(state, score) {
 function renderEnergyPath(history) {
     const svg = elements.energyPathSvg;
     if (!svg) return;
-    svg.innerHTML = '';
+    
+    // Clear efficiently
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
     
     const last7 = history.slice(-7);
     if (last7.length < 2) return;
 
-    // Create Gradient
+    // Create Gradient using standard NS methods
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    defs.innerHTML = `
-        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="rgba(133, 141, 255, 0)" />
-            <stop offset="100%" stop-color="rgba(255, 255, 255, 0.8)" />
-        </linearGradient>
-    `;
+    const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+    grad.setAttribute("id", "lineGradient");
+    grad.setAttribute("x1", "0%"); grad.setAttribute("y1", "0%");
+    grad.setAttribute("x2", "100%"); grad.setAttribute("y2", "0%");
+    
+    const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    stop1.setAttribute("offset", "0%");
+    stop1.setAttribute("stop-color", "rgba(133, 141, 255, 0)");
+    
+    const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    stop2.setAttribute("offset", "100%");
+    stop2.setAttribute("stop-color", "rgba(255, 255, 255, 0.8)");
+    
+    grad.appendChild(stop1);
+    grad.appendChild(stop2);
+    defs.appendChild(grad);
     svg.appendChild(defs);
 
     const points = last7.map(h => {
@@ -2416,7 +3132,9 @@ function renderEnergyPath(history) {
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("d", pathData);
     path.setAttribute("class", "energy-line animating");
+    path.setAttribute("stroke", "url(#lineGradient)");
     path.style.strokeWidth = "4";
+    path.style.fill = "none";
     svg.appendChild(path);
 }
 
@@ -2505,7 +3223,6 @@ function renderNarrativeCards(history) {
         </div>
         <div class="insight-card liquid-border stagger-2">
             <div class="flex items-center gap-2 mb-1" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                <script type="module" src="app.js?v=66"></script>
                 <span class="text-[10px] text-emerald-400 tracking-widest uppercase">${t('insight_growth_title')}</span>
             </div>
             <p class="text-white/80 mt-1">${t('insight_growth_desc').replace('{percent}', growth)}</p>
@@ -2520,62 +3237,40 @@ function renderNarrativeCards(history) {
     `;
 }
 
-if (elements.skipLoadingBtn) {
-  elements.skipLoadingBtn.addEventListener('click', () => {
-    if (meditationLoadingTimeout) clearTimeout(meditationLoadingTimeout);
-    if (meditationCountdownInterval) clearInterval(meditationCountdownInterval);
-    
-    navigateTo('view-savoring');
-    
-    // Update step indicator to Step 6
-    const parentStepIndicator = document.getElementById('savoringStepIndicator');
-    if (parentStepIndicator) {
-      parentStepIndicator.textContent = t('step_6');
-      parentStepIndicator.setAttribute('data-i18n', 'step_6');
-      if (parentStepIndicator.parentElement) parentStepIndicator.parentElement.classList.remove('hidden');
+// THE FIX: Move exercise start logic to the breath circle itself
+if (elements.breathCircle) {
+  elements.breathCircle.onclick = () => {
+    // Force Unlock Audio on Exercise Start
+    if (SensoryEngine && typeof SensoryEngine.initAudio === 'function') {
+      SensoryEngine.initAudio();
     }
-
-    // Hide everything except Savoring
-    if(elements.marPhase1) elements.marPhase1.classList.add('hidden');
-    if(elements.marPhase2) elements.marPhase2.classList.add('hidden');
-    if(elements.marPhaseOffer) elements.marPhaseOffer.classList.add('hidden');
-    if(elements.marPhaseScan) elements.marPhaseScan.classList.add('hidden');
     
-    if(elements.marPhase3) {
-      elements.marPhase3.classList.remove('hidden');
-      elements.marPhase3.classList.remove('opacity-0');
-      setTimeout(() => elements.savoringInput && elements.savoringInput.focus(), 100);
+    if(elements.exerciseMicrocopy) {
+      setTimeout(() => {
+        elements.exerciseMicrocopy.style.opacity = '0';
+      }, 3000);
     }
-  });
+    
+    startExerciseEngine();
+  };
 }
 
-elements.breathCircle.addEventListener('click', () => {
-  if (!elements.startExerciseBtn.disabled) {
-    elements.startExerciseBtn.click();
-  }
-});
-
-elements.startExerciseBtn.addEventListener('click', () => {
-  AudioEngine.init();
-  elements.startExerciseBtn.disabled = true;
-  elements.startExerciseBtn.textContent = '...';
-  
-  if(elements.exerciseMicrocopy) {
-    setTimeout(() => {
-      elements.exerciseMicrocopy.style.opacity = '0';
-    }, 5000);
-  }
-  
+function startExerciseEngine() {
+  if (isExerciseActive) return; // Prevent multiple triggers
+  isExerciseActive = true;
   currentPhaseIndex = 0;
   
   if (breathTimerInterval) clearInterval(breathTimerInterval);
+  if (exerciseTimer) clearTimeout(exerciseTimer); 
   
   breathTimerInterval = setInterval(() => {
-    if (isModalOpen) return; // Silent pause for total timer
+    if (isModalOpen) return;
     timeRemaining--;
     if(timeRemaining <= 0) {
-      clearInterval(breathTimerInterval);
       stopExercise();
+      if (SensoryEngine && typeof SensoryEngine.triggerResolutionChord === 'function') {
+        SensoryEngine.triggerResolutionChord();
+      }
       if (AppState._standaloneExercise) {
         navigateTo('view-completion');
         return;
@@ -2584,8 +3279,11 @@ elements.startExerciseBtn.addEventListener('click', () => {
     }
   }, 1000);
 
+  if (SensoryEngine && typeof SensoryEngine.initAudio === 'function') {
+    SensoryEngine.initAudio();
+  }
   runPhase();
-});
+}
 
 function runPhase(customDuration = null) {
   if(timeRemaining <= 0 || isModalOpen) return;
@@ -2595,25 +3293,49 @@ function runPhase(customDuration = null) {
   phaseStartTime = Date.now();
   remainingPhaseDuration = duration;
 
+<<<<<<< HEAD
+  // Add rapid class for high-frequency breathing
+=======
   // Add rapid class for high-frequency breathing (Breath of Fire)
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
   const isRapid = duration < 600;
   elements.breathCircle.className = `breath-circle ${phase.class} ${isRapid ? 'breathe-rapid' : ''}`;
   elements.breathCircle.style.transitionDuration = `${duration / 1000}s`;
-  document.documentElement.style.setProperty('--breath-duration', `${duration / 1000}s`);
   
   const lookupKey = `ex_${phase.name.toLowerCase().replace(' ', '_')}`;
   elements.breathInstruction.textContent = t(lookupKey) !== lookupKey ? t(lookupKey) : phase.name;
   
+<<<<<<< HEAD
+  const durationMs = (phase.duration || phase.seconds || 4) * 1000;
+  
+  // Sync Audio Engine with Phase Duration
+  if (SensoryEngine && typeof SensoryEngine.setBreathingPhase === 'function') {
+      const pId = phase.name.toLowerCase();
+      const mappedPhase = pId.includes('in') ? 'inhale' : (pId.includes('out') || pId.includes('ex') ? 'exhale' : 'hold');
+      SensoryEngine.setBreathingPhase(mappedPhase, durationMs);
+  }
+
+  // Sync Background Transition Duration
+  document.documentElement.style.setProperty('--breath-duration', `${durationMs}ms`);
+
+  if (phase.name.toLowerCase().includes('in') || phase.name.toLowerCase() === 'inhale top-up') {
+    AudioEngine.playBell(phase.name.toLowerCase() === 'inhale top-up' ? 'soft' : 'start');
+    document.documentElement.style.setProperty('--bg-brightness', '1.6');
+    document.documentElement.style.setProperty('--breath-scale', '1.15');
+=======
   if (phase.name.toLowerCase().includes('in') || phase.name.toLowerCase() === 'inhale top-up') {
     AudioEngine.playBell(phase.name.toLowerCase() === 'inhale top-up' ? 'soft' : 'start');
     SensoryEngine.setBreathingPhase('inhale');
     document.documentElement.style.setProperty('--bg-brightness', 1);
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
   } else if (phase.name.toLowerCase().includes('out') || phase.name.toLowerCase().includes('ex')) {
     AudioEngine.playBell('soft');
-    SensoryEngine.setBreathingPhase('exhale');
-    document.documentElement.style.setProperty('--bg-brightness', 0.4);
+    document.documentElement.style.setProperty('--bg-brightness', '0.35');
+    document.documentElement.style.setProperty('--breath-scale', '0.92');
   } else {
-    SensoryEngine.setBreathingPhase('hold');
+    // Hold / Empty (Static State)
+    document.documentElement.style.setProperty('--bg-brightness', '0.75');
+    document.documentElement.style.setProperty('--breath-scale', '1.02');
   }
 
   exerciseTimer = setTimeout(() => {
@@ -2646,19 +3368,11 @@ function resumeExercise() {
   runPhase(remainingPhaseDuration);
 }
 
-elements.skipExerciseBtn.addEventListener('click', () => {
-  if (breathTimerInterval) clearInterval(breathTimerInterval);
-  stopExercise();
-  if (AppState._standaloneExercise) {
-    renderMeditationsList();
-    navigateTo('view-meditations');
-    return;
-  }
-  startMarinationFlow();
-});
 
 function stopExercise() {
+  if (breathTimerInterval) clearInterval(breathTimerInterval);
   if (exerciseTimer) clearTimeout(exerciseTimer);
+  isExerciseActive = false;
   elements.breathCircle.className = 'breath-circle';
 }
 
@@ -2666,13 +3380,16 @@ function stopExercise() {
 function startMarinationFlow() {
   navigateTo('view-savoring');
   
-  // Restore parent step header (may have been hidden or changed by scan)
+  // Restore parent step header and set Step 4 Indicator
   const parentStepIndicator = document.getElementById('savoringStepIndicator');
   if (parentStepIndicator) {
+    if (parentStepIndicator.parentElement) parentStepIndicator.parentElement.classList.remove('hidden');
     parentStepIndicator.textContent = t('step_4');
     parentStepIndicator.setAttribute('data-i18n', 'step_4');
-    if (parentStepIndicator.parentElement) parentStepIndicator.parentElement.classList.remove('hidden');
   }
+
+  // Set Info Key for Step 4
+  if (elements.savoringInfoBtn) elements.savoringInfoBtn.setAttribute('data-info', 'info_step4_desc');
   
   // Reset phases
   if(elements.marPhase1) {
@@ -2690,7 +3407,7 @@ function startMarinationFlow() {
     document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('selected'));
 
     // Auto-advance Phase 1 -> Phase 2 after 5 seconds
-    setTimeout(() => {
+    marinationTimer = setTimeout(() => {
        // Check if user hasn't cancelled or returned early
        if(!elements.marPhase1) return;
        // If modal is open, wait until it closes
@@ -2709,41 +3426,123 @@ function startMarinationFlow() {
 }
 
 function advanceMarination() {
+  const container = elements.marSensationContainer;
+  const savoringSenses = ['mar_lighter', 'mar_slower', 'mar_warmer', 'mar_clearer', 'mar_calmer', 'mar_tense'];
+  const state = AppState.currentCheckIn.polyvagal_state || 'ventral'; 
+
   elements.marPhase1.classList.add('opacity-0');
   setTimeout(() => {
-     elements.marPhase1.classList.add('hidden');
-     elements.marPhase2.classList.remove('hidden');
-     elements.marPhase2.classList.add('opacity-0');
-     setTimeout(() => elements.marPhase2.classList.remove('opacity-0'), 50);
+    elements.marPhase1.classList.add('hidden');
+    elements.marPhase2.classList.remove('hidden');
+    elements.marPhase2.classList.add('opacity-0');
+
+    if (container) {
+      // Clear previous and set ripple layout
+      container.className = 'rhizome-container ripple-grid';
+      
+      // Smart Grid Shuffling to prevent excessive overlap
+      // Create 6 grid slots (3 columns x 2 rows)
+      const slots = [
+        { r: 0, c: 0 }, { r: 0, c: 1 }, { r: 0, c: 2 },
+        { r: 1, c: 0 }, { r: 1, c: 1 }, { r: 1, c: 2 }
+      ].sort(() => Math.random() - 0.5); // Shuffle slots
+
+      container.innerHTML = savoringSenses.map((key, i) => {
+        const slot = slots[i % slots.length];
+        const gridX = (slot.c * 33) + 5; // Base column pos
+        const gridY = (slot.r * 40) + 10; // Base row pos
+        
+        // Add jitter (random offset within the grid cell)
+        const top = gridY + (Math.random() * 20 - 10);
+        const left = gridX + (Math.random() * 15 - 7);
+        const speed = 7 + Math.random() * 5; 
+        const delay = Math.random() * -10;
+
+        // Biological wandering offsets
+        const mx = Math.random() * 25 - 12.5;
+        const my = Math.random() * 25 - 12.5;
+        const mx2 = Math.random() * 25 - 12.5;
+        const my2 = Math.random() * 25 - 12.5;
+
+        const style = `
+          --top: ${top}%; --left: ${left}%; 
+          --speed: ${speed}s; --delay: ${delay}s; 
+          --mx: ${mx}px; --my: ${my}px; --mx2: ${mx2}px; --my2: ${my2}px;
+        `;
+
+        return `
+          <button class="rhizome-chip ${state}" data-sense="${key}" style="${style}">
+            <span>${t(key)}</span>
+          </button>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.rhizome-chip').forEach((chip, i) => {
+        // Staggered fade in
+        chip.style.opacity = '0';
+        chip.style.transform = 'scale(0.5)';
+        setTimeout(() => {
+          chip.style.opacity = '1';
+          chip.style.transform = 'scale(1)';
+        }, 100 + (i * 80));
+
+        chip.addEventListener('click', () => {
+          chip.classList.toggle('selected');
+          
+          // Sensory Feedback
+          if (chip.classList.contains('selected') && SensoryEngine) {
+            SensoryEngine.playUnlock && SensoryEngine.playUnlock();
+          }
+
+          const hasSelection = container.querySelectorAll('.rhizome-chip.selected').length > 0;
+          if (hasSelection) {
+            setHUD('arrow', () => proceedFromSensations());
+            if (elements.globalHUD) elements.globalHUD.classList.add('active');
+          } else {
+            if (elements.globalHUD) elements.globalHUD.classList.remove('active');
+          }
+        });
+      });
+    }
+
+    if (elements.marinationHUD) elements.marinationHUD.classList.remove('active');
+    if (elements.savoringInfoBtn) elements.savoringInfoBtn.setAttribute('data-info', 'info_step4_desc');
+
+    setTimeout(() => {
+      elements.marPhase2.classList.remove('opacity-0');
+    }, 100);
   }, 800);
 }
 
-// Pill Selection Logic
-if (elements.marPhase2) {
-  elements.marPhase2.addEventListener('click', (e) => {
-    if (e.target.classList.contains('pill-btn')) {
-      e.target.classList.toggle('selected');
-    }
-  });
-}
-
-// 2b. Continue from Pills to Offer
-if (elements.marContinueBtn) {
-  elements.marContinueBtn.onclick = () => {
-    const selected = Array.from(document.querySelectorAll('.pill-btn.selected')).map(b => b.getAttribute('data-i18n'));
-    // Save sensations strictly by their translation key
+function proceedFromSensations() {
+    const selected = Array.from(document.querySelectorAll('.rhizome-chip.selected')).map(b => b.getAttribute('data-sense'));
     AppState.currentCheckIn.sensations = selected;
     
-    elements.marPhase2.classList.add('opacity-0');
     setTimeout(() => {
-        elements.marPhase2.classList.add('hidden');
-        // Bypass marPhaseOffer and go straight to loading
-        const rawProtocolId = subEmotionMap[AppState.currentCheckIn.subEmotion]?.protocol || 'p_resonance';
-        startMeditationLoading(rawProtocolId);
-    }, 800);
-  };
+        elements.marPhase2.classList.add('opacity-0');
+        setTimeout(() => {
+            elements.marPhase2.classList.add('hidden');
+            
+            // Direct to Loading (Step 5)
+            const targetProtocol = (typeof subEmotionMap !== 'undefined' && subEmotionMap[AppState.currentCheckIn.subEmotion]) 
+              ? subEmotionMap[AppState.currentCheckIn.subEmotion].protocol 
+              : 'p_resonance';
+            startMeditationLoading(targetProtocol);
+            
+        }, 800);
+    }, 500);
 }
 
+<<<<<<< HEAD
+// Ensure renderSavoringLog is accessible globally if needed, and clean definition
+window.renderSavoringLog = renderSavoringLog;
+function renderSavoringLog() {
+    // 1. Clean visibility across all phases
+    document.querySelectorAll('.marination-phase').forEach(p => p.classList.add('hidden'));
+    
+    if (elements.marPhase3) {
+      elements.marPhase3.classList.remove('hidden');
+=======
 // 2b-2. Final Savoring Phase Entry
 function goToSavoring(fromPhase) {
   // Capture protocolId if coming from exercise
@@ -2753,19 +3552,58 @@ function goToSavoring(fromPhase) {
   fromPhase.classList.add('opacity-0');
   setTimeout(() => {
       fromPhase.classList.add('hidden');
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
       
-      // Update parent step header to Step 6
+      // Integrate with Global HUD for completion
+      setHUD('check', () => {
+         const note = elements.savoringNote ? elements.savoringNote.value : '';
+         AppState.currentCheckIn.note = note;
+         finalCheckout();
+      });
+      if (elements.globalHUD) elements.globalHUD.classList.add('active');
+      
+      setTimeout(() => elements.marPhase3.classList.remove('opacity-0'), 100);
+    }
+      
+      // Ensure Step 6 headers are explicitly visible and unhidden
+      const stepHeaders = elements.marPhase3.querySelectorAll('h2, p');
+      stepHeaders.forEach(h => {
+        h.classList.remove('hidden', 'opacity-0');
+        h.style.opacity = '1';
+        h.style.display = 'block';
+      });
+
       const parentStepIndicator = document.getElementById('savoringStepIndicator');
       if (parentStepIndicator) {
         parentStepIndicator.textContent = t('step_6');
         parentStepIndicator.setAttribute('data-i18n', 'step_6');
-        if (parentStepIndicator.parentElement) parentStepIndicator.parentElement.classList.remove('hidden');
+        parentStepIndicator.classList.remove('hidden');
       }
 
-      elements.marPhase3.classList.remove('hidden');
-      elements.marPhase2.classList.add('hidden');
-      elements.marPhase3.classList.remove('hidden');
-      setTimeout(() => elements.marPhase3.classList.remove('opacity-0'), 50);
+      if (elements.savoringInfoBtn) {
+        elements.savoringInfoBtn.setAttribute('data-info', 'info_step6_desc');
+        elements.savoringInfoBtn.classList.remove('hidden');
+      }
+
+      setHUD('check', () => submitSavoringLog());
+      setTimeout(() => {
+          if (elements.globalHUD) elements.globalHUD.classList.add('active');
+          if (elements.savoringNote) {
+            elements.savoringNote.focus();
+            elements.savoringNote.classList.remove('hidden');
+          }
+      }, 1000);
+}
+
+// 2b-2. Final Savoring Phase Entry
+function goToSavoring(fromPhase) {
+  // Capture protocolId if coming from exercise
+  if (exerciseParams && exerciseParams.id) {
+    AppState.currentCheckIn.protocol = exerciseParams.id;
+  }
+  setTimeout(() => {
+      fromPhase.classList.add('hidden');
+      renderSavoringLog();
   }, 800);
 }
 
@@ -2775,6 +3613,7 @@ if (elements.offerDoneBtn) {
 }
 
 let isMeditationPaused = false;
+let isExerciseActive = false; // Mutex for breathing exercise
 let meditationIndex = 0;
 let meditationPhaseStartTime = 0;
 let meditationRemainingDuration = 0;
@@ -2855,23 +3694,132 @@ function finishGuidedScan() {
   goToSavoring(elements.marPhaseScan);
 }
 
+function drawBecomingArrow() {
+  const canvas = document.getElementById('becomingCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  // High-dpi scaling
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const pre = { a: AppState.currentCheckIn.pre_arousal || 0.5, v: AppState.currentCheckIn.pre_valence || 0.5 };
+  const postA = AppState.currentCheckIn.post_arousal || pre.a;
+  const postV = AppState.currentCheckIn.post_valence || pre.v;
+
+  const w = rect.width;
+  const h = rect.height;
+  const pX = pre.v * w;
+  const pY = (1 - pre.a) * h;
+  const tX = postV * w;
+  const tY = (1 - postA) * h;
+
+  let progress = 0;
+  const animate = () => {
+    progress += 0.02;
+    if (progress > 1) progress = 1;
+
+    ctx.clearRect(0, 0, w, h);
+    
+    // Draw trail
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.moveTo(pX, pY);
+    ctx.lineTo(tX, tY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw Growing Vector
+    const cX = pX + (tX - pX) * progress;
+    const cY = pY + (tY - pY) * progress;
+
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#22c55e';
+    ctx.strokeStyle = '#22c55e';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(pX, pY);
+    ctx.lineTo(cX, cY);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Draw End Beacon
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath();
+    ctx.arc(cX, cY, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      showShiftBadge(pre, { a: postA, v: postV });
+    }
+  };
+
+  animate();
+
+  // Labels
+  const preLbl = document.querySelector('.becoming-label.pre');
+  const postLbl = document.querySelector('.becoming-label.post');
+  if (preLbl) { preLbl.style.left = `${pX}px`; preLbl.style.top = `${pY-10}px`; }
+  if (postLbl) { postLbl.style.left = `${tX}px`; postLbl.style.top = `${tY+15}px`; }
+}
+
+function showShiftBadge(pre, post) {
+  const container = document.querySelector('.becoming-visualizer');
+  if (!container) return;
+  
+  const existing = container.querySelector('.shift-badge');
+  if (existing) existing.remove();
+
+  const diffV = Math.round((post.v - pre.v) * 100);
+  const diffA = Math.round((post.a - pre.a) * 100);
+  
+  const badge = document.createElement('div');
+  badge.className = 'shift-badge';
+  badge.innerHTML = `
+    <span style="font-family: monospace; font-size: 0.7rem; opacity: 0.6; letter-spacing: 1px;">NEURAL SHIFT</span>
+    <div style="display: flex; gap: 1rem; font-weight: 600;">
+      <span style="color: #6ee7c7;">VALENCE ${diffV > 0 ? '+' : ''}${diffV}%</span>
+      <span style="color: #7b9ccc;">AROUSAL ${diffA > 0 ? '+' : ''}${diffA}%</span>
+    </div>
+  `;
+  container.appendChild(badge);
+  setTimeout(() => badge.classList.add('active'), 100);
+}
+
 if (elements.scanExitBtn) {
   elements.scanExitBtn.onclick = finishGuidedScan;
 }
 
-// Step 4: Savoring Form Submit
-elements.savoringForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const text = elements.savoringInput.value.trim();
-  if(!text) return;
+// Step 6 Save Implementation (Triggered by Global HUD)
+async function submitSavoringLog() {
+  const noteEl = document.getElementById('savoringNote');
+  const text = noteEl ? noteEl.value.trim() : '';
 
   AppState.currentCheckIn.savoringText = text;
   AppState.currentCheckIn.timestamp = Date.now();
   
-  const btn = document.getElementById('finishLoopBtn');
-  btn.textContent = t('btn_saving');
-  btn.disabled = true;
+  // Calculate Post State for Delta Arrow (Vector towards Ventral)
+  const sens = AppState.currentCheckIn.sensations || [];
+  let postA = AppState.currentCheckIn.pre_arousal || 0.5;
+  let postV = AppState.currentCheckIn.pre_valence || 0.5;
 
+  // Simple heuristic mapping
+  if (sens.includes('mar_calmer')) { postA = postA * 0.7 + 0.5 * 0.3; postV = Math.min(1, postV + 0.15); }
+  if (sens.includes('mar_slower')) { postA = Math.max(0, postA - 0.15); }
+  if (sens.includes('mar_clearer')) { postV = Math.min(1, postV + 0.2); }
+  if (sens.includes('mar_warmer')) { postV = Math.min(1, postV + 0.1); }
+  if (sens.includes('mar_lighter')) { postA = postA * 0.9 + 0.5 * 0.1; postV = Math.min(1, postV + 0.1); }
+  
+  AppState.currentCheckIn.post_arousal = postA;
+  AppState.currentCheckIn.post_valence = postV;
+  
   // UNIFIED SAVING LAYER
   // 1. Always save to Local (Backup/Guest Source)
   AppState.mockHistory.unshift({...AppState.currentCheckIn});
@@ -2889,22 +3837,20 @@ elements.savoringForm.addEventListener('submit', async (e) => {
     }
   }
 
-  btn.textContent = t('btn_complete');
-  btn.disabled = false;
-  elements.savoringInput.value = '';
-
   // Update user's last emotion in Firestore globally for notifications
   if (fb.isInitialized && AppState.user) {
      const userRef = fb.doc(fb.db, "users", AppState.user.uid);
      await fb.setDoc(userRef, { lastEmotion: AppState.currentCheckIn.subEmotion || 'se_neutral' }, { merge: true });
   }
 
-  // THE RESOLUTION — trigger bio-feedback reset before completion
+  // trigger bio-feedback reset before completion
   resetBioFeedback();
 
   navigateTo('view-completion');
-  setTimeout(() => checkAndShowPushModal(), 2000);
-});
+  setTimeout(() => {
+    if (typeof checkAndShowPushModal === 'function') checkAndShowPushModal();
+  }, 2000);
+}
 
 // --- PUSH NOTIFICATIONS ---
 let messagingInstance = null;
@@ -2944,16 +3890,32 @@ async function requestAndSaveFCMToken() {
        });
        if (token) {
           const userRef = fb.doc(fb.db, "users", AppState.user.uid);
-          const currentUTCHour = new Date().getUTCHours();
+          
+          // Get selected time from picker or default to current
+          const picker = document.getElementById('nudgeTimePicker');
+          let nudgeHour = new Date().getUTCHours();
+          if (picker && picker.value) {
+            const [h, m] = picker.value.split(':');
+            nudgeHour = parseInt(h); // Simplified for skeleton
+          }
+
           await fb.setDoc(userRef, {
              pushAsked: true,
              notificationsEnabled: true,
              fcmToken: token,
-             nudgeHourUTC: currentUTCHour,
+             nudgeHourUTC: nudgeHour,
              language: AppState.lang,
              lastEmotion: AppState.currentCheckIn.subEmotion || 'se_neutral'
           }, { merge: true });
-          elements.notifToggleCheckbox.checked = true;
+
+          localStorage.setItem('aura_notifs_enabled', 'true');
+          if (elements.notifToggleCheckbox) elements.notifToggleCheckbox.checked = true;
+          const container = document.getElementById('nudgeTimeContainer');
+          if (container) container.classList.remove('hidden');
+          
+          // Hide Dashboard Banner if permission granted
+          const banner = document.querySelector('.dash-notif-banner');
+          if (banner) banner.classList.add('hidden');
        }
     }
   } catch(e) {
@@ -2961,21 +3923,31 @@ async function requestAndSaveFCMToken() {
   }
 }
 
-elements.notifToggleCheckbox.addEventListener('change', async (e) => {
-  const isEnabled = e.target.checked;
-  if (!fb.isInitialized || !AppState.user) return;
-  
-  if (isEnabled) {
-     if (Notification.permission === 'granted') {
+if (elements.notifToggleCheckbox) {
+  elements.notifToggleCheckbox.addEventListener('change', async (e) => {
+    const isEnabled = e.target.checked;
+    if (isEnabled) {
        await requestAndSaveFCMToken();
-     } else {
-       await requestAndSaveFCMToken(); // re-requests if default
-     }
-  } else {
-     const userRef = fb.doc(fb.db, "users", AppState.user.uid);
-     await fb.setDoc(userRef, { notificationsEnabled: false }, { merge: true });
-  }
-});
+    } else {
+       if (AppState.user) {
+         const userRef = fb.doc(fb.db, "users", AppState.user.uid);
+         await fb.setDoc(userRef, { notificationsEnabled: false }, { merge: true });
+       }
+       localStorage.setItem('aura_notifs_enabled', 'false');
+       const container = document.getElementById('nudgeTimeContainer');
+       if (container) container.classList.add('hidden');
+    }
+  });
+}
+
+const timePicker = document.getElementById('nudgeTimePicker');
+if (timePicker) {
+  timePicker.addEventListener('change', () => {
+    if (localStorage.getItem('aura_notifs_enabled') === 'true') {
+      requestAndSaveFCMToken(); // Update in background
+    }
+  });
+}
 
 // Completion return Home
 elements.returnHomeBtn.addEventListener('click', () => loadDashboard());
@@ -3225,15 +4197,58 @@ function initGalaxyAnimation(dist) {
   }
 
   function animate() {
+<<<<<<< HEAD
+    if (!galaxyAnimationId) return; // Prevent ghost loops
+    ctx.clearRect(0, 0, w, h);
+    
+    // Subtle center glow (Drawn once per frame)
+=======
     ctx.clearRect(0, 0, w, h);
     
     // Subtle center glow
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
     const gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, 100);
     gradient.addColorStop(0, 'rgba(133, 141, 255, 0.08)');
     gradient.addColorStop(1, 'transparent');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, w, h);
 
+<<<<<<< HEAD
+    // Group particles by color for batching
+    const groups = { ventral: [], sympathetic: [], dorsal: [] };
+    const stateKeys = ['ventral', 'sympathetic', 'dorsal'];
+    
+    particles.forEach(p => {
+      p.angle += p.speed;
+      p.pulse += p.pulseSpeed;
+      // Store state key in the particle object during init if not already (adding now for robustness)
+      const colorKey = stateKeys.find(k => colors[k] === p.color) || 'ventral';
+      groups[colorKey].push(p);
+    });
+
+    // Batch Draw by Color
+    stateKeys.forEach(key => {
+      const group = groups[key];
+      if (group.length === 0) return;
+
+      ctx.beginPath();
+      ctx.fillStyle = colors[key];
+      
+      group.forEach(p => {
+        const x = w/2 + Math.cos(p.angle) * p.dist;
+        const y = h/2 + Math.sin(p.angle) * p.dist;
+        const currentOpacity = 0.3 + Math.sin(p.pulse) * 0.2; // Slightly reduced amplitude for batch feel
+        
+        // Use individual arcs but a single fill() - Note: Per-particle opacity is hard with batching
+        // We'll use a global alpha for the group to stay performant, or individual draws if needed.
+        // For MAX performance, we use a shared alpha or a simplified pulse.
+        ctx.moveTo(x + p.radius, y);
+        ctx.arc(x, y, p.radius, 0, Math.PI * 2);
+      });
+      
+      ctx.globalAlpha = 0.6; // Solid average visibility for the whole group
+      ctx.fill();
+=======
     particles.forEach(p => {
       p.angle += p.speed;
       const x = w/2 + Math.cos(p.angle) * p.dist;
@@ -3247,6 +4262,7 @@ function initGalaxyAnimation(dist) {
       ctx.fill();
       
       p.pulse += p.pulseSpeed;
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
     });
     
     ctx.globalAlpha = 1;
@@ -3269,32 +4285,56 @@ async function showCommunityModal() {
     };
 
     personalGrid.innerHTML = `
+<<<<<<< HEAD
+      <div class="stat-card liquid-border">
+=======
       <div class="stat-card">
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
         <span class="stat-label">${AppState.lang === 'tr' ? 'Yolculuk Serisi' : 'Vagal Streak'}</span>
         <span class="stat-value">${stats.streak}</span>
         <span class="stat-sub">${AppState.lang === 'tr' ? 'Gün aktif' : 'Days active'}</span>
       </div>
+<<<<<<< HEAD
+      <div class="stat-card liquid-border">
+=======
       <div class="stat-card">
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
         <span class="stat-label">${AppState.lang === 'tr' ? 'Toplam Kayıt' : 'Total Records'}</span>
         <span class="stat-value">${stats.total}</span>
         <span class="stat-sub">${AppState.lang === 'tr' ? 'Check-in kaydı' : 'Neural check-ins'}</span>
       </div>
+<<<<<<< HEAD
+      <div class="stat-card liquid-border" style="border-left: 2px solid ${stateColorMap[stats.state]}">
+=======
       <div class="stat-card" style="border-left: 2px solid ${stateColorMap[stats.state]}">
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
         <span class="stat-label">${AppState.lang === 'tr' ? 'Baskın Durum' : 'Dominant State'}</span>
         <span class="stat-value" style="color: ${stateColorMap[stats.state]}">${stateLabelMap[stats.state]}</span>
         <span class="stat-sub">${AppState.lang === 'tr' ? 'Son 30 gün' : 'Last 30 days'}</span>
       </div>
+<<<<<<< HEAD
+      <div class="stat-card liquid-border">
+=======
       <div class="stat-card">
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
         <span class="stat-label">${AppState.lang === 'tr' ? 'Sıkça Yapılan' : 'Top Protocol'}</span>
         <span class="stat-value" style="font-size: 1.1rem">${stats.protocol}</span>
         <span class="stat-sub">${stats.protocolIcon}</span>
       </div>
+<<<<<<< HEAD
+      <div class="stat-card liquid-border">
+=======
       <div class="stat-card">
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
         <span class="stat-label">${AppState.lang === 'tr' ? 'Haftalık Ort.' : 'Avg / Week'}</span>
         <span class="stat-value">${stats.avg}</span>
         <span class="stat-sub">${AppState.lang === 'tr' ? 'Senans / Hafta' : 'Sessions / week'}</span>
       </div>
+<<<<<<< HEAD
+      <div class="stat-card liquid-border">
+=======
       <div class="stat-card">
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
         <span class="stat-label">${AppState.lang === 'tr' ? 'Aura Yolculuğu' : 'Aura Voyage'}</span>
         <span class="stat-value" style="font-size: 0.9rem">${stats.memberSince}</span>
         <span class="stat-sub">${AppState.lang === 'tr' ? 'Başlangıç' : 'Commenced'}</span>
@@ -3339,8 +4379,15 @@ async function switchCommTab(tabId) {
     document.getElementById('distDorsal').style.width = `${dist.dorsal}%`;
     
     const topProt = commData.top_protocol;
+<<<<<<< HEAD
+    const cp = document.getElementById('commTopProtocol');
+    if (cp) cp.textContent = protocols[topProt] ? protocols[topProt].title : '-';
+    const can = document.getElementById('commActiveNow');
+    if (can) can.textContent = commData.active_now;
+=======
     document.getElementById('commTopProtocol').textContent = protocols[topProt] ? protocols[topProt].title : '-';
     document.getElementById('commActiveNow').textContent = commData.active_now;
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
     
     if (commData.pending) document.getElementById('commPlaceholderNote').classList.remove('hidden');
     else document.getElementById('commPlaceholderNote').classList.add('hidden');

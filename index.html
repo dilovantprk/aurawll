@@ -12,6 +12,9 @@
   <link rel="stylesheet" href="style.css?v=64">
 </head>
 <body>
+  <!-- Dedicated Layer for Whole-Screen Visual Breath Sync -->
+  <div id="aura-background"></div>
+
   <script>
     function showErrorOnScreen(msg) {
       if (document.readyState === 'loading') {
@@ -89,13 +92,22 @@
 
         <!-- Screen 3: Method -->
         <div class="onb-screen hidden" style="opacity: 0; position: absolute;">
-          <div class="mb-4" style="font-size: 2.5rem; display: flex; gap: 1.5rem; justify-content: center;">
-            <span style="opacity: 0.9;">✅</span>
-            <span style="opacity: 0.9;">🫁</span>
-            <span style="opacity: 0.9;">✨</span>
+          <div class="onb-icon-trio mb-8">
+            <!-- Calibration Icon -->
+            <div class="onb-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <!-- Resonance Icon -->
+            <div class="onb-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M7 12c0-3 2-5 5-5s5 2 5 5-2 5-5 5-5-2-5-5z"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10l2 2M5 19l2-2m10-10l2-2"/></svg>
+            </div>
+            <!-- Insight Icon -->
+            <div class="onb-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 3v3m0 12v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M3 12h3m12 0h3M4.2 19.8l2.1-2.1m11.4-11.4l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
           </div>
-          <h1 data-i18n="onb_3_title">Check in. Regulate. Absorb.</h1>
-          <p data-i18n="onb_3_sub" style="font-size: 1.1rem; line-height: 1.6; color: var(--text-muted); padding: 0 1rem;"></p>
+          <h1 class="onb-title-technical" data-i18n="onb_3_title">Check in. Regulate. Absorb.</h1>
+          <p class="onb-subtitle-refined" data-i18n="onb_3_sub"></p>
         </div>
 
         <!-- Screen 4: Invitation -->
@@ -158,7 +170,6 @@
            <button class="nav-link active" data-view="dashboard" data-i18n="nav_home">Home</button>
            <button class="nav-link" data-view="meditations" data-i18n="nav_breathe">Breathe</button>
            <button class="nav-link" data-view="notebook" data-i18n="nav_notebook">Notes</button>
-           <button class="nav-link" data-view="insight" data-i18n="nav_insight">Insight</button>
            <button class="nav-link" data-view="settings" data-i18n="nav_profile">Profile</button>
         </div>
       </div>
@@ -179,15 +190,55 @@
           <div class="dash-main">
 
             <!-- Big CTA for Check-In -->
-            <button id="startCheckinBtn" class="hero-btn glass-panel pulse-hover">
-              <div class="hero-icon">✨</div>
-              <h3 data-i18n="dash_start">Start Check-in</h3>
-              <p data-i18n="dash_start_desc">3-5 minutes intended for you.</p>
+            <button id="startCheckinBtn" class="hero-btn cockpit-card liquid-border pulse-hover">
+              <div class="cockpit-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.5" stroke-dasharray="2 2"/>
+                  <path d="M12 7V12L15 15" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 2V4M12 20V22M2 12H4M20 12H22" stroke="white" stroke-width="1.2" opacity="0.4"/>
+                </svg>
+              </div>
+              <div class="cockpit-content">
+                <span class="cockpit-label" data-i18n="dash_start_label">PROTOCOL</span>
+                <h3 data-i18n="dash_start" class="cockpit-title">Start Check-in</h3>
+                <p data-i18n="dash_start_desc" class="cockpit-text">3-5 minutes intended for you.</p>
+              </div>
             </button>
 
             <!-- Weekly Patterns Section -->
             <div class="patterns-wrapper fade-in-up delay-1">
               <h3 data-i18n="dash_weekly" class="section-title">Weekly Patterns</h3>
+<<<<<<< HEAD
+
+              <!-- Vagal Heatmap Card (Now at the TOP of patterns) -->
+              <div id="vagalHeatmapCard" class="vagal-heatmap-card liquid-border hidden mb-4">
+                <button class="cockpit-info-btn" data-info="info_heatmap_desc">i</button>
+                <div class="vagal-triangle-container">
+                  <div class="vagal-vertex v-ventral" data-i18n="vagal_ventral">Ventral</div>
+                  <div class="vagal-vertex v-dorsal" data-i18n="vagal_dorsal">Dorsal</div>
+                  <div class="vagal-vertex v-sympathetic" data-i18n="vagal_symp">Sympathetic</div>
+                  <div id="vagalMetaballContainer" class="vagal-metaball-container">
+                    <div id="vagalBlob" class="vagal-blob"></div>
+                    <div id="vagalTraces" class="vagal-traces"></div>
+                  </div>
+                </div>
+                <!-- Technical Navigation Label -->
+                <div class="vagal-router-footer">
+                  <span data-i18n="vagal_router_label">SINIR SİSTEMİ ROTAN</span>
+                </div>
+              </div>
+              
+              <!-- Timeline Header -->
+              <div id="weeklyTimeline" class="timeline-header-v2">
+                <!-- Rendered by JS -->
+              </div>
+
+              <div class="cockpit-grid">
+                <!-- Vagal Resilience Card (Small) -->
+                <!-- Vagal Resilience Card (Small) -->
+                <div id="resilienceBar" class="cockpit-card-mini liquid-border hidden">
+                  <button class="cockpit-info-btn" data-info="info_resilience_desc">i</button>
+=======
               
               <!-- Timeline Header (Now outside the main cards) -->
               <div id="weeklyTimeline" class="timeline-header-v2">
@@ -197,13 +248,18 @@
               <div class="cockpit-grid">
                 <!-- Vagal Resilience Card (Small) -->
                 <div id="resilienceBar" class="cockpit-card-mini hidden">
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
                   <div class="resilience-header">
-                    <span class="resilience-label" data-i18n="dash_resilience">Esneklik</span>
-                    <span id="resilienceLevel" class="resilience-level">—</span>
+                    <span class="resilience-label" data-i18n="dash_resilience_flow">ESNEKLİK AKIŞI</span>
+                    <span id="resilienceScore" class="resilience-score">0</span>
                   </div>
                   <div class="resilience-track">
                     <div id="resilienceFill" class="resilience-fill"></div>
                   </div>
+<<<<<<< HEAD
+                  <div class="resilience-footer">
+                    <span id="resilienceStatus" class="resilience-status">...</span>
+=======
                 </div>
 
                 <!-- AI Insight Card -->
@@ -215,6 +271,7 @@
                   </div>
                   <div class="cockpit-content">
                     <p id="insightText" class="cockpit-text"></p>
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
                   </div>
                 </div>
                 
@@ -229,6 +286,39 @@
                   </div>
               </div>
 
+<<<<<<< HEAD
+                <!-- AI Insight Card -->
+                <div id="weeklyInsight" class="cockpit-card liquid-border hidden">
+                  <button class="cockpit-info-btn" data-info="info_insight_desc">i</button>
+                  <div class="cockpit-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 10H8.01M12 10H12.01M16 10H16.01M21 12C21 16.9706 16.9706 21 12 21C10.5111 21 9.10657 20.638 7.87103 20C4.94632 20.5 3 18.5 3.5 15.5C2.56303 14.4717 2 13.1111 2 11.625C2 6.30926 6.47715 2 12 2C17.5228 2 22 6.30926 22 11.625C22 11.7511 21.9966 11.8764 21.99 12.0009C21.9965 11.9904 21.9965 11.9798 21.99 11.9693" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="cockpit-content">
+                    <span class="cockpit-label" data-i18n="dash_summary">ÖZET</span>
+                    <p id="insightText" class="cockpit-text"></p>
+                  </div>
+                </div>
+                
+                <!-- Frequently Used Exercise Card -->
+                <div id="weeklyExercise" class="cockpit-card liquid-border hidden">
+                  <button class="cockpit-info-btn" data-info="info_exercise_desc">i</button>
+                  <div class="cockpit-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 22V17M12 17C12 17 11 15 9 15C7 15 5 16.5 5 18.5C5 20.5 7 22 9 22C10.5 22 11.5 21.25 12 20.5M12 17C12 17 13 15 15 15C17 15 19 16.5 19 18.5C19 20.5 17 22 15 22C13.5 22 12.5 21.25 12 20.5M12 17V8M12 8L16 4M12 8L8 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M9 12C7.34315 12 6 10.6569 6 9C6 7.34315 7.34315 6 9 6C10.6569 6 12 7.34315 12 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M15 12C16.6569 12 18 10.6569 18 9C18 7.34315 16.6569 6 15 6C13.3431 6 12 7.34315 12 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="cockpit-content">
+                    <span class="cockpit-label" data-i18n="dash_exercise_title">Most Used Exercise</span>
+                    <strong id="insightExText" class="cockpit-title">...</strong>
+                  </div>
+                </div>
+              </div>
+
+=======
               <!-- Vagal Heatmap Card (Small fallback if cards hidden) -->
               <div id="vagalHeatmapCard" class="vagal-heatmap-card hidden mt-4">
                 <div class="vagal-triangle-container">
@@ -241,6 +331,7 @@
                   </div>
                 </div>
               </div>
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
               
               <div id="weeklyEmpty" class="empty-state hidden" data-i18n="dash_no_weekly">
                 Complete a few more loops to unlock your patterns.
@@ -263,59 +354,65 @@
       </div>
     </section>
 
-    <!-- STEP 1: STATE PICKER -->
-    <section id="view-state-picker" class="view hidden center-content">
-      <div class="step-header fade-in">
+    <!-- STEP 1: SOMATIC ENTRY -->
+    <section id="view-somatic-entry" class="view hidden center-content">
+      <div class="step-header fade-in" style="position: relative;">
+        <button class="cockpit-info-btn checkin-info-btn" data-info="info_step1_desc">i</button>
         <span class="step-indicator" data-i18n="step_1">Step 1 of 6</span>
-        <h2 data-i18n="picker_title">How does your body feel right now?</h2>
+        <h2 data-i18n="somatic_title">How does your body feel right now?</h2>
+        <p class="subtitle" data-i18n="somatic_subtitle" style="opacity: 0.6; margin-top: 0.5rem;">Select up to 3 options.</p>
       </div>
 
-      <div class="state-options fade-in-up delay-1">
-        
-        <button class="state-card glass-panel vagal-reactive" data-state="wired">
-          <div class="state-icon wired-icon">⚡️</div>
-          <div class="state-card-info">
-            <h3 data-i18n="state_wired">Wired</h3>
-            <p data-i18n="state_wired_desc">Overstimulated, racing thoughts, restless.</p>
-          </div>
-        </button>
-
-        <button class="state-card glass-panel vagal-reactive" data-state="foggy">
-          <div class="state-icon foggy-icon">☁️</div>
-          <div class="state-card-info">
-            <h3 data-i18n="state_foggy">Foggy</h3>
-            <p data-i18n="state_foggy_desc">Understimulated, heavy, disconnected.</p>
-          </div>
-        </button>
-
-        <button class="state-card glass-panel vagal-reactive" data-state="okay">
-          <div class="state-icon okay-icon">🌱</div>
-          <div class="state-card-info">
-            <h3 data-i18n="state_okay">Okay</h3>
-            <p data-i18n="state_okay_desc">Regulated, present, calm.</p>
-          </div>
-        </button>
-
-      </div>
-    </section>
-
-    <!-- STEP 2: SUB-EMOTION PICKER -->
-    <section id="view-sub-emotion" class="view hidden center-content">
-      <div class="step-header fade-in">
-        <span class="step-indicator" data-i18n="step_2">Step 2 of 6</span>
-        <h2 id="subEmotionTitle">You feel Wired. Can you pinpoint it?</h2>
-      </div>
-
-      <!-- dynamic chips -->
-      <div id="subEmotionContainer" class="sub-emotion-grid fade-in-up delay-1">
+      <div id="somaticContainer" class="rhizome-container fade-in-up delay-1">
         <!-- Rendered by JS -->
       </div>
       
-      <!-- 'Other' Custom Input -->
-      <div id="otherInputContainer" class="hidden other-input-wrap fade-in-up delay-1">
-        <input type="text" id="customSubEmotionInput" data-i18n-prop="placeholder:sub_custom_placeholder" class="glass-input" placeholder="Describe what you feel...">
-        <button id="customSubEmotionBtn" class="primary-btn mt-4" data-i18n="sub_btn_continue">Continue to Exercise</button>
+      <!-- HUD removed from here, moving to globalHUD -->
+    </section>
+
+    <!-- STEP 2: AFFECT GRID -->
+    <section id="view-affect-grid" class="view hidden center-content">
+      <div class="step-header fade-in" style="position: relative;">
+        <button class="cockpit-info-btn checkin-info-btn" data-info="info_step2_desc">i</button>
+        <span class="step-indicator" data-i18n="step_2">Step 2 of 6</span>
+        <h2 data-i18n="grid_title">Tap the grid to pinpoint your state</h2>
       </div>
+
+      <div class="grid-container-wrapper fade-in-up delay-1" style="margin: 2rem 0;">
+        <div id="affect-grid" class="relative-grid">
+          <span class="label grid-label top" data-i18n="grid_label_high_energy">High Energy</span>
+          <span class="label grid-label bottom" data-i18n="grid_label_low_energy">Low Energy</span>
+          <span class="label grid-label left" data-i18n="grid_label_hard">Hard</span>
+          <span class="label grid-label right" data-i18n="grid_label_easy">Easy</span>
+          
+          <div id="suggestion-dot" class="suggestion-dot"></div>
+          <div id="user-dot" class="user-dot hidden"></div>
+          
+          <div id="grid-touch-area"></div>
+          
+          <!-- Quadrant Labels -->
+          <span class="grid-quadrant-label grid-quad_tr" data-i18n="grid_quad_tr"></span>
+          <span class="grid-quadrant-label grid-quad_tl" data-i18n="grid_quad_tl"></span>
+          <span class="grid-quadrant-label grid-quad_bl" data-i18n="grid_quad_bl"></span>
+          <span class="grid-quadrant-label grid-quad_br" data-i18n="grid_quad_br"></span>
+        </div>
+      </div>
+      <!-- HUD removed from here, moving to globalHUD -->
+    </section>
+
+    <!-- STEP 2B: EMOTION REFINEMENT -->
+    <section id="view-emotion-refinement" class="view hidden center-content">
+      <div class="step-header fade-in" style="position: relative;">
+        <button class="cockpit-info-btn checkin-info-btn" data-info="info_step2b_desc">i</button>
+        <span class="step-indicator" data-i18n="step_2b">Step 2B of 6</span>
+        <h2 data-i18n="emotion_title">How would you name this feeling?</h2>
+        <p class="subtitle" data-i18n="emotion_subtitle" style="opacity: 0.6; margin-top: 0.5rem;">Pick what resonates most (max 3)</p>
+      </div>
+
+      <div id="emotionRefinementContainer" class="rhizome-container fade-in-up delay-1">
+        <!-- Rendered by JS -->
+      </div>
+      <!-- HUD removed from here, moving to globalHUD -->
     </section>
 
     <!-- STEP 2.5: MEDITATION LOADING -->
@@ -329,25 +426,24 @@
             <circle class="loading-circle-bg" cx="50" cy="50" r="45"></circle>
             <circle id="loadingCircleProgress" class="loading-circle-fill" cx="50" cy="50" r="45"></circle>
           </svg>
-          <div class="loading-icon">🧘</div>
+          <div class="loading-icon stagger-1">5</div>
         </div>
-
         <div class="loading-text-box mt-4">
           <h2 id="meditationLoadingTitle">Protocol...</h2>
-          <p data-i18n="meditation_loading_desc">Hazırlanıyoruz...</p>
+          <p data-i18n="meditation_loading_desc">Preparing session...</p>
         </div>
 
-        <button id="skipLoadingBtn" class="ghost-btn mt-4" data-i18n="btn_skip_loading">Atla</button>
+        <!-- loadingHUD removed, moving to globalHUD -->
       </div>
     </section>
 
     <!-- STEP 3: REGULATION EXERCISE -->
     <section id="view-exercise" class="view hidden center-content">
-      <div class="step-header fade-in">
+      <div class="step-header fade-in" style="position: relative;">
+        <button class="cockpit-info-btn checkin-info-btn" data-info="info_step3_desc">i</button>
         <span class="step-indicator" data-i18n="step_3">Step 3 of 6</span>
-        <h2 id="exerciseTitle">Breathe</h2>
-        <p id="exerciseMicrocopy" class="exercise-microcopy"></p>
-        <p id="exerciseDesc" data-i18n="ex_follow">Follow the circle.</p>
+        <h2 id="exerciseTitle" data-i18n="ex_title">Breathe</h2>
+        <p id="exerciseDesc" data-i18n="ex_follow" style="opacity: 0.6; font-size: 0.9rem;">Follow the circle.</p>
       </div>
 
       <!-- Breathing Visualizer -->
@@ -357,15 +453,13 @@
         </div>
       </div>
 
-      <div class="exercise-controls fade-in delay-2">
-        <button id="startExerciseBtn" class="primary-btn hidden" style="display: none !important;">Begin (<span id="exerciseDuration">3:00</span>)</button>
-        <button id="skipExerciseBtn" class="ghost-btn" data-i18n="btn_skip">Skip for now</button>
-      </div>
+      <!-- exerciseHUD removed, moving to globalHUD -->
     </section>
 
     <!-- STEP 4: MARINATION & SAVORING LOG -->
     <section id="view-savoring" class="view hidden center-content">
-      <div class="step-header fade-in">
+      <div class="step-header fade-in" style="position: relative;">
+        <button id="savoringInfoBtn" class="cockpit-info-btn checkin-info-btn" data-info="info_step4_desc">i</button>
         <span id="savoringStepIndicator" class="step-indicator" data-i18n="step_4">Step 4 of 6</span>
       </div>
 
@@ -374,18 +468,14 @@
         <h2 class="soft-pulse" data-i18n="mar_notice">Notice what's shifted in your body right now.</h2>
       </div>
 
-      <!-- Phase 2: Sensation Selector -->
-      <div id="marPhase2" class="marination-phase fade-in-up hidden">
-        <h2 data-i18n="mar_what_do_you_feel" style="margin-bottom:1.5rem">What do you feel?</h2>
-        <div class="sensation-pills">
-          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_lighter" data-i18n="mar_lighter">Lighter</button>
-          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_slower" data-i18n="mar_slower">Slower</button>
-          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_warmer" data-i18n="mar_warmer">Warmer</button>
-          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_clearer" data-i18n="mar_clearer">Clearer</button>
-          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_calmer" data-i18n="mar_calmer">Calmer</button>
-          <button class="pill-btn glass-btn vagal-reactive" data-sense="mar_tense" data-i18n="mar_tense">Still tense</button>
+      <!-- Phase 2: Sensation Selection -->
+      <div id="marPhase2" class="marination-phase hidden">
+        <h2 data-i18n="mar_notice" style="font-weight: 500; margin-bottom: 2rem;">Notice what's shifted.</h2>
+        <div class="neural-hive-wrapper">
+          <div id="marSensationContainer" class="rhizome-container hive-grid">
+            <!-- Hexagonal Cells Rendered by JS -->
+          </div>
         </div>
-        <button id="marContinueBtn" class="primary-btn mt-4" data-i18n="mar_continue">Continue</button>
       </div>
 
       <!-- Phase 2b: Meditation Offer -->
@@ -404,15 +494,29 @@
       </div>
 
       <!-- Phase 3: Savoring Log (Step 6) -->
-      <div id="marPhase3" class="marination-phase fade-in-up hidden">
-        <h2 data-i18n="sav_title" style="margin-bottom: 0.5rem">What's one good thing you noticed today?</h2>
-        <p data-i18n="sav_desc" style="margin-bottom: 1.5rem; color: var(--text-muted)">A savoring moment to complete the loop.</p>
-        <form id="savoringForm" class="savoring-form">
-          <textarea id="savoringInput" class="glass-input" rows="4" data-i18n-prop="placeholder:sav_placeholder" placeholder="(e.g. the smell of coffee, a warm breeze...)" required></textarea>
-          <button type="submit" id="finishLoopBtn" class="primary-btn" data-i18n="btn_complete">Complete & Save</button>
-        </form>
+      <div id="marPhase3" class="marination-phase hidden" style="width: 100%;">
+        <h2 data-i18n="mar_savor_title" style="font-weight: 500; margin-bottom: 0.5rem;">What was one good thing you noticed today?</h2>
+        <p style="opacity: 0.6; font-size: 0.9rem; margin-bottom: 2rem;" data-i18n="mar_savor_subtitle">A moment of focus to complete the loop.</p>
+        
+        <div style="position: relative; width: 100%; max-width: 400px; margin: 0 auto;">
+          <textarea id="savoringNote" 
+            class="glass-panel" 
+            style="width: 100%; min-height: 150px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 1.5rem; color: #fff; font-family: inherit; font-size: 1rem; resize: none; outline: none; transition: border-color 0.3s ease;"
+            placeholder="(e.g., smell of coffee, a warm breeze, finishing a small task...)"
+            data-i18n-placeholder="mar_savor_placeholder"></textarea>
+        </div>
       </div>
+
+
+      <!-- marinationHUD removed, moving to globalHUD -->
     </section>
+
+    <!-- CENTRALIZED GLOBAL HUD (Skeleton) -->
+    <div id="globalHUD" class="hud-actions">
+      <button id="globalHUDBtn" class="hud-btn">
+        <!-- Icon injected by JS -->
+      </button>
+    </div>
 
     <!-- Completion Overlay -->
     <section id="view-completion" class="view hidden center-content">
@@ -456,6 +560,8 @@
       </div>
     </section>
 
+<<<<<<< HEAD
+=======
     <!-- INSIGHT VIEW (The Vagal Mirror) -->
     <section id="view-insight" class="view hidden">
       <div class="standard-view-content">
@@ -503,6 +609,7 @@
 
       </div>
     </section>
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
     <!-- SETTINGS / PROFILE VIEW -->
     <section id="view-settings" class="view hidden">
       <div class="settings-content standard-view-content fade-in-up">
@@ -555,6 +662,24 @@
              </div>
 
              <!-- Nudges -->
+<<<<<<< HEAD
+             <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; border-top: 1px solid rgba(255,255,255,0.05); flex-direction: column; gap: 1rem;">
+                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                       <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="dash_daily_nudges">Günlük Hatırlatıcılar</span>
+                    </div>
+                    <label class="toggle-switch">
+                       <input type="checkbox" id="notifToggleCheckbox">
+                       <span class="slider"></span>
+                    </label>
+                 </div>
+                 <div id="nudgeTimeContainer" class="hidden" style="display: flex; align-items: center; justify-content: space-between; padding-left: 2.5rem; transition: all 0.3s ease;">
+                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4);" data-i18n="prof_reminder_time">Hatırlatma Saati</span>
+                    <input type="time" id="nudgeTimePicker" class="glass-input" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 4px 8px; color: white; font-size: 0.85rem;">
+                 </div>
+              </div>
+=======
              <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05);">
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
@@ -565,6 +690,7 @@
                    <span class="slider"></span>
                 </label>
              </div>
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
 
              <!-- Volume -->
              <div class="settings-row" style="padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.05);">
@@ -742,15 +868,6 @@
         </div>
         <span class="nav-label" data-i18n="nav_notebook">Notes</span>
       </button>
-      <button id="navInsight" class="nav-item" data-view="insight" aria-label="Insight">
-        <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        </div>
-        <span class="nav-label">Insight</span>
-      </button>
       <button id="navProfile" class="nav-item" data-view="settings" aria-label="Profile">
         <div class="nav-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -765,7 +882,7 @@
   </div>
 
   <!-- Vagal Deep Dive Modal -->
-  <div id="vagalModal" class="modal hidden">
+  <div id="vagalModal" class="modal">
     <div class="modal-backdrop"></div>
     <div class="modal-content glass-panel">
       <button id="closeVagalModal" class="info-close-btn">✕</button>
@@ -778,6 +895,10 @@
     </div>
   </div>
 
+<<<<<<< HEAD
+  <script type="module" src="app.js?v=202"></script>
+=======
   <script type="module" src="app.js?v=200"></script>
+>>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
 </body>
 </html>
