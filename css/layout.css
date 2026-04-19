@@ -1,0 +1,605 @@
+/* --- MOBILE BOTTOM NAVIGATION --- */
+/* --- Aura Desktop Reform v79 --- */
+/* Unified with global body style above */
+
+/* Fluid Typography */
+.logo-large { font-size: clamp(2.5rem, 8vw, 5rem); }
+#greetingText { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 500; }
+.section-title { 
+  color: rgba(255, 255, 255, 0.2);
+  margin-bottom: 1rem;
+}
+
+/* Global Centered Layout Utility (Profile Logic v3) */
+.standard-view-content {
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 6rem 1rem; /* Faster top-entry on mobile */
+}
+
+/* Wide Dashboard View Content */
+.dashboard-view-content {
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 6rem 1rem;
+}
+
+/* DESKTOP REFINEMENTS (1024px+) */
+@media (min-width: 768px) {
+  .standard-view-content {
+    max-width: 800px;      /* Unified Desktop Width Protocol */
+    padding-top: 6.5rem;   /* Standard Glass Island Buffer */
+    padding-bottom: 4rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .standard-view-content {
+    max-width: 800px;
+    padding-top: 6.5rem;
+  }
+
+  .dashboard-view-content {
+    max-width: 900px;
+    padding-top: 6.5rem;
+    padding-bottom: 8rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  /* Dual Column Grid for Dashboard */
+  .dash-grid-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 3rem;
+    align-items: start;
+    width: 100%;
+  }
+}
+
+/* Mobile Specific Width Polish */
+@media (max-width: 600px) {
+  .dashboard-view-content, .standard-view-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .dash-grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+#view-insight .standard-view-content {
+  max-width: 520px; 
+}
+
+.dash-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dash-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Settings Utility Classes */
+.pt-24 { padding-top: 6rem !important; }
+.pb-32 { padding-bottom: 8rem !important; }
+
+/* Settings Button Hover States */
+.hover\:bg-red-500\/10:hover { background: rgba(239, 68, 68, 0.1) !important; }
+.hover\:bg-emerald-500\/10:hover { background: rgba(16, 185, 129, 0.1) !important; }
+.group:hover .group-hover\:text-red-400 { color: #f87171 !important; }
+.group:hover .group-hover\:text-emerald-400 { color: #34d399 !important; }
+
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .view {
+    padding: clamp(2rem, 5vw, 4rem) 2rem;
+    max-width: 1400px;
+  }
+
+  .dash-grid-wrapper {
+    display: grid;
+    grid-template-areas: 
+      "greet ."
+      "main side";
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1.5rem 4rem;
+    align-items: start;
+  }
+
+  .welcome-box { grid-area: greet; }
+  .dash-main { grid-area: main; }
+  .dash-side { grid-area: side; }
+  
+  .desktop-nav { 
+    display: none; 
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+  }
+  
+  body.is-authenticated:not(.nav-hidden) .desktop-nav { 
+    display: block; 
+    opacity: 1;
+  }
+  
+  #mobile-nav, .mobile-nav { display: none !important; }
+  #main-header { display: none !important; }
+}
+
+/* Glass Island Navigation */
+.desktop-nav {
+  position: fixed;
+  top: 1.5rem;
+  left: 0;
+  width: 100%;
+  z-index: 2000;
+  display: none;
+}
+
+.nav-island {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(15, 15, 20, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  padding: 0.6rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.nav-brand {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: #fff;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: color 0.3s ease, background 0.3s ease, transform 0.3s ease;
+}
+
+.nav-link:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+.nav-link.active { color: #fff; background: rgba(255, 255, 255, 0.08); font-weight: 500; }
+.mobile-nav {
+  position: fixed;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 480px); /* Sync with app-container width */
+  height: 72px;
+  background: rgba(15, 15, 20, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 36px;
+  display: flex !important;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  will-change: transform;
+}
+
+.mobile-nav.nav-hidden {
+  transform: translate(-50%, 150%);
+  opacity: 0;
+  pointer-events: none;
+  display: flex !important;
+}
+
+.mobile-nav.nav-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0.5rem 0.3rem;
+  border-radius: 16px;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  position: relative;
+  flex: 1;
+}
+
+.nav-icon {
+  transition: transform 0.3s var(--spring-easing), stroke 0.3s ease;
+  opacity: 0.8; /* Increased from 0.6 for better visibility */
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  opacity: 0.7;
+}
+
+.nav-item.active {
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.nav-item.active .nav-icon {
+  opacity: 1;
+  stroke: var(--accent-primary);
+  filter: drop-shadow(0 0 12px rgba(133, 141, 255, 0.6));
+}
+
+.nav-item.active .nav-label {
+  color: var(--accent-primary);
+  opacity: 1;
+}
+
+.nav-item:active {
+  transform: scale(0.95);
+}
+
+/* Add padding to views when nav is visible so content isn't hidden behind the nav */
+body.has-nav .view {
+  padding-bottom: calc(5rem + var(--safe-bottom));
+}
+body.has-nav .dashboard-content {
+  padding-bottom: 2rem;
+}
+
+/* --- MEDITATIONS VIEW --- */
+.meditations-content {
+  width: 100%;
+  padding-top: 1rem;
+}
+
+/* --- UNIFIED VIEW HEADERS --- */
+.view-header {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.view-header h2 {
+  font-size: clamp(1.6rem, 8vw, 2.2rem);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.view-header p {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.meditations-content {
+  position: relative;
+}
+
+.meditations-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 400px;
+  width: 100%;
+}
+
+/* Filter Chips */
+.filter-chips-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.filter-chips-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.filter-chip {
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.filter-chip.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Category Specific Active States */
+.filter-chip.active[data-category="calm"] {
+  background: rgba(133, 141, 255, 0.2);
+  border-color: rgba(133, 141, 255, 0.4);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(133, 141, 255, 0.2);
+}
+
+.filter-chip.active[data-category="focus"] {
+  background: rgba(200, 140, 255, 0.2);
+  border-color: rgba(200, 140, 255, 0.4);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(200, 140, 255, 0.2);
+}
+
+/* Recommended Section */
+.rec-section-container {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.rec-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+
+.rec-scroll-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.rec-scroll-row::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.rec-scroll-row .meditation-card {
+  flex: 0 0 280px; /* Fixed width for recommendation cards */
+  max-width: 280px;
+}
+
+.rec-card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 3px 8px;
+  border-radius: 100px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.meditation-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  position: relative; /* Anchor for the badge */
+  
+  /* Filtering Transition Properties */
+  max-height: 200px;
+  opacity: 1;
+  margin: 0px;
+  overflow: hidden;
+  transition: opacity 0.4s ease, max-height 0.4s ease, margin 0.4s ease, padding 0.4s ease, transform 0.3s ease, flex-basis 0.4s ease, width 0.4s ease;
+}
+
+.meditation-card.hidden-protocol {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  flex-basis: 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  border: none !important;
+  pointer-events: none;
+}
+
+.meditation-card:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.meditation-card:active {
+  transform: scale(0.97);
+}
+
+.marination-phase {
+  width: 100%;
+  max-width: 600px;
+  min-height: 450px;
+  padding: 2rem;
+  display: none; /* Changed to display:none by default */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  text-align: center;
+}
+.marination-phase:not(.hidden) {
+  display: flex !important;
+}
+
+.meditation-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(133, 141, 255, 0.1);
+  border: 1px solid rgba(133, 141, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.meditation-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.meditation-card-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.meditation-card-meta {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65); /* Increased contrast */
+  font-weight: 300;
+}
+
+.meditation-card-arrow {
+  color: rgba(255, 255, 255, 0.5); /* Clearer presence */
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.meditation-card:hover .meditation-card-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* --- DESKTOP REFINEMENTS FOR MEDITATIONS (768px+) --- */
+@media (min-width: 768px) {
+  #view-meditations .standard-view-content {
+    max-width: 800px; /* Wider canvas for desktop list */
+    padding-top: 8.5rem; /* Increased top space as requested */
+    padding-bottom: 4rem; /* Less excessive bottom space */
+  }
+
+  /* Stable 2-Column Grid for Meditations */
+  #view-meditations .meditations-list {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    width: 100%;
+  }
+
+  #view-meditations .meditations-list .meditation-card {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Unified Profile Width & Alignment (540px for better presence) */
+  #view-settings .standard-view-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #view-settings .identity-card-v2,
+  #view-settings .stagger-2,
+  #view-settings .stagger-3 {
+    width: 100% !important;
+    max-width: 540px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* --- INSIGHT (THE VAGAL MIRROR) DESKTOP OVERHAUL --- */
+  #view-insight .standard-view-content {
+    padding-top: 6rem;
+  }
+
+  #view-insight .heatmap-container {
+    height: 420px !important;
+  }
+
+  #view-insight .vagal-triangle-container {
+    max-width: 400px !important;
+    margin-top: 40px;
+  }
+
+  #insight-hero-title {
+    font-size: 2.4rem;
+  }
+
+  /* Insight cards: better spacing on wide screens */
+  #view-insight .glass-panel {
+    padding: 2.5rem 2rem;
+  }
+}
+
+
+body.nav-hidden #main-header,
+body.nav-hidden .desktop-nav {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}

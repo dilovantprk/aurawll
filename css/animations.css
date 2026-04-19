@@ -1,0 +1,431 @@
+/* --- Antigravity v2 Sensory UI --- */
+
+/* === BIO-JITTER (Wired State) === */
+@keyframes bio-jitter {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(0.5px, -0.3px); }
+  40%  { transform: translate(-0.4px, 0.5px); }
+  60%  { transform: translate(0.3px, 0.4px); }
+  80%  { transform: translate(-0.5px, -0.5px); }
+  100% { transform: translate(0, 0); }
+}
+
+body.state-wired .vagal-reactive {
+  animation: bio-jitter 0.12s infinite linear !important;
+  filter: blur(0.4px);
+  transition: filter 0.3s ease, animation 0.3s ease;
+}
+
+/* === DORSAL PULSATION (Foggy State) === */
+@keyframes dorsal-breathe {
+  0%, 100% { transform: scale(0.98); opacity: 0.85; }
+  50%      { transform: scale(1.02); opacity: 1; }
+}
+
+body.state-foggy .vagal-reactive {
+  animation: dorsal-breathe 4s ease-in-out infinite !important;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* === OKAY STATE — Clean, no effects === */
+body.state-okay .vagal-reactive {
+  animation: none !important;
+  filter: none !important;
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* === THE RESOLUTION — Entropy → Order === */
+body.state-resolved .vagal-reactive {
+  animation: none !important;
+  filter: none !important;
+  transform: scale(1) !important;
+  opacity: 1 !important;
+  transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Support for Success Glow via Pseudo-element for smooth cross-browser fade */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(
+    circle at 50% 40%,
+    rgba(100, 228, 159, 0.35) 0%,
+    rgba(168, 230, 207, 0.15) 40%,
+    transparent 80%
+  );
+  opacity: 0;
+  transition: opacity 3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Success Glow: Completion Chromotherapy */
+body.state-resolved::before {
+  opacity: 1 !important;
+}
+
+.aw-core.focusing {
+  transform: scale(1.4);
+  box-shadow: 0 0 80px rgba(255, 255, 255, 0.8);
+}
+
+.focusing-text {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-main);
+  opacity: 0;
+  transition: opacity 1s ease;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.aw-core.focusing .focusing-text {
+  animation: softPulse 2s infinite;
+}
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.completion-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 400px;
+}
+
+.success-icon {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 4px 15px rgba(255, 255, 255, 0.4));
+}
+
+.completion-box h2 {
+  font-size: 2.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.completion-box p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 3rem;
+}
+
+/* Interactive elements get bio-reactive behavior via body state class */
+.nav-item, .hero-btn, .state-card, .primary-btn, .pill-btn, .ghost-btn {
+  /* Bio-reactivity is inherited from body.state-* .vagal-reactive */
+  transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+/* === VAGAL PLASTICITY / RESILIENCE BAR === */
+.cockpit-card-mini {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 1.8rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.resilience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 0.8rem;
+}
+
+.resilience-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.resilience-score {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+}
+
+.resilience-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.resilience-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 100px;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1), background 1s ease;
+}
+
+/* === CRYSTAL CLARITY (Dashboard Entry) === */
+@keyframes crystalClarify {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+body.crystal-entry .app-container {
+  animation: crystalClarify 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* === ENERGY PATH (SVG Spline on Heatmap) === */
+.vagal-energy-path {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.energy-spline {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: drawSpline 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+}
+
+@keyframes drawSpline {
+  to { stroke-dashoffset: 0; }
+}
+
+/* === COMPASSIONATE INTERVENTION === */
+.compassion-mode {
+  border-left: 3px solid rgba(255, 170, 117, 0.5) !important;
+  background: rgba(255, 170, 117, 0.04) !important;
+}
+
+.compassion-mode .insight-text {
+  font-style: italic;
+  line-height: 1.7;
+}
+
+/* --- UNIFIED LOADER --- */
+.loader-circle {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 3rem auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Guest CTA Box */
+.guest-cta-box {
+  transition: all 0.5s ease-in-out;
+  margin: 0 auto 2rem auto;
+}
+.guest-cta-box .glass-panel {
+  border-color: rgba(133, 141, 255, 0.3);
+  box-shadow: 0 0 20px rgba(133, 141, 255, 0.1), inset 0 0 10px rgba(133, 141, 255, 0.05);
+}
+/* --- DEEP JOURNEY SPECIFIC STYLES --- */
+.deep-journey-card {
+  background: linear-gradient(145deg, rgba(133, 141, 255, 0.1) 0%, rgba(133, 141, 255, 0.02) 100%) !important;
+  border: 1px solid rgba(133, 141, 255, 0.2) !important;
+  box-shadow: 0 4px 15px rgba(133, 141, 255, 0.05);
+}
+
+.deep-journey-card:hover {
+  border-color: rgba(133, 141, 255, 0.4) !important;
+  background: linear-gradient(145deg, rgba(133, 141, 255, 0.15) 0%, rgba(133, 141, 255, 0.05) 100%) !important;
+  box-shadow: 0 8px 30px rgba(133, 141, 255, 0.15);
+}
+
+.scan-text-fade {
+  transition: opacity 1s ease-in-out;
+}
+
+#view-meditation-loading .loading-prep-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  z-index: 10;
+}
+
+#view-meditation-loading .loading-circle-box {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.loading-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.loading-circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 4;
+}
+
+.loading-circle-fill {
+  fill: none;
+  stroke: var(--accent-primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  transition: stroke-dashoffset 3s linear;
+}
+
+#view-meditation-loading.active .loading-circle-fill {
+  stroke-dashoffset: 0;
+}
+
+.loading-text-box {
+  text-align: center;
+}
+
+#meditationLoadingTitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+/* --- NEURAL SHIFT VISUALIZER (Step 6) --- */
+.becoming-visualizer {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 320px;
+  margin: 2rem auto;
+  border-radius: 32px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.6), 0 10px 40px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#becomingCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.shift-badge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.8rem 1.2rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.8s var(--spring-easing);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.shift-badge.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.becoming-label {
+  position: absolute;
+  font-family: monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fff;
+  opacity: 0.5;
+  pointer-events: none;
+  text-transform: uppercase;
+  transition: all 0.5s ease;
+  z-index: 5;
+}
+
+/* --- INFO MODAL STANDARD 1 AESTHETIC --- */
+.info-modal-standard-1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  text-align: center;
+}
+
+.info-large-icon {
+  font-size: 2.2rem;
+  opacity: 0.2;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+  margin-bottom: 0.5rem;
+  animation: float 6s ease-in-out infinite;
+}
+
+.info-body-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-main);
+  font-weight: 300;
+  letter-spacing: 0.3px;
+}
+
+.info-citation {
+  align-self: flex-end;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--accent-primary);
+  opacity: 0.8;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(133, 141, 255, 0.2);
+  padding-bottom: 2px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes intro-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}

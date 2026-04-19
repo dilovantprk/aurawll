@@ -41,7 +41,7 @@
   <div id="app" class="app-container">
     
     <!-- Top Header Navigation -->
-    <header id="main-header" class="fade-in-up">
+    <header id="main-header" class="fade-in-up hidden">
       <div class="logo">Aura.</div>
       <div id="headerActions" class="header-actions">
         <button id="globalMuteBtn" class="glass-btn small-btn hidden" aria-label="Mute" style="margin-right: 0.5rem;" title="Toggle Sounds">
@@ -163,7 +163,7 @@
     </section>
 
     <!-- DESKTOP TOP NAVIGATION (Glass Island) -->
-    <nav id="desktop-nav" class="desktop-nav">
+    <nav id="desktop-nav" class="desktop-nav hidden">
       <div class="nav-island">
         <div class="nav-brand">Aura.</div>
         <div class="nav-links">
@@ -208,8 +208,6 @@
             <!-- Weekly Patterns Section -->
             <div class="patterns-wrapper fade-in-up delay-1">
               <h3 data-i18n="dash_weekly" class="section-title">Weekly Patterns</h3>
-<<<<<<< HEAD
-
               <!-- Vagal Heatmap Card (Now at the TOP of patterns) -->
               <div id="vagalHeatmapCard" class="vagal-heatmap-card liquid-border hidden mb-4">
                 <button class="cockpit-info-btn" data-info="info_heatmap_desc">i</button>
@@ -235,20 +233,8 @@
 
               <div class="cockpit-grid">
                 <!-- Vagal Resilience Card (Small) -->
-                <!-- Vagal Resilience Card (Small) -->
                 <div id="resilienceBar" class="cockpit-card-mini liquid-border hidden">
                   <button class="cockpit-info-btn" data-info="info_resilience_desc">i</button>
-=======
-              
-              <!-- Timeline Header (Now outside the main cards) -->
-              <div id="weeklyTimeline" class="timeline-header-v2">
-                <!-- Rendered by JS -->
-              </div>
-
-              <div class="cockpit-grid">
-                <!-- Vagal Resilience Card (Small) -->
-                <div id="resilienceBar" class="cockpit-card-mini hidden">
->>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
                   <div class="resilience-header">
                     <span class="resilience-label" data-i18n="dash_resilience_flow">ESNEKLİK AKIŞI</span>
                     <span id="resilienceScore" class="resilience-score">0</span>
@@ -256,22 +242,8 @@
                   <div class="resilience-track">
                     <div id="resilienceFill" class="resilience-fill"></div>
                   </div>
-<<<<<<< HEAD
                   <div class="resilience-footer">
                     <span id="resilienceStatus" class="resilience-status">...</span>
-=======
-                </div>
-
-                <!-- AI Insight Card -->
-                <div id="weeklyInsight" class="cockpit-card hidden">
-                  <div class="cockpit-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8 10H8.01M12 10H12.01M16 10H16.01M21 12C21 16.9706 16.9706 21 12 21C10.5111 21 9.10657 20.638 7.87103 20C4.94632 20.5 3 18.5 3.5 15.5C2.56303 14.4717 2 13.1111 2 11.625C2 6.30926 6.47715 2 12 2C17.5228 2 22 6.30926 22 11.625C22 11.7511 21.9966 11.8764 21.99 12.0009C21.9965 11.9904 21.9965 11.9798 21.99 11.9693" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                  <div class="cockpit-content">
-                    <p id="insightText" class="cockpit-text"></p>
->>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
                   </div>
                 </div>
                 
@@ -286,7 +258,6 @@
                   </div>
               </div>
 
-<<<<<<< HEAD
                 <!-- AI Insight Card -->
                 <div id="weeklyInsight" class="cockpit-card liquid-border hidden">
                   <button class="cockpit-info-btn" data-info="info_insight_desc">i</button>
@@ -296,7 +267,7 @@
                     </svg>
                   </div>
                   <div class="cockpit-content">
-                    <span class="cockpit-label" data-i18n="dash_summary">ÖZET</span>
+                    <strong id="insightTitle" class="cockpit-title"></strong>
                     <p id="insightText" class="cockpit-text"></p>
                   </div>
                 </div>
@@ -317,21 +288,6 @@
                   </div>
                 </div>
               </div>
-
-=======
-              <!-- Vagal Heatmap Card (Small fallback if cards hidden) -->
-              <div id="vagalHeatmapCard" class="vagal-heatmap-card hidden mt-4">
-                <div class="vagal-triangle-container">
-                  <div class="vagal-vertex v-ventral" data-i18n="vagal_ventral">Ventral</div>
-                  <div class="vagal-vertex v-dorsal" data-i18n="vagal_dorsal">Dorsal</div>
-                  <div class="vagal-vertex v-sympathetic" data-i18n="vagal_symp">Sympathetic</div>
-                  <div id="vagalMetaballContainer" class="vagal-metaball-container">
-                    <div id="vagalBlob" class="vagal-blob"></div>
-                    <div id="vagalTraces" class="vagal-traces"></div>
-                  </div>
-                </div>
-              </div>
->>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
               
               <div id="weeklyEmpty" class="empty-state hidden" data-i18n="dash_no_weekly">
                 Complete a few more loops to unlock your patterns.
@@ -404,7 +360,7 @@
     <section id="view-emotion-refinement" class="view hidden center-content">
       <div class="step-header fade-in" style="position: relative;">
         <button class="cockpit-info-btn checkin-info-btn" data-info="info_step2b_desc">i</button>
-        <span class="step-indicator" data-i18n="step_2b">Step 2B of 6</span>
+        <span class="step-indicator" data-i18n="step_3">Step 3 of 6</span>
         <h2 data-i18n="emotion_title">How would you name this feeling?</h2>
         <p class="subtitle" data-i18n="emotion_subtitle" style="opacity: 0.6; margin-top: 0.5rem;">Pick what resonates most (max 3)</p>
       </div>
@@ -441,7 +397,7 @@
     <section id="view-exercise" class="view hidden center-content">
       <div class="step-header fade-in" style="position: relative;">
         <button class="cockpit-info-btn checkin-info-btn" data-info="info_step3_desc">i</button>
-        <span class="step-indicator" data-i18n="step_3">Step 3 of 6</span>
+        <span class="step-indicator" data-i18n="step_4">Step 4 of 6</span>
         <h2 id="exerciseTitle" data-i18n="ex_title">Breathe</h2>
         <p id="exerciseDesc" data-i18n="ex_follow" style="opacity: 0.6; font-size: 0.9rem;">Follow the circle.</p>
       </div>
@@ -460,7 +416,7 @@
     <section id="view-savoring" class="view hidden center-content">
       <div class="step-header fade-in" style="position: relative;">
         <button id="savoringInfoBtn" class="cockpit-info-btn checkin-info-btn" data-info="info_step4_desc">i</button>
-        <span id="savoringStepIndicator" class="step-indicator" data-i18n="step_4">Step 4 of 6</span>
+        <span id="savoringStepIndicator" class="step-indicator" data-i18n="step_5">Step 5 of 6</span>
       </div>
 
       <!-- Phase 1: Body Scan Prompt (5s) -->
@@ -560,8 +516,6 @@
       </div>
     </section>
 
-<<<<<<< HEAD
-=======
     <!-- INSIGHT VIEW (The Vagal Mirror) -->
     <section id="view-insight" class="view hidden">
       <div class="standard-view-content">
@@ -609,7 +563,6 @@
 
       </div>
     </section>
->>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
     <!-- SETTINGS / PROFILE VIEW -->
     <section id="view-settings" class="view hidden">
       <div class="settings-content standard-view-content fade-in-up">
@@ -662,35 +615,22 @@
              </div>
 
              <!-- Nudges -->
-<<<<<<< HEAD
-             <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; border-top: 1px solid rgba(255,255,255,0.05); flex-direction: column; gap: 1rem;">
-                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-                       <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="dash_daily_nudges">Günlük Hatırlatıcılar</span>
-                    </div>
-                    <label class="toggle-switch">
-                       <input type="checkbox" id="notifToggleCheckbox">
-                       <span class="slider"></span>
-                    </label>
-                 </div>
-                 <div id="nudgeTimeContainer" class="hidden" style="display: flex; align-items: center; justify-content: space-between; padding-left: 2.5rem; transition: all 0.3s ease;">
-                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4);" data-i18n="prof_reminder_time">Hatırlatma Saati</span>
-                    <input type="time" id="nudgeTimePicker" class="glass-input" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 4px 8px; color: white; font-size: 0.85rem;">
-                 </div>
-              </div>
-=======
-             <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-                   <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="dash_daily_nudges">Günlük Hatırlatıcılar</span>
-                </div>
-                <label class="toggle-switch">
-                   <input type="checkbox" id="notifToggleCheckbox">
-                   <span class="slider"></span>
-                </label>
-             </div>
->>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
+              <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; border-top: 1px solid rgba(255,255,255,0.05); flex-direction: column; gap: 1rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                     <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                        <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="dash_daily_nudges">Günlük Hatırlatıcılar</span>
+                     </div>
+                     <label class="toggle-switch">
+                        <input type="checkbox" id="notifToggleCheckbox">
+                        <span class="slider"></span>
+                     </label>
+                  </div>
+                  <div id="nudgeTimeContainer" class="hidden" style="display: flex; align-items: center; justify-content: space-between; padding-left: 2.5rem; transition: all 0.3s ease;">
+                     <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4);" data-i18n="prof_reminder_time">Hatırlatma Saati</span>
+                     <input type="time" id="nudgeTimePicker" class="glass-input" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 4px 8px; color: white; font-size: 0.85rem;">
+                  </div>
+               </div>
 
              <!-- Volume -->
              <div class="settings-row" style="padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.05);">
@@ -895,10 +835,6 @@
     </div>
   </div>
 
-<<<<<<< HEAD
   <script type="module" src="app.js?v=202"></script>
-=======
-  <script type="module" src="app.js?v=200"></script>
->>>>>>> 32417ea05b716f38815df2c00a5f84bf0d6c12af
 </body>
 </html>
