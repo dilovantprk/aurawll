@@ -14,22 +14,6 @@ export const locales = {
     "meditations_title": "Breathing Methods",
     "meditations_desc": "Choose a technique to practice.",
     "meditations_duration": "min",
-    "cat_all": "All",
-    "cat_calm": "Calm",
-    "cat_focus": "Focus",
-    "cat_energize": "Energize",
-    "benefit_478": "Relaxation / Sleep",
-    "benefit_sigh": "Cooling / Stress Relief",
-    "benefit_bellows": "Energy / Focus",
-    "benefit_resonance": "HRV / Balance",
-    "benefit_grounding": "Anxiety / Presence",
-    "benefit_box": "Focus / Calm",
-    "benefit_phys_sigh": "Heart Rate Reset",
-    "benefit_coherent": "Coherence",
-    "benefit_ext_exhale": "Parasympathetic Brake",
-    "benefit_cyclic_sigh": "Mood Boost",
-    "benefit_fire": "Alertness",
-    "benefit_nadi": "Hemispheric Balance",
     "notebook_desc": "Your wellness journal.",
     "notebook_empty": "No entries yet. Complete a check-in to start your journal.",
     "notebook_today": "Today",
@@ -54,14 +38,14 @@ export const locales = {
     "btn_exit_guest": "Leave Guest Mode",
     "welcome_tagline": "breathe · observe · regulate",
     "welcome_prompt": "Hold to Arrive",
-    
+
     // Settings
     "settings_title": "Settings",
     "settings_desc": "Manage your preferences.",
     "settings_lang": "App Language",
     "settings_guest_label": "Guest Session",
     "settings_logged_in_as": "Logged in as",
-    
+
     // Auth View
     "auth_subtitle": "A quiet space for your mind.",
     "auth_name": "What should we call you?",
@@ -139,7 +123,7 @@ export const locales = {
     "compassion_wired": "You've been running on high for a few days. That takes courage. Maybe today, let your body lead instead of your mind. 💛",
     "compassion_foggy": "It's been heavy lately. That's okay — your body is protecting you. A small, gentle movement might help the fog lift. 💙",
     "day_1": "Mon", "day_2": "Tue", "day_3": "Wed", "day_4": "Thu", "day_5": "Fri", "day_6": "Sat", "day_0": "Sun",
-    
+
     // Vagal Heatmap
     "vagal_ventral": "Ventral",
     "vagal_dorsal": "Dorsal",
@@ -148,7 +132,7 @@ export const locales = {
     "vagal_intensity_light": "Light",
     "vagal_intensity_medium": "Moderate",
     "vagal_intensity_chronic": "Chronic",
-    
+
     // Info Buttons (Dashboard)
     "info_heatmap_title": "Neural State Distribution",
     "info_heatmap_body": "Maps the longitudinal frequency of your nervous system states. This visualization identifies your primary autonomic baseline and regulatory trends over time.",
@@ -324,7 +308,7 @@ export const locales = {
     "sub_title_okay": "You feel Okay. What specifically?",
     "sub_custom_placeholder": "Describe what you feel...",
     "sub_btn_continue": "Continue to Exercise",
-    
+
     // Sub-emotions Dict
     "se_anxious": "Anxious",
     "se_overwhelmed": "Overwhelmed",
@@ -332,23 +316,23 @@ export const locales = {
     "se_frustrated": "Frustrated",
     "se_racing_thoughts": "Racing thoughts",
     "se_on_edge": "On edge",
-    
+
     "se_exhausted": "Exhausted",
     "se_numb": "Numb",
     "se_disconnected": "Disconnected",
     "se_bored": "Bored",
     "se_heavy": "Heavy",
     "se_spaced_out": "Spaced out",
-    
+
     "se_calm": "Calm",
     "se_focused": "Focused",
     "se_content": "Content",
     "se_grateful": "Grateful",
     "se_neutral": "Neutral",
     "se_grounded": "Grounded",
-    
+
     "se_other": "Other...",
-    
+
     // Body Signals (Somatic Entry - Step 1)
     // Ventral
     "bs_ventral_shoulders": "Shoulders are relaxed / down",
@@ -498,7 +482,7 @@ export const locales = {
     // Body Scan Meditation
     "mar_offer_continue": "Continue",
     "mar_offer_done": "Skip Meditation",
-    
+
     "scan_478_0": "You don't have to do anything right now. Just arrive.",
     "scan_478_1": "Notice your hands. Are they holding anything? Let them soften.",
     "scan_478_2": "Your exhale just did something real. Feel what's left.",
@@ -583,26 +567,10 @@ export const locales = {
     "med_title": "Nefes",
     "med_desc": "Durumuna göre bir protokol seç.",
     "med_recommended_title": "Önerilen Nefes Egzersizleri",
-    "med_journeys_title": "Derin Yolculuklar",
+    "med_journeys_title": "Deep Journeys",
     "meditations_title": "Nefes Teknikleri",
     "meditations_desc": "Pratik yapmak için bir teknik seç.",
     "meditations_duration": "dk",
-    "cat_all": "Tümü",
-    "cat_calm": "Sakin",
-    "cat_focus": "Odak",
-    "cat_energize": "Enerji",
-    "benefit_478": "Gevşeme / Uyku",
-    "benefit_sigh": "Serinleme / Stres Giderme",
-    "benefit_bellows": "Enerji / Odaklanma",
-    "benefit_resonance": "HRV / Denge",
-    "benefit_grounding": "Anksiyete / Farkındalık",
-    "benefit_box": "Odak / Sakinlik",
-    "benefit_phys_sigh": "Kalp Atış Hızı Sıfırlama",
-    "benefit_coherent": "Koherans",
-    "benefit_ext_exhale": "Parasempatik Frenleme",
-    "benefit_cyclic_sigh": "Ruh Hali Modu",
-    "benefit_fire": "Uyanıklık / Zindelik",
-    "benefit_nadi": "Yarımküre Dengesi",
     "notebook_desc": "Kişisel sağlık günlüğün.",
     "notebook_empty": "Henüz kayıt yok. Günlüğünü başlatmak için bir check-in tamamla.",
     "notebook_today": "Bugün",
@@ -627,14 +595,14 @@ export const locales = {
     "btn_exit_guest": "Misafir Modundan Çık",
     "welcome_tagline": "nefes al · gözlemle · düzenle",
     "welcome_prompt": "Odaklanmak için basılı tut",
-    
+
     // Settings
     "settings_title": "Ayarlar",
     "settings_desc": "Tercihlerini yönet.",
     "settings_lang": "Uygulama Dili",
     "settings_guest_label": "Misafir Oturumu",
     "settings_logged_in_as": "Giriş yapılan hesap:",
-    
+
     // Auth View
     "auth_subtitle": "Zihnin için sessiz bir alan.",
     "auth_name": "Sana nasıl hitap edelim?",
@@ -669,7 +637,7 @@ export const locales = {
     "prof_reset": "Hafızayı Sıfırla",
     "prof_reset_confirm": "Tüm yerel geçmiş kalıcı olarak silinecek. Emin misin?",
     "prof_logout": "Kokpitten Çık",
-    "prof_desc": "Wellness kimliğini ve duyularını yönet.",
+    "prof_desc": "İyi oluş kimliğini ve duyularını yönet.",
     "prof_system_title": "Sistem",
 
     // Dashboard View
@@ -721,7 +689,7 @@ export const locales = {
     "vagal_intensity_light": "Hafif",
     "vagal_intensity_medium": "Orta",
     "vagal_intensity_chronic": "Kronik",
-    
+
     // Info Buttons (Dashboard)
     "info_heatmap_title": "Nöral Durum Dağılımı",
     "info_heatmap_body": "Sinir sistemi durumlarınızın (Ventral, Sempatik, Dorsal) uzun vadeli dağılımını haritalandırır. Bu analiz, temel fizyolojik eşiğinizi ve zaman içindeki regülasyon eğilimlerinizi belirler.",
@@ -905,14 +873,14 @@ export const locales = {
     "se_frustrated": "Öfkeli",
     "se_racing_thoughts": "Uçuşan Düşünceler",
     "se_on_edge": "Diken Üstünde",
-    
+
     "se_exhausted": "Bitkin",
     "se_numb": "Hissiz",
     "se_disconnected": "Kopuk",
     "se_bored": "Sıkkın",
     "se_heavy": "Ağırlaşmış",
     "se_spaced_out": "Kopmuş",
-    
+
     "se_calm": "Sakin",
     "se_focused": "Odaklanmış",
     "se_content": "Hoşnut",
@@ -1044,17 +1012,17 @@ export const locales = {
     "onb_3_title": "Fark et. Düzenle. Bütünleş.",
     "onb_3_sub": "Durumunu fark etmek için 30 saniye. Değiştirmek için 3 dakika. İçselleştirmek için 20 saniye.",
     "onb_4_title": "Kontrol etmeye hazır mısın?",
-    "onb_4_sub": "Seri yapma zorunluluğu yok. Baskı yok. Sadece senin sistemin ve dürüst bir an.",
+    "onb_4_sub": "Seri yapma zorunluluğu yok. Baskı yok",
     "onb_lets_go": "Başlayalım",
 
     // Savoring (Step 4)
-    "mar_savor_title": "Bugün fark ettiğin iyi bir şey neydi?",
+    "mar_savor_title": "Bugün fark ettiğin iyi bir şeyi hatırla ve not al?",
     "mar_savor_subtitle": "Döngüyü tamamlamak için bir odaklanma anı.",
     "mar_savor_placeholder": "(örn. kahvenin kokusu, sıcak bir esinti, küçük bir işi bitirmek...)",
 
     // Completion
     "done_title": "Harikasın.",
-    "done_desc": "Sinir sistemin sana teşekkür ediyor.",
+    "done_desc": "Sinir sistemin sana minnettar.",
 
     // Meditation Loading
     "meditation_loading_desc": "Hazırlanıyoruz...",
@@ -1071,10 +1039,10 @@ export const locales = {
     // Body Scan Meditation
     "mar_offer_continue": "Devam Et",
     "mar_offer_done": "Meditasyonu Atla",
-    
+
     "scan_478_0": "Şu an hiçbir şey yapman gerekmiyor. Sadece gel.",
     "scan_478_1": "Ellerine dikkat et. Bir şey tutuyorlar mı? Bırakabilirler.",
-    "scan_478_2": "Nefes verişin gerçek bir şey yaptı. Geride kalanı hisset.",
+    "scan_478_2": "Nefes verişin gerçek bir etki yarattı. Geride kalanı hisset.",
     "scan_478_3": "Ayaklarından yukarı doğru tara. Hiçbir şeyi düzeltmene gerek yok.",
     "scan_478_4": "Sinir sistemin az önce çok çalıştı. Oturmasına izin ver.",
 
@@ -1082,7 +1050,7 @@ export const locales = {
     "scan_sigh_1": "Göğsünde hala sıkışma var mı? Bir kez nefes ver oraya.",
     "scan_sigh_2": "Çene, omuzlar, alın. Hala nerede tutuyorsun?",
     "scan_sigh_3": "Şu an hiçbir şeyi çözmen gerekmiyor.",
-    "scan_sigh_4": "Hayal kırıklığının bir karar değil, bilgi olmasına izin ver.",
+    "scan_sigh_4": "Hayal kırıklığının bir karar değil, bir veri olmasına izin ver.",
 
     "scan_grounding_0": "Sol ayak. Sağ ayak. İkisi de yerde.",
     "scan_grounding_1": "Altındaki yüzeyi hisset. Sert mi, yumuşak mı?",
@@ -1102,10 +1070,10 @@ export const locales = {
     "scan_resonance_3": "Beynin şu an bunu kaydediyor. Bırak kaydetsin.",
     "scan_resonance_4": "Bu şans değil. Bunu sen inşa ettin. Hatırla.",
 
-    "scan_bellows_0": "Az önce bir şey değişti. Hissedebiliyor musun?",
+    "scan_bellows_0": "Az önce bir şey değişti. Farkettin mi?",
     "scan_bellows_1": "Bir yerde ısı var mı? Karıncalanma? Tara.",
-    "scan_bellows_2": "Kalp atışın değişti. Yavaşlarken hisset.",
-    "scan_bellows_3": "Uyuşukluk bir koruyucuydu. Şu an altında ne var?",
+    "scan_bellows_2": "Kalp atışın değişti. Yavaşladığını hisset.",
+    "scan_bellows_3": "Uyuşukluk bir koruyucuydu. Şu an ne hissediyorsun?",
     "scan_bellows_4": "Bir şeyi uyandırdın. Bir an daha kal onunla.",
 
     "mar_offer_done": "Bitirdim",
@@ -1128,20 +1096,20 @@ export const locales = {
     "info_savoring_ref": "(Hanson, 2013 / Rozin & Royzman, 2001)",
 
     // --- DERİN YOLCULUK PROMLARI ---
-    "med_nsdr_1": "Buraya var. Olman gereken başka hiçbir yer yok.",
+    "med_nsdr_1": "Buradasın. Bu yeterli.",
     "med_nsdr_2": "Bedeninin ağırlığının zemine yerleştiğini hisset.",
     "med_nsdr_3": "Gözlerini gevşet. Çeneni rahatlat. Dilini serbest bırak.",
-    "med_nsdr_4": "Alnından köprücük kemiğine kadar bir gevşeme dalgası hisset.",
+    "med_nsdr_4": "Alnından köprücük kemiğine kadar yayılan gevşeme dalgasını hisset.",
     "med_nsdr_5": "Nefesin yükselişini ve düşüşünü kontrol etmeden izle.",
     "med_nsdr_6": "Tam olman gereken yerdesin. Dinlen.",
 
-    "med_vagal_1": "Dikkati mide ve kalp bölgesine odakla.",
-    "med_vagal_2": "Karnına derin bir nefes al, genişlemeyi hisset.",
+    "med_vagal_1": "Dikkatini mide ve kalp bölgesine ver.",
+    "med_vagal_2": "Karnına derin bir nefes al, genişlemesini hisset.",
     "med_vagal_3": "Uzun, sessiz bir 'Haaaa' sesiyle nefesi serbest bırak.",
-    "med_vagal_4": "Denge ve güven. Sistemin tam ve bütün.",
+    "med_vagal_4": "Denge ve güven. Sistemin tam ve bütün halinde.",
 
     "med_presence_1": "Farkındalığını etrafındaki odaya aç.",
     "med_presence_2": "Tek bir duyumla kal. Soğuk, sıcaklık veya doku.",
-    "med_presence_3": "Düşüncelerin kendisi değil, onları izleyensin."
+    "med_presence_3": "Sen düşüncelerin değilsin, onları izleyensin."
   }
 };
