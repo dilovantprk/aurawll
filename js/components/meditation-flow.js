@@ -1,7 +1,7 @@
 import { elements } from '../core/dom.js';
 import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
-import { protocols, subEmotionMap } from '../core/constants.js';
+import { protocols, subEmotionMap, PROTOCOL_META } from '../core/constants.js';
 
 let configProps = {
   fb: null,
@@ -31,7 +31,7 @@ export function initMeditationFlow(config) {
       elements.marPhaseOffer.classList.add('opacity-0');
       setTimeout(() => {
         elements.marPhaseOffer.classList.add('hidden');
-        const rawProtocolId = subEmotionMap[AppState.currentCheckIn.subEmotion]?.protocol || 'p_resonance';
+        const rawProtocolId = AppState.currentExercise?.id || 'p_resonance';
         startMeditationLoading(rawProtocolId);
       }, 800);
     };
@@ -41,7 +41,21 @@ export function initMeditationFlow(config) {
 export function startMeditationLoading(protocolId) {
   if (configProps.setHUD) configProps.setHUD(null);
   const protocol = protocols[protocolId];
-  elements.meditationLoadingTitle.textContent = protocol.title;
+  
+  // CRITICAL: Set active state so modals and other components know what's playing
+  if (AppState) {
+    AppState.currentExercise = { ...protocol, id: protocolId };
+  }
+  
+  elements.meditationLoadingTitle.textContent = t(protocol.titleKey);
+  
+  // HARD BIND: Ensure the info button in the next screen (exercise) is ready
+  const exerciseInfoBtn = document.querySelector('#view-exercise .checkin-info-btn');
+  if (exerciseInfoBtn) {
+    exerciseInfoBtn.setAttribute('data-type', protocolId);
+    exerciseInfoBtn.removeAttribute('data-info');
+  }
+
   if (configProps.updateUI) configProps.updateUI();
   
   elements.loadingCircleProgress.style.transition = 'none';
@@ -81,10 +95,24 @@ export function startMeditationLoading(protocolId) {
 }
 
 export function runMeditation(customDuration = null) {
-  if (configProps.setHUD) configProps.setHUD(null); // Force HUD stealth during scan
+  if (configProps.setHUD) configProps.setHUD(null); 
   if (meditationIndex >= 5) return;
-  const rawProtocolId = subEmotionMap[AppState.currentCheckIn.subEmotion]?.protocol || 'p_resonance';
-  const protocolId = rawProtocolId.replace('p_','');
+
+  // Use the actual protocol that was just practiced
+  let rawProtocolId = AppState.currentExercise?.id || 'p_resonance';
+  
+  // Mapping for protocols that don't have dedicated scan sets yet
+  const fallbackMap = {
+    'p_phys_sigh': 'p_sigh',
+    'p_cyclic_sigh': 'p_sigh',
+    'p_coherent': 'p_resonance',
+    'p_nadi': 'p_resonance',
+    'p_ext_exhale': 'p_478',
+    'p_fire': 'p_bellows'
+  };
+
+  const finalProtocolId = fallbackMap[rawProtocolId] || rawProtocolId;
+  const protocolId = finalProtocolId.replace('p_','');
   const textKey = `scan_${protocolId}_${meditationIndex}`;
   const textLine = t(textKey);
   
@@ -343,8 +371,10 @@ async function submitSavoringLog() {
   }
 
   if (configProps.resetBioFeedback) configProps.resetBioFeedback();
+  AppState.justFinishedCheckIn = true;
+  AppState.lastCheckInState = AppState.currentCheckIn.state;
   if (configProps.navigateTo) configProps.navigateTo('view-completion');
-  if (elements.globalHUD) elements.globalHUD.classList.remove('active');
+  if (configProps.setHUD) configProps.setHUD(null);
   
   if (elements.returnHomeBtn) {
     elements.returnHomeBtn.onclick = () => {

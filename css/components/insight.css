@@ -1,0 +1,72 @@
+/* ===================================================
+   INSIGHT VIEW (The Vagal Mirror)
+   Extracted from base.css for modular organization
+   =================================================== */
+
+/* Heatmap Container */
+#macro-heatmap {
+    height: 120px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 24px;
+}
+
+/* Insight Card */
+.insight-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 1.5rem;
+    transition: transform 0.5s var(--spring-easing), background 0.5s ease, box-shadow 0.5s ease;
+    will-change: transform;
+}
+
+.insight-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.4);
+}
+
+/* Insight View Layout */
+#view-insight {
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+}
+
+#view-insight .standard-view-content {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Hero Title */
+#insight-hero-title {
+    font-weight: 300;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.2rem;
+    background: linear-gradient(to bottom, #fff, var(--vagal-accent, #A8E6CF));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+/* Resilience Pulse Effect */
+.resilience-pulse {
+    animation: resiliencePulsing 3s ease-in-out infinite;
+}
+
+@keyframes resiliencePulsing {
+    0%, 100% { filter: drop-shadow(0 0 5px var(--vagal-accent)) brightness(1); }
+    50% { filter: drop-shadow(0 0 15px #fff) brightness(1.2); color: #fff; }
+}
+
+/* Dynamic Themes (Bio-reactive color shifts) */
+#view-insight.theme-ventral { --vagal-accent: #A8E6CF; --vagal-glow: rgba(168, 230, 207, 0.4); }
+#view-insight.theme-sympathetic { --vagal-accent: #FFAA75; --vagal-glow: rgba(255, 170, 117, 0.4); }
+#view-insight.theme-dorsal { --vagal-accent: #A2D1FF; --vagal-glow: rgba(162, 209, 255, 0.4); }
+
+

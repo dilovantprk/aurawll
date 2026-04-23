@@ -1,0 +1,173 @@
+/* ===================================================
+   AUTH VIEW (Aura Entry v3)
+   Extracted from base.css for modular organization
+   =================================================== */
+
+/* Auth Card Container */
+.auth-card {
+  margin: auto;
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  border-radius: 32px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+/* Logo */
+.logo-large { 
+  font-size: clamp(2.5rem, 8vw, 3.5rem); 
+  font-weight: 600; 
+  letter-spacing: -1.5px;
+  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.4));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Tab Switcher (Login / Register) */
+.auth-tabs { 
+  display: flex; 
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 99px;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tabs-pill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  height: calc(100% - 8px);
+  width: calc(50% - 4px);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+}
+
+.auth-tab {
+  flex: 1; 
+  padding: 0.8rem; 
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+  border-bottom: none !important;
+}
+
+.auth-tab.active { 
+  color: #fff; 
+}
+
+/* Auth Form */
+.auth-form .input-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.auth-form input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.2rem 1.5rem;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 300;
+  transition: all 0.3s ease;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Fix Chrome Autofill white background */
+.auth-form input:-webkit-autofill,
+.auth-form input:-webkit-autofill:hover, 
+.auth-form input:-webkit-autofill:focus, 
+.auth-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #0a0b12 inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: rgba(168, 230, 207, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 20px -5px rgba(168, 230, 207, 0.15);
+}
+
+.auth-form input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+#authSubmitBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+  padding: 1rem 0;
+  border-radius: 99px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#authSubmitBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+#skipAuthBtn {
+  letter-spacing: 4px;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+}
+
+#skipAuthBtn:hover {
+  opacity: 1;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Loader Screen */
+#view-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12vh 0 10vh;
+  background: var(--bg-primary);
+  opacity: 1;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#view-loading.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aw-loading-pulse {
+  animation: aw-loading-glow 1.5s ease-in-out infinite alternate !important;
+}
+
+@keyframes aw-loading-glow {
+  from { opacity: 0.4; transform: scale(0.95); box-shadow: 0 0 10px rgba(133, 141, 255, 0.3); }
+  to   { opacity: 1; transform: scale(1.1); box-shadow: 0 0 30px rgba(133, 141, 255, 0.6); }
+}

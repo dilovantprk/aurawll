@@ -40,8 +40,23 @@ export function navigateTo(viewId, skipHistory = false) {
   const target = document.getElementById(viewId);
   if (!target) return;
 
+  // Global HUD Reset
+  setHUD(null);
+
   if (!skipHistory) {
     history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', ''));
+  }
+
+  // Update Active Tab Name in Header
+  if (elements.activeTabName) {
+    let slug = viewId.replace('view-', '');
+    
+    // Map check-in steps to "Check-in"
+    const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
+    if (checkinSteps.includes(slug)) slug = 'checkin';
+    
+    const tabLabel = t('nav_' + slug) || slug;
+    elements.activeTabName.textContent = tabLabel;
   }
 
   elements.views.forEach(v => {
@@ -50,6 +65,7 @@ export function navigateTo(viewId, skipHistory = false) {
   });
 
   target.classList.remove('hidden');
+  target.scrollTop = 0;
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       target.classList.add('active', 'opacity-100', 'translate-y-0');
@@ -60,28 +76,24 @@ export function navigateTo(viewId, skipHistory = false) {
   if (viewId === 'view-dashboard') loadDashboard();
   if (viewId === 'view-meditations') { renderMeditationsList(); renderFilterChips(); renderRecommendations(); }
   if (viewId === 'view-notebook') loadNotebook();
-  if (viewId === 'view-insight') updateInsightView(AppState.user?.history || AppState.mockHistory);
+  if (viewId === 'view-insight') updateInsightView(AppState.userHistory || AppState.mockHistory);
   if (viewId === 'view-settings') updateSettingsView();
   
   // Push physical translations to static DOM elements
   renderLocalization();
 
-  const hideMobileHeaderViews = ['view-welcome'];
-  const hideImmersionNavViews = ['view-welcome', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
+  const hideMobileHeaderViews = ['view-welcome', 'view-auth'];
+  const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
   
   const shouldHideMobileHeader = hideMobileHeaderViews.includes(viewId);
   const shouldHideImmersionNav = hideImmersionNavViews.includes(viewId);
   
-  // Header Visibility (#main-header) - Hide during immersion
+  // Mobile Header Visibility (#mobile-header)
   if (elements.header) {
-    if (shouldHideImmersionNav) {
+    if (shouldHideMobileHeader) {
       elements.header.classList.add('hidden');
-      elements.header.style.display = 'none';
-      elements.header.style.opacity = '0';
     } else {
       elements.header.classList.remove('hidden');
-      elements.header.style.display = 'flex';
-      elements.header.style.opacity = '1';
     }
   }
 
@@ -181,7 +193,12 @@ async function initAppBootstrap() {
   SensoryEngine.droneEnabled = AppState.droneEnabled;
   SensoryEngine.isMuted = AppState.isMuted;
 
-  initModals({ navigateTo, AppState, showInfoModal });
+  initModals({ 
+    navigateTo, 
+    AppState, 
+    showInfoModal,
+    getExerciseParams: () => AppState.currentExercise
+  });
   renderLocalization(); // Apply to static elements on boot
   initCheckin({ 
     navigateTo, 

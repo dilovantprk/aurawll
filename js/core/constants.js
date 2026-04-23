@@ -43,7 +43,7 @@ export const stateLegacyMap = { ventral: "Okay", sympathetic: "Wired", dorsal: "
 
 export const protocols = {
   p_478: {
-    title: "4-7-8 Relaxing Breath",
+    titleKey: "title_p_478",
     category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
@@ -53,7 +53,7 @@ export const protocols = {
     totalDuration: 114
   },
   p_sigh: {
-    title: "Deep Sigh (Cooling)",
+    titleKey: "title_p_sigh",
     category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
@@ -62,7 +62,7 @@ export const protocols = {
     totalDuration: 120
   },
   p_bellows: {
-    title: "Energizing Bellows",
+    titleKey: "title_p_bellows",
     category: "energize",
     phases: [
       { name: "In", class: "breathe-inhale", duration: 2000 },
@@ -71,7 +71,7 @@ export const protocols = {
     totalDuration: 90
   },
   p_resonance: {
-    title: "Resonance Frequency",
+    titleKey: "title_p_resonance",
     category: "focus",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 5500 },
@@ -80,7 +80,7 @@ export const protocols = {
     totalDuration: 110
   },
   p_grounding: {
-    title: "Grounding Breath",
+    titleKey: "title_p_grounding",
     category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
@@ -89,7 +89,7 @@ export const protocols = {
     totalDuration: 120
   },
   p_phys_sigh: {
-    title: "Physiological Sigh",
+    titleKey: "title_p_phys_sigh",
     category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 2000 },
@@ -99,7 +99,7 @@ export const protocols = {
     totalDuration: 60
   },
   p_coherent: {
-    title: "Coherent Breathing",
+    titleKey: "title_p_coherent",
     category: "focus",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 5500 },
@@ -108,7 +108,7 @@ export const protocols = {
     totalDuration: 300
   },
   p_ext_exhale: {
-    title: "Extended Exhale (4-8)",
+    titleKey: "title_p_ext_exhale",
     category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
@@ -117,7 +117,7 @@ export const protocols = {
     totalDuration: 120
   },
   p_cyclic_sigh: {
-    title: "Cyclic Sighing",
+    titleKey: "title_p_cyclic_sigh",
     category: "calm",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 3000 },
@@ -127,7 +127,7 @@ export const protocols = {
     totalDuration: 300
   },
   p_fire: {
-    title: "Breath of Fire",
+    titleKey: "title_p_fire",
     category: "energize",
     phases: [
       { name: "In", class: "breathe-inhale", duration: 250 },
@@ -136,7 +136,7 @@ export const protocols = {
     totalDuration: 120
   },
   p_nadi: {
-    title: "Nadi Shodhana",
+    titleKey: "title_p_nadi",
     category: "focus",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
@@ -145,7 +145,7 @@ export const protocols = {
     totalDuration: 240
   },
   p_box: {
-    title: "Box Breathing",
+    titleKey: "title_p_box",
     category: "focus",
     phases: [
       { name: "Inhale", class: "breathe-inhale", duration: 4000 },
@@ -155,6 +155,34 @@ export const protocols = {
     ],
     totalDuration: 120
   }
+};
+
+export const PROTOCOL_ICONS = {
+  calm: `<path d="M12 32 C 18 12, 26 52, 32 32 C 38 12, 46 52, 52 32" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  energize: `<path d="M32 10 L 42 35 L 32 30 L 22 35 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  focus: `<rect x="22" y="22" width="20" height="20" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  wave: `<path d="M10 32 Q 21 12 32 32 T 54 32" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  moon: `<path d="M42 48 A 20 20 0 1 1 42 16 A 15 15 0 0 0 42 48" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  wind: `<path d="M10 25 H 40 C 45 25 45 15 40 15 S 35 25 40 25 M 10 40 H 35 C 40 40 40 30 35 30 S 30 40 35 40" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  leaf: `<path d="M32 52 C 32 52 12 42 12 22 C 12 12 22 12 32 22 C 42 12 52 12 52 22 C 52 42 32 52 32 52 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  fire: `<path d="M32 52 C 32 52 42 42 42 32 C 42 22 32 12 32 12 C 32 12 22 22 22 32 C 22 42 32 52 32 52 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/><path d="M32 42 C 32 42 36 38 36 32 C 36 28 32 24 32 24 C 32 24 28 28 28 32 C 28 38 32 42 32 42 Z" stroke="white" stroke-width="1" fill="none" opacity="0.4"/>`,
+  balance: `<circle cx="24" cy="32" r="10" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/><circle cx="40" cy="32" r="10" stroke="white" stroke-width="1.5" fill="none" opacity="0.4"/>`,
+  box: `<rect x="18" y="18" width="28" height="28" rx="4" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`
+};
+
+export const PROTOCOL_META = {
+  p_478: { icon: PROTOCOL_ICONS.moon, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_478' },
+  p_sigh: { icon: PROTOCOL_ICONS.wind, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_sigh' },
+  p_bellows: { icon: PROTOCOL_ICONS.fire, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_bellows' },
+  p_resonance: { icon: PROTOCOL_ICONS.wave, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_resonance' },
+  p_grounding: { icon: PROTOCOL_ICONS.leaf, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_grounding' },
+  p_box: { icon: PROTOCOL_ICONS.box, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_box' },
+  p_phys_sigh: { icon: PROTOCOL_ICONS.wind, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_phys_sigh' },
+  p_coherent: { icon: PROTOCOL_ICONS.wave, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_coherent' },
+  p_ext_exhale: { icon: PROTOCOL_ICONS.calm, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_ext_exhale' },
+  p_cyclic_sigh: { icon: PROTOCOL_ICONS.wind, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_cyclic_sigh' },
+  p_fire: { icon: PROTOCOL_ICONS.energize, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_fire' },
+  p_nadi: { icon: PROTOCOL_ICONS.balance, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_nadi' }
 };
 
 export const subEmotionMap = {
@@ -181,4 +209,30 @@ export const subEmotionMap = {
   se_grounded: { list: 'okay', protocol: 'p_box' },
   // Core default
   se_other: { protocol: 'p_resonance' }
+};
+
+export const EMOTION_PROTOCOL_MAP = {
+  // Ventral
+  emo_grateful: 'p_resonance',
+  emo_curious: 'p_box',
+  emo_peaceful: 'p_coherent',
+  emo_joyful: 'p_resonance',
+  emo_compassionate: 'p_nadi',
+  emo_connected: 'p_coherent',
+  
+  // Sympathetic
+  emo_anxious: 'p_478',
+  emo_angry: 'p_phys_sigh',
+  emo_overwhelmed: 'p_box',
+  emo_excited: 'p_resonance',
+  emo_tense: 'p_478',
+  emo_impatient: 'p_sigh',
+  
+  // Dorsal
+  emo_numb: 'p_bellows',
+  emo_tired: 'p_fire',
+  emo_sad: 'p_grounding',
+  emo_empty: 'p_bellows',
+  emo_hopeless: 'p_grounding',
+  emo_dull: 'p_fire'
 };

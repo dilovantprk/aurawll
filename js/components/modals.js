@@ -1,5 +1,9 @@
 import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
+import { PROTOCOL_META } from '../core/constants.js';
+import { AppState } from '../core/state.js';
+
+let galaxyAnimationId = null;
 
 let isModalOpen = false;
 let configProps = {
@@ -27,6 +31,173 @@ export function initModals(config) {
       if (infoKey) openInfoArchive(infoKey);
     }
   });
+
+  initCommunityModal();
+}
+
+export function initCommunityModal() {
+  if (elements.closeCommunityBtn) elements.closeCommunityBtn.onclick = hideCommunityModal;
+  if (elements.communityBackdrop) elements.communityBackdrop.onclick = hideCommunityModal;
+
+  elements.commTabBtns.forEach(btn => {
+    btn.onclick = () => {
+      const tab = btn.getAttribute('data-tab');
+      elements.commTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      elements.commTabPanes.forEach(pane => {
+        if (pane.id === (tab === 'ben' ? 'commTabBen' : 'commTabTopluluk')) {
+          pane.classList.add('active');
+        } else {
+          pane.classList.remove('active');
+        }
+      });
+
+      if (tab === 'topluluk') startGalaxy();
+      else stopGalaxy();
+    };
+  });
+}
+
+export function openCommunityModal(history) {
+  if (!elements.communityModal) return;
+  
+  renderPersonalStats(history);
+  renderCommunityStats();
+  
+  elements.communityModal.classList.add('active');
+  if (elements.communityBackdrop) elements.communityBackdrop.classList.add('active');
+  
+  // Default tab
+  const benTab = Array.from(elements.commTabBtns).find(b => b.getAttribute('data-tab') === 'ben');
+  if (benTab) benTab.click();
+}
+
+export function hideCommunityModal() {
+  if (elements.communityModal) elements.communityModal.classList.remove('active');
+  if (elements.communityBackdrop) elements.communityBackdrop.classList.remove('active');
+  stopGalaxy();
+}
+
+function renderPersonalStats(history = []) {
+  if (!elements.personalStatsGrid) return;
+  
+  const stats = { wired: 0, foggy: 0, okay: 0 };
+  const sensationsMap = {};
+  let totalSessions = history.length;
+  
+  history.forEach(h => {
+    if (h.state && stats[h.state] !== undefined) stats[h.state]++;
+    
+    // Support both old (sensations) and new (somatic_selections) history formats
+    const signals = h.somatic_selections || h.sensations || [];
+    if (Array.isArray(signals)) {
+      signals.forEach(s => {
+        sensationsMap[s] = (sensationsMap[s] || 0) + 1;
+      });
+    }
+  });
+
+  // Find most frequent sensation
+  let topSensation = '-';
+  let topCount = 0;
+  for (const [key, count] of Object.entries(sensationsMap)) {
+    if (count > topCount) {
+      topCount = count;
+      topSensation = t(key);
+    }
+  }
+
+  elements.personalStatsGrid.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">${t('vagal_ventral')}</div>
+      <div class="stat-value" style="color: #64E49F;">${stats.okay}</div>
+      <div class="stat-sub">${t('stat_ventral_desc')}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">${t('vagal_symp')}</div>
+      <div class="stat-value" style="color: #FBA044;">${stats.wired}</div>
+      <div class="stat-sub">${t('stat_symp_desc')}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">${t('vagal_dorsal')}</div>
+      <div class="stat-value" style="color: #62A4FF;">${stats.foggy}</div>
+      <div class="stat-sub">${t('stat_dorsal_desc')}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">${t('stat_total_sessions')}</div>
+      <div class="stat-value">${totalSessions}</div>
+      <div class="stat-sub">${totalSessions > 0 ? t('comm_streak').replace('{count}', totalSessions) : '-'}</div>
+    </div>
+    <div class="stat-card" style="grid-column: span 2; background: rgba(255, 255, 255, 0.03);">
+      <div class="stat-label">${t('stat_top_signal')}</div>
+      <div class="stat-value" style="font-size: 1.1rem; text-transform: capitalize; color: #fff;">${topSensation}</div>
+      <div class="stat-sub">Somatic farkındalık lideri</div>
+    </div>
+  `;
+}
+
+async function renderCommunityStats() {
+  const totalCheckins = 42083 + Math.floor(Math.random() * 100);
+  if (elements.commCheckinCount) {
+    elements.commCheckinCount.innerHTML = t('comm_checkin_count').replace('{count}', `<span>${totalCheckins.toLocaleString()}</span>`);
+  }
+  
+  // Random distribution for mock feel
+  const v = 45, s = 30, d = 25;
+  if (elements.distVentral) elements.distVentral.style.width = `${v}%`;
+  if (elements.distSympathetic) elements.distSympathetic.style.width = `${s}%`;
+  if (elements.distDorsal) elements.distDorsal.style.width = `${d}%`;
+  
+  if (elements.commTopProtocol) elements.commTopProtocol.textContent = t('title_p_resonance');
+  if (elements.commActiveNow) elements.commActiveNow.textContent = 12 + Math.floor(Math.random() * 20);
+}
+
+function startGalaxy() {
+  const canvas = elements.galaxyCanvas;
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  const resize = () => {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  };
+  resize();
+
+  const particles = [];
+  for (let i = 0; i < 150; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2,
+      speed: 0.2 + Math.random() * 0.5,
+      opacity: 0.1 + Math.random() * 0.5
+    });
+  }
+
+  const animate = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.y -= p.speed;
+      if (p.y < 0) p.y = canvas.height;
+      ctx.fillStyle = `rgba(255,255,255,${p.opacity})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    galaxyAnimationId = requestAnimationFrame(animate);
+  };
+  
+  stopGalaxy();
+  animate();
+}
+
+function stopGalaxy() {
+  if (galaxyAnimationId) {
+    cancelAnimationFrame(galaxyAnimationId);
+    galaxyAnimationId = null;
+  }
 }
 
 export function updateModalState(state) {
@@ -49,50 +220,94 @@ function getAuraSVGIcon(type) {
     'breathing': `<circle cx="32" cy="32" r="14" stroke="white" stroke-width="1.5" fill="none"><animate attributeName="r" values="12;16;12" dur="4s" repeatCount="indefinite"/></circle><circle cx="32" cy="32" r="24" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>`
   };
   
-  const innerContent = iconMap[type] || `<circle cx="32" cy="32" r="10" fill="white" opacity="0.8"/><circle cx="32" cy="32" r="22" stroke="rgba(255,255,255,0.2)" fill="none"/>`;
-  
-  return `
-    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="auraGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs>
-      <g filter="url(#auraGlow)">
-        ${innerContent}
-      </g>
-    </svg>
-  `;
+  if (iconMap[type]) {
+    const innerContent = iconMap[type];
+    return `
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="auraGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <g filter="url(#auraGlow)">
+          ${innerContent}
+        </g>
+      </svg>
+    `;
+  } else {
+    // Protocol or other: Use stylized background with the SVG icon
+    const meta = PROTOCOL_META[type] || { icon: '' };
+    return `
+      <div class="stylized-protocol-icon" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; box-shadow: 0 0 30px rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
+        <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          ${meta.icon}
+        </svg>
+      </div>
+    `;
+  }
 }
 
 export function openInfoArchive(key) {
+  console.log("Aura Modal Triggered with key:", key);
   if (!elements.vagalModal) return;
 
-  const type = key.replace('info_', '').replace('_desc', '').replace('_title', '').replace('_body', '');
+  // Cleanup key and identify type
+  const cleanKey = key.replace('info_', '').replace('_desc', '').replace('_title', '').replace('_body', '');
   
-  let title, body, ref;
-  const exerciseParams = typeof configProps.getExerciseParams === 'function' ? configProps.getExerciseParams() : null;
+  let title, body, ref, iconType = cleanKey;
+  
+  // Resolve exercise context
+  const activeEx = (configProps.AppState && configProps.AppState.currentExercise) || 
+                   (typeof configProps.getExerciseParams === 'function' ? configProps.getExerciseParams() : null);
 
-  if (type === 'breathing' && exerciseParams && exerciseParams.id) {
-    const pId = exerciseParams.id;
-    title = t(`sci_${pId}_title`);
-    body = t(`sci_${pId}_desc`);
-    ref = t(`sci_${pId}_ref`);
-  } else {
-    title = t(`info_${type}_title`);
-    body = t(`info_${type}_body`);
-    ref = t(`info_${type}_ref`);
+  // Helper for reliable translation
+  const getT = (k) => {
+    const val = t(k);
+    return (val && val !== k) ? val : null;
+  };
+
+  // Determine pId (Protocol ID)
+  let pId = (cleanKey.startsWith('p_') || PROTOCOL_META[cleanKey]) ? cleanKey : null;
+  
+  // If we are in breathing/exercise context, try to resolve pId from active exercise
+  if (!pId && (cleanKey === 'breathing' || cleanKey === 'step3' || cleanKey === 'exercise') && activeEx) {
+    pId = activeEx.id;
   }
 
+  // 1. Try Specific Scientific Content
+  if (pId) {
+    const sTitle = getT(`sci_${pId}_title`);
+    const sBody = getT(`sci_${pId}_desc`);
+    const sRef = getT(`sci_${pId}_ref`);
+    
+    if (sTitle && sBody) {
+      title = sTitle;
+      body = sBody;
+      ref = sRef || 'Aura Scientific Archive';
+      iconType = pId;
+    }
+  }
+
+  // 2. Fallback to Generic Content
+  if (!title) {
+    title = t(`info_${cleanKey}_title`);
+    body = t(`info_${cleanKey}_body`);
+    ref = t(`info_${cleanKey}_ref`);
+    iconType = cleanKey;
+  }
+
+  // UI PREP: Reset all specific fields in the Vagal Modal
   if (elements.vagalModalTitle) elements.vagalModalTitle.style.display = 'none';
   if (elements.vagalModalHeatmap) elements.vagalModalHeatmap.style.display = 'none';
   if (elements.vagalModalRec) elements.vagalModalRec.style.display = 'none';
+  if (elements.vagalModalAnalysis) elements.vagalModalAnalysis.style.display = 'block';
 
+  // Render Content
   if (elements.vagalModalAnalysis) {
     elements.vagalModalAnalysis.innerHTML = `
       <div class="info-sheet-content">
-        <div class="info-sheet-icon">${getAuraSVGIcon(type)}</div>
+        <div class="info-sheet-icon">${getAuraSVGIcon(iconType)}</div>
         <h2 class="info-sheet-title">${title}</h2>
         <div class="info-sheet-body">${body}</div>
         <div class="info-sheet-ref">Source: ${ref}</div>
@@ -102,6 +317,7 @@ export function openInfoArchive(key) {
 
   elements.vagalModal.classList.add('open');
   
+  // Pause any active timers
   if (!configProps.isTimerPaused && configProps.pauseExercise) configProps.pauseExercise();
   if (!configProps.isMeditationPaused && configProps.pauseMeditation) configProps.pauseMeditation();
 }

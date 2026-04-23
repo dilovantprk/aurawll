@@ -14,14 +14,14 @@
 .standard-view-content {
   width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 1rem 6rem 1rem; /* Faster top-entry on mobile */
+  padding: 7.5rem 1.5rem 8rem 1.5rem; /* More space to clear top island */
 }
 
 /* Wide Dashboard View Content */
 .dashboard-view-content {
   width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 1rem 6rem 1rem;
+  padding: 7.5rem 1.5rem 8rem 1.5rem;
 }
 
 /* DESKTOP REFINEMENTS (1024px+) */
@@ -52,10 +52,11 @@
   /* Dual Column Grid for Dashboard */
   .dash-grid-wrapper {
     display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 3rem;
+    grid-template-columns: 1fr minmax(280px, 340px);
+    gap: 2rem;
     align-items: start;
     width: 100%;
+    overflow: hidden;
   }
 }
 
@@ -114,34 +115,35 @@
   .dash-grid-wrapper {
     display: grid;
     grid-template-areas: 
-      "greet ."
+      "greet side"
       "main side";
     grid-template-columns: 1.6fr 1fr;
-    gap: 1.5rem 4rem;
+    gap: 1.5rem 3rem;
     align-items: start;
+    width: 100%;
   }
 
   .welcome-box { grid-area: greet; }
   .dash-main { grid-area: main; }
   .dash-side { grid-area: side; }
   
-  .desktop-nav { 
+  .desktop-header-nav { 
     display: none; 
     opacity: 0;
     transition: opacity 0.8s ease-in-out;
   }
   
-  body.is-authenticated:not(.nav-hidden) .desktop-nav { 
-    display: block; 
+  body.is-authenticated:not(.nav-hidden) .desktop-header-nav { 
+    display: flex; 
     opacity: 1;
   }
   
   #mobile-nav, .mobile-nav { display: none !important; }
-  #main-header { display: none !important; }
+  #mobile-header { display: none !important; }
 }
 
 /* Glass Island Navigation */
-.desktop-nav {
+.desktop-header-nav {
   position: fixed;
   top: 1.5rem;
   left: 0;
@@ -192,90 +194,13 @@
 
 .nav-link:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
 .nav-link.active { color: #fff; background: rgba(255, 255, 255, 0.08); font-weight: 500; }
-.mobile-nav {
-  position: fixed;
-  bottom: max(24px, env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(90%, 480px); /* Sync with app-container width */
-  height: 72px;
-  background: rgba(15, 15, 20, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 36px;
-  display: flex !important;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 1000;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
-  will-change: transform;
-}
-
-.mobile-nav.nav-hidden {
-  transform: translate(-50%, 150%);
-  opacity: 0;
-  pointer-events: none;
-  display: flex !important;
-}
-
-.mobile-nav.nav-visible {
-  transform: translate(-50%, 0);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 0.5rem 0.3rem;
-  border-radius: 16px;
-  color: var(--text-muted);
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.3s ease, color 0.3s ease;
-  position: relative;
-  flex: 1;
-}
-
-.nav-icon {
-  transition: transform 0.3s var(--spring-easing), stroke 0.3s ease;
-  opacity: 0.8; /* Increased from 0.6 for better visibility */
-}
-
-.nav-label {
+label {
   font-size: 10px;
   font-weight: 500;
   transition: color 0.3s ease;
   opacity: 0.7;
 }
 
-.nav-item.active {
-  color: var(--accent-primary);
-  transform: translateY(-2px);
-}
-
-.nav-item.active .nav-icon {
-  opacity: 1;
-  stroke: var(--accent-primary);
-  filter: drop-shadow(0 0 12px rgba(133, 141, 255, 0.6));
-}
-
-.nav-item.active .nav-label {
-  color: var(--accent-primary);
-  opacity: 1;
-}
-
-.nav-item:active {
-  transform: scale(0.95);
-}
 
 /* Add padding to views when nav is visible so content isn't hidden behind the nav */
 body.has-nav .view {
@@ -288,27 +213,48 @@ body.has-nav .dashboard-content {
 /* --- MEDITATIONS VIEW --- */
 .meditations-content {
   width: 100%;
-  padding-top: 1rem;
+  /* Removed padding-top: 1rem to allow standard-view-content to take over */
 }
 
-/* --- UNIFIED VIEW HEADERS --- */
-.view-header {
-  margin-bottom: 2rem;
-  text-align: left;
+.view-header,
+.welcome-box {
+  margin-bottom: 2.5rem;
+  text-align: center;
 }
 
+/* Page Titles are now in the floating header */
+.view-header h1, 
 .view-header h2 {
-  font-size: clamp(1.6rem, 8vw, 2.2rem);
-  margin-bottom: 0.4rem;
-  letter-spacing: -0.5px;
-  color: var(--text-main);
-  font-weight: 500;
+  display: none !important;
 }
 
-.view-header p {
-  font-size: 1.05rem;
+@media (min-width: 1024px) {
+  .view-header { text-align: left; }
+  .view-header h1, 
+  .view-header h2,
+  .welcome-box h2 { 
+    display: block !important; 
+  }
+}
+
+.view-header p,
+.welcome-box p {
+  font-size: 0.95rem;
   color: var(--text-muted);
-  opacity: 0.8;
+  opacity: 0.7;
+  max-width: 280px;
+  margin: 0.5rem auto 0;
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+@media (min-width: 1024px) {
+  .view-header p,
+  .welcome-box p {
+    margin: 0;
+    max-width: 100%;
+    text-align: left;
+  }
 }
 
 .meditations-content {
@@ -488,6 +434,149 @@ body.has-nav .dashboard-content {
   display: flex !important;
 }
 
+/* === PREMIUM SMART PILL NAVIGATION === */
+.mobile-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  min-width: 280px;
+  max-width: calc(100% - 40px);
+  height: 68px;
+  background: rgba(20, 20, 25, 0.7);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  transition: all 0.5s var(--spring-easing);
+}
+
+.mobile-nav.nav-hidden {
+  transform: translateX(-50%) translateY(120px);
+  opacity: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  width: 48px;
+  border-radius: 30px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.4s var(--spring-easing);
+  position: relative;
+  overflow: hidden;
+  gap: 0;
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--vagal-accent, #64E49F);
+  width: 48px; /* No expansion, icons only */
+  gap: 0;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.nav-item.active .nav-icon {
+  transform: scale(1.1);
+}
+
+.nav-label {
+  display: none !important; /* Always hidden on mobile now */
+}
+
+/* Label logic removed for icon-only mobile nav */
+
+@keyframes slideInRight {
+  from { transform: translateX(-5px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* === MOBILE GLASS ISLAND HEADER === */
+#mobile-header {
+  position: fixed;
+  top: 16px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 2000;
+  pointer-events: none;
+  transition: transform 0.4s var(--spring-easing), opacity 0.4s ease;
+}
+
+@media (min-width: 1024px) {
+  #mobile-header { display: none !important; }
+}
+
+#mobile-header.hidden {
+  transform: translateY(-100px);
+  opacity: 0;
+  display: none !important;
+}
+
+.header-island {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 40px;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  min-width: 160px;
+  justify-content: space-between;
+  
+  /* Organic Stretch Effect */
+  transition: all 0.5s var(--spring-easing);
+  will-change: width, transform;
+}
+
+#active-tab-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-main);
+  margin-left: 0.8rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding-left: 0.8rem;
+  text-transform: capitalize;
+  letter-spacing: -0.2px;
+}
+
+.desktop-header-nav {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: none; /* Hidden on mobile by default */
+}
+
+@media (min-width: 1024px) {
+  .desktop-header-nav { display: flex; }
+}
+
 .meditation-card-icon {
   width: 48px;
   height: 48px;
@@ -596,8 +685,7 @@ body.has-nav .dashboard-content {
 }
 
 
-body.nav-hidden #main-header,
-body.nav-hidden .desktop-nav {
+body.nav-hidden .desktop-header-nav {
   display: none !important;
   opacity: 0 !important;
   pointer-events: none !important;

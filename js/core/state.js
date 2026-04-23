@@ -17,6 +17,8 @@ export const AppState = {
   hapticEnabled: safeGetItem('aura_haptic') !== 'false', // Default true
   droneEnabled: safeGetItem('aura_drone') !== 'false', // Default true
   appVolume: parseInt(safeGetItem('aura_volume')) || 50, // Default 50
+  justFinishedCheckIn: false,
+  lastCheckInState: null,
   currentCheckIn: {
     state: null, 
     polyvagal_state: null,

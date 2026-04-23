@@ -40,17 +40,19 @@
   <!-- App Wrapper -->
   <div id="app" class="app-container">
     
-    <!-- Top Header Navigation -->
-    <header id="main-header" class="fade-in-up hidden">
-      <div class="logo">Aura.</div>
-      <div id="headerActions" class="header-actions">
-        <button id="globalMuteBtn" class="glass-btn small-btn hidden" aria-label="Mute" style="margin-right: 0.5rem;" title="Toggle Sounds">
-          <svg id="muteIconOn" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-          <svg id="muteIconOff" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-        </button>
-        <button id="globalInfoBtn" class="glass-btn small-btn hidden" aria-label="Info">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        </button>
+    <!-- Top Header Navigation (Glass Island Design) -->
+    <header id="mobile-header" class="fade-in-up hidden">
+      <div class="header-island">
+        <div class="logo">Aura. <span id="active-tab-name"></span></div>
+        <div id="headerActions" class="header-actions">
+          <button id="globalMuteBtn" class="glass-btn small-btn hidden" aria-label="Mute" style="margin-right: 0.5rem;" title="Toggle Sounds">
+            <svg id="muteIconOn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+            <svg id="muteIconOff" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          </button>
+          <button id="globalInfoBtn" class="glass-btn small-btn hidden" aria-label="Info">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -163,7 +165,7 @@
     </section>
 
     <!-- DESKTOP TOP NAVIGATION (Glass Island) -->
-    <nav id="desktop-nav" class="desktop-nav hidden">
+    <nav id="desktop-header-nav" class="desktop-header-nav hidden">
       <div class="nav-island">
         <div class="nav-brand">Aura.</div>
         <div class="nav-links">
@@ -182,7 +184,7 @@
         <div class="dash-grid-wrapper">
           <!-- Welcome Section (Aligned to top-left) -->
           <div class="welcome-box">
-            <h2 id="greetingText" data-i18n="dash_morning">Good morning.</h2>
+            <h2 id="greetingText">Good morning.</h2>
             <p data-i18n="dash_take_moment">Take a moment for yourself today.</p>
           </div>
 
@@ -247,46 +249,32 @@
                   </div>
                 </div>
                 
-                <!-- Frequently Used Exercise Card -->
-                <div id="weeklyExercise" class="cockpit-card hidden">
-                  <div class="cockpit-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 22V17M12 17C12 17 11 15 9 15C7 15 5 16.5 5 18.5C5 20.5 7 22 9 22C10.5 22 11.5 21.25 12 20.5M12 17C12 17 13 15 15 15C17 15 19 16.5 19 18.5C19 20.5 17 22 15 22C13.5 22 12.5 21.25 12 20.5M12 17V8M12 8L16 4M12 8L8 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M9 12C7.34315 12 6 10.6569 6 9C6 7.34315 7.34315 6 9 6C10.6569 6 12 7.34315 12 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M15 12C16.6569 12 18 10.6569 18 9C18 7.34315 16.6569 6 15 6C13.3431 6 12 7.34315 12 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-              </div>
 
                 <!-- AI Insight Card -->
                 <div id="weeklyInsight" class="cockpit-card liquid-border hidden">
                   <button class="cockpit-info-btn" data-info="info_insight_desc">i</button>
                   <div class="cockpit-icon">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8 10H8.01M12 10H12.01M16 10H16.01M21 12C21 16.9706 16.9706 21 12 21C10.5111 21 9.10657 20.638 7.87103 20C4.94632 20.5 3 18.5 3.5 15.5C2.56303 14.4717 2 13.1111 2 11.625C2 6.30926 6.47715 2 12 2C17.5228 2 22 6.30926 22 11.625C22 11.7511 21.9966 11.8764 21.99 12.0009C21.9965 11.9904 21.9965 11.9798 21.99 11.9693" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 4.5V2.5M12 21.5V19.5M4.5 12H2.5M21.5 12H19.5M7.05 7.05L5.636 5.636M18.364 18.364L16.95 16.95M18.364 5.636L16.95 7.05M7.05 16.95L5.636 18.364M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="white" fill-opacity="0.2"/>
                     </svg>
                   </div>
                   <div class="cockpit-content">
                     <strong id="insightTitle" class="cockpit-title"></strong>
                     <p id="insightText" class="cockpit-text"></p>
+                    <div class="insight-details" style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
+                      <div class="insight-detail-item">
+                        <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">ODAK</span>
+                        <div id="insightFocus" style="font-size: 13px; color: var(--text-main); font-weight: 500;"></div>
+                      </div>
+                      <div class="insight-detail-item">
+                        <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">ÖNERİ</span>
+                        <div id="insightRecommendation" style="font-size: 13px; color: var(--text-main); font-weight: 500;"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
-                <!-- Frequently Used Exercise Card -->
-                <div id="weeklyExercise" class="cockpit-card liquid-border hidden">
-                  <button class="cockpit-info-btn" data-info="info_exercise_desc">i</button>
-                  <div class="cockpit-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 22V17M12 17C12 17 11 15 9 15C7 15 5 16.5 5 18.5C5 20.5 7 22 9 22C10.5 22 11.5 21.25 12 20.5M12 17C12 17 13 15 15 15C17 15 19 16.5 19 18.5C19 20.5 17 22 15 22C13.5 22 12.5 21.25 12 20.5M12 17V8M12 8L16 4M12 8L8 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M9 12C7.34315 12 6 10.6569 6 9C6 7.34315 7.34315 6 9 6C10.6569 6 12 7.34315 12 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M15 12C16.6569 12 18 10.6569 18 9C18 7.34315 16.6569 6 15 6C13.3431 6 12 7.34315 12 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                  <div class="cockpit-content">
-                    <span class="cockpit-label" data-i18n="dash_exercise_title">Most Used Exercise</span>
-                    <strong id="insightExText" class="cockpit-title">...</strong>
-                  </div>
-                </div>
               </div>
               
               <div id="weeklyEmpty" class="empty-state hidden" data-i18n="dash_no_weekly">
@@ -396,7 +384,7 @@
     <!-- STEP 3: REGULATION EXERCISE -->
     <section id="view-exercise" class="view hidden center-content">
       <div class="step-header fade-in" style="position: relative;">
-        <button class="cockpit-info-btn checkin-info-btn" data-info="info_step3_desc">i</button>
+        <button class="cockpit-info-btn checkin-info-btn" data-info="info_breathing">i</button>
         <span class="step-indicator" data-i18n="step_4">Step 4 of 6</span>
         <h2 id="exerciseTitle" data-i18n="ex_title">Breathe</h2>
         <p id="exerciseDesc" data-i18n="ex_follow" style="opacity: 0.6; font-size: 0.9rem;">Follow the circle.</p>
@@ -568,11 +556,12 @@
       <div class="settings-content standard-view-content fade-in-up">
         
         <div class="view-header">
-          <h1 data-i18n="nav_profile" style="font-size: clamp(1.6rem, 8vw, 2.2rem); font-weight: 500; letter-spacing: -0.5px; color: var(--text-main); margin-bottom: 0;">Profil</h1>
+          <h1 data-i18n="nav_profile">Profil</h1>
+          <p data-i18n="prof_desc">Manage your wellness identity and senses.</p>
         </div>
 
         <!-- IDENTITY CARD -->
-        <div class="identity-card-v2 glass-panel stagger-1" style="padding: 2.5rem 2rem; margin-bottom: 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden;">
+        <div class="identity-card-v2 glass-panel stagger-1" style="padding: 2.5rem 2rem; margin-bottom: 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 40px rgba(0,0,0,0.25);">
              <div class="aura-core-v2-container" style="margin-bottom: 1.5rem;">
                 <div id="aura-core-sphere" class="aura-core-v2"></div>
              </div>
@@ -586,15 +575,15 @@
         </div>
 
         <!-- SENSORY CONTROLS -->
-        <div class="stagger-2" style="margin-bottom: 2rem;">
-           <h3 class="premium-header" data-i18n="prof_sensory_title">Duyusal Kontroller</h3>
+        <div class="settings-group stagger-2">
+           <h3 class="settings-group-title" data-i18n="prof_sensory_title">Duyusal Kontroller</h3>
            
-           <div class="glass-panel" style="overflow: hidden;">
+           <div class="settings-panel">
              <!-- Haptic -->
-             <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="m2 8 2 2 4-4 4 4 4-4 4 4 2-2"></path><path d="m2 16 2 2 4-4 4 4 4-4 4 4 2-2"></path></svg>
-                   <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="prof_haptic">Haptic Geri Bildirim</span>
+             <div class="settings-row">
+                <div class="settings-label">
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 8 2 2 4-4 4 4 4-4 4 4 2-2"></path><path d="m2 16 2 2 4-4 4 4 4-4 4 4 2-2"></path></svg>
+                   <span class="settings-text" data-i18n="prof_haptic">Haptic Feedback</span>
                 </div>
                 <label class="toggle-switch">
                    <input type="checkbox" id="hapticToggle">
@@ -603,94 +592,97 @@
              </div>
 
              <!-- Drone -->
-             <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-                   <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="prof_drone">Biyo-Akustik Drone</span>
+             <div class="settings-row">
+                <div class="settings-label">
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                   <span class="settings-text" data-i18n="prof_drone">Bio-Acoustic Drone</span>
                 </div>
                 <label class="toggle-switch">
-                   <input type="checkbox" id="droneToggle" checked>
+                   <input type="checkbox" id="droneToggle">
                    <span class="slider"></span>
                 </label>
              </div>
 
              <!-- Nudges -->
-              <div class="settings-row" style="padding: 1rem 1.25rem; display: flex; border-top: 1px solid rgba(255,255,255,0.05); flex-direction: column; gap: 1rem;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-                        <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="dash_daily_nudges">Günlük Hatırlatıcılar</span>
-                     </div>
-                     <label class="toggle-switch">
-                        <input type="checkbox" id="notifToggleCheckbox">
-                        <span class="slider"></span>
-                     </label>
+             <div class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="settings-label">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                    <span class="settings-text" data-i18n="dash_daily_nudges">Daily Nudges</span>
                   </div>
-                  <div id="nudgeTimeContainer" class="hidden" style="display: flex; align-items: center; justify-content: space-between; padding-left: 2.5rem; transition: all 0.3s ease;">
-                     <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4);" data-i18n="prof_reminder_time">Hatırlatma Saati</span>
-                     <input type="time" id="nudgeTimePicker" class="glass-input" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 4px 8px; color: white; font-size: 0.85rem;">
-                  </div>
-               </div>
-
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="notifToggleCheckbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div id="nudgeTimeContainer" class="hidden" style="display: flex; align-items: center; justify-content: space-between; padding-left: 2.2rem;">
+                   <span style="font-size: 0.8rem; color: rgba(255,255,255,0.4);" data-i18n="prof_reminder_time">Time</span>
+                   <input type="time" id="nudgeTimePicker" class="glass-input" style="width: auto; padding: 4px 10px; font-size: 0.9rem;">
+                </div>
+             </div>
              <!-- Volume -->
-             <div class="settings-row" style="padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                   <div style="display: flex; align-items: center; gap: 0.75rem;">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                      <span style="font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.7);" data-i18n="prof_volume">Akustik Derinlik</span>
-                   </div>
-                   <span id="volume-val-label" style="font-size: 10px; color: rgba(255,255,255,0.3); font-family: monospace;">50%</span>
+             <div class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="settings-label">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    <span class="settings-text" data-i18n="prof_volume">Acoustic Depth</span>
+                  </div>
+                  <span id="volume-val-label" style="font-size: 10px; color: rgba(255,255,255,0.3); font-family: monospace;">50%</span>
                 </div>
                 <input type="range" id="volumeSlider" min="0" max="100" value="50" class="glass-range">
              </div>
            </div>
         </div>
 
-        <!-- DATA SOVEREIGNTY / VERİ EGEMENLİĞİ -->
-        <div class="stagger-3" style="margin-bottom: 2rem;">
-           <h3 class="premium-header" data-i18n="prof_data_title">Veri Egemenliği</h3>
+        <!-- APP SETTINGS -->
+        <div class="settings-group stagger-3">
+           <h3 class="settings-group-title" data-i18n="settings_title">Uygulama Ayarları</h3>
            
-           <div class="glass-panel" style="overflow: hidden;">
-             <div style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; opacity: 0.5;">
-                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(52, 211, 153, 0.6);"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                   <span style="font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 2px; text-transform: uppercase;" data-i18n="prof_data_safe">Veriler Cihazında Güvende</span>
+           <div class="settings-panel">
+             <!-- Language -->
+             <div class="settings-row">
+                <div class="settings-label">
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                   <span class="settings-text" data-i18n="settings_lang">Dil / Language</span>
                 </div>
+                <button id="langToggleBtn" class="glass-btn" style="font-size: 0.8rem; letter-spacing: 1px;"><span>EN</span></button>
+             </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                   <button id="exportJsonBtn" class="glass-btn" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; font-size: 10px;">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                      <span data-i18n="prof_export" style="letter-spacing: 1px;">Geçmişi Yedekle (JSON)</span>
-                   </button>
-                   <button id="exportTxtBtn" class="glass-btn" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; font-size: 10px;">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                      <span data-i18n="prof_export_report" style="letter-spacing: 1px;">Wellness Özeti (.txt)</span>
-                   </button>
+             <!-- Privacy / Data -->
+             <div class="settings-row danger-row">
+                <div class="settings-label">
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--error);"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                   <span class="settings-text" style="color: var(--error);" data-i18n="btn_delete_data">Verileri Sıfırla</span>
                 </div>
-
-                <button id="resetMemoryBtn" class="glass-btn danger-text danger-glow" style="padding: 1rem; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; margin-top: 0.5rem;">
-                   <span data-i18n="prof_reset">Tüm Verileri Sil</span>
-                </button>
+                <button id="resetMemoryBtn" class="ghost-btn" style="width: auto; color: var(--error); padding: 0.5rem 1rem;">Sıfırla</button>
              </div>
            </div>
+    <!-- AUTH ACTIONS -->
+        <div class="settings-group stagger-4" style="margin-top: 3rem;">
+           <button id="logoutBtn" class="primary-btn danger-glow" data-i18n="btn_logout">Log out</button>
+           <button id="exitGuestBtn" class="ghost-btn hidden" data-i18n="btn_exit_guest">Leave Guest Mode</button>
         </div>
 
-        <!-- SYSTEM & RECORDS / SİSTEM & KAYITLAR -->
-        <div class="stagger-4" style="margin-bottom: 2rem; max-width: 440px;">
-           <h3 class="premium-header" data-i18n="prof_system_title">Sistem & Kayıtlar</h3>
+        <!-- DATA SOVEREIGNTY -->
+        <div class="settings-group stagger-4">
+           <h3 class="settings-group-title" data-i18n="prof_data_title">Veri Egemenliği</h3>
            
-           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <!-- Language Toggle -->
-              <button id="langToggleBtn" class="glass-btn" style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%;">
-                 <span style="font-size: 0.9rem; font-weight: 300; letter-spacing: 1px;">TR</span>
-              </button>
+           <div class="settings-panel" style="padding: 1.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.6rem; opacity: 0.4; margin-bottom: 1.2rem; justify-content: center;">
+                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-okay);"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                 <span style="font-size: 9px; color: rgba(255,255,255,0.6); letter-spacing: 1.5px; text-transform: uppercase;" data-i18n="prof_data_safe">Data Secured Locally</span>
+              </div>
 
-              <!-- Logout -->
-              <button id="logoutBtn" class="glass-btn" style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; transition: all 0.3s ease;">
-                 <svg id="logoutIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(255,255,255,0.4);"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                 <span id="logoutText" style="font-size: 0.9rem; font-weight: 300; letter-spacing: 1px;" data-i18n="prof_logout">Kokpitten Çık</span>
-              </button>
+              <div style="display: flex; gap: 0.8rem; width: 100%;">
+                 <button id="exportJsonBtn" class="export-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>JSON</span>
+                 </button>
+                 <button id="exportTxtBtn" class="export-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>TXT</span>
+                 </button>
+              </div>
            </div>
         </div>
 
@@ -783,36 +775,40 @@
     <nav id="mobile-nav" class="mobile-nav nav-hidden">
       <button id="navHome" class="nav-item active" data-view="dashboard" aria-label="Home">
         <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L4 9V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V9L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
           </svg>
         </div>
         <span class="nav-label" data-i18n="nav_home">Home</span>
       </button>
       <button id="navMeditations" class="nav-item" data-view="meditations" aria-label="Breathe">
         <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M8 12h8"></path><path d="M12 8v8"></path>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22C12 22 6 18 6 13C6 8 10 4 12 4C14 4 18 8 18 13C18 18 12 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 8V18" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+            <path d="M9 11C9 11 10.5 10 12 10C13.5 10 15 11 15 11" stroke="currentColor" stroke-width="1" opacity="0.5"/>
           </svg>
         </div>
         <span class="nav-label" data-i18n="nav_breathe">Breathe</span>
       </button>
       <button id="navNotebook" class="nav-item" data-view="notebook" aria-label="Notes">
         <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V4C20 2.89543 19.1046 2 18 2H6C4.89543 2 4 2.89543 4 4Z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 7H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+            <path d="M8 12H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+            <path d="M8 17H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
           </svg>
         </div>
         <span class="nav-label" data-i18n="nav_notebook">Notes</span>
       </button>
       <button id="navProfile" class="nav-item" data-view="settings" aria-label="Profile">
         <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 21V19C6 16.7909 7.79086 15 10 15H14C16.2091 15 18 16.7909 18 19V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1" opacity="0.2"/>
           </svg>
         </div>
         <span class="nav-label" data-i18n="nav_profile">Profile</span>

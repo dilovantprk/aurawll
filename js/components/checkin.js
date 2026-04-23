@@ -1,7 +1,7 @@
 import { elements } from '../core/dom.js';
 import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
-import { SOMATIC_MAP, EMOTION_OPTIONS, protocols, subEmotionMap, stateLegacyMap } from '../core/constants.js';
+import { SOMATIC_MAP, EMOTION_OPTIONS, protocols, subEmotionMap, stateLegacyMap, PROTOCOL_META, EMOTION_PROTOCOL_MAP } from '../core/constants.js';
 
 let configProps = {
   navigateTo: null,
@@ -193,10 +193,12 @@ export function renderEmotionRefinement(state) {
         chip.classList.remove('selected');
       }
       
-      const protocolMap = { ventral: 'p_resonance', sympathetic: 'p_478', dorsal: 'p_bellows' };
       if (AppState.currentCheckIn.selected_emotions.length > 0) {
         setHUD('arrow', () => {
-          prepareExercise(protocolMap[state]);
+          // Diversity logic: Use the first selected emotion's specific protocol
+          const firstEmotion = AppState.currentCheckIn.selected_emotions[0];
+          const protocolId = EMOTION_PROTOCOL_MAP[firstEmotion] || (state === 'sympathetic' ? 'p_478' : (state === 'dorsal' ? 'p_bellows' : 'p_resonance'));
+          prepareExercise(protocolId);
         });
       } else {
         setHUD(null);
@@ -211,8 +213,16 @@ export function prepareExercise(protocolId) {
   const ex = protocols[protocolId];
   AppState.currentExercise = ex; // Fix for exercise.js:27
   configProps.exerciseParams = ex;
-  elements.exerciseTitle.textContent = ex.title;
+  elements.exerciseTitle.textContent = t(ex.titleKey);
   if(elements.exerciseMicrocopy) elements.exerciseMicrocopy.textContent = t(`mc_${protocolId}`);
+  
+  // HARD BIND: Ensure the info button knows exactly which protocol we are in
+  const exerciseInfoBtn = document.querySelector('#view-exercise .checkin-info-btn');
+  if (exerciseInfoBtn) {
+    exerciseInfoBtn.setAttribute('data-type', protocolId);
+    exerciseInfoBtn.removeAttribute('data-info');
+  }
+
   configProps.timeRemaining = ex.totalDuration;
   if (configProps.navigateTo) configProps.navigateTo('view-exercise');
   setTimeout(() => {
@@ -247,6 +257,8 @@ export function setHUD(mode, onClick) {
   if (!elements.globalHUD || !elements.globalHUDBtn) return;
   if (!mode) {
     elements.globalHUD.classList.remove('active');
+    elements.globalHUDBtn.innerHTML = '';
+    elements.globalHUDBtn.onclick = null;
     return;
   }
   const svgs = {

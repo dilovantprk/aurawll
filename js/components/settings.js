@@ -2,6 +2,7 @@ import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { AppState, safeSetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
+import { openCommunityModal } from './modals.js';
 
 let configProps = {};
 
@@ -58,6 +59,13 @@ export function initSettings(config) {
     });
     const indicator = elements.langToggleBtn.querySelector('span');
     if (indicator) indicator.textContent = AppState.lang.toUpperCase();
+  }
+
+  if (elements.auraCoreSphere) {
+    elements.auraCoreSphere.addEventListener('click', () => {
+      const history = (AppState.userHistory && AppState.userHistory.length > 0) ? AppState.userHistory : (AppState.mockHistory || []);
+      openCommunityModal(history);
+    });
   }
 }
 

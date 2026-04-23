@@ -21,12 +21,32 @@ export async function loadDashboard() {
   setTimeout(() => document.body.classList.remove('crystal-entry'), 800);
 
   const hour = new Date().getHours();
-  let greetingKey = hour < 12 ? 'dash_morning' : (hour < 18 ? 'dash_afternoon' : 'dash_evening');
-  const greeting = t(greetingKey);
   const defaultName = AppState.lang === 'tr' ? 'Dostum' : 'Friend';
   let storedName = localStorage.getItem('aura_guest_name');
   const name = AppState.user?.displayName || storedName || defaultName;
-  elements.greetingText.textContent = t('dash_greeting').replace('{greeting}', greeting).replace('{name}', name);
+
+  let greetingKey = '';
+  // Handle justFinishedCheckIn
+  if (AppState.justFinishedCheckIn) {
+    const state = AppState.lastCheckInState;
+    if (state === 'okay') greetingKey = 'checkin_ventral';
+    else if (state === 'wired') greetingKey = 'checkin_sympathetic';
+    else if (state === 'foggy') greetingKey = 'checkin_dorsal';
+    else greetingKey = 'checkin_dorsal';
+    AppState.justFinishedCheckIn = false;
+  } else {
+    if (hour === 2 && AppState.lang === 'tr') greetingKey = 'dash_special_2';
+    else if (hour === 4 && AppState.lang === 'tr') greetingKey = 'dash_special_4';
+    else if (hour >= 6 && hour < 11) greetingKey = 'dash_morning';
+    else if (hour >= 11 && hour < 17) greetingKey = 'dash_afternoon';
+    else if (hour >= 17 && hour < 22) greetingKey = 'dash_evening';
+    else greetingKey = 'dash_night';
+  }
+
+  const greeting = t(greetingKey).replace('{name}', name);
+  if (elements.greetingText) {
+    elements.greetingText.textContent = greeting;
+  }
 
   // CACHE LOGIC: Serve existing data immediately
   if (AppState.userHistory && AppState.userHistory.length > 0) {
@@ -64,10 +84,15 @@ function renderDashboardComponents(data) {
   analyzeWeeklyPatterns(data);
   const displayData = data.slice(0, 5);
   renderHistory(displayData);
+  
+  // ALWAYS SHOW: Ensure these are visible even if history is empty
+  elements.vagalHeatmapCard?.classList.remove('hidden');
+  elements.resilienceBar?.classList.remove('hidden');
+  
   if (data.length > 0) {
-    if (elements.vagalHeatmapCard) elements.vagalHeatmapCard.classList.remove('hidden');
-    if (elements.resilienceBar) elements.resilienceBar.classList.remove('hidden'); 
     renderVagalHeatmap(data[0]); 
+  } else {
+    renderVagalHeatmap(null); // Show initial/placeholder state
   }
 }
 
@@ -113,20 +138,47 @@ export function analyzeWeeklyPatterns(historyData) {
     timelineHTML += `<div class="day-col"><div class="day-label" data-i18n="${dayKey}">${t(dayKey)}</div><div class="${dominantState ? `day-circle day-${dominantState}` : 'day-circle'}"></div></div>`;
   }
   elements.weeklyTimeline.innerHTML = timelineHTML;
-  if (weeklyData.length < 3) { elements.weeklyEmpty.classList.remove('hidden'); elements.weeklyInsight.classList.add('hidden'); elements.weeklyExercise.classList.add('hidden'); elements.vagalHeatmapCard.classList.add('hidden'); return; }
-  elements.weeklyEmpty.classList.add('hidden');
+  
+  // ALWAYS SHOW: Keep the cards visible even with low data for premium presence
+  elements.vagalHeatmapCard?.classList.remove('hidden');
+  elements.resilienceBar?.classList.remove('hidden');
+
+  if (weeklyData.length < 3) { 
+    elements.weeklyEmpty?.classList.remove('hidden'); 
+    elements.weeklyExercise?.classList.add('hidden'); 
+    
+    // Show initial journey insight instead of hiding
+    const initialInsight = getWeeklyInsight(null, AppState.lang);
+    if (elements.insightTitle) elements.insightTitle.textContent = initialInsight.title;
+    if (elements.insightText) elements.insightText.textContent = initialInsight.desc;
+    const focusEl = document.getElementById('insightFocus');
+    const recEl = document.getElementById('insightRecommendation');
+    if (focusEl) focusEl.textContent = initialInsight.focus;
+    if (recEl) recEl.textContent = initialInsight.recommendation;
+    elements.weeklyInsight?.classList.remove('hidden');
+    return; 
+  }
+
+  elements.weeklyEmpty?.classList.add('hidden');
   const compassionMessage = checkCompassionateIntervention(weeklyData);
-  if (compassionMessage) { elements.insightText.innerHTML = compassionMessage; elements.weeklyInsight.classList.remove('hidden'); elements.weeklyInsight.classList.add('compassion-mode'); }
+  if (compassionMessage) { 
+    if (elements.insightText) elements.insightText.innerHTML = compassionMessage; 
+    elements.weeklyInsight?.classList.remove('hidden'); 
+    elements.weeklyInsight?.classList.add('compassion-mode'); 
+  }
   else {
-    const insight = getWeeklyInsight(weeklyData);
+    const insight = getWeeklyInsight(weeklyData, AppState.lang);
     if (insight) {
       if (elements.insightTitle) elements.insightTitle.textContent = insight.title;
       if (elements.insightText) elements.insightText.textContent = insight.desc;
-      elements.weeklyInsight?.classList.remove('hidden');
+      
+      const focusEl = document.getElementById('insightFocus');
+      const recEl = document.getElementById('insightRecommendation');
+      if (focusEl) focusEl.textContent = insight.focus;
+      if (recEl) recEl.textContent = insight.recommendation;
+
+    elements.weeklyInsight?.classList.remove('hidden');
     }
-    // Also show exercise part if available
-    elements.weeklyExercise?.classList.remove('hidden');
-    if (elements.insightExText) elements.insightExText.textContent = AppState.lang === 'tr' ? 'Rezonans' : 'Resonance';
   }
 }
 

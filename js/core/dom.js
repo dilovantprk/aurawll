@@ -1,5 +1,6 @@
 export const elements = {
-  header: document.getElementById('main-header'),
+  header: document.getElementById('mobile-header'),
+  activeTabName: document.getElementById('active-tab-name'),
   headerActions: document.getElementById('headerActions'),
   langToggleBtn: document.getElementById('langToggleBtn'),
   logoutBtn: document.getElementById('logoutBtn'),
@@ -138,7 +139,7 @@ export const elements = {
 
   // Navigation
   mobileNav: document.getElementById('mobile-nav'),
-  desktopNav: document.getElementById('desktop-nav'),
+  desktopNav: document.getElementById('desktop-header-nav'),
   get navLinks() { return document.querySelectorAll('.nav-link'); },
   get navItems() { return document.querySelectorAll('.nav-item'); },
   navHome: document.getElementById('navHome'),
@@ -146,6 +147,21 @@ export const elements = {
   navNotebook: document.getElementById('navNotebook'),
   navInsight: document.getElementById('navInsight'),
   navProfile: document.getElementById('navProfile'),
+
+  // Community Modal
+  communityModal: document.getElementById('communityModal'),
+  communityBackdrop: document.getElementById('communityBackdrop'),
+  closeCommunityBtn: document.getElementById('closeCommunityBtn'),
+  get commTabBtns() { return document.querySelectorAll('.comm-tab-btn'); },
+  get commTabPanes() { return document.querySelectorAll('.comm-tab-pane'); },
+  personalStatsGrid: document.getElementById('personalStatsGrid'),
+  galaxyCanvas: document.getElementById('galaxyCanvas'),
+  commCheckinCount: document.getElementById('commCheckinCount'),
+  distVentral: document.getElementById('distVentral'),
+  distSympathetic: document.getElementById('distSympathetic'),
+  distDorsal: document.getElementById('distDorsal'),
+  commTopProtocol: document.getElementById('commTopProtocol'),
+  commActiveNow: document.getElementById('commActiveNow'),
 
   // Meditations View
   meditationsList: document.getElementById('meditationsList'),
