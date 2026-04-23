@@ -262,7 +262,7 @@
   -webkit-backdrop-filter: blur(35px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 28px 28px 0 0;
-  padding: 2rem 2rem calc(2rem + var(--safe-bottom));
+  padding: 1.5rem 1.5rem calc(1.5rem + var(--safe-bottom));
   transform: translateY(100%);
   visibility: hidden;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0.4s;
@@ -528,7 +528,7 @@
 .info-sheet-icon {
   width: 64px;
   height: 64px;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -554,19 +554,19 @@
   background: rgba(255, 255, 255, 0.1);
 }
 .info-sheet-title {
-  font-size: 1.4rem;
-  font-weight: 200;
+  font-size: 1.25rem;
+  font-weight: 300;
   color: var(--text-main);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
   text-align: center;
-  letter-spacing: 0.2rem;
+  letter-spacing: 0.15rem;
   text-transform: uppercase;
 }
 .info-sheet-body {
   font-size: 0.95rem;
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0 auto 2rem auto;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 auto 1.25rem auto;
   font-weight: 300;
   max-width: 420px;
 }
@@ -583,13 +583,16 @@
 }
 .info-sheet-ref {
   display: block;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.3);
   font-style: italic;
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   opacity: 0.5;
   letter-spacing: 0.02rem;
+  width: 100%;
 }
 
 /* Final App Polish */
@@ -601,6 +604,6 @@
     padding-bottom: 2rem;
   }
   .aw-orbits { width: 240px; height: 240px; }
-  .info-bottom-sheet { padding: 1.5rem 1.5rem calc(1.5rem + var(--safe-bottom)); }
+  .info-bottom-sheet { padding: 1.25rem 1.25rem calc(1.25rem + var(--safe-bottom)); }
 }
 

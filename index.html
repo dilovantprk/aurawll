@@ -780,6 +780,73 @@
       </div>
     </div>
 
+    <!-- COMMUNITY VIEW (Experimental Hub) -->
+    <section id="view-community" class="view hidden">
+      <div class="community-hub-content standard-view-content fade-in-up">
+        
+        <!-- Articles Tab -->
+        <div id="commTabArticles" class="comm-view-pane active">
+          <div id="articlesGrid" class="comm-grid visible">
+            <!-- Populated by community.js -->
+          </div>
+        </div>
+        <!-- Marketplace Tab -->
+        <div id="commTabMarket" class="comm-view-pane hidden">
+          <div id="marketGrid" class="comm-grid">
+            <!-- Populated by community.js -->
+          </div>
+        </div>
+
+        <!-- Creator Studio Tab -->
+        <div id="commTabCreator" class="comm-view-pane hidden">
+          <div class="creator-container fade-in-up">
+            
+            <div class="creator-form-group">
+              <label class="creator-label" data-i18n="comm_creator_type">Content Type</label>
+              <select id="creatorTypeSelect" class="creator-input">
+                <option value="breath" selected data-i18n="comm_type_breath">Breath Flow</option>
+                <option value="meditation" data-i18n="comm_type_meditation">Meditation Journey</option>
+                <option value="article" data-i18n="comm_type_article">Article / Story</option>
+              </select>
+            </div>
+
+            <div id="creatorDynamicFields">
+              <!-- Default: Breath Fields -->
+              <div class="creator-form-group">
+                <label class="creator-label">
+                  <span>Exercise Name</span>
+                </label>
+                <input type="text" id="creatorNameInput" class="creator-input" placeholder="e.g. Ocean Breath">
+              </div>
+
+              <div class="creator-form-group">
+                <label class="creator-label">
+                  <span>Inhale</span>
+                  <span id="inhaleVal">4s</span>
+                </label>
+                <input type="range" id="inhaleRange" class="creator-range" min="2" max="10" value="4">
+              </div>
+
+              <div class="creator-form-group">
+                <label class="creator-label">
+                  <span>Exhale</span>
+                  <span id="exhaleVal">6s</span>
+                </label>
+                <input type="range" id="exhaleRange" class="creator-range" min="2" max="10" value="6">
+              </div>
+            </div>
+
+            <div class="creator-preview" id="creatorJsonPreview">
+              { "type": "breath", "name": "New Rhythm", "pattern": { "inhale": 4, "exhale": 6 } }
+            </div>
+
+            <button class="primary-btn" id="btnPublishCommunity" style="margin-top: 2rem; width: 100%;" data-i18n="comm_btn_publish">Publish to Community</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- Mobile Bottom Navigation -->
     <nav id="mobile-nav" class="mobile-nav nav-hidden">
       <button id="navHome" class="nav-item active" data-view="dashboard" aria-label="Home">

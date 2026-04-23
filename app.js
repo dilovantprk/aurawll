@@ -24,6 +24,7 @@ import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth } from './js/components/auth.js';
+import { initCommunity, checkAndResetLongPress, switchCommunityTab } from './js/components/community.js';
 
 // Services
 import { signInAsGuest, logoutUser } from './authService.js';
@@ -56,6 +57,16 @@ export function navigateTo(viewId, skipHistory = false) {
     if (checkinSteps.includes(slug)) slug = 'checkin';
     
     const tabLabel = t('nav_' + slug) || slug;
+    
+    // Check for community sub-views
+    if (slug.startsWith('comm-')) {
+      const subTab = slug.replace('comm-', '');
+      switchCommunityTab(subTab);
+      // We don't want to switch main view if we are already in community
+      if (elements.activeTabName) elements.activeTabName.textContent = "Aura Space";
+      return; 
+    }
+
     elements.activeTabName.textContent = tabLabel;
   }
 
@@ -78,6 +89,7 @@ export function navigateTo(viewId, skipHistory = false) {
   if (viewId === 'view-notebook') loadNotebook();
   if (viewId === 'view-insight') updateInsightView(AppState.userHistory || AppState.mockHistory);
   if (viewId === 'view-settings') updateSettingsView();
+  if (viewId === 'view-community') { /* Already handled in component but could add refresh logic here */ }
   
   // Push physical translations to static DOM elements
   renderLocalization();
@@ -100,11 +112,9 @@ export function navigateTo(viewId, skipHistory = false) {
   // Desktop Nav Visibility (Immersive behavior)
   if (elements.desktopNav) {
     if (shouldHideImmersionNav) {
-      elements.desktopNav.classList.add('hidden');
-      elements.desktopNav.style.display = 'none';
+      elements.desktopNav.classList.add('hidden', 'nav-hidden');
     } else {
-      elements.desktopNav.classList.remove('hidden');
-      elements.desktopNav.style.display = ''; // Let CSS handle desktop/mobile display rules
+      elements.desktopNav.classList.remove('hidden', 'nav-hidden');
     }
   }
 
@@ -121,10 +131,6 @@ export function navigateTo(viewId, skipHistory = false) {
       document.body.classList.remove('nav-hidden');
       document.body.classList.add('has-nav');
     }
-  }
-  if (elements.desktopNav) {
-    if (shouldHideImmersionNav) elements.desktopNav.classList.add('nav-hidden');
-    else elements.desktopNav.classList.remove('nav-hidden');
   }
 
   // Sync Nav Active States
@@ -267,13 +273,19 @@ async function initAppBootstrap() {
     }
   });
 
+  initCommunity({ navigateTo });
+
   // Navigation Setup
   const allNavs = [...(elements.navItems || []), ...(elements.navLinks || [])];
   allNavs.forEach(btn => {
     btn.onclick = () => {
       const view = btn.getAttribute('data-view');
       if (view) {
+        // Suppress navigation if a long-press just happened
+        if (view === 'settings' && checkAndResetLongPress()) return;
+
         if (view === 'dashboard') loadDashboard();
+        else if (view === 'community') navigateTo('view-community');
         else navigateTo('view-' + view);
       }
     };
