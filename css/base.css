@@ -78,24 +78,13 @@ body {
   flex-direction: column;
 }
 
-/* Custom Minimal Scrollbars (Aura Style) */
+/* Hide all scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.1);
+  display: none;
 }
 * {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.05) transparent;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #aura-background {
@@ -421,14 +410,6 @@ body {
 
 .view-transition {
     transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.mobile-nav.nav-hidden,
-.desktop-nav.nav-hidden {
-  display: none !important;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(-20px);
 }
 
 .view.hidden {

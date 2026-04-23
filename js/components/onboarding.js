@@ -1,6 +1,8 @@
 import { elements } from '../core/dom.js';
 import { safeSetItem, AppState } from '../core/state.js';
 
+import { loadDashboard } from './dashboard.js';
+
 let currentOnbScreen = 0;
 let configProps = {
     navigateTo: null
@@ -9,16 +11,33 @@ let configProps = {
 export function startOnboardingFlow(config) {
   if (config) Object.assign(configProps, config);
   
+  if (configProps.navigateTo) {
+    configProps.navigateTo('view-onboarding');
+  }
+
   if (!elements.onbScreensContainer) return;
   const screens = elements.onbScreensContainer.querySelectorAll('.onb-screen');
   const dots = document.querySelectorAll('.onb-dot');
   
   const showScreen = (idx) => {
     screens.forEach((s, i) => {
-      s.classList.toggle('active', i === idx);
-      s.classList.toggle('hidden', i !== idx);
+      if (i === idx) {
+        s.classList.remove('hidden');
+        s.style.position = 'relative';
+        s.style.pointerEvents = 'auto';
+        setTimeout(() => { s.style.opacity = '1'; }, 20);
+      } else {
+        s.style.opacity = '0';
+        s.style.pointerEvents = 'none';
+        setTimeout(() => {
+          s.classList.add('hidden');
+          s.style.position = 'absolute';
+        }, 400);
+      }
     });
-    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    dots.forEach((d, i) => {
+      d.style.background = i === idx ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)';
+    });
   };
 
   showScreen(0);
@@ -38,7 +57,7 @@ export function startOnboardingFlow(config) {
         sensations: [], 
         timestamp: null 
     };
-    if (configProps.navigateTo) configProps.navigateTo('view-somatic-entry');
+    loadDashboard();
   };
 
   if (elements.onbSkipBtn) elements.onbSkipBtn.onclick = finish;

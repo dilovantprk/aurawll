@@ -234,10 +234,15 @@ export function prepareExercise(protocolId) {
 export function advanceFromExercise() {
   if (configProps.stopExercise) configProps.stopExercise();
   
-  // If standalone (from Breathe page), return home
+  // If standalone (from Breathe page), show completion
   if (AppState.isCheckIn === false) {
     setHUD(null);
-    if (configProps.loadDashboard) configProps.loadDashboard();
+    if (configProps.navigateTo) configProps.navigateTo('view-completion');
+    if (elements.returnHomeBtn) {
+      elements.returnHomeBtn.onclick = () => {
+        if (configProps.loadDashboard) configProps.loadDashboard();
+      };
+    }
     return;
   }
 

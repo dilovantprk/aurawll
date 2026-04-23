@@ -21,6 +21,15 @@ export function renderLocalization(root = document) {
     }
   });
 
+  // Update innerHTML for elements that contain HTML tags (e.g. legal links)
+  root.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    const translation = t(key);
+    if (translation && translation !== key) {
+      el.innerHTML = translation;
+    }
+  });
+
   // Update specific attributes (e.g., placeholder:auth_email)
   root.querySelectorAll('[data-i18n-prop]').forEach(el => {
     const propMap = el.getAttribute('data-i18n-prop'); // Format: "placeholder:key,title:key"

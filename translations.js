@@ -68,8 +68,8 @@ export const locales = {
     "btn_logout": "Log out",
     "btn_login": "Log In",
     "btn_register": "Register",
-    "btn_enter": "Enter",
-    "btn_skip": "Skip for now",
+    "btn_enter": "Continue",
+    "btn_skip": "Continue as guest",
     "btn_return": "Return Home",
     "btn_complete": "Complete & Save",
     "btn_saving": "Saving...",
@@ -618,7 +618,17 @@ export const locales = {
 
     "med_presence_1": "Open your awareness to the room around you.",
     "med_presence_2": "Stay with one sensation. Cold, warmth, texture.",
-    "med_presence_3": "You are the observer of the thoughts, not the thoughts themselves."
+    "med_presence_3": "You are the observer of the thoughts, not the thoughts themselves.",
+
+    // Legal & Auth
+    "auth_legal_text": "I agree to the <span class='legal-link' data-legal='terms'>Terms</span>, <span class='legal-link' data-legal='privacy'>Privacy Policy</span>, and <span class='legal-link' data-legal='kvkk'>KVKK</span>.",
+    "auth_legal_required": "Please accept the legal terms to continue.",
+    "info_legal_terms_title": "Terms of Use",
+    "info_legal_terms_body": "Aura is a self-regulation and wellness tool based on Polyvagal Theory principles. This application does not provide medical diagnosis, treatment, or professional psychological counseling. The practices and information provided are for general educational purposes only. If you have a serious health condition or a clinical situation, please consult a licensed healthcare professional. By using Aura, you acknowledge that you use the app at your own risk and that the tools provided are for personal growth purposes.",
+    "info_legal_privacy_title": "Privacy Policy",
+    "info_legal_privacy_body": "Your privacy is sacred to us. All sensory data, emotional check-in records, and meditation history you record within Aura are used solely to create a personalized wellness journey for you. Your data is primarily stored on your local device unless you create an account to use synchronization features. Your data is never sold to advertising networks or shared with third parties in a way that reveals your identity.",
+    "info_legal_kvkk_title": "KVKK / GDPR Disclosure",
+    "info_legal_kvkk_body": "In accordance with data protection regulations (GDPR/KVKK), the data you share through Aura may be considered sensitive personal data. These data (emotional states and biometric sensations) are processed only with your consent to provide a better user experience and analyze your nervous system patterns. You can stop the processing of your data at any time, request the deletion of your stored data, or use your right to portability by exporting your data."
   },
 
   tr: {
@@ -1238,6 +1248,16 @@ export const locales = {
 
     "med_presence_1": "Farkındalığını etrafındaki odaya aç.",
     "med_presence_2": "Tek bir duyumla kal. Soğuk, sıcaklık veya doku.",
-    "med_presence_3": "Sen düşüncelerin değilsin, sadece onları gözlemleyensin."
+    "med_presence_3": "Sen düşüncelerin değilsin, sadece onları gözlemleyensin.",
+
+    // Yasal Metinler
+    "auth_legal_text": "<span class='legal-link' data-legal='terms'>Kullanım Koşulları</span>, <span class='legal-link' data-legal='privacy'>Gizlilik Politikası</span> ve <span class='legal-link' data-legal='kvkk'>KVKK</span> metinlerini okudum ve onaylıyorum.",
+    "auth_legal_required": "Devam etmek için yasal metinleri onaylamanız gerekmektedir.",
+    "info_legal_terms_title": "Kullanım Koşulları",
+    "info_legal_terms_body": "Aura, Polyvagal Teori prensiplerine dayalı bir öz-düzenleme ve wellness aracıdır. Bu uygulama herhangi bir tıbbi teşhis, tedavi veya profesyonel psikolojik danışmanlık hizmeti sunmaz. Uygulama içerisinde sunulan pratikler ve bilgiler sadece genel bilgilendirme amaçlıdır. Ciddi bir sağlık sorununuz veya klinik bir durumunuz varsa lütfen lisanslı bir sağlık profesyoneline danışın. Aura'yı kullanarak, uygulamayı kendi sorumluluğunuzda kullandığınızı ve sunduğumuz araçların kişisel gelişim amaçlı olduğunu kabul etmiş sayılırsınız.",
+    "info_legal_privacy_title": "Gizlilik Politikası",
+    "info_legal_privacy_body": "Gizliliğiniz bizim için kutsaldır. Aura içerisinde kaydettiğiniz tüm duyusal veriler, duygusal check-in kayıtları ve meditasyon geçmişi, yalnızca sizin için kişiselleştirilmiş bir wellness yolculuğu oluşturmak amacıyla kullanılır. Verileriniz, siz aksini talep etmedikçe veya bir hesap oluşturup senkronizasyon özelliklerini kullanmadıkça öncelikli olarak yerel cihazınızda saklanır. Verileriniz asla reklam ağlarına satılmaz veya kimliğinizi açık eden bir şekilde üçüncü taraflarla paylaşılmaz.",
+    "info_legal_kvkk_title": "KVKK Aydınlatma Metni",
+    "info_legal_kvkk_body": "6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) uyarınca, Aura üzerinden paylaştığınız veriler 'özel nitelikli kişisel veri' kapsamında değerlendirilebilir. Bu veriler (ruhsal durum ve biyometrik hisler), sadece sizin rızanızla ve size daha iyi bir kullanıcı deneyimi sunmak, sinir sistemi modellerinizi analiz etmek amacıyla işlenir. Verilerinizin işlenmesini istediğiniz an durdurabilir, saklanan verilerinizin silinmesini talep edebilir veya verilerinizi dışa aktararak taşınabilirlik hakkınızı kullanabilirsiniz."
   }
 };

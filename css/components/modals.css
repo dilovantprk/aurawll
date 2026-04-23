@@ -568,7 +568,18 @@
   color: rgba(255, 255, 255, 0.8);
   margin: 0 auto 2rem auto;
   font-weight: 300;
-  max-width: 320px;
+  max-width: 420px;
+}
+.legal-content .info-sheet-body {
+  text-align: left;
+  max-width: 100%;
+}
+.legal-content .info-sheet-title {
+  text-align: left;
+  width: 100%;
+}
+.legal-content .info-sheet-content {
+  align-items: flex-start;
 }
 .info-sheet-ref {
   display: block;

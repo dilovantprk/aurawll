@@ -60,13 +60,7 @@ export function renderMeditationsList() {
 
   elements.meditationsList.innerHTML = breathHTML;
 
-  elements.meditationsList.querySelectorAll('.meditation-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.info-trigger')) return;
-      const protocolId = card.getAttribute('data-protocol');
-      if (configProps.prepareExercise) configProps.prepareExercise(protocolId);
-    });
-  });
+
 }
 
 

@@ -18,6 +18,8 @@ export const elements = {
   authError: document.getElementById('authError'),
   authSubmitBtn: document.getElementById('authSubmitBtn'),
   skipAuthBtn: document.getElementById('skipAuthBtn'),
+  authLegalGroup: document.getElementById('authLegalGroup'),
+  legalCheckbox: document.getElementById('legalCheckbox'),
 
   // Somatic & Grid
   viewSomaticEntry: document.getElementById('view-somatic-entry'),
@@ -106,6 +108,8 @@ export const elements = {
 
   // Notifications
   notifToggleCheckbox: document.getElementById('notifToggleCheckbox'),
+  nudgeTimeContainer: document.getElementById('nudgeTimeContainer'),
+  nudgeTimePicker: document.getElementById('nudgeTimePicker'),
   notifModal: document.getElementById('notifModal'),
   notifAcceptBtn: document.getElementById('notifAcceptBtn'),
   notifDenyBtn: document.getElementById('notifDenyBtn'),
@@ -123,6 +127,7 @@ export const elements = {
   exportJsonBtn: document.getElementById('exportJsonBtn'),
   exportTxtBtn: document.getElementById('exportTxtBtn'),
   resetMemoryBtn: document.getElementById('resetMemoryBtn'),
+  settingsLoginBtn: document.getElementById('settingsLoginBtn'),
   
   // Scientific Info Modal
   infoModal: document.getElementById('infoModal'),

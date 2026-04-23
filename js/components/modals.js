@@ -301,7 +301,15 @@ export function openInfoArchive(key) {
   if (elements.vagalModalTitle) elements.vagalModalTitle.style.display = 'none';
   if (elements.vagalModalHeatmap) elements.vagalModalHeatmap.style.display = 'none';
   if (elements.vagalModalRec) elements.vagalModalRec.style.display = 'none';
-  if (elements.vagalModalAnalysis) elements.vagalModalAnalysis.style.display = 'block';
+  if (elements.vagalModalAnalysis) {
+    elements.vagalModalAnalysis.style.display = 'block';
+    // Add legal-content class for better readability of long texts
+    if (cleanKey.startsWith('legal_')) {
+      elements.vagalModalAnalysis.classList.add('legal-content');
+    } else {
+      elements.vagalModalAnalysis.classList.remove('legal-content');
+    }
+  }
 
   // Render Content
   if (elements.vagalModalAnalysis) {

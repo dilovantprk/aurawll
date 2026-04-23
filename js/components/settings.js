@@ -38,17 +38,98 @@ export function initSettings(config) {
     if (elements.volumeValLabel) elements.volumeValLabel.textContent = `${AppState.appVolume}%`;
   }
 
-  elements.resetMemoryBtn?.addEventListener('click', () => {
+  // Notifications — auto-detect most frequent check-in time
+  function getMostFrequentCheckinTime() {
+    const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
+    if (!data || data.length === 0) return '21:00';
+    const hourCounts = {};
+    let maxCount = 0;
+    let mostFrequentHour = 21;
+    data.forEach(item => {
+      const hour = new Date(item.timestamp).getHours();
+      hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+      if (hourCounts[hour] > maxCount) { maxCount = hourCounts[hour]; mostFrequentHour = hour; }
+    });
+    return `${mostFrequentHour.toString().padStart(2, '0')}:00`;
+  }
+
+  const savedNotif = localStorage.getItem('aura_notif') === 'true';
+  const autoTime = getMostFrequentCheckinTime();
+
+  if (elements.notifToggleCheckbox) {
+    elements.notifToggleCheckbox.checked = savedNotif;
+    if (savedNotif && elements.nudgeTimeContainer) elements.nudgeTimeContainer.classList.remove('hidden');
+    elements.notifToggleCheckbox.addEventListener('change', (e) => {
+      const enabled = e.target.checked;
+      localStorage.setItem('aura_notif', enabled);
+      if (elements.nudgeTimeContainer) {
+        if (enabled) elements.nudgeTimeContainer.classList.remove('hidden');
+        else elements.nudgeTimeContainer.classList.add('hidden');
+      }
+    });
+  }
+
+  if (elements.nudgeTimePicker) {
+    elements.nudgeTimePicker.value = autoTime;
+    elements.nudgeTimePicker.disabled = true;
+    elements.nudgeTimePicker.style.opacity = '0.7';
+    elements.nudgeTimePicker.style.cursor = 'default';
+  }
+
+  // Export Data
+  const downloadFile = (filename, content, type) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  };
+
+  elements.exportJsonBtn?.addEventListener('click', () => {
+    const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
+    downloadFile('aura-wellness-data.json', JSON.stringify(data, null, 2), 'application/json');
+  });
+
+  elements.exportTxtBtn?.addEventListener('click', () => {
+    const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
+    let txt = "Aura Wellness Report\n====================\n\n";
+    data.forEach(item => {
+      txt += `Date: ${new Date(item.timestamp).toLocaleString()}\n`;
+      txt += `State: ${item.state} (${item.polyvagal_state || 'Unknown'})\n`;
+      if (item.subEmotion) txt += `Emotion: ${item.subEmotion}\n`;
+      if (item.customEmotion) txt += `Custom Emotion: ${item.customEmotion}\n`;
+      if (item.somatic_selections) txt += `Somatic: ${item.somatic_selections.join(', ')}\n`;
+      if (item.savoringText) txt += `Note: ${item.savoringText}\n`;
+      txt += "--------------------\n";
+    });
+    downloadFile('aura-wellness-report.txt', txt, 'text/plain');
+  });
+
+  // Delete all data (local + Firebase)
+  elements.resetMemoryBtn?.addEventListener('click', async () => {
     if (confirm(t('prof_reset_confirm'))) {
-      localStorage.clear();
+      if (configProps.eraseAllData) {
+        elements.resetMemoryBtn.disabled = true;
+        await configProps.eraseAllData();
+      } else {
+        localStorage.clear();
+      }
       window.location.reload();
     }
   });
 
+  // Logout
   elements.logoutBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     if (configProps.logout) configProps.logout();
     else window.location.reload();
+  });
+
+  // Guest → Login
+  elements.settingsLoginBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (configProps.navigateTo) configProps.navigateTo('view-auth');
   });
 
   if (elements.langToggleBtn) {
@@ -82,11 +163,16 @@ export function updateSettingsView() {
 
   const latest = localHistory[0];
   if (latest && elements.auraCoreSphere) {
-    const weights = getWeightsFromState(latest.state);
-    const stateData = calculateVagalState(0.5, 0.5); // Fallback if calculateVagalPoint is needed
-    // In this context, we use the simpler state mapping
     const colors = { ventral: '#64E49F', sympathetic: '#FBA044', dorsal: '#62A4FF' };
     const color = colors[latest.polyvagal_state] || colors.ventral;
     elements.auraCoreSphere.style.background = `radial-gradient(circle at 35% 35%, ${color} 0%, rgba(255,255,255,0.4) 40%, transparent 80%)`;
+  }
+
+  // Show/hide logout vs login button based on guest status
+  const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
+  if (elements.logoutBtn) elements.logoutBtn.style.display = isGuest ? 'none' : '';
+  if (elements.settingsLoginBtn) {
+    elements.settingsLoginBtn.style.display = isGuest ? 'flex' : 'none';
+    elements.settingsLoginBtn.classList.toggle('hidden', !isGuest);
   }
 }

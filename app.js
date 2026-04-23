@@ -13,7 +13,7 @@ import { MeditationAudio } from './js/services/meditation-audio.js';
 
 // Components
 import { initModals, showInfoModal } from './js/components/modals.js';
-import { initCheckin, renderSomaticEntry, setHUD, prepareExercise } from './js/components/checkin.js';
+import { initCheckin, renderSomaticEntry, setHUD, prepareExercise, advanceFromExercise } from './js/components/checkin.js';
 import { initDashboard, loadDashboard } from './js/components/dashboard.js';
 import { initNotebook, loadNotebook } from './js/components/notebook.js';
 import { initMeditationFlow, startMeditationLoading } from './js/components/meditation-flow.js';
@@ -82,8 +82,8 @@ export function navigateTo(viewId, skipHistory = false) {
   // Push physical translations to static DOM elements
   renderLocalization();
 
-  const hideMobileHeaderViews = ['view-welcome', 'view-auth'];
-  const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
+  const hideMobileHeaderViews = ['view-welcome', 'view-auth', 'view-onboarding'];
+  const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-onboarding', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
   
   const shouldHideMobileHeader = hideMobileHeaderViews.includes(viewId);
   const shouldHideImmersionNav = hideImmersionNavViews.includes(viewId);
@@ -229,16 +229,41 @@ async function initAppBootstrap() {
     onAuthenticated: (user) => {
       AppState.user = user;
       migrateGuestData(user.uid);
-      loadDashboard();
+      const onboarded = localStorage.getItem('aura_onboarded');
+      if (!onboarded) {
+        startOnboardingFlow({ navigateTo });
+      } else {
+        loadDashboard();
+      }
     }
   });
   initSettings({ 
+    navigateTo,
     setVolume: (v) => SensoryEngine.setVolume(v), 
     setDroneEnabled: (s) => SensoryEngine.setDroneEnabled(s),
     logout: async () => {
       await logoutUser();
       AppState.user = null;
+      localStorage.removeItem('aura_history');
+      localStorage.removeItem('aura_guest_name');
+      localStorage.removeItem('aura_onboarded');
       window.location.reload();
+    },
+    eraseAllData: async () => {
+      try {
+        if (fb && fb.isInitialized && AppState.user) {
+          const q = fb.query(fb.collection(fb.db, 'checkins'), fb.where('uid', '==', AppState.user.uid));
+          const snapshot = await fb.getDocs(q);
+          const deletePromises = [];
+          snapshot.forEach(doc => {
+            deletePromises.push(fb.deleteDoc(doc.ref));
+          });
+          await Promise.all(deletePromises);
+        }
+      } catch (err) {
+        console.error("[Aura] Failed to delete Firebase data", err);
+      }
+      localStorage.clear();
     }
   });
 
@@ -263,6 +288,50 @@ async function initAppBootstrap() {
       fb.onAuthStateChanged(fb.auth, (user) => startAppFlow(user));
     } else { startAppFlow(null); }
   } catch (err) { startAppFlow(null); }
+
+  initSwipeNavigation();
+}
+
+/**
+ * Swipe to Navigate Logic
+ */
+function initSwipeNavigation() {
+  const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
+  let touchStartX = 0;
+  let touchStartY = 0;
+  
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
+    if (!currentView) return;
+    
+    const currentTab = currentView.id.replace('view-', '');
+    const currentIndex = tabs.indexOf(currentTab);
+    if (currentIndex === -1) return;
+
+    if (e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
+
+    const touchEndX = e.changedTouches[0].screenX;
+    const touchEndY = e.changedTouches[0].screenY;
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    
+    if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      if (deltaX < 0 && currentIndex < tabs.length - 1) {
+        const nextTab = tabs[currentIndex + 1];
+        if (nextTab === 'dashboard') loadDashboard();
+        else navigateTo(`view-${nextTab}`);
+      } else if (deltaX > 0 && currentIndex > 0) {
+        const prevTab = tabs[currentIndex - 1];
+        if (prevTab === 'dashboard') loadDashboard();
+        else navigateTo(`view-${prevTab}`);
+      }
+    }
+  }, { passive: true });
 }
 
 function updateUI() {

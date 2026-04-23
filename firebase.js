@@ -20,7 +20,8 @@ import {
   limit,
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 import { 
   getMessaging, 
@@ -72,6 +73,7 @@ export {
   doc,
   setDoc,
   getDoc,
+  deleteDoc,
   getMessaging,
   getToken,
   onMessage
