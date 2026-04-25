@@ -485,35 +485,35 @@ body.crystal-entry .app-container {
 .skeleton-card { height: 160px; width: 100%; border-radius: 36px; margin-bottom: 1rem; }
 .skeleton-circle { width: 60px; height: 60px; border-radius: 50%; }
 
-/* === PHYSICAL GLASS HEADER SLIDE === */
+/* === PHYSICAL GLASS HEADER SLIDE (v2: Full Screen) === */
 .header-island-slide-out-left {
   animation: headerSlideOutLeft 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 .header-island-slide-in-right {
-  animation: headerSlideInRight 0.3s cubic-bezier(0, 0, 0.2, 1) forwards;
+  animation: headerSlideInRight 0.25s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 .header-island-slide-out-right {
   animation: headerSlideOutRight 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 .header-island-slide-in-left {
-  animation: headerSlideInLeft 0.3s cubic-bezier(0, 0, 0.2, 1) forwards;
+  animation: headerSlideInLeft 0.25s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
 @keyframes headerSlideOutLeft {
   0% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(-30px); opacity: 0; filter: blur(4px); }
+  100% { transform: translateX(-100vw); opacity: 0; }
 }
 @keyframes headerSlideInRight {
-  0% { transform: translateX(30px); opacity: 0; filter: blur(4px); }
-  100% { transform: translateX(0); opacity: 1; filter: blur(0); }
+  0% { transform: translateX(100vw); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
 @keyframes headerSlideOutRight {
   0% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(30px); opacity: 0; filter: blur(4px); }
+  100% { transform: translateX(100vw); opacity: 0; }
 }
 @keyframes headerSlideInLeft {
-  0% { transform: translateX(-30px); opacity: 0; filter: blur(4px); }
-  100% { transform: translateX(0); opacity: 1; filter: blur(0); }
+  0% { transform: translateX(-100vw); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
 
 /* === HEADER TAB CHANGE ANIMATION (Liquid Glass Reveal) === */
