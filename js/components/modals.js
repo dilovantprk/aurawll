@@ -316,6 +316,10 @@ export function hideCommunityModal() {
     elements.communityBackdrop.style.transition = '';
   }
   if (typeof stopGalaxy === 'function') stopGalaxy();
+  if (statsUnsubscribe) {
+    statsUnsubscribe();
+    statsUnsubscribe = null;
+  }
 }
 
 
@@ -404,39 +408,51 @@ function renderPersonalStats(history = []) {
   `;
 }
 
+let statsUnsubscribe = null;
+
 async function renderCommunityStats() {
   const fb = configProps.fb;
-  let totalCheckins = 42083; // Base legacy count
-  let activeNow = 12 + (Math.floor(Date.now() / 60000) % 20);
+  const baseLegacyCount = 42083;
+  
+  const updateUI = (cloudCount) => {
+    const total = baseLegacyCount + cloudCount;
+    // Organic jitter for "Active Now"
+    const activeNow = 15 + Math.floor(Math.random() * 8) + (Math.floor(Date.now() / 3600000) % 10);
+    
+    if (elements.commCheckinCount) {
+      elements.commCheckinCount.innerHTML = t('comm_checkin_count').replace('{count}', `<span>${total.toLocaleString()}</span>`);
+    }
+    if (elements.commActiveNow) elements.commActiveNow.textContent = activeNow;
+    
+    // Dynamic distribution for mock feel (simulating global balance)
+    const v = 48 + (Math.random() * 2 - 1); 
+    const s = 29 + (Math.random() * 2 - 1); 
+    const d = 100 - v - s;
+    if (elements.distVentral) elements.distVentral.style.width = `${v}%`;
+    if (elements.distSympathetic) elements.distSympathetic.style.width = `${s}%`;
+    if (elements.distDorsal) elements.distDorsal.style.width = `${d}%`;
+    
+    if (elements.commTopProtocol) elements.commTopProtocol.textContent = t('title_p_resonance');
+  };
+
+  // Initial render with fallback/cache if needed
+  updateUI(0);
 
   if (fb && fb.isInitialized) {
     try {
+      if (statsUnsubscribe) statsUnsubscribe(); // Clean up existing
+      
       const statsRef = fb.doc(fb.db, "stats", "community");
-      const statsSnap = await fb.getDoc(statsRef);
-      if (statsSnap.exists()) {
-        const cloudCount = statsSnap.data().totalCheckins || 0;
-        totalCheckins += cloudCount;
-        // activeNow could also be dynamic if we had presence, but keeping organic for now
-        activeNow = 18 + (Math.floor(Date.now() / 60000) % 15);
-      }
+      statsUnsubscribe = fb.onSnapshot(statsRef, (doc) => {
+        if (doc.exists()) {
+          const cloudCount = doc.data().totalCheckins || 0;
+          updateUI(cloudCount);
+        }
+      }, (err) => console.warn("Live stats failed", err));
+      
     } catch (e) {
       console.warn("Could not fetch community stats:", e);
     }
-  }
-  
-  if (elements.commCheckinCount) {
-    elements.commCheckinCount.innerHTML = t('comm_checkin_count').replace('{count}', `<span>${totalCheckins.toLocaleString()}</span>`);
-  }
-  
-  // Dynamic distribution for mock feel
-  const v = 48, s = 29, d = 23;
-  if (elements.distVentral) elements.distVentral.style.width = `${v}%`;
-  if (elements.distSympathetic) elements.distSympathetic.style.width = `${s}%`;
-  if (elements.distDorsal) elements.distDorsal.style.width = `${d}%`;
-  
-  if (elements.commTopProtocol) elements.commTopProtocol.textContent = t('title_p_resonance');
-  if (elements.commActiveNow) {
-    elements.commActiveNow.textContent = activeNow;
   }
 }
 
