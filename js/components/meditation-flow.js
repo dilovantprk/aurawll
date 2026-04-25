@@ -87,6 +87,10 @@ export function startMeditationLoading(protocolId) {
 
     meditationLoadingTimeout = setTimeout(() => {
       if (configProps.navigateTo) configProps.navigateTo('view-savoring');
+      
+      const savoringHeader = document.querySelector('#view-savoring .step-header');
+      if (savoringHeader) savoringHeader.classList.add('hidden');
+
       [elements.marPhase1, elements.marPhase2, elements.marPhaseOffer, elements.marPhase3].forEach(p => p?.classList.add('hidden'));
       elements.marPhaseScan.classList.remove('hidden');
       meditationIndex = 0;
@@ -143,6 +147,9 @@ function finishGuidedScan() {
   scanTimeouts.forEach(clearTimeout);
   scanTimeouts = [];
   
+  const savoringHeader = document.querySelector('#view-savoring .step-header');
+  if (savoringHeader) savoringHeader.classList.remove('hidden');
+
   // Phase 1: Meditative Intro
   [elements.marPhaseScan, elements.marPhaseOffer, elements.marPhase2, elements.marPhase3].forEach(p => p?.classList.add('hidden'));
   elements.marPhase1.classList.remove('hidden');
@@ -336,6 +343,17 @@ function renderSavoringLog() {
   if (stepInd) {
     stepInd.textContent = t('step_6');
     stepInd.setAttribute('data-i18n', 'step_6');
+  }
+  
+  const savoringTitle = document.getElementById('savoringTitle');
+  if (savoringTitle) {
+    savoringTitle.textContent = t('mar_savor_title');
+    savoringTitle.setAttribute('data-i18n', 'mar_savor_title');
+  }
+  
+  const savoringSubtitle = document.getElementById('savoringSubtitle');
+  if (savoringSubtitle) {
+    savoringSubtitle.classList.remove('hidden');
   }
   
   // Trigger Becoming visualizer

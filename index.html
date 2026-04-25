@@ -81,49 +81,50 @@
     </section>
 
     <!-- ONBOARDING VIEW -->
-    <section id="view-onboarding" class="view hidden center-content" style="padding-top: 5vh; justify-content: center;">
+    <section id="view-onboarding" class="view hidden center-content" style="padding-top: 0; justify-content: center;">
       
-      <div id="onbScreensContainer" class="onb-screens-container" style="width: 100%; max-width: 400px; position: relative; cursor: pointer;">
+      <div id="onbScreensContainer" class="onb-screens-container" style="width: 100%; max-width: 480px; position: relative; cursor: pointer; padding: 2rem;">
+        
         <!-- Screen 1: Hook -->
-        <div class="onb-screen active" style="transition: all 0.5s ease; display: flex; flex-direction: column; align-items: center; text-align: center;">
-          <div class="breath-circle mb-6" style="animation: softPulse 4s infinite ease-in-out; width:100px; height:100px; border-radius: 50%; border: 1px solid rgba(133,141,255,0.4); box-shadow: inset 0 0 30px rgba(133,141,255,0.1), 0 0 20px rgba(133,141,255,0.2); display: flex; justify-content: center; align-items: center;">
-             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <div class="onb-screen active" style="transition: opacity 0.8s ease; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center; min-height: 50vh;">
+          <div class="mb-8" style="width: 120px; height: 120px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05); background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 70%); display: flex; justify-content: center; align-items: center;">
+             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-main, #fff); opacity: 0.8;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
           </div>
-          <h1 style="font-size: 1.8rem; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 1rem; color: #fff;" data-i18n="onb_1_title">Sinir sistemin daima konuşur.</h1>
-          <p style="font-size: 1.05rem; color: rgba(255,255,255,0.5); font-weight: 300; line-height: 1.6; padding: 0 1rem;" data-i18n="onb_1_sub">Aura, onu dinlemene ve<br>uyumlanmana yardımcı olur.</p>
+          <h1 style="font-size: 2.2rem; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 1.2rem; color: var(--text-main, #fff);" data-i18n="onb_1_title">Sinir sistemin daima konuşur.</h1>
+          <p style="font-size: 1.1rem; color: var(--text-muted, rgba(255,255,255,0.5)); font-weight: 300; line-height: 1.6; max-width: 300px;" data-i18n="onb_1_sub">Aura, onu dinlemene ve<br>uyumlanmana yardımcı olur.</p>
         </div>
 
         <!-- Screen 2: Method -->
-        <div class="onb-screen hidden" style="opacity: 0; transform: translateY(10px); position: absolute; top: 0; left: 0; width: 100%; transition: all 0.5s ease; display: flex; flex-direction: column; align-items: center; text-align: center;">
-          <div class="onb-icon-trio mb-8" style="display: flex; gap: 1rem; justify-content: center;">
-            <div class="onb-icon-box glass-panel" style="padding: 1rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-primary);"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg>
+        <div class="onb-screen hidden" style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 0.8s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+          <div class="onb-icon-trio mb-8" style="display: flex; gap: 1.5rem; justify-content: center;">
+            <div class="glass-panel" style="padding: 1.2rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="color: var(--text-main, #fff); opacity: 0.8;"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg>
             </div>
-            <div class="onb-icon-box glass-panel" style="padding: 1rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; transform: translateY(-10px);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--vagal-accent);"><path d="M7 12c0-3 2-5 5-5s5 2 5 5-2 5-5 5-5-2-5-5z"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10l2 2M5 19l2-2m10-10l2-2"/></svg>
+            <div class="glass-panel" style="padding: 1.2rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="color: var(--text-main, #fff); opacity: 0.8;"><path d="M7 12c0-3 2-5 5-5s5 2 5 5-2 5-5 5-5-2-5-5z"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10l2 2M5 19l2-2m10-10l2-2"/></svg>
             </div>
-            <div class="onb-icon-box glass-panel" style="padding: 1rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-dorsal);"><path d="M12 3v3m0 12v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M3 12h3m12 0h3M4.2 19.8l2.1-2.1m11.4-11.4l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>
+            <div class="glass-panel" style="padding: 1.2rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="color: var(--text-main, #fff); opacity: 0.8;"><path d="M12 3v3m0 12v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M3 12h3m12 0h3M4.2 19.8l2.1-2.1m11.4-11.4l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>
             </div>
           </div>
-          <h1 style="font-size: 1.8rem; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 1rem; color: #fff;" data-i18n="onb_3_title">Fark Et. Dengelen. Bütünleş.</h1>
-          <p style="font-size: 1.05rem; color: rgba(255,255,255,0.5); font-weight: 300; line-height: 1.6; padding: 0 1rem;" data-i18n="onb_3_sub">Nefes pratikleri ve duygu takibi ile<br>sinir sistemi regülasyonu.</p>
+          <h1 style="font-size: 2.2rem; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 1.2rem; color: var(--text-main, #fff);" data-i18n="onb_3_title">Fark Et. Dengelen. Bütünleş.</h1>
+          <p style="font-size: 1.1rem; color: var(--text-muted, rgba(255,255,255,0.5)); font-weight: 300; line-height: 1.6; max-width: 320px;" data-i18n="onb_3_sub">Nefes pratikleri ve duygu takibi ile<br>sinir sistemi regülasyonu.</p>
         </div>
 
         <!-- Screen 3: Invitation -->
-        <div class="onb-screen hidden" style="opacity: 0; transform: translateY(10px); position: absolute; top: 0; left: 0; width: 100%; transition: all 0.5s ease; display: flex; flex-direction: column; align-items: center; text-align: center;">
-          <div class="mb-8" style="width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(133,141,255,0.4) 0%, transparent 80%); display: flex; align-items: center; justify-content: center;">
-             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: #fff;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <div class="onb-screen hidden" style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 0.8s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+          <div class="mb-8" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="color: var(--text-main, #fff);"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
           </div>
-          <h1 style="font-size: 2.2rem; font-weight: 300; margin-bottom: 1.5rem; color: #fff;" data-i18n="onb_4_title">Başlamaya hazır mısın?</h1>
-          <button id="onbLetsGoBtn" class="primary-btn pulse-hover" style="width: 100%; max-width: 250px; font-size: 1.1rem; padding: 1rem 0; border-radius: 99px; letter-spacing: 1px; z-index: 10;" data-i18n="onb_lets_go">İçeri Gir</button>
+          <h1 style="font-size: 2.2rem; font-weight: 300; margin-bottom: 2rem; color: var(--text-main, #fff);" data-i18n="onb_4_title">Başlamaya hazır mısın?</h1>
+          <button id="onbLetsGoBtn" class="primary-btn" style="width: 100%; max-width: 280px; font-size: 1.1rem; padding: 1.2rem 0; border-radius: 99px; letter-spacing: 1px; z-index: 10;" data-i18n="onb_lets_go">İçeri Gir</button>
         </div>
       </div>
 
-      <div class="onb-dots" style="position: absolute; bottom: 10vh; display: flex; gap: 12px; pointer-events: none;">
-        <span class="onb-dot active" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.6); transition: all 0.3s ease;"></span>
-        <span class="onb-dot" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s ease;"></span>
-        <span class="onb-dot" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s ease;"></span>
+      <div class="onb-dots" style="position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; pointer-events: none;">
+        <span class="onb-dot active" style="width: 6px; height: 6px; border-radius: 50%; background: var(--text-main, #fff); opacity: 0.8; transition: opacity 0.4s ease;"></span>
+        <span class="onb-dot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--text-main, #fff); opacity: 0.2; transition: opacity 0.4s ease;"></span>
+        <span class="onb-dot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--text-main, #fff); opacity: 0.2; transition: opacity 0.4s ease;"></span>
       </div>
     </section>
 
@@ -411,19 +412,19 @@
 
     <!-- STEP 4: MARINATION & SAVORING LOG -->
     <section id="view-savoring" class="view hidden center-content">
-      <div class="step-header fade-in" style="position: relative;">
+      <div class="step-header fade-in">
         <button id="savoringInfoBtn" class="cockpit-info-btn checkin-info-btn" data-info="info_step4_desc">i</button>
         <span id="savoringStepIndicator" class="step-indicator" data-i18n="step_5">Step 5 of 6</span>
+        <h2 id="savoringTitle" data-i18n="mar_notice">Notice what's shifted in your body right now.</h2>
+        <p id="savoringSubtitle" class="step-subtitle hidden" data-i18n="mar_savor_subtitle">A moment of focus to complete the loop.</p>
       </div>
 
       <!-- Phase 1: Body Scan Prompt (5s) -->
       <div id="marPhase1" class="marination-phase fade-in-pure">
-        <h2 class="soft-pulse" data-i18n="mar_notice">Notice what's shifted in your body right now.</h2>
       </div>
 
       <!-- Phase 2: Sensation Selection -->
       <div id="marPhase2" class="marination-phase hidden">
-        <h2 data-i18n="mar_notice" style="font-weight: 500; margin-bottom: 2rem;">Notice what's shifted.</h2>
         <div class="neural-hive-wrapper">
           <div id="marSensationContainer" class="rhizome-container hive-grid">
             <!-- Hexagonal Cells Rendered by JS -->
@@ -448,8 +449,6 @@
 
       <!-- Phase 3: Savoring Log (Step 6) -->
       <div id="marPhase3" class="marination-phase hidden" style="width: 100%;">
-        <h2 data-i18n="mar_savor_title" style="font-weight: 500; margin-bottom: 0.5rem;">What was one good thing you noticed today?</h2>
-        <p style="opacity: 0.6; font-size: 0.9rem; margin-bottom: 2rem;" data-i18n="mar_savor_subtitle">A moment of focus to complete the loop.</p>
         
         <div style="position: relative; width: 100%; max-width: 400px; margin: 0 auto;">
           <textarea id="savoringNote" 

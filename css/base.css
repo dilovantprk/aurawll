@@ -384,6 +384,12 @@ body {
   padding-bottom: 5rem;
 }
 
+#view-completion.center-content {
+  justify-content: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 h1, h2, h3 { 
   font-weight: 500; 
   line-height: 1.2; 

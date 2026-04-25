@@ -554,3 +554,10 @@
   color: var(--accent-primary);
 }
 
+/* Mobile Settings Header Adjustment */
+@media (max-width: 600px) {
+  #view-settings .standard-view-content {
+    padding-top: 5rem !important;
+  }
+}
+

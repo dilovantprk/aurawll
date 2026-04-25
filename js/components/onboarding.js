@@ -32,11 +32,11 @@ export function startOnboardingFlow(config) {
         setTimeout(() => {
           s.classList.add('hidden');
           s.style.position = 'absolute';
-        }, 400);
+        }, 800);
       }
     });
     dots.forEach((d, i) => {
-      d.style.background = i === idx ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)';
+      d.style.opacity = i === idx ? '0.8' : '0.2';
     });
   };
 
