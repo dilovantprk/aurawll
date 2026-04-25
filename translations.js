@@ -792,7 +792,7 @@ export const locales = {
     // Badges
     "badge_explorer": "Kaşif",
     "badge_explorer_desc": "Her protokolü denedi",
-    "badge_earlybird": "Erken Kuş",
+    "badge_earlybird": "Erkenci Kuş",
     "badge_earlybird_desc": "Sabah sağlığı seansı",
     "badge_nightowl": "Gece Kuşu",
     "badge_nightowl_desc": "Gece yarısı düzenlemesi",
