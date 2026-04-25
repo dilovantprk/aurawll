@@ -362,13 +362,20 @@ async function submitSavoringLog() {
   saveHistoryToLocal();
 
   const fb = configProps.fb;
-  if (fb && fb.isInitialized && AppState.user && !AppState.user.guest) {
-    // Non-blocking cloud save to prevent "sticking" on slow connections
+  if (fb && fb.isInitialized) {
+    // Non-blocking cloud save
     (async () => {
       try {
-        await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...AppState.currentCheckIn });
-        const userRef = fb.doc(fb.db, "users", AppState.user.uid);
-        await fb.setDoc(userRef, { lastEmotion: AppState.currentCheckIn.subEmotion || 'se_neutral' }, { merge: true });
+        // 1. Global Community Counter (All users contribute)
+        const globalStatsRef = fb.doc(fb.db, "stats", "community");
+        await fb.setDoc(globalStatsRef, { totalCheckins: fb.increment(1) }, { merge: true });
+
+        // 2. Personal History (Authenticated users only)
+        if (AppState.user && !AppState.user.guest) {
+          await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...AppState.currentCheckIn });
+          const userRef = fb.doc(fb.db, "users", AppState.user.uid);
+          await fb.setDoc(userRef, { lastEmotion: AppState.currentCheckIn.subEmotion || 'se_neutral' }, { merge: true });
+        }
       } catch(err) { console.warn("Cloud save background failed", err); }
     })();
   }

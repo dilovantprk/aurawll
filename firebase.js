@@ -21,7 +21,9 @@ import {
   doc,
   setDoc,
   getDoc,
-  deleteDoc
+  updateDoc,
+  deleteDoc,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 import { 
   getMessaging, 
@@ -73,7 +75,9 @@ export {
   doc,
   setDoc,
   getDoc,
+  updateDoc,
   deleteDoc,
+  increment,
   getMessaging,
   getToken,
   onMessage

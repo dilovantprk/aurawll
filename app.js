@@ -274,6 +274,7 @@ async function initAppBootstrap() {
       import('./firebase.js'),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase timeout')), 3000))
     ]);
+    if (fb) initModals({ fb }); // Pass fb to existing modals config
   } catch (err) {
     console.error("[Aura] Firebase load failed", err);
   }
