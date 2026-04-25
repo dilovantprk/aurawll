@@ -371,36 +371,33 @@ body.has-nav .dashboard-content {
 /* Sliding Liquid Pill Indicator */
 .nav-indicator {
   position: absolute;
-  top: 10px;
+  bottom: 12px; /* Positioned below icons */
   left: 0;
-  height: 44px;
+  height: 2px; /* Thin indicator line */
   width: var(--nav-width, 0);
   display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), width 0.4s ease;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), width 0.4s ease;
   transform: translateX(var(--nav-left, 0));
   z-index: 0;
 }
 
 .nav-indicator::after {
   content: '';
-  width: 85%;
+  width: 40%; /* Shorter than the item width for a sleek look */
   height: 100%;
-  background: rgba(var(--vagal-accent-rgb, 133, 141, 255), 0.15);
-  border: 1.5px solid rgba(var(--vagal-accent-rgb, 133, 141, 255), 0.3);
-  border-radius: 22px;
-  backdrop-filter: blur(5px);
+  background: var(--vagal-accent, #fff);
+  border-radius: 2px;
   box-shadow: 
-    0 0 20px rgba(var(--vagal-accent-rgb, 133, 141, 255), 0.1),
-    inset 0 0 10px rgba(255, 255, 255, 0.05);
+    0 0 12px var(--vagal-accent, #fff),
+    0 0 4px rgba(255, 255, 255, 0.8);
   transition: transform 0.4s var(--spring-bounce);
 }
 
 .nav-pill-stretch::after {
-  transform: scaleX(1.35) scaleY(0.85);
-  filter: blur(1px);
+  transform: scaleX(1.8); /* Elegant stretch instead of blur */
   opacity: 0.8;
 }
 
@@ -412,7 +409,7 @@ body.has-nav .dashboard-content {
   flex: 1;
   height: 64px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.55); /* Increased from 0.35 for better visibility */
   transition: all 0.4s var(--spring-easing);
   position: relative;
   gap: 2px;
@@ -420,7 +417,7 @@ body.has-nav .dashboard-content {
 }
 
 .nav-item.active {
-  color: var(--vagal-accent, #fff);
+  color: #fff;
   transform: translateY(-2px);
 }
 
@@ -432,23 +429,24 @@ body.has-nav .dashboard-content {
 }
 
 .nav-item.active .nav-icon {
-  transform: scale(1.15);
-  filter: drop-shadow(0 0 8px rgba(var(--vagal-accent-rgb, 255,255,255), 0.4));
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6)); /* Premium Neon Glow */
 }
 
 .nav-label {
   display: block;
   font-size: 9px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  opacity: 0.4;
+  opacity: 0.6;
   transition: all 0.3s ease;
   white-space: nowrap;
 }
 
 .nav-item.active .nav-label {
   opacity: 1;
+  font-weight: 600;
   letter-spacing: 1.2px;
 }
 
@@ -486,39 +484,59 @@ body.has-nav .dashboard-content {
 
 .header-island {
   pointer-events: auto;
-  width: calc(100% - 2.4rem);
-  background: rgba(255, 255, 255, 0.12); /* Slightly more opaque for lower blur */
-  backdrop-filter: blur(20px); /* Optimized for performance */
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: calc(100% - 2rem);
+  background: rgba(255, 255, 255, 0.08); /* More transparent for integrated glass feel */
+  backdrop-filter: blur(15px); /* Increased blur for deep glassmorphism */
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtler border */
   border-top: none;
   border-radius: 0 0 32px 32px;
-  padding: calc(0.6rem + env(safe-area-inset-top, 20px)) 1.5rem 0.8rem 1.5rem;
+  padding: calc(0.7rem + env(safe-area-inset-top, 20px)) 1.5rem 0.9rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   justify-content: space-between;
   
-  /* Simplified Transition */
   transition: transform 0.5s var(--spring-easing), opacity 0.4s ease;
   will-change: transform;
 }
 
+.header-island .logo {
+  font-weight: 700; /* Bold branding */
+  font-size: 1.3rem;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+}
+
 #active-tab-name {
   font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-main);
-  -webkit-text-fill-color: var(--text-main);
-  margin-left: 0.8rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  padding-left: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 300; /* Thin page title for contrast */
+  color: rgba(255, 255, 255, 0.6); /* Slightly dimmed */
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.6);
+  margin-left: 1rem;
+  position: relative;
   text-transform: capitalize;
   letter-spacing: -0.2px;
   display: inline-block;
   vertical-align: middle;
   line-height: 1;
+}
+
+/* Elegant Divider Glow */
+#active-tab-name::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
 }
 
 .desktop-header-nav {
