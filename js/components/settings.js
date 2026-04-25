@@ -2,6 +2,8 @@ import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { AppState, safeSetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
+import { BADGES } from '../core/constants.js';
+import { calculateEarnedBadges } from '../core/utils.js';
 import { openCommunityModal } from './modals.js';
 
 import { NotificationService } from '../services/notifications.js';
@@ -179,6 +181,17 @@ export function updateSettingsView() {
     const stateKey = latest.polyvagal_state || latest.state;
     const color = colors[stateKey] || colors.okay;
     elements.auraCoreSphere.style.setProperty('--vagal-accent', color);
+  }
+
+  // Render Badges in Bio-Identity
+  if (elements.identityBadges) {
+    const earnedBadgeIds = calculateEarnedBadges(localHistory);
+    const badgeIconsHtml = earnedBadgeIds.map(id => {
+      const badge = BADGES[id];
+      if (!badge) return '';
+      return `<div class="id-badge-icon" title="${t(badge.titleKey)}" style="font-size: 1.2rem; cursor: help;">${badge.icon}</div>`;
+    }).join('');
+    elements.identityBadges.innerHTML = badgeIconsHtml;
   }
 
   // Show/hide logout vs login button based on guest status

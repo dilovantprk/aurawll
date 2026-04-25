@@ -119,6 +119,7 @@ export const elements = {
   auraCoreSphere: document.getElementById('aura-core-sphere'),
   userDisplayName: document.getElementById('user-display-name'),
   uniqueDaysStats: document.getElementById('unique-days-stats'),
+  identityBadges: document.getElementById('identity-badges'),
   guestCtaBox: document.getElementById('guest-cta-box'),
   guestCtaRegisterBtn: document.getElementById('guest-cta-register-btn'),
   hapticToggle: document.getElementById('hapticToggle'),

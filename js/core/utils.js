@@ -1,5 +1,39 @@
 import { t } from './i18n.js';
 import { AppState } from './state.js';
+import { protocols } from './constants.js';
+
+export function calculateEarnedBadges(history) {
+  const earned = new Set();
+  if (!history || history.length === 0) return Array.from(earned);
+
+  const usedProtocols = new Set(history.map(h => h.protocolId).filter(id => id));
+  const allProtocols = Object.keys(protocols);
+  if (allProtocols.every(p => usedProtocols.has(p))) earned.add('explorer');
+
+  history.forEach(h => {
+    const hour = new Date(h.timestamp).getHours();
+    if (hour >= 5 && hour < 10) earned.add('earlybird');
+    if (hour >= 23 || hour < 4) earned.add('nightowl');
+  });
+
+  if (history.length >= 50) earned.add('master');
+
+  let ventralCount = 0;
+  for (let i = 0; i < history.length; i++) {
+    const state = history[i].polyvagal_state || history[i].state;
+    if (state === 'ventral' || state === 'okay') {
+      ventralCount++;
+      if (ventralCount >= 5) { earned.add('zen'); break; }
+    } else {
+      ventralCount = 0;
+    }
+  }
+
+  // Simple streak check (simulated as we already have comm_streak in UI)
+  if (history.length >= 7) earned.add('streak7');
+  
+  return Array.from(earned);
+}
 
 export function normalizeCheckinData(data) {
   if (!data) return data;
