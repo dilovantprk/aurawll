@@ -417,22 +417,20 @@ let simulatedGrowthInterval = null;
 
 async function renderCommunityStats() {
   const fb = configProps.fb;
-  const baseLegacyCount = 124803; // Higher base for more premium feel
-  let localGrowthOffset = parseInt(sessionStorage.getItem('aura_growth_offset') || '0');
+  const baseLegacyCount = 0; // Purely real data from Firestore
   
   const updateUI = (cloudCount) => {
-    const total = baseLegacyCount + cloudCount + localGrowthOffset;
-    const activeNow = 24 + Math.floor(Math.random() * 12) + (Math.floor(Date.now() / 3600000) % 15);
+    const total = baseLegacyCount + cloudCount;
+    // Active now is estimated based on recent cloud activity or a small organic floor
+    const activeNow = cloudCount > 0 ? Math.max(1, Math.min(12, Math.floor(cloudCount / 10) + 1)) : 1;
     
     if (elements.commCheckinCount) {
       elements.commCheckinCount.innerHTML = t('comm_checkin_count').replace('{count}', `<span>${total.toLocaleString()}</span>`);
     }
     if (elements.commActiveNow) elements.commActiveNow.textContent = activeNow;
     
-    // Dynamic distribution (Ventral focus)
-    const v = 52 + (Math.random() * 2 - 1); 
-    const s = 26 + (Math.random() * 2 - 1); 
-    const d = 100 - v - s;
+    // Distribution (using real cloud ratios would be ideal, but for now we use a stable real feel)
+    const v = 60, s = 25, d = 15;
     if (elements.distVentral) elements.distVentral.style.width = `${v}%`;
     if (elements.distSympathetic) elements.distSympathetic.style.width = `${s}%`;
     if (elements.distDorsal) elements.distDorsal.style.width = `${d}%`;
@@ -443,16 +441,6 @@ async function renderCommunityStats() {
   // Initial render
   updateUI(0);
 
-  // Simulated Growth (1 completion every ~45 seconds)
-  if (simulatedGrowthInterval) clearInterval(simulatedGrowthInterval);
-  simulatedGrowthInterval = setInterval(() => {
-    localGrowthOffset++;
-    sessionStorage.setItem('aura_growth_offset', localGrowthOffset);
-    // Trigger UI refresh if we have cloud data, otherwise just local
-    const currentCloud = parseInt(sessionStorage.getItem('aura_cloud_count') || '0');
-    updateUI(currentCloud);
-  }, 45000);
-
   if (fb && fb.isInitialized) {
     try {
       if (statsUnsubscribe) statsUnsubscribe();
@@ -460,7 +448,6 @@ async function renderCommunityStats() {
       statsUnsubscribe = fb.onSnapshot(statsRef, (doc) => {
         if (doc.exists()) {
           const cloudCount = doc.data().totalCheckins || 0;
-          sessionStorage.setItem('aura_cloud_count', cloudCount);
           updateUI(cloudCount);
         }
       }, (err) => console.warn("Live stats failed", err));
