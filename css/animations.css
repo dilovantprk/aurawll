@@ -215,8 +215,8 @@ body.state-resolved::before {
 
 /* === CRYSTAL CLARITY (Dashboard Entry) === */
 @keyframes crystalClarify {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: scale(1.02); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 body.crystal-entry .app-container {
@@ -487,9 +487,9 @@ body.crystal-entry .app-container {
 
 /* === HEADER TAB CHANGE ANIMATION (Liquid Glass Reveal) === */
 @keyframes header-text-update {
-  0%   { opacity: 0; filter: blur(8px); transform: scaleX(0.95) translateY(2px); }
+  0%   { opacity: 0; filter: blur(8px); transform: scaleX(0.95); }
   40%  { opacity: 0.8; filter: blur(3px); }
-  100% { opacity: 1; filter: blur(0); transform: scaleX(1) translateY(0); }
+  100% { opacity: 1; filter: blur(0); transform: scaleX(1); }
 }
 
 .header-text-animate {
