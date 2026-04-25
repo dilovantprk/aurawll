@@ -118,6 +118,7 @@ export const elements = {
   // Cockpit / Profile
   auraCoreSphere: document.getElementById('aura-core-sphere'),
   userDisplayName: document.getElementById('user-display-name'),
+  identityRank: document.getElementById('identity-rank'),
   uniqueDaysStats: document.getElementById('unique-days-stats'),
   identityBadges: document.getElementById('identity-badges'),
   guestCtaBox: document.getElementById('guest-cta-box'),

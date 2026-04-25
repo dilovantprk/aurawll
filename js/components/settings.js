@@ -176,9 +176,12 @@ export function updateSettingsView() {
     if (lastBadge) displayTitle = t(lastBadge.titleKey);
   }
 
-  const finalName = name ? `${name} | ${displayTitle}` : displayTitle;
-  
+  const finalName = name || (AppState.lang === 'tr' ? 'Misafir' : 'Guest');
   if (elements.userDisplayName) elements.userDisplayName.textContent = finalName;
+  
+  if (elements.identityRank) {
+    elements.identityRank.textContent = displayTitle;
+  }
   
   if (elements.uniqueDaysStats) {
     const uniqueDays = new Set(localHistory.map(h => new Date(h.timestamp).toDateString())).size || 0;
