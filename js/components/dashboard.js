@@ -112,7 +112,7 @@ export function renderHistory(data) {
     elements.historyList.innerHTML = `<div class="empty-state">${t('dash_empty')}</div>`;
     return;
   }
-  elements.historyList.innerHTML = data.map(doc => {
+  elements.historyList.innerHTML = data.map((doc, index) => {
     const item = normalizeCheckinData(doc);
     const timeStr = getHumanizedTime(item.timestamp);
     const stateName = { 'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic', 'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal', 'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral' }[item.state] || '...';
