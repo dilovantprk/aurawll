@@ -363,14 +363,29 @@ async function initAppBootstrap() {
   const navLinks = elements.navLinks ? Array.from(elements.navLinks) : [];
   const allNavs = [...navItems, ...navLinks];
 
+  const tabsOrder = ['dashboard', 'meditations', 'notebook', 'settings'];
+
   allNavs.forEach(btn => {
     if (!btn) return;
     btn.onclick = () => {
-      const view = btn.getAttribute('data-view');
-      if (view) {
+      const targetSlug = btn.getAttribute('data-view');
+      if (targetSlug) {
         SensoryEngine.triggerHaptic('light');
         SensoryEngine.playTick();
-        navigateTo('view-' + view);
+        
+        const currentSlug = AppState.currentView.replace('view-', '');
+        const currentIndex = tabsOrder.indexOf(currentSlug);
+        const targetIndex = tabsOrder.indexOf(targetSlug);
+        
+        let direction = 'right';
+        // If coming from a deep view (not in main tabs) to a main tab, always treat as 'left'
+        if (currentIndex === -1 && targetIndex !== -1) {
+          direction = 'left';
+        } else if (targetIndex < currentIndex) {
+          direction = 'left';
+        }
+        
+        navigateTo('view-' + targetSlug, direction);
       }
     };
   });
