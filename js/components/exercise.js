@@ -40,8 +40,12 @@ export function startExerciseEngine() {
 
 function runPhase() {
   const params = configProps.getExerciseParams();
+  if (!params || !params.phases || !params.phases[currentPhaseIndex]) {
+    stopExercise();
+    return;
+  }
   const phase = params.phases[currentPhaseIndex];
-  const duration = phase.duration;
+  const duration = phase.duration || 4000;
 
   elements.breathCircle.className = `breath-circle ${phase.class}`;
   elements.breathCircle.style.transitionDuration = `${duration / 1000}s`;

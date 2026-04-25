@@ -16,6 +16,7 @@ export const AppState = {
   isMuted: safeGetItem('aura_muted') === 'true',
   hapticEnabled: safeGetItem('aura_haptic') !== 'false', // Default true
   droneEnabled: safeGetItem('aura_drone') !== 'false', // Default true
+  uiSoundsEnabled: safeGetItem('aura_ui_sounds') === 'true', // Default false
   appVolume: parseInt(safeGetItem('aura_volume')) || 50, // Default 50
   justFinishedCheckIn: false,
   lastCheckInState: null,

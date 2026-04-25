@@ -2,32 +2,37 @@
 .modal {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: 1000001;
   display: flex !important;
   align-items: flex-end;
   justify-content: center;
-  opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  transition: opacity 0.5s ease, visibility 0.5s ease, backdrop-filter 0.5s ease;
+  transition: visibility 0s 0.5s; /* Delay hiding until glide finished */
 }
 
-.modal.open {
-  opacity: 1;
+.modal.active {
   visibility: visible;
   pointer-events: auto;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(15px) saturate(180%);
-  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  transition: visibility 0s 0s;
 }
 
 .modal-backdrop {
   position: absolute;
   inset: 0;
   z-index: -1;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background 0.4s ease, backdrop-filter 0.4s ease;
+  pointer-events: none;
+}
+
+.modal-backdrop.active {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  pointer-events: auto;
 }
 
 .modal-content {
@@ -41,11 +46,49 @@
   -webkit-backdrop-filter: blur(35px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.1); /* Ultra-thin premium border */
   box-shadow: 0 -20px 80px rgba(0, 0, 0, 0.9);
-  transform: translateY(110%); /* Start beyond screen */
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(105%); /* Start slightly below */
+  transition: transform 0.5s cubic-bezier(0.32, 0, 0.67, 0); /* Organic exit */
 }
 
-.modal.open .modal-content {
+.modal.active .modal-content {
+  transform: translateY(0); /* Glide up */
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* Snappy entry */
+}
+
+.modal-handle {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  cursor: grab;
+  transition: background 0.3s ease, width 0.3s ease;
+  z-index: 100;
+}
+
+/* Larger hit area for easier grabbing */
+.modal-handle::after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: -20px;
+  right: -20px;
+  bottom: -15px;
+}
+
+.modal-handle:hover {
+  background: rgba(255, 255, 255, 0.4);
+  width: 44px;
+}
+
+.modal-handle:active {
+  cursor: grabbing;
+}
+
+.modal.active .modal-content {
   transform: translateY(0); /* Glide up */
 }
 
@@ -83,19 +126,22 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
+  z-index: 1000;
+  transition: all 0.3s var(--spring-easing);
+  font-size: 0.8rem;
 }
 
 .info-close-btn:hover {
-  background: rgba(255,255,255,0.15);
-  transform: rotate(90deg);
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg) scale(1.1);
+  color: #fff;
 }
 
 /* Deep Dive Modal Specifics */
@@ -238,17 +284,20 @@
 .info-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 9998;
+  background: rgba(0, 0, 0, 0.4); 
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  z-index: 1000000 !important;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.5s ease, visibility 0s 0.5s;
 }
 .info-backdrop.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
+  transition: opacity 0.4s ease, visibility 0s 0s;
 }
 
 .info-bottom-sheet {
@@ -256,25 +305,25 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
-  background: rgba(25, 25, 35, 0.65);
+  z-index: 1000001 !important;
+  background: rgba(25, 25, 35, 0.95);
   backdrop-filter: blur(35px) saturate(180%);
   -webkit-backdrop-filter: blur(35px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 28px 28px 0 0;
-  padding: 1.5rem 1.5rem calc(1.5rem + var(--safe-bottom));
-  transform: translateY(100%);
+  border-radius: 32px 32px 0 0;
+  padding: 2rem 1.8rem calc(2rem + var(--safe-bottom)); /* Reduced padding */
+  transform: translateY(105%);
   visibility: hidden;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0.4s;
-  max-height: 70vh;
+  transition: transform 0.5s cubic-bezier(0.32, 0, 0.67, 0), visibility 0s 0.5s;
+  max-height: 75vh; /* Slightly shorter for better look */
   overflow-y: auto;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 -15px 50px rgba(0, 0, 0, 0.6);
 }
 
 .info-bottom-sheet.active {
   transform: translateY(0);
   visibility: visible;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0s;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0s; /* Snappy entry */
 }
 
 /* --- COMMUNITY & STATS MODAL REFINEMENTS --- */
@@ -480,44 +529,84 @@
 }
 
 /* Desktop Adjustment Override for Community Modal */
+/* Desktop Adjustment Override for Bottom Sheets & Modals */
 @media (min-width: 1024px) {
-  #communityModal {
-    max-width: 480px;
-    left: 50%;
-    right: auto;
-    transform: translate(-50%, 100%);
-    border-radius: 28px;
-    bottom: 50%;
-    top: auto;
+  /* Common Modal Container (Flex) */
+  .modal {
+    align-items: center;
   }
   
-  #communityModal.active {
-    transform: translate(-50%, 50%);
+  /* Flex Child Modal Content */
+  .modal-content {
+    border-radius: 24px;
+    padding-bottom: 2.5rem;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.32, 0, 0.67, 0), opacity 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .modal.active .modal-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    transition: transform 0.6s var(--spring-easing), opacity 0.4s ease;
+  }
+
+  .modal-handle {
+    display: none; /* Hide drag handle on desktop */
+  }
+
+  /* No backdrop blur on desktop (active & inactive to prevent flash on close) */
+  .info-backdrop,
+  .info-backdrop.active,
+  .modal-backdrop,
+  .modal-backdrop.active {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none !important; /* Allow interaction with background elements */
+  }
+
+  /* Fixed Absolute Modal Content (info-bottom-sheet) */
+  .info-bottom-sheet {
+    width: 280px; /* Horizontal limit applied */
+    max-width: none;
+    max-height: 85vh; /* Relaxed vertical limit */
+    left: auto !important;
+    top: auto !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    border-radius: 14px;
+    transform: translateY(20px) !important; /* Shorter slide up animation */
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, visibility 0s 0.5s;
+    
+    /* Transparent Liquid Glass Effect */
+    background: rgba(25, 25, 30, 0.5) !important;
+    backdrop-filter: blur(25px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(200%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 1.2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .info-bottom-sheet.active {
+    transform: translateY(0) !important;
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0s 0s;
+  }
+
+  #communityModal {
+    width: 310px;
+    max-width: none;
   }
 }
 
-.info-close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1.2rem;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-}
-.info-close-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text-main);
-}
-
+/* Modal Header / Content Refinements */
 .info-sheet-content {
   display: flex;
   flex-direction: column;
@@ -604,6 +693,6 @@
     padding-bottom: 2rem;
   }
   .aw-orbits { width: 240px; height: 240px; }
-  .info-bottom-sheet { padding: 1.25rem 1.25rem calc(1.25rem + var(--safe-bottom)); }
+  .info-bottom-sheet { padding: 1.5rem 1.5rem calc(1.5rem + var(--safe-bottom)); }
 }
 

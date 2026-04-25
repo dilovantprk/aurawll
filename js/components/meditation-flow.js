@@ -363,22 +363,27 @@ async function submitSavoringLog() {
 
   const fb = configProps.fb;
   if (fb && fb.isInitialized && AppState.user && !AppState.user.guest) {
-    try {
-      await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...AppState.currentCheckIn });
-      const userRef = fb.doc(fb.db, "users", AppState.user.uid);
-      await fb.setDoc(userRef, { lastEmotion: AppState.currentCheckIn.subEmotion || 'se_neutral' }, { merge: true });
-    } catch(err) { console.warn("Cloud save failed", err); }
+    // Non-blocking cloud save to prevent "sticking" on slow connections
+    (async () => {
+      try {
+        await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...AppState.currentCheckIn });
+        const userRef = fb.doc(fb.db, "users", AppState.user.uid);
+        await fb.setDoc(userRef, { lastEmotion: AppState.currentCheckIn.subEmotion || 'se_neutral' }, { merge: true });
+      } catch(err) { console.warn("Cloud save background failed", err); }
+    })();
   }
 
   if (configProps.resetBioFeedback) configProps.resetBioFeedback();
   AppState.justFinishedCheckIn = true;
   AppState.lastCheckInState = AppState.currentCheckIn.state;
+  
   if (configProps.navigateTo) configProps.navigateTo('view-completion');
   if (configProps.setHUD) configProps.setHUD(null);
   
   if (elements.returnHomeBtn) {
     elements.returnHomeBtn.onclick = () => {
       if (configProps.loadDashboard) configProps.loadDashboard();
+      if (configProps.navigateTo) configProps.navigateTo('view-dashboard');
     };
   }
 }

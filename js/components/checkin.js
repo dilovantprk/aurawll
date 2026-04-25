@@ -2,6 +2,7 @@ import { elements } from '../core/dom.js';
 import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { SOMATIC_MAP, EMOTION_OPTIONS, protocols, subEmotionMap, stateLegacyMap, PROTOCOL_META, EMOTION_PROTOCOL_MAP } from '../core/constants.js';
+import { vibrate } from '../core/utils.js';
 
 let configProps = {
   navigateTo: null,
@@ -26,6 +27,7 @@ export function initCheckin(config) {
   
   if (elements.startCheckinBtn) {
     elements.startCheckinBtn.addEventListener('click', () => {
+      vibrate('medium');
       AppState.isCheckIn = true; // Set flow context
       AppState.currentCheckIn = { 
         state: null, 
@@ -54,6 +56,7 @@ export function renderSomaticEntry() {
   const chips = container.querySelectorAll('.rhizome-chip');
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
+      vibrate('light');
       const key = chip.getAttribute('data-key');
       const idx = AppState.currentCheckIn.somatic_selections.indexOf(key);
       if (idx === -1) {
@@ -132,6 +135,7 @@ export function renderAffectGrid() {
   if (!area || !userDot) return;
   userDot.classList.add('hidden');
   area.onclick = (e) => {
+    vibrate('medium');
     const rect = area.getBoundingClientRect();
     const v = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     const a = Math.max(0, Math.min(1, 1 - ((e.clientY - rect.top) / rect.height)));
@@ -216,6 +220,11 @@ export function prepareExercise(protocolId) {
   elements.exerciseTitle.textContent = t(ex.titleKey);
   if(elements.exerciseMicrocopy) elements.exerciseMicrocopy.textContent = t(`mc_${protocolId}`);
   
+  // Hide step indicator if NOT in check-in flow
+  if (elements.exerciseStepIndicator) {
+    elements.exerciseStepIndicator.style.display = AppState.isCheckIn ? 'block' : 'none';
+  }
+  
   // HARD BIND: Ensure the info button knows exactly which protocol we are in
   const exerciseInfoBtn = document.querySelector('#view-exercise .checkin-info-btn');
   if (exerciseInfoBtn) {
@@ -238,9 +247,11 @@ export function advanceFromExercise() {
   if (AppState.isCheckIn === false) {
     setHUD(null);
     if (configProps.navigateTo) configProps.navigateTo('view-completion');
+    vibrate('success');
     if (elements.returnHomeBtn) {
       elements.returnHomeBtn.onclick = () => {
         if (configProps.loadDashboard) configProps.loadDashboard();
+        if (configProps.navigateTo) configProps.navigateTo('view-dashboard');
       };
     }
     return;

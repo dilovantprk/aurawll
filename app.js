@@ -24,7 +24,6 @@ import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth } from './js/components/auth.js';
-import { initCommunity, checkAndResetLongPress, switchCommunityTab } from './js/components/community.js';
 
 // Services
 import { signInAsGuest, logoutUser } from './authService.js';
@@ -58,22 +57,35 @@ export function navigateTo(viewId, skipHistory = false) {
     
     const tabLabel = t('nav_' + slug) || slug;
     
-    // Check for community sub-views
-    if (slug.startsWith('comm-')) {
-      const subTab = slug.replace('comm-', '');
-      switchCommunityTab(subTab);
-      // We don't want to switch main view if we are already in community
-      if (elements.activeTabName) elements.activeTabName.textContent = "Aura Space";
-      return; 
+    if (elements.activeTabName && elements.activeTabName.textContent !== tabLabel) {
+      elements.activeTabName.textContent = tabLabel;
+      elements.activeTabName.classList.remove('header-text-animate');
+      const island = elements.activeTabName.closest('.header-island');
+      if (island) island.classList.remove('liquid-pulse-animate');
+      
+      void elements.activeTabName.offsetWidth; // trigger reflow
+      
+      elements.activeTabName.classList.add('header-text-animate');
+      if (island) island.classList.add('liquid-pulse-animate');
     }
 
-    elements.activeTabName.textContent = tabLabel;
+    // Desktop Sync
+    const desktopActiveName = document.getElementById('desktop-active-tab-name');
+    if (desktopActiveName) {
+      desktopActiveName.classList.remove('visible');
+      setTimeout(() => {
+        if (tabLabel) desktopActiveName.textContent = tabLabel;
+        desktopActiveName.classList.add('visible');
+      }, 50);
+    }
   }
 
-  elements.views.forEach(v => {
-    v.classList.add('hidden');
-    v.classList.remove('active', 'opacity-100', 'translate-y-0');
-  });
+  if (elements.views) {
+    Array.from(elements.views).forEach(v => {
+      v.classList.add('hidden');
+      v.classList.remove('active', 'opacity-100', 'translate-y-0');
+    });
+  }
 
   target.classList.remove('hidden');
   target.scrollTop = 0;
@@ -89,7 +101,6 @@ export function navigateTo(viewId, skipHistory = false) {
   if (viewId === 'view-notebook') loadNotebook();
   if (viewId === 'view-insight') updateInsightView(AppState.userHistory || AppState.mockHistory);
   if (viewId === 'view-settings') updateSettingsView();
-  if (viewId === 'view-community') { /* Already handled in component but could add refresh logic here */ }
   
   // Push physical translations to static DOM elements
   renderLocalization();
@@ -102,20 +113,14 @@ export function navigateTo(viewId, skipHistory = false) {
   
   // Mobile Header Visibility (#mobile-header)
   if (elements.header) {
-    if (shouldHideMobileHeader) {
-      elements.header.classList.add('hidden');
-    } else {
-      elements.header.classList.remove('hidden');
-    }
+    if (shouldHideMobileHeader) elements.header.classList.add('hidden');
+    else elements.header.classList.remove('hidden');
   }
 
   // Desktop Nav Visibility (Immersive behavior)
   if (elements.desktopNav) {
-    if (shouldHideImmersionNav) {
-      elements.desktopNav.classList.add('hidden', 'nav-hidden');
-    } else {
-      elements.desktopNav.classList.remove('hidden', 'nav-hidden');
-    }
+    if (shouldHideImmersionNav) elements.desktopNav.classList.add('hidden', 'nav-hidden');
+    else elements.desktopNav.classList.remove('hidden', 'nav-hidden');
   }
 
   // Mobile Nav Visibility (Immersive behavior)
@@ -135,11 +140,50 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Sync Nav Active States
   const slug = viewId.replace('view-', '');
-  const allNavs = [...(elements.navItems || []), ...(elements.navLinks || [])];
+  const navItems = elements.navItems ? Array.from(elements.navItems) : [];
+  const navLinks = elements.navLinks ? Array.from(elements.navLinks) : [];
+  const allNavs = [...navItems, ...navLinks];
+
   allNavs.forEach(btn => {
+    if (!btn) return;
     if (btn.getAttribute('data-view') === slug) btn.classList.add('active');
     else btn.classList.remove('active');
   });
+
+  // Update Liquid Pill Position
+  const updatePill = (containerId) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const items = Array.from(container.querySelectorAll('.nav-item') || []);
+    const activeItem = items.find(item => item.classList.contains('active'));
+    const indicator = container.querySelector('.nav-indicator');
+    
+    if (activeItem && indicator) {
+      const oldLeft = parseFloat(container.style.getPropertyValue('--nav-left')) || 0;
+      const newLeft = activeItem.offsetLeft;
+      const distance = Math.abs(newLeft - oldLeft);
+
+      // Apply organic "stretch" class if moving significantly
+      if (distance > 20) {
+        indicator.classList.add('nav-pill-stretch');
+        setTimeout(() => indicator.classList.remove('nav-pill-stretch'), 400);
+      }
+
+      container.style.setProperty('--nav-width', activeItem.offsetWidth + 'px');
+      container.style.setProperty('--nav-left', newLeft + 'px');
+    }
+  };
+
+  requestAnimationFrame(() => {
+    updatePill('desktop-nav-links');
+    updatePill('mobile-nav');
+  });
+
+  // Sensory Feedback
+  if (!skipHistory) {
+    SensoryEngine.triggerHaptic('medium');
+    SensoryEngine.playSwipe();
+  }
 }
 
 /**
@@ -169,11 +213,19 @@ function startAppFlow(user) {
     AppState.user = user; 
     migrateGuestData(user.uid); 
     document.body.classList.add('is-authenticated');
+
+    // If authenticated, skip welcome and go to dashboard/onboarding
+    if (safeGetItem('aura_onboarded')) {
+      loadDashboard();
+      navigateTo('view-dashboard');
+    } else {
+      startOnboardingFlow({ navigateTo });
+    }
+    return;
   } else {
     document.body.classList.remove('is-authenticated');
+    navigateTo('view-welcome');
   }
-
-  navigateTo('view-welcome');
 
   initWelcomeScreen({
     user: AppState.user,
@@ -183,7 +235,7 @@ function startAppFlow(user) {
         if (!AppState.user) AppState.user = await signInAsGuest();
         setTimeout(() => {
           if (!safeGetItem('aura_onboarded')) startOnboardingFlow({ navigateTo });
-          else loadDashboard();
+          else navigateTo('view-dashboard');
         }, 800);
       } else if (mode === 'login') { navigateTo('view-auth'); }
     },
@@ -191,13 +243,12 @@ function startAppFlow(user) {
   });
 }
 
-/**
- * Bootstrapping
- */
 async function initAppBootstrap() {
   SensoryEngine.appVolume = AppState.appVolume;
   SensoryEngine.droneEnabled = AppState.droneEnabled;
   SensoryEngine.isMuted = AppState.isMuted;
+  SensoryEngine.hapticEnabled = AppState.hapticEnabled;
+  SensoryEngine.uiSoundsEnabled = AppState.uiSoundsEnabled;
 
   initModals({ 
     navigateTo, 
@@ -205,7 +256,18 @@ async function initAppBootstrap() {
     showInfoModal,
     getExerciseParams: () => AppState.currentExercise
   });
-  renderLocalization(); // Apply to static elements on boot
+  renderLocalization(); 
+  
+  renderLocalization(); 
+
+  try {
+    fb = await Promise.race([
+      import('./firebase.js'),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase timeout')), 3000))
+    ]);
+  } catch (err) {
+    console.error("[Aura] Firebase load failed", err);
+  }
   initCheckin({ 
     navigateTo, 
     resetBioFeedback: () => SensoryEngine.stopHaptics(), 
@@ -220,7 +282,7 @@ async function initAppBootstrap() {
   initMeditationFlow({ fb, navigateTo, resetBioFeedback: () => SensoryEngine.stopHaptics(), AudioEngine: MeditationAudio, setHUD, loadDashboard });
   initMeditations({ 
     prepareExercise: (id) => {
-      AppState.isCheckIn = false; // Standalone session
+      AppState.isCheckIn = false; 
       prepareExercise(id); 
       navigateTo('view-exercise'); 
     } 
@@ -232,16 +294,7 @@ async function initAppBootstrap() {
   });
   initAuth({
     navigateTo,
-    onAuthenticated: (user) => {
-      AppState.user = user;
-      migrateGuestData(user.uid);
-      const onboarded = localStorage.getItem('aura_onboarded');
-      if (!onboarded) {
-        startOnboardingFlow({ navigateTo });
-      } else {
-        loadDashboard();
-      }
-    }
+    onAuthenticated: (user) => startAppFlow(user)
   });
   initSettings({ 
     navigateTo,
@@ -254,52 +307,62 @@ async function initAppBootstrap() {
       localStorage.removeItem('aura_guest_name');
       localStorage.removeItem('aura_onboarded');
       window.location.reload();
-    },
-    eraseAllData: async () => {
-      try {
-        if (fb && fb.isInitialized && AppState.user) {
-          const q = fb.query(fb.collection(fb.db, 'checkins'), fb.where('uid', '==', AppState.user.uid));
-          const snapshot = await fb.getDocs(q);
-          const deletePromises = [];
-          snapshot.forEach(doc => {
-            deletePromises.push(fb.deleteDoc(doc.ref));
-          });
-          await Promise.all(deletePromises);
-        }
-      } catch (err) {
-        console.error("[Aura] Failed to delete Firebase data", err);
-      }
-      localStorage.clear();
     }
   });
 
-  initCommunity({ navigateTo });
+  // Global Haptic Bridge
+  window.addEventListener('aura-haptic', (e) => {
+    if (SensoryEngine) SensoryEngine.triggerHaptic(e.detail || 'light');
+  });
+
+  // Throttled Parallax Scroll
+  let scrollTicking = false;
+  if (elements.app) {
+    elements.app.addEventListener('scroll', () => {
+      if (!scrollTicking && document.getElementById('view-dashboard')?.classList.contains('active')) {
+        window.requestAnimationFrame(() => {
+          const scrollY = elements.app.scrollTop;
+          document.documentElement.style.setProperty('--vagal-y', `${40 + (scrollY * 0.05)}%`);
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
+    }, { passive: true });
+  }
 
   // Navigation Setup
-  const allNavs = [...(elements.navItems || []), ...(elements.navLinks || [])];
+  const navItems = elements.navItems ? Array.from(elements.navItems) : [];
+  const navLinks = elements.navLinks ? Array.from(elements.navLinks) : [];
+  const allNavs = [...navItems, ...navLinks];
+
   allNavs.forEach(btn => {
+    if (!btn) return;
     btn.onclick = () => {
       const view = btn.getAttribute('data-view');
       if (view) {
-        // Suppress navigation if a long-press just happened
-        if (view === 'settings' && checkAndResetLongPress()) return;
-
-        if (view === 'dashboard') loadDashboard();
-        else if (view === 'community') navigateTo('view-community');
-        else navigateTo('view-' + view);
+        SensoryEngine.triggerHaptic('light');
+        SensoryEngine.playTick();
+        navigateTo('view-' + view);
       }
     };
   });
+
+  // INITIAL UI SHOW - Show welcome immediately without waiting for Firebase
+  startAppFlow(null);
 
   try {
     fb = await Promise.race([
       import('./firebase.js'),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase timeout')), 3000))
     ]);
-    if (fb.isInitialized && fb.auth) {
-      fb.onAuthStateChanged(fb.auth, (user) => startAppFlow(user));
-    } else { startAppFlow(null); }
-  } catch (err) { startAppFlow(null); }
+    if (fb && fb.isInitialized && fb.auth) {
+      fb.onAuthStateChanged(fb.auth, (user) => {
+        if (user) startAppFlow(user);
+      });
+    }
+  } catch (err) {
+    console.error("[Aura] Firebase load failed", err);
+  }
 
   initSwipeNavigation();
 }

@@ -17,11 +17,29 @@ export function initSettings(config) {
     elements.hapticToggle.checked = AppState.hapticEnabled;
   }
 
+  if (elements.uiSoundsToggle) {
+    elements.uiSoundsToggle.addEventListener('change', (e) => {
+      AppState.uiSoundsEnabled = e.target.checked;
+      safeSetItem('aura_ui_sounds', AppState.uiSoundsEnabled);
+      // Directly update engine
+      if (typeof SensoryEngine !== 'undefined') SensoryEngine.uiSoundsEnabled = AppState.uiSoundsEnabled;
+      else if (configProps.setUISoundsEnabled) configProps.setUISoundsEnabled(AppState.uiSoundsEnabled);
+    });
+    elements.uiSoundsToggle.checked = AppState.uiSoundsEnabled;
+  }
+
   if (elements.droneToggle) {
     elements.droneToggle.addEventListener('change', (e) => {
       AppState.droneEnabled = e.target.checked;
       safeSetItem('aura_drone', AppState.droneEnabled);
       if (configProps.setDroneEnabled) configProps.setDroneEnabled(AppState.droneEnabled);
+      
+      // Toggle volume visibility
+      const volContainer = document.getElementById('volumeContainer');
+      if (volContainer) {
+        if (AppState.droneEnabled) volContainer.classList.remove('hidden');
+        else volContainer.classList.add('hidden');
+      }
     });
     elements.droneToggle.checked = AppState.droneEnabled;
   }
@@ -161,18 +179,27 @@ export function updateSettingsView() {
     elements.uniqueDaysStats.textContent = t('prof_active_days').replace('{count}', uniqueDays);
   }
 
-  const latest = localHistory[0];
+  const latest = localHistory[localHistory.length - 1]; // Get most recent
   if (latest && elements.auraCoreSphere) {
-    const colors = { ventral: '#64E49F', sympathetic: '#FBA044', dorsal: '#62A4FF' };
-    const color = colors[latest.polyvagal_state] || colors.ventral;
-    elements.auraCoreSphere.style.background = `radial-gradient(circle at 35% 35%, ${color} 0%, rgba(255,255,255,0.4) 40%, transparent 80%)`;
+    const colors = { okay: '#64E49F', wired: '#FBA044', foggy: '#62A4FF', ventral: '#64E49F', sympathetic: '#FBA044', dorsal: '#62A4FF' };
+    const stateKey = latest.polyvagal_state || latest.state;
+    const color = colors[stateKey] || colors.okay;
+    elements.auraCoreSphere.style.setProperty('--vagal-accent', color);
   }
 
   // Show/hide logout vs login button based on guest status
   const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
   if (elements.logoutBtn) elements.logoutBtn.style.display = isGuest ? 'none' : '';
+  if (elements.syncCtaText) elements.syncCtaText.classList.toggle('hidden', !isGuest);
   if (elements.settingsLoginBtn) {
     elements.settingsLoginBtn.style.display = isGuest ? 'flex' : 'none';
     elements.settingsLoginBtn.classList.toggle('hidden', !isGuest);
+  }
+
+  // Handle volume visibility on view load
+  const volContainer = document.getElementById('volumeContainer');
+  if (volContainer) {
+    if (AppState.droneEnabled) volContainer.classList.remove('hidden');
+    else volContainer.classList.add('hidden');
   }
 }

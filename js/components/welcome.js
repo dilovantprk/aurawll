@@ -10,6 +10,8 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
   const core = screen?.querySelector('.aw-core');
 
   if (!screen || !core) return;
+  if (core.dataset.init === 'true') return;
+  core.dataset.init = 'true';
 
   // Cleanup existing focusing text to prevent duplicates
   const oldText = core.querySelector('.focusing-text');
@@ -33,14 +35,16 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
   let focusTimer = null;
   let hapticInterval = null;
   let focusActive = false;
-  const FOCUS_DURATION = 3000;
+  const FOCUS_DURATION = 1500;
 
   const onStart = (e) => {
     if (focusActive) return;
-    if (e.cancelable) e.preventDefault();
-
+    
     focusActive = true;
     core.classList.add('focusing');
+    
+    // Immediate Feedback
+    if ('vibrate' in navigator) { try { navigator.vibrate([15, 30, 15]); } catch(e) {} }
     
     if (onGesture && typeof onGesture === 'function') {
       try { onGesture(); } catch(e) {}
@@ -48,8 +52,6 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
     if (SensoryEngine && SensoryEngine.resumeAudio) {
       SensoryEngine.resumeAudio();
     }
-
-    if ('vibrate' in navigator) { try { navigator.vibrate(12); } catch(e) {} }
 
     focusTimer = setTimeout(() => {
       completeFocus();

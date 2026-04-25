@@ -5,13 +5,20 @@ import { AppState } from '../core/state.js';
 
 let configProps = {};
 
+/**
+ * Initializes the meditation view logic and events.
+ */
 export function initMeditations(config) {
   Object.assign(configProps, config);
   
-  // Bind Card Clicks
+  // Bind Card Clicks (One-time delegation)
   if (elements.meditationsList) {
     elements.meditationsList.onclick = (e) => {
-      if (e.target.closest('.info-trigger')) return;
+      const infoTrigger = e.target.closest('.info-trigger');
+      if (infoTrigger) {
+        // Handled by global listener in modals.js, but stop bubble here
+        return;
+      }
       const card = e.target.closest('.meditation-card');
       if (card && configProps.prepareExercise) {
         const protocolId = card.getAttribute('data-protocol');
@@ -20,19 +27,20 @@ export function initMeditations(config) {
     };
   }
 
+  // Initial Rendering
   renderMeditationsList();
   renderFilterChips();
   renderRecommendations();
+  
+  // Apply initial filter state if any
+  applyFilter(AppState._activeFilter || 'all');
 }
 
+/**
+ * Renders all available meditation protocols as cards.
+ */
 export function renderMeditationsList() {
   if (!elements.meditationsList) return;
-
-  const historyItems = (AppState.user && AppState.user.history && AppState.user.history.length > 0) 
-    ? AppState.user.history 
-    : (AppState.mockHistory || []);
-  
-  const lastEntry = historyItems.length > 0 ? historyItems[0] : null;
 
   const breatheProtocols = protocols || {};
   
@@ -40,9 +48,12 @@ export function renderMeditationsList() {
     const metaData = PROTOCOL_META[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)', benefitKey: '' };
     const benefit = metaData.benefitKey ? t(metaData.benefitKey) : '';
     const mins = Math.ceil(p.totalDuration / 60);
+    
     return `
-      <div class="meditation-card ${AppState._activeFilter && AppState._activeFilter !== 'all' && p.category !== AppState._activeFilter ? 'hidden-protocol' : ''}" 
-              data-protocol="${id}" style="border-left: 3px solid ${metaData.accent};">
+      <div class="meditation-card" 
+           data-protocol="${id}" 
+           data-category="${p.category || 'all'}" 
+           style="border-left: 3px solid ${metaData.accent};">
         <div class="meditation-card-icon">
           <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             ${metaData.icon}
@@ -56,38 +67,64 @@ export function renderMeditationsList() {
       </div>`;
   };
 
-  const breathHTML = Object.keys(breatheProtocols).map(id => renderCard(id, breatheProtocols[id])).join('');
-
-  elements.meditationsList.innerHTML = breathHTML;
-
-
+  elements.meditationsList.innerHTML = Object.keys(breatheProtocols)
+    .map(id => renderCard(id, breatheProtocols[id]))
+    .join('');
+    
+  // Ensure the current filter is applied to the newly rendered list
+  applyFilter(AppState._activeFilter || 'all');
 }
 
-
+/**
+ * Renders filter chips and handles their click events via delegation.
+ */
 export function renderFilterChips() {
   if (!elements.filterChips) return;
+  
   const categories = [
     { id: 'all', label: t('cat_all') },
     { id: 'calm', label: t('cat_calm') },
     { id: 'focus', label: t('cat_focus') },
     { id: 'energize', label: t('cat_energize') }
   ];
-  AppState._activeFilter = AppState._activeFilter || 'all';
+  
+  const activeId = AppState._activeFilter || 'all';
+  
   elements.filterChips.innerHTML = categories.map(cat => `
-    <button class="filter-chip ${AppState._activeFilter === cat.id ? 'active' : ''}" data-category="${cat.id}">
+    <button class="filter-chip ${activeId === cat.id ? 'active' : ''}" data-category="${cat.id}">
       ${cat.label}
     </button>
   `).join('');
 
-  elements.filterChips.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      AppState._activeFilter = chip.getAttribute('data-category');
-      renderFilterChips();
-      renderMeditationsList();
+  // Event Delegation for Filter Chips
+  elements.filterChips.onclick = (e) => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    
+    const category = chip.getAttribute('data-category');
+    AppState._activeFilter = category;
+    
+    // Update visual active state of chips
+    elements.filterChips.querySelectorAll('.filter-chip').forEach(c => {
+      c.classList.toggle('active', c === chip);
     });
-  });
+    
+    applyFilter(category);
+  };
 }
 
+/**
+ * Applies the filter by updating the data-filter attribute on the list container.
+ * This triggers the CSS-based filtering.
+ */
+export function applyFilter(category) {
+  if (!elements.meditationsList) return;
+  elements.meditationsList.setAttribute('data-filter', category || 'all');
+}
+
+/**
+ * Renders recommendations based on user history or current state.
+ */
 export function renderRecommendations() {
   if (!elements.recommendationsContainer) return;
   // Recommendations logic here...

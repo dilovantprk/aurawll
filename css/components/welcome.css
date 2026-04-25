@@ -89,7 +89,8 @@
   background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 80%);
   border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 50%;
-  z-index: 30;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
   cursor: pointer;
   box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.1);
   transition: all 1.2s var(--spring-easing);

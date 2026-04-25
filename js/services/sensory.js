@@ -18,6 +18,8 @@ export const SensoryEngine = {
   currentPattern: null,
   isMuted: false,
   droneEnabled: true,
+  hapticEnabled: true,
+  uiSoundsEnabled: false,
   appVolume: 50,
 
   initAudio() {
@@ -138,6 +140,54 @@ export const SensoryEngine = {
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
     osc.connect(gain); gain.connect(this.masterGain);
     osc.start(now); osc.stop(now + 1.4);
+  },
+
+  playTick() {
+    if (!this.audioCtx || this.isMuted || !this.uiSoundsEnabled) return;
+    this.resumeAudio();
+    const now = this.audioCtx.currentTime;
+    const osc = this.audioCtx.createOscillator();
+    const gain = this.audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + 0.04);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.08, now + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+    osc.connect(gain); gain.connect(this.masterGain);
+    osc.start(now); osc.stop(now + 0.06);
+  },
+
+  playSwipe() {
+    if (!this.audioCtx || this.isMuted || !this.uiSoundsEnabled) return;
+    this.resumeAudio();
+    const now = this.audioCtx.currentTime;
+    const osc = this.audioCtx.createOscillator();
+    const gain = this.audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.05, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+    osc.connect(gain); gain.connect(this.masterGain);
+    osc.start(now); osc.stop(now + 0.2);
+  },
+
+  triggerHaptic(type = 'light') {
+    if (!this.hapticEnabled || !('vibrate' in navigator)) return;
+    const patterns = {
+      light: [15],
+      medium: [30],
+      heavy: [50],
+      success: [15, 30, 20],
+      error: [60, 40, 60]
+    };
+    try {
+      navigator.vibrate(patterns[type] || patterns.light);
+    } catch(e) {
+      console.warn("Haptic failed", e);
+    }
   },
 
   triggerResolutionChord() {

@@ -5,6 +5,7 @@ import { protocols } from '../core/constants.js';
 import { normalizeCheckinData, getHumanizedTime, renderMiniDeltaSVG } from '../core/utils.js';
 import { calculateVagalPoint, calculatePlasticity } from '../core/vagal-engine.js';
 import { getWeeklyInsight } from '../services/insight-engine.js';
+import { SensoryEngine } from '../services/sensory.js';
 
 let configProps = {
   fb: null,
@@ -13,10 +14,11 @@ let configProps = {
 
 export function initDashboard(config) {
   Object.assign(configProps, config);
+  
+  // Vagal Heatmap click handled by global info-trigger in modals.js
 }
 
 export async function loadDashboard() {
-  if (configProps.navigateTo) configProps.navigateTo('view-dashboard');
   document.body.classList.add('crystal-entry');
   setTimeout(() => document.body.classList.remove('crystal-entry'), 800);
 
@@ -35,9 +37,7 @@ export async function loadDashboard() {
     else greetingKey = 'checkin_dorsal';
     AppState.justFinishedCheckIn = false;
   } else {
-    if (hour === 2 && AppState.lang === 'tr') greetingKey = 'dash_special_2';
-    else if (hour === 4 && AppState.lang === 'tr') greetingKey = 'dash_special_4';
-    else if (hour >= 6 && hour < 11) greetingKey = 'dash_morning';
+    if (hour >= 6 && hour < 11) greetingKey = 'dash_morning';
     else if (hour >= 11 && hour < 17) greetingKey = 'dash_afternoon';
     else if (hour >= 17 && hour < 22) greetingKey = 'dash_evening';
     else greetingKey = 'dash_night';
@@ -53,11 +53,22 @@ export async function loadDashboard() {
     renderDashboardComponents(AppState.userHistory);
     // If cache is fresh (< 2 mins), skip the fetch
     if (Date.now() - AppState.lastHistoryFetch < 120000) return;
-  } else {
-    elements.historyList.innerHTML = '<div class="loader-circle" style="width:24px;height:24px;border-width:2px;margin:1rem auto;"></div>';
+  } else if (!elements.historyList.querySelector('.stat-card, .history-item')) {
+    // Only show skeleton if NO data is present to avoid flickering on re-visit
+    elements.historyList.innerHTML = `
+      <div class="skeleton-card skeleton" style="margin-bottom: 1rem;"></div>
+      <div class="skeleton-card skeleton" style="margin-bottom: 1rem;"></div>
+      <div class="skeleton-card skeleton"></div>
+    `;
   }
 
   try {
+    if (!configProps.fb || !configProps.fb.isInitialized) {
+      console.warn("[Dashboard] Firebase not ready yet, waiting...");
+      // Try again in 500ms if not ready
+      setTimeout(loadDashboard, 500);
+      return;
+    }
     let historyData = [];
     const fb = configProps.fb;
     if (fb && fb.isInitialized && AppState.user) {
@@ -110,7 +121,7 @@ export function renderHistory(data) {
     const tags = [];
     if (item.somatic_selections) item.somatic_selections.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
     return `
-      <div class="aura-card fade-in-up">
+      <div class="aura-card stagger-${(index % 4) + 3}" onclick="window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}))">
         <div class="card-header"><div class="aura-orb ${item.polyvagal_state || 'ventral'}"></div><div class="time-meta">${timeStr}</div><div class="state-label">${emotionLabel}</div></div>
         <div class="card-body"><p class="user-note">${item.savoringText ? `"${item.savoringText}"` : '...'}</p><div class="delta-mini-grid">${renderMiniDeltaSVG(item)}</div></div>
         ${tags.length > 0 ? `<div class="card-footer">${tags.map(tag => `<span class="somatic-tag">${tag}</span>`).join('')}</div>` : ''}

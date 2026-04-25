@@ -2,6 +2,7 @@ import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { PROTOCOL_META } from '../core/constants.js';
 import { AppState } from '../core/state.js';
+import { vibrate } from '../core/utils.js';
 
 let galaxyAnimationId = null;
 
@@ -19,26 +20,37 @@ let configProps = {
 export function initModals(config) {
   Object.assign(configProps, config);
   
-  if (elements.closeInfoBtn) elements.closeInfoBtn.addEventListener('click', hideInfoModal);
-  if (elements.infoBackdrop) elements.infoBackdrop.addEventListener('click', hideInfoModal);
-  if (elements.closeVagalModal) elements.closeVagalModal.addEventListener('click', hideInfoModal);
+  const closeAll = () => {
+    hideInfoModal();
+    hideCommunityModal();
+    hideVagalModal();
+  };
 
-  // Global Info Support: Handle all elements with data-info or data-type
+  // Global Info Support & Close Buttons
   document.addEventListener('click', (e) => {
     const infoBtn = e.target.closest('.cockpit-info-btn, .info-icon, .info-trigger');
+    const isCloseBtn = e.target.closest('.info-close-btn');
+    const isBackdrop = e.target.classList.contains('info-backdrop') || 
+                       e.target.classList.contains('modal-backdrop');
+
     if (infoBtn) {
       const infoKey = infoBtn.getAttribute('data-info') || infoBtn.getAttribute('data-type');
-      if (infoKey) openInfoArchive(infoKey);
+      if (infoKey) openInfoArchive(infoKey, infoBtn);
+    } else if (isCloseBtn || isBackdrop) {
+      closeAll();
+    }
+    
+    // Also handle clicking the outer container of the modal
+    if (e.target.classList.contains('modal')) {
+      closeAll();
     }
   });
 
   initCommunityModal();
+  initDataSovereigntyActions();
 }
 
 export function initCommunityModal() {
-  if (elements.closeCommunityBtn) elements.closeCommunityBtn.onclick = hideCommunityModal;
-  if (elements.communityBackdrop) elements.communityBackdrop.onclick = hideCommunityModal;
-
   elements.commTabBtns.forEach(btn => {
     btn.onclick = () => {
       const tab = btn.getAttribute('data-tab');
@@ -46,7 +58,9 @@ export function initCommunityModal() {
       btn.classList.add('active');
       
       elements.commTabPanes.forEach(pane => {
-        if (pane.id === (tab === 'ben' ? 'commTabBen' : 'commTabTopluluk')) {
+        const paneId = pane.getAttribute('id');
+        const expectedId = tab === 'ben' ? 'commTabBen' : (tab === 'topluluk' ? 'commTabTopluluk' : 'commTabVeri');
+        if (paneId === expectedId) {
           pane.classList.add('active');
         } else {
           pane.classList.remove('active');
@@ -55,29 +69,243 @@ export function initCommunityModal() {
 
       if (tab === 'topluluk') startGalaxy();
       else stopGalaxy();
+
+      updateTabIndicator();
     };
+  });
+
+  initSwipeToDismiss(elements.communityModal, elements.communityBackdrop, hideCommunityModal);
+  initSwipeToDismiss(elements.vagalModal, elements.vagalBackdrop, hideVagalModal);
+  initSwipeToDismiss(elements.infoModal, elements.infoBackdrop, hideInfoModal);
+}
+
+function initSwipeToDismiss(modal, backdrop, closeFn) {
+  if (!modal || !backdrop) return;
+
+  const content = modal.querySelector('.modal-content') || modal;
+  const handle = modal.querySelector('.modal-handle');
+  
+  let startY = 0;
+  let currentY = 0;
+  let isDragging = false;
+  let startTf = '';
+
+  const startDrag = (y, isHandle = false) => {
+    // Only allow swipe if at top of scroll OR if dragging by the handle
+    if (!isHandle && modal.scrollTop > 0) return;
+    
+    startY = y;
+    isDragging = true;
+    startTf = window.getComputedStyle(content).transform;
+    if (startTf === 'none') startTf = '';
+    content.style.transition = 'none';
+    if (handle) handle.style.background = 'rgba(255, 255, 255, 0.4)';
+    console.log("[Aura] Drag started at Y:", y, "isHandle:", isHandle);
+  };
+
+  const moveDrag = (y) => {
+    if (!isDragging) return;
+    currentY = y;
+    const deltaY = currentY - startY;
+
+    // Only visually drag if we are moving DOWN
+    if (deltaY > 0) {
+      content.style.transform = `${startTf} translateY(${deltaY}px)`;
+      backdrop.style.opacity = 1 - (deltaY / 600);
+    } else {
+      // If swiping UP, reset transform to prevent jumping and allow natural scroll
+      content.style.transform = startTf;
+    }
+  };
+
+  const endDrag = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    
+    const deltaY = currentY - startY;
+    console.log("[Aura] Drag ended. DeltaY:", deltaY);
+
+    if (deltaY > 100) { 
+      // Successful swipe down - clear inline styles to allow CSS transition to take over
+      content.style.transform = '';
+      content.style.transition = '';
+      backdrop.style.opacity = '';
+      backdrop.style.transition = '';
+      if (closeFn) closeFn();
+    } else {
+      // Aborted swipe - snap back
+      content.style.transition = 'transform 0.5s var(--spring-easing)';
+      content.style.transform = '';
+      backdrop.style.opacity = '';
+      backdrop.style.transition = 'opacity 0.5s ease';
+      
+      // Cleanup inline transitions after snapping back
+      setTimeout(() => {
+        content.style.transition = '';
+        backdrop.style.transition = '';
+      }, 500);
+    }
+    
+    if (handle) handle.style.background = 'rgba(255, 255, 255, 0.15)';
+    startY = 0;
+    currentY = 0;
+  };
+
+  // Touch Events
+  modal.addEventListener('touchstart', (e) => {
+    const isHandle = e.target.classList.contains('modal-handle');
+    startDrag(e.touches[0].clientY, isHandle);
+  }, { passive: true });
+
+  modal.addEventListener('touchmove', (e) => {
+    moveDrag(e.touches[0].clientY);
+  }, { passive: true });
+
+  modal.addEventListener('touchend', endDrag);
+
+  // Mouse Events
+  modal.addEventListener('mousedown', (e) => {
+    const isInteractive = e.target.closest('button, a, input, select, textarea, .comm-tab-btn');
+    const isHandle = e.target.classList.contains('modal-handle');
+    
+    if (!isInteractive || isHandle) {
+      startDrag(e.clientY, isHandle);
+    }
+  });
+  window.addEventListener('mousemove', (e) => moveDrag(e.clientY));
+  window.addEventListener('mouseup', endDrag);
+}
+
+function updateTabIndicator() {
+  const activeBtn = Array.from(elements.commTabBtns).find(b => b.classList.contains('active'));
+  const indicator = document.querySelector('.comm-tab-indicator');
+  if (activeBtn && indicator) {
+    indicator.style.width = `${activeBtn.offsetWidth}px`;
+    indicator.style.left = `${activeBtn.offsetLeft}px`;
+  }
+}
+
+function initDataSovereigntyActions() {
+  const downloadFile = (filename, content, type) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  };
+
+  elements.exportJsonBtnModal?.addEventListener('click', () => {
+    const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : (AppState.mockHistory || []);
+    downloadFile('aura-wellness-data.json', JSON.stringify(data, null, 2), 'application/json');
+  });
+
+  elements.exportTxtBtnModal?.addEventListener('click', () => {
+    const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : (AppState.mockHistory || []);
+    let txt = "Aura Wellness Report\n====================\n\n";
+    data.forEach(item => {
+      txt += `Date: ${new Date(item.timestamp).toLocaleString()}\n`;
+      txt += `State: ${item.state} (${item.polyvagal_state || 'Unknown'})\n`;
+      if (item.subEmotion) txt += `Emotion: ${item.subEmotion}\n`;
+      if (item.customEmotion) txt += `Custom Emotion: ${item.customEmotion}\n`;
+      if (item.somatic_selections) txt += `Somatic: ${item.somatic_selections.join(', ')}\n`;
+      if (item.savoringText) txt += `Note: ${item.savoringText}\n`;
+      txt += "--------------------\n";
+    });
+    downloadFile('aura-wellness-report.txt', txt, 'text/plain');
+  });
+
+  elements.resetMemoryBtnModal?.addEventListener('click', async () => {
+    if (confirm(t('prof_reset_confirm'))) {
+      if (configProps.eraseAllData) {
+        elements.resetMemoryBtnModal.disabled = true;
+        await configProps.eraseAllData();
+      } else {
+        localStorage.clear();
+      }
+      window.location.reload();
+    }
   });
 }
 
-export function openCommunityModal(history) {
+function positionModalNearButton(modal, btn) {
+  if (window.innerWidth < 1024 || !btn || !modal) {
+    modal.style.removeProperty('--modal-x');
+    modal.style.removeProperty('--modal-y');
+    modal.style.removeProperty('--modal-translate');
+    modal.style.removeProperty('--modal-translate-active');
+    modal.style.removeProperty('--modal-origin');
+    return;
+  }
+  
+  const rect = btn.getBoundingClientRect();
+  const modalWidth = 380; 
+  const modalHeight = 450; 
+  
+  let left = rect.right - modalWidth + 10;
+  let originX = 'right';
+  if (left < 20) {
+    left = rect.left - 10;
+    originX = 'left';
+    if (left < 20) left = 20;
+  }
+  
+  let top = rect.bottom + 10;
+  let originY = 'top';
+  if (top + modalHeight > window.innerHeight) {
+    top = rect.top - modalHeight - 10;
+    originY = 'bottom';
+    if (top < 20) top = 20;
+  }
+
+  modal.style.setProperty('--modal-x', `${left}px`);
+  modal.style.setProperty('--modal-y', `${top}px`);
+  modal.style.setProperty('--modal-translate', `translate(0, 15px)`);
+  modal.style.setProperty('--modal-translate-active', `translate(0, 0)`);
+  modal.style.setProperty('--modal-origin', `${originY} ${originX}`);
+}
+
+export function openCommunityModal(history, triggerBtn) {
   if (!elements.communityModal) return;
+  
+  // Clear any active info/vagal modals
+  hideInfoModal();
+  hideVagalModal();
   
   renderPersonalStats(history);
   renderCommunityStats();
+  
+  positionModalNearButton(elements.communityModal, triggerBtn);
   
   elements.communityModal.classList.add('active');
   if (elements.communityBackdrop) elements.communityBackdrop.classList.add('active');
   
   // Default tab
   const benTab = Array.from(elements.commTabBtns).find(b => b.getAttribute('data-tab') === 'ben');
-  if (benTab) benTab.click();
+  if (benTab) {
+    benTab.click();
+    setTimeout(updateTabIndicator, 100);
+  }
 }
 
 export function hideCommunityModal() {
-  if (elements.communityModal) elements.communityModal.classList.remove('active');
-  if (elements.communityBackdrop) elements.communityBackdrop.classList.remove('active');
-  stopGalaxy();
+  if (typeof vibrate === 'function') vibrate('light');
+  if (elements.communityModal) {
+    elements.communityModal.classList.remove('active');
+    elements.communityModal.style.transform = '';
+    elements.communityModal.style.transition = '';
+  }
+  if (elements.communityBackdrop) {
+    elements.communityBackdrop.classList.remove('active');
+    elements.communityBackdrop.style.opacity = '';
+    elements.communityBackdrop.style.transition = '';
+  }
+  if (typeof stopGalaxy === 'function') stopGalaxy();
 }
+
+
+
+
 
 function renderPersonalStats(history = []) {
   if (!elements.personalStatsGrid) return;
@@ -198,6 +426,11 @@ function stopGalaxy() {
     cancelAnimationFrame(galaxyAnimationId);
     galaxyAnimationId = null;
   }
+  const canvas = elements.galaxyCanvas;
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 }
 
 export function updateModalState(state) {
@@ -217,6 +450,7 @@ function getAuraSVGIcon(type) {
     'step4': `<circle cx="32" cy="32" r="4" fill="white"/><circle cx="32" cy="32" r="12" stroke="white" stroke-width="1" opacity="0.4"/><circle cx="32" cy="32" r="24" stroke="white" stroke-width="0.5" opacity="0.2"/>`,
     'step5': `<path d="M20 44L32 20L44 44H20Z" stroke="white" stroke-width="1.5" fill="none"/><circle cx="32" cy="34" r="2" fill="white"/>`,
     'step6': `<path d="M32 48C32 48 12 36 12 24C12 16 18 12 24 12C28 12 32 15 32 15C32 15 36 12 40 12C46 12 52 16 52 24C52 36 32 48 32 48Z" stroke="white" stroke-width="1.5" fill="none"/><path d="M22 24H42" stroke="white" stroke-width="0.5" opacity="0.4"/>`,
+    'vagal_analysis': `<circle cx="32" cy="32" r="12" stroke="white" stroke-width="1.5"/><path d="M32 10V20M32 44V54M10 32H20M44 32H54" stroke="white" stroke-width="1.5" opacity="0.6"/><circle cx="32" cy="32" r="22" stroke="white" stroke-width="0.5" stroke-dasharray="2 4"/>`,
     'breathing': `<circle cx="32" cy="32" r="14" stroke="white" stroke-width="1.5" fill="none"><animate attributeName="r" values="12;16;12" dur="4s" repeatCount="indefinite"/></circle><circle cx="32" cy="32" r="24" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>`
   };
   
@@ -248,9 +482,14 @@ function getAuraSVGIcon(type) {
   }
 }
 
-export function openInfoArchive(key) {
+export function openInfoArchive(key, triggerBtn) {
   console.log("Aura Modal Triggered with key:", key);
-  if (!elements.vagalModal) return;
+  if (!elements.infoModal) return;
+
+  // Close any existing modals first to prevent "ghosting" or layering issues
+  hideCommunityModal();
+  hideInfoModal();
+  hideVagalModal();
 
   // Cleanup key and identify type
   const cleanKey = key.replace('info_', '').replace('_desc', '').replace('_title', '').replace('_body', '');
@@ -297,33 +536,26 @@ export function openInfoArchive(key) {
     iconType = cleanKey;
   }
 
-  // UI PREP: Reset all specific fields in the Vagal Modal
-  if (elements.vagalModalTitle) elements.vagalModalTitle.style.display = 'none';
+  // 3. UI STATE MANAGEMENT: Reset & Visibility
   if (elements.vagalModalHeatmap) elements.vagalModalHeatmap.style.display = 'none';
+  if (elements.vagalModalAnalysis) elements.vagalModalAnalysis.style.display = 'none';
   if (elements.vagalModalRec) elements.vagalModalRec.style.display = 'none';
-  if (elements.vagalModalAnalysis) {
-    elements.vagalModalAnalysis.style.display = 'block';
-    // Add legal-content class for better readability of long texts
-    if (cleanKey.startsWith('legal_')) {
-      elements.vagalModalAnalysis.classList.add('legal-content');
-    } else {
-      elements.vagalModalAnalysis.classList.remove('legal-content');
-    }
+  
+  if (elements.infoBody) {
+    elements.infoBody.style.display = 'block';
+    elements.infoBody.innerHTML = body || '...';
   }
 
-  // Render Content
-  if (elements.vagalModalAnalysis) {
-    elements.vagalModalAnalysis.innerHTML = `
-      <div class="info-sheet-content">
-        <div class="info-sheet-icon">${getAuraSVGIcon(iconType)}</div>
-        <h2 class="info-sheet-title">${title}</h2>
-        <div class="info-sheet-body">${body}</div>
-        <div class="info-sheet-ref">Source: ${ref}</div>
-      </div>
-    `;
-  }
+  // Content injection
+  if (elements.infoTitle) elements.infoTitle.textContent = title;
+  if (elements.infoRef) elements.infoRef.textContent = ref || '';
+  if (elements.infoIcon) elements.infoIcon.innerHTML = getAuraSVGIcon(iconType);
 
-  elements.vagalModal.classList.add('open');
+  positionModalNearButton(elements.infoModal, triggerBtn);
+
+  // Finalize display
+  if (elements.infoModal) elements.infoModal.classList.add('active');
+  if (elements.infoBackdrop) elements.infoBackdrop.classList.add('active');
   
   // Pause any active timers
   if (!configProps.isTimerPaused && configProps.pauseExercise) configProps.pauseExercise();
@@ -334,12 +566,40 @@ export function showInfoModal(type) {
   openInfoArchive(`info_${type}`);
 }
 
-export function hideInfoModal() {
-  isModalOpen = false;
-  if(elements.infoBackdrop) elements.infoBackdrop.classList.remove('active');
-  if(elements.infoModal) elements.infoModal.classList.remove('active');
-  if(elements.vagalModal) elements.vagalModal.classList.remove('open');
+export function hideVagalModal() {
+  hideInfoModal();
+}
 
-  if (configProps.isTimerPaused && configProps.resumeExercise) configProps.resumeExercise();
-  if (configProps.isMeditationPaused && configProps.resumeMeditation) configProps.resumeMeditation();
+export function hideInfoModal() {
+  if (typeof vibrate === 'function') vibrate('light');
+  isModalOpen = false;
+  
+  if (elements.infoBackdrop) {
+    elements.infoBackdrop.classList.remove('active');
+    elements.infoBackdrop.style.opacity = '';
+    elements.infoBackdrop.style.transition = '';
+  }
+  if (elements.infoModal) {
+    elements.infoModal.classList.remove('active');
+    elements.infoModal.style.transform = '';
+    elements.infoModal.style.transition = '';
+  }
+  if (elements.communityBackdrop) {
+    elements.communityBackdrop.classList.remove('active');
+    elements.communityBackdrop.style.opacity = '';
+    elements.communityBackdrop.style.transition = '';
+  }
+  if (elements.communityModal) {
+    elements.communityModal.classList.remove('active');
+    elements.communityModal.style.transform = '';
+    elements.communityModal.style.transition = '';
+  }
+
+  // Safety checks for resume functions
+  if (configProps.isTimerPaused && typeof configProps.resumeExercise === 'function') {
+    configProps.resumeExercise();
+  }
+  if (configProps.isMeditationPaused && typeof configProps.resumeMeditation === 'function') {
+    configProps.resumeMeditation();
+  }
 }

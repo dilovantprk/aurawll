@@ -1,5 +1,5 @@
 import { elements } from '../core/dom.js';
-import { loginWithEmail, registerWithEmail } from '../../authService.js';
+import { loginWithEmail, registerWithEmail, signInAsGuest } from '../../authService.js';
 import { t } from '../core/i18n.js';
 
 /**
@@ -92,8 +92,16 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     }
   });
 
-  skipAuthBtn?.addEventListener('click', () => {
-    navigateTo('view-welcome');
+  skipAuthBtn?.addEventListener('click', async () => {
+    try {
+      const user = await signInAsGuest();
+      // Force onboarding status to true when skipping from auth
+      localStorage.setItem('aura_onboarded', 'true');
+      if (onAuthenticated) onAuthenticated(user);
+    } catch (err) {
+      console.error('[Aura] Guest login failed', err);
+      navigateTo('view-welcome'); 
+    }
   });
 
   // Init state

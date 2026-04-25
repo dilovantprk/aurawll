@@ -9,18 +9,35 @@
 }
 
 .aura-core-v2 {
-  width: 50px;
-  height: 50px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: var(--vagal-accent, #fff);
-  filter: blur(25px);
-  animation: auras-pulse 4s infinite ease-in-out;
-  box-shadow: 0 0 40px var(--vagal-glow, rgba(255,255,255,0.2));
+  /* 3D Liquid Gradient */
+  background: radial-gradient(circle at 35% 35%, 
+              rgba(255, 255, 255, 0.9) 0%, 
+              var(--vagal-accent, #858DFF) 40%, 
+              rgba(0, 0, 0, 0.4) 100%);
+  filter: blur(0.5px);
+  animation: auras-pulse-3d 4s infinite ease-in-out;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    0 0 30px var(--vagal-accent, rgba(133, 141, 255, 0.3)),
+    inset 0 -4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 4px 12px rgba(255, 255, 255, 0.3);
+  opacity: 1;
+  z-index: 5;
+  position: relative;
 }
 
-@keyframes auras-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.3); opacity: 0.9; }
+@keyframes auras-pulse-3d {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg); 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 30px var(--vagal-accent, rgba(133, 141, 255, 0.3));
+  }
+  50% { 
+    transform: scale(1.12) rotate(5deg); 
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 50px var(--vagal-accent, rgba(133, 141, 255, 0.5));
+  }
 }
 
 /* Settings Group */
@@ -43,10 +60,110 @@
   backdrop-filter: blur(35px) saturate(160%);
   -webkit-backdrop-filter: blur(35px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 32px;
+  border-radius: 40px;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1);
-  margin-bottom: 2rem;
+}
+
+/* Data Sovereignty Card Specifics (Advanced Liquid Glass) */
+.data-sov-card-wrapper {
+  margin-top: 4rem;
+  padding: 0 1rem 4rem 1rem;
+}
+
+.data-sov-card {
+  border-radius: 48px; /* Unified Liquid standard */
+  padding: 2.2rem 1.8rem;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 40px 100px rgba(0, 0, 0, 0.4), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.7s var(--spring-easing);
+  overflow: hidden;
+  position: relative;
+}
+
+.data-sov-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+  pointer-events: none;
+}
+
+.data-sov-card:hover {
+  transform: translateY(-10px) scale(1.01);
+  border-color: rgba(133, 141, 255, 0.25);
+  box-shadow: 
+    0 50px 120px rgba(0, 0, 0, 0.5), 
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.data-sov-card-title {
+  padding-left: 0;
+  margin-bottom: 1.8rem;
+  text-align: center;
+  opacity: 0.9;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.data-sov-status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0.5;
+  margin-bottom: 1.8rem;
+  justify-content: center;
+}
+
+.data-sov-status svg {
+  color: var(--accent-okay);
+}
+
+.data-sov-status span {
+  font-size: 10px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.data-sov-actions {
+  display: flex;
+  gap: 1.2rem;
+  width: 100%;
+  margin-bottom: 2.2rem;
+}
+
+.data-sov-danger {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 1.8rem;
+  display: flex;
+  justify-content: center;
+}
+
+.data-sov-reset-btn {
+  background: none;
+  border: none;
+  color: var(--error);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.data-sov-reset-btn:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  text-shadow: 0 0 12px rgba(255, 60, 60, 0.5);
 }
 
 .settings-row {
@@ -214,6 +331,11 @@
 #resetMemoryBtn:hover {
   opacity: 1;
   transform: scale(1.05);
+  text-shadow: 0 0 10px rgba(255, 60, 60, 0.4);
+}
+
+#resetMemoryBtn:active {
+  transform: scale(0.95);
 }
 
 /* Export Box Style */
@@ -223,7 +345,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.7);
   padding: 1.5rem 1rem;
-  border-radius: 24px;
+  border-radius: 32px;
   font-size: 10px;
   letter-spacing: 1.5px;
   font-weight: 600;

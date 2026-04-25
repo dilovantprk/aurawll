@@ -1,4 +1,5 @@
 import { t } from './i18n.js';
+import { AppState } from './state.js';
 
 export function normalizeCheckinData(data) {
   if (!data) return data;
@@ -41,4 +42,20 @@ export function renderMiniDeltaSVG(entry) {
   const v = entry.pre_valence || 0.5;
   const color = (v >= 0.5) ? 'rgb(100, 228, 159)' : (a >= 0.5 ? 'rgb(255, 107, 107)' : 'rgb(98, 164, 255)');
   return `<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="${v * 24}" cy="${(1 - a) * 24}" r="3" fill="${color}" /></svg>`;
+}
+
+export function vibrate(type = 'light') {
+  if (typeof window === 'undefined' || !window.navigator || !window.navigator.vibrate) return;
+  if (AppState && AppState.hapticEnabled === false) return;
+  
+  const patterns = {
+    light: [10],
+    medium: [15],
+    heavy: [25],
+    success: [10, 30, 10],
+    error: [50, 50, 50],
+    impact: [20]
+  };
+  
+  window.navigator.vibrate(patterns[type] || patterns.light);
 }

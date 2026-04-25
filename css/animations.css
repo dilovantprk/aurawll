@@ -127,7 +127,15 @@ body.state-resolved::before {
 /* Interactive elements get bio-reactive behavior via body state class */
 .nav-item, .hero-btn, .state-card, .primary-btn, .pill-btn, .ghost-btn {
   /* Bio-reactivity is inherited from body.state-* .vagal-reactive */
-  transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.4s var(--spring-bounce), filter 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-item:active, .hero-btn:active, .state-card:active, .primary-btn:active, .glass-panel:active {
+  transform: scale(0.96) translateY(1px) !important;
+}
+
+.nav-item:hover, .hero-btn:hover, .state-card:hover, .primary-btn:hover {
+  transform: translateY(-2px);
 }
 
 /* === VAGAL PLASTICITY / RESILIENCE BAR === */
@@ -139,8 +147,20 @@ body.state-resolved::before {
   border-radius: 24px;
   padding: 1.8rem 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
+  animation: floating-hud 6s ease-in-out infinite;
+}
+
+@keyframes floating-hud {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%      { transform: translateY(-4px) rotate(0.5deg); }
+  66%      { transform: translateY(2px) rotate(-0.5deg); }
+}
+
+.hero-btn.cockpit-card {
+  animation: floating-hud 8s ease-in-out infinite;
 }
 
 .resilience-header {
@@ -428,4 +448,47 @@ body.crystal-entry .app-container {
 @keyframes intro-progress {
   from { width: 0%; }
   to { width: 100%; }
+}
+
+/* === SKELETON LOADING ANIMATIONS === */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.03) 25%, 
+    rgba(255, 255, 255, 0.08) 50%, 
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite linear;
+  border-radius: 12px;
+}
+
+.skeleton-text { height: 1rem; margin-bottom: 0.5rem; width: 100%; }
+.skeleton-title { height: 2rem; width: 60%; margin-bottom: 1.5rem; border-radius: 16px; }
+.skeleton-card { height: 160px; width: 100%; border-radius: 36px; margin-bottom: 1rem; }
+.skeleton-circle { width: 60px; height: 60px; border-radius: 50%; }
+
+/* === HEADER TAB CHANGE ANIMATION (Liquid Glass Reveal) === */
+@keyframes header-text-update {
+  0%   { opacity: 0; filter: blur(8px); transform: scaleX(0.95) translateY(2px); }
+  40%  { opacity: 0.8; filter: blur(3px); }
+  100% { opacity: 1; filter: blur(0); transform: scaleX(1) translateY(0); }
+}
+
+.header-text-animate {
+  animation: header-text-update 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes liquid-pulse-stretch {
+  0%   { transform: scaleX(1) scaleY(1); border-color: rgba(255, 255, 255, 0.12); }
+  30%  { transform: scaleX(1.05) scaleY(0.95); border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.15); }
+  100% { transform: scaleX(1) scaleY(1); border-color: rgba(255, 255, 255, 0.12); }
+}
+
+.liquid-pulse-animate {
+  animation: liquid-pulse-stretch 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

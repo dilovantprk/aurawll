@@ -1,7 +1,7 @@
 import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
-import { getHumanizedTime, renderMiniDeltaSVG } from '../core/utils.js';
+import { getHumanizedTime, renderMiniDeltaSVG, vibrate } from '../core/utils.js';
 
 let configProps = {
   fb: null,
@@ -16,7 +16,11 @@ export async function loadNotebook() {
   if (configProps.navigateTo) configProps.navigateTo('view-notebook');
   if (!elements.notebookEntries) return;
 
-  elements.notebookEntries.innerHTML = '<div class="loader-circle"></div>';
+  elements.notebookEntries.innerHTML = `
+    <div class="skeleton-card skeleton" style="margin-bottom: 1rem;"></div>
+    <div class="skeleton-card skeleton" style="margin-bottom: 1rem;"></div>
+    <div class="skeleton-card skeleton"></div>
+  `;
 
   let localEntries = AppState.mockHistory || [];
   let cloudEntries = [];

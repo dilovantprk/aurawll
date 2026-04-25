@@ -77,7 +77,7 @@ export const locales = {
     "btn_login_link": "Already have an account? <span>Log in</span>",
     "btn_exit_guest": "Leave Guest Mode",
     "welcome_tagline": "breathe · observe · regulate",
-    "welcome_prompt": "Hold to Arrive",
+    "welcome_prompt": "Hold to Focus",
 
     // Settings
     "settings_title": "Settings",
@@ -95,12 +95,14 @@ export const locales = {
     // Profile & Settings Cockpit
     "guest_cta_title": "Save Your Journey",
     "guest_cta_desc": "Create an account to securely sync your neuro-history and personalized insights across devices.",
+    "prof_sync_cta": "Sign in to sync your data and ensure your wellness journey is never lost.",
     "prof_active_days": "{count} Days Active",
     "prof_identity": "Bio-Identity",
 
     // Community Modal
     "comm_tab_me": "Me",
     "comm_tab_community": "Community",
+    "comm_tab_data": "Data",
     "comm_data_privacy": "This data belongs only to you.",
     "stat_total_sessions": "Total Sessions",
     "stat_top_signal": "Top Signal",
@@ -117,6 +119,7 @@ export const locales = {
     "prof_sensory_title": "Sensory Controls",
     "prof_haptic": "Haptic Feedback",
     "prof_drone": "Bio-Acoustic Drone",
+    "prof_ui_sounds": "UI Sounds",
     "prof_volume": "Acoustic Depth",
     "prof_data_title": "Data Sovereignty",
     "prof_data_safe": "Data secured locally on device.",
@@ -167,7 +170,7 @@ export const locales = {
     "tod_evening": "evening",
     "insight_template": "You've felt '{emotion}' most often — usually in the {time}. That's your nervous system asking for a reset.",
     "insight_no_dominant": "Your week has been a mixed bag of emotions. Keep checking in.",
-    "insight_loading": "Aura AI is reflecting on your week...",
+    "insight_loading": "Aura is reflecting on your week...",
     "plasticity_high": "High Plasticity",
     "plasticity_medium": "Moderate",
     "plasticity_low": "Needs Attention",
@@ -194,8 +197,12 @@ export const locales = {
     "info_resilience_body": "Measures your physiological resilience—the ease with which your system transitions between states. High plasticity indicates a robust and flexible nervous system.",
     "info_resilience_ref": "Porges (2007)",
 
-    "info_insight_title": "AI Neural Analysis",
+    "info_insight_title": "Aura Neural Analysis",
     "info_insight_body": "Antigravity's neural engine analyzes your biometric checkpoints to identify circadian patterns and suggest optimal regulatory paths.",
+    "info_vagal_analysis_title": "Neural Deep Dive",
+    "info_vagal_analysis_body": "This analysis reflects your longitudinal autonomic baseline based on recent check-ins. Your nervous system patterns reveal how you adapt to stress and find rest over time.",
+    "info_vagal_analysis_ref": "Aura Neural Engine v2",
+    "vagal_recommendation_default": "Your system shows healthy plasticity. Continue your daily protocols to maintain resilience.",
     "info_insight_ref": "Antigravity Neural Engine v2",
 
     "info_exercise_title": "Vagal Regulation Protocol",
@@ -442,6 +449,8 @@ export const locales = {
     "ex_hold": "Hold",
     "ex_in": "In",
     "ex_out": "Out",
+    "ex_top": "Top",
+    "ex_up": "Up",
     "ex_hold_empty": "Hold Empty",
 
     // Protocol Micro-copy
@@ -534,7 +543,7 @@ export const locales = {
     "done_desc": "Your nervous system thanks you.",
 
     // Meditation Loading
-    "meditation_loading_desc": "Preparing meditation...",
+    "meditation_loading_desc": "Slow down",
     "btn_skip_loading": "Skip",
 
     // Notifications
@@ -710,7 +719,7 @@ export const locales = {
     "btn_login_link": "Zaten hesabın var mı? <span>Giriş yap</span>",
     "btn_exit_guest": "Misafir Modundan Çık",
     "welcome_tagline": "nefes al · gözlemle · dengelen",
-    "welcome_prompt": "Burada olmak için basılı tut",
+    "welcome_prompt": "Odaklanmak için basılı tut",
 
     // Settings
     "settings_title": "Ayarlar",
@@ -728,12 +737,14 @@ export const locales = {
     // Profile & Settings Cockpit
     "guest_cta_title": "Yolculuğunu Kaydet",
     "guest_cta_desc": "Nöro-geçmişini ve kişiselleştirilmiş analizlerini tüm cihazlarında eşzamanlamak için ücretsiz bir hesap oluştur.",
+    "prof_sync_cta": "Verilerini senkronize etmek ve iyi oluş yolculuğunun kaybolmasını engellemek için giriş yap veya kaydol.",
     "prof_active_days": "{count} Gündür Aktif",
     "prof_identity": "Biyo-Kimlik",
 
     // Community Modal
     "comm_tab_me": "Ben",
     "comm_tab_community": "Topluluk",
+    "comm_tab_data": "Veri",
     "comm_data_privacy": "Veriler yalnızca sana aittir.",
     "stat_total_sessions": "Toplam Oturum",
     "stat_top_signal": "En Sık Sinyal",
@@ -750,6 +761,7 @@ export const locales = {
     "prof_sensory_title": "Duyusal Kontroller",
     "prof_haptic": "Haptic Geri Bildirim",
     "prof_drone": "Biyo-Akustik Drone",
+    "prof_ui_sounds": "UI Sesleri",
     "prof_volume": "Akustik Derinlik",
     "prof_data_title": "Veri Egemenliği",
     "prof_data_safe": "Veriler cihazında güvende.",
@@ -811,7 +823,7 @@ export const locales = {
     "insight_okay_title": "Dengeli Akış",
     "insight_okay_desc": "Ventral güvenlik ve denge durumundasınız.",
     "insight_compassion_needed": "Sisteminizin şu an biraz ekstra şefkate ihtiyacı var.",
-    "insight_loading": "Aura AI haftalık örüntülerini analiz ediyor...",
+    "insight_loading": "Aura haftalık örüntülerini analiz ediyor...",
     "plasticity_high": "Yüksek Esneklik",
     "plasticity_medium": "Orta Düzey",
     "plasticity_low": "İlgi Gerekiyor",
@@ -838,8 +850,12 @@ export const locales = {
     "info_resilience_body": "Fizyolojik esnekliğinizi ölçer; sisteminizin durumlar arası geçiş yapabilme hızını ve kolaylığını gösterir. Yüksek plastisite, dayanıklı bir sinir sistemine işaret eder.",
     "info_resilience_ref": "Porges (2007)",
 
-    "info_insight_title": "AI Nöral Analiz",
+    "info_insight_title": "Aura Nöral Analiz",
     "info_insight_body": "Aura'nın nöral motoru, biyometrik verilerinizi analiz ederek sirkadiyen ritimlerinizi tanımlar ve size özel en etkili regülasyon yollarını önerir.",
+    "info_vagal_analysis_title": "Nöral Derin Analiz",
+    "info_vagal_analysis_body": "Bu analiz, son check-in verilerinize dayanarak otonom sinir sisteminizin temel eğilimlerini yansıtır. Örüntüleriniz, strese nasıl uyum sağladığınızı ve zaman içinde nasıl dinlendiğinizi ortaya koyar.",
+    "info_vagal_analysis_ref": "Aura Nöral Motoru v2",
+    "vagal_recommendation_default": "Sisteminiz sağlıklı bir esneklik gösteriyor. Dayanıklılığınızı korumak için günlük protokollerinize devam edin.",
     "info_insight_ref": "Antigravity Neural Engine v2",
 
     "info_exercise_title": "Vagal Protokol Analizi",
@@ -1068,11 +1084,13 @@ export const locales = {
     "ex_ready": "Hazır",
     "ex_begin": "Başla",
     "ex_inhale": "Nefes Al",
-    "ex_inhale_top_up": "...ve biraz daha derin çek",
+    "ex_inhale_top_up": "Biraz daha çek",
     "ex_exhale": "Nefes Ver",
     "ex_hold": "Tut",
     "ex_in": "Al",
     "ex_out": "Ver",
+    "ex_top": "Daha",
+    "ex_up": "Çek",
     "ex_hold_empty": "Boş Tut",
 
     // Protocol Micro-copy
@@ -1165,7 +1183,7 @@ export const locales = {
     "done_desc": "Sinir sistemin sana minnettar.",
 
     // Meditation Loading
-    "meditation_loading_desc": "Hazırlanıyoruz...",
+    "meditation_loading_desc": "Yavaşla",
     "btn_skip_loading": "Atla",
 
     // Notifications
