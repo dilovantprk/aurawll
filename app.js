@@ -129,10 +129,27 @@ export function navigateTo(viewId, skipHistory = false) {
   const shouldHideMobileHeader = hideMobileHeaderViews.includes(viewId);
   const shouldHideImmersionNav = hideImmersionNavViews.includes(viewId);
   
+  // Desktop Nav Visibility
+  if (elements.desktopNav) {
+    if (shouldHideImmersionNav) elements.desktopNav.classList.add('hidden', 'nav-hidden');
+    else elements.desktopNav.classList.remove('hidden', 'nav-hidden');
+  }
+
   // Mobile Header Visibility
   if (elements.header) {
     if (shouldHideMobileHeader) elements.header.classList.add('hidden');
     else elements.header.classList.remove('hidden');
+  }
+
+  // Desktop Sync Tab Name
+  const desktopActiveName = document.getElementById('desktop-active-tab-name');
+  if (desktopActiveName) {
+    desktopActiveName.classList.remove('visible');
+    setTimeout(() => {
+      const tabLabel = t('nav_' + newSlug) || newSlug;
+      if (tabLabel) desktopActiveName.textContent = tabLabel;
+      desktopActiveName.classList.add('visible');
+    }, 50);
   }
 
   // Nav Visibility
