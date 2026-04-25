@@ -62,27 +62,35 @@ export function navigateTo(viewId, skipHistory = false) {
     history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', ''));
   }
 
-  // Update Header with Physical Glass Slide Effect
-  const island = elements.activeTabName?.closest('.header-island');
   const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
-  
   const isCurrentlyCheckin = checkinSteps.includes(AppState.currentView?.replace('view-', '') || '');
   const isTargetingCheckin = checkinSteps.includes(newSlug);
   const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
+  const isCheckin = checkinSteps.includes(newSlug);
+  
+  // Update Header with Physical Glass Slide Effect
+  const island = elements.activeTabName?.closest('.header-island');
 
   if (island && !skipHeaderAnimation) {
-    const headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
-    const headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
+    let headerOutClass, headerInClass;
+    
+    if (isCheckin) {
+      // STANDARD Header Logic
+      headerOutClass = direction === 'left' ? 'header-island-slide-out-right' : 'header-island-slide-out-left';
+      headerInClass = direction === 'left' ? 'header-island-slide-in-left' : 'header-island-slide-in-right';
+    } else {
+      // INVERTED Header Logic
+      headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
+      headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
+    }
     
     island.classList.remove('header-island-slide-out-left', 'header-island-slide-out-right', 'header-island-slide-in-left', 'header-island-slide-in-right');
     island.classList.add(headerOutClass);
-    
+
     setTimeout(() => {
       let slug = newSlug;
-      const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
       if (checkinSteps.includes(slug)) slug = 'checkin';
       const tabLabel = t('nav_' + slug) || slug;
-      
       if (elements.activeTabName) elements.activeTabName.textContent = tabLabel;
       
       island.classList.remove(headerOutClass);
@@ -96,7 +104,6 @@ export function navigateTo(viewId, skipHistory = false) {
       setTimeout(() => island.classList.remove(headerInClass), 400);
     }, 250);
   } else if (island && skipHeaderAnimation) {
-    // Just ensure text is synced if needed, but no slide
     let slug = newSlug;
     if (checkinSteps.includes(slug)) slug = 'checkin';
     const tabLabel = t('nav_' + slug) || slug;
@@ -107,17 +114,25 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Handle View Transitions (Physical Slide)
   if (currentView) {
-    const outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
-    currentView.classList.add(outClass);
+    let outClass, inClass;
     
-    const inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
+    if (isCheckin) {
+      // STANDARD View Logic
+      outClass = direction === 'left' ? 'view-slide-out-right' : 'view-slide-out-left';
+      inClass = direction === 'left' ? 'view-slide-in-left' : 'view-slide-in-right';
+    } else {
+      // INVERTED View Logic
+      outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
+      inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
+    }
+
+    currentView.classList.add(outClass);
     target.classList.remove('hidden');
     target.classList.add('active', inClass);
     target.scrollTop = 0;
     
     setTimeout(() => {
       currentView.classList.add('hidden');
-      currentView.classList.remove('active', 'view-slide-out-left', 'view-slide-out-right');
       target.classList.remove('view-slide-in-right', 'view-slide-in-left');
       isNavigating = false;
     }, 500);
