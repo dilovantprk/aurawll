@@ -494,9 +494,10 @@ function initSwipeNavigation() {
         }
       }
       
-      // Move both views - INVERTED LOGIC
+      // Move both views - SYNCED WITH INVERTED LOGIC
       currentView.style.transform = `translateX(${currentDeltaX}px)`;
       if (targetView) {
+        // In the new inverted logic: Next page (direction > 0) is physically on the LEFT (-100%)
         const offset = direction > 0 ? '-100%' : '100%';
         targetView.style.transform = `translateX(calc(${offset} + ${currentDeltaX}px))`;
       }
@@ -513,12 +514,12 @@ function initSwipeNavigation() {
     const success = Math.abs(currentDeltaX) > threshold && targetView;
 
     if (success) {
-      const direction = currentDeltaX < 0 ? 'left' : 'right'; // Inverted
+      const direction = currentDeltaX < 0 ? 'right' : 'left'; // Match button logic: swipe left -> forward (right)
       // Cleanup inline styles and navigate
       currentView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       if (targetView) targetView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       
-      const finalX = currentDeltaX < 0 ? '100%' : '-100%'; // Inverted
+      const finalX = currentDeltaX < 0 ? '-100%' : '100%'; // Swipe left completes to left (but triggers 'right' navigation)
       currentView.style.transform = `translateX(${finalX})`;
       currentView.style.opacity = '0';
       if (targetView) {
