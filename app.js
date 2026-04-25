@@ -525,8 +525,7 @@ function initSwipeNavigation() {
     const success = Math.abs(currentDeltaX) > threshold && targetView;
 
     if (success) {
-      const navDirection = currentDeltaX < 0 ? 'right' : 'left'; 
-      
+      const direction = currentDeltaX < 0 ? 'right' : 'left'; 
       // Cleanup inline styles and navigate
       currentView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       if (targetView) targetView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
