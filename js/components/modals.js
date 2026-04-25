@@ -1,6 +1,6 @@
 import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
-import { PROTOCOL_META } from '../core/constants.js';
+import { PROTOCOL_META, BADGES, protocols } from '../core/constants.js';
 import { AppState } from '../core/state.js';
 import { vibrate } from '../core/utils.js';
 
@@ -318,6 +318,39 @@ export function hideCommunityModal() {
 
 
 
+function calculateEarnedBadges(history) {
+  const earned = new Set();
+  if (!history || history.length === 0) return Array.from(earned);
+
+  const usedProtocols = new Set(history.map(h => h.protocolId).filter(id => id));
+  const allProtocols = Object.keys(protocols);
+  if (allProtocols.every(p => usedProtocols.has(p))) earned.add('explorer');
+
+  history.forEach(h => {
+    const hour = new Date(h.timestamp).getHours();
+    if (hour >= 5 && hour < 10) earned.add('earlybird');
+    if (hour >= 23 || hour < 4) earned.add('nightowl');
+  });
+
+  if (history.length >= 50) earned.add('master');
+
+  let ventralCount = 0;
+  for (let i = 0; i < history.length; i++) {
+    const state = history[i].polyvagal_state || history[i].state;
+    if (state === 'ventral' || state === 'okay') {
+      ventralCount++;
+      if (ventralCount >= 5) { earned.add('zen'); break; }
+    } else {
+      ventralCount = 0;
+    }
+  }
+
+  // Simple streak check (simulated as we already have comm_streak in UI)
+  if (history.length >= 7) earned.add('streak7');
+  
+  return Array.from(earned);
+}
+
 function renderPersonalStats(history = []) {
   if (!elements.personalStatsGrid) return;
   
@@ -347,6 +380,22 @@ function renderPersonalStats(history = []) {
     }
   }
 
+  const earnedBadgeIds = calculateEarnedBadges(history);
+  const badgeHtml = Object.values(BADGES).map(badge => {
+    const isEarned = earnedBadgeIds.includes(badge.id);
+    return `
+      <div class="badge-item ${isEarned ? 'active' : 'locked'}">
+        <div class="badge-inner">
+          <div class="badge-icon">${badge.icon}</div>
+          <div class="badge-tooltip">
+            <strong>${t(badge.titleKey)}</strong>
+            <span>${t(badge.descKey)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
   elements.personalStatsGrid.innerHTML = `
     <div class="stat-card">
       <div class="stat-label">${t('vagal_ventral')}</div>
@@ -368,7 +417,15 @@ function renderPersonalStats(history = []) {
       <div class="stat-value">${totalSessions}</div>
       <div class="stat-sub">${totalSessions > 0 ? t('comm_streak').replace('{count}', totalSessions) : '-'}</div>
     </div>
-    <div class="stat-card" style="grid-column: span 2; background: rgba(255, 255, 255, 0.03);">
+    
+    <div class="badges-container" style="grid-column: span 2; margin-top: 0.5rem;">
+      <div class="stat-label" style="margin-bottom: 0.8rem; opacity: 0.6;">Aura Başarıları</div>
+      <div class="badges-grid">
+        ${badgeHtml}
+      </div>
+    </div>
+
+    <div class="stat-card" style="grid-column: span 2; background: rgba(255, 255, 255, 0.03); margin-top: 0.5rem;">
       <div class="stat-label">${t('stat_top_signal')}</div>
       <div class="stat-value" style="font-size: 1.1rem; text-transform: capitalize; color: #fff;">${topSensation}</div>
       <div class="stat-sub">Somatic farkındalık lideri</div>

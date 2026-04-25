@@ -236,3 +236,12 @@ export const EMOTION_PROTOCOL_MAP = {
   emo_hopeless: 'p_grounding',
   emo_dull: 'p_fire'
 };
+
+export const BADGES = {
+  explorer: { id: 'explorer', icon: '🧭', titleKey: 'badge_explorer', descKey: 'badge_explorer_desc' },
+  earlybird: { id: 'earlybird', icon: '🌅', titleKey: 'badge_earlybird', descKey: 'badge_earlybird_desc' },
+  nightowl: { id: 'nightowl', icon: '🦉', titleKey: 'badge_nightowl', descKey: 'badge_nightowl_desc' },
+  streak7: { id: 'streak7', icon: '🔥', titleKey: 'badge_streak7', descKey: 'badge_streak7_desc' },
+  master: { id: 'master', icon: '💎', titleKey: 'badge_master', descKey: 'badge_master_desc' },
+  zen: { id: 'zen', icon: '🧘', titleKey: 'badge_zen', descKey: 'badge_zen_desc' }
+};
