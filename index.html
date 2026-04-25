@@ -568,19 +568,30 @@
           <h1 data-i18n="nav_profile">Profil</h1>
           <p data-i18n="prof_desc">Manage your wellness identity and senses.</p>
         </div>
-
-        <!-- IDENTITY CARD -->
-        <div class="identity-card-v2 glass-panel stagger-1">
-             <div class="aura-core-v2-container" style="margin-bottom: 1.5rem;">
-                <div id="aura-core-sphere" class="aura-core-v2"></div>
-             </div>
-             <div class="identity-info-v2">
-                <h2 id="user-display-name" style="font-size: 1.5rem; font-weight: 300; margin-bottom: 0.5rem; letter-spacing: -0.5px; color: var(--text-main);">Explorer</h2>
-                <div id="unique-days-stats" style="display: inline-block; padding: 0.4rem 1rem; background: rgba(255,255,255,0.05); border-radius: 100px; border: 1px solid rgba(255,255,255,0.1); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5);">
-                   <span data-i18n="prof_active_days">8 Neural Records</span>
+        <!-- IDENTITY CARD (Arc Inspired Edition) -->
+        <div class="identity-card-v2 arc-theme stagger-1">
+             <!-- Top Visual: Organic Vagal Wave + Sphere Core -->
+             <div class="aura-blob-container">
+                <div class="aura-blob-wave">
+                   <div id="aura-core-sphere" class="aura-core-v2"></div>
                 </div>
-                <div id="identity-badges" class="identity-badges" style="margin-top: 1rem; display: flex; gap: 8px; justify-content: center; min-height: 24px;"></div>
-                <p class="premium-header" style="margin-top: 1.2rem; padding-left: 0; text-align: center;" data-i18n="prof_identity">Biyo-Kimlik</p>
+             </div>
+             
+             <!-- Identity Info -->
+             <div class="identity-body">
+                <h2 id="user-display-name" class="arc-name">Explorer</h2>
+                <div id="identity-rank" class="arc-rank">VAGAL MASTER</div>
+                
+                <div class="arc-footer">
+                   <div id="identity-badges" class="arc-badges"></div>
+                   <div class="arc-meta">
+                      <div class="arc-meta-box">
+                         <span class="arc-meta-label">AURA</span>
+                         <span id="unique-days-stats" class="arc-meta-value">8 RECORDS</span>
+                      </div>
+                      <div class="arc-brand">AURA.SPACE</div>
+                   </div>
+                </div>
              </div>
         </div>
 
