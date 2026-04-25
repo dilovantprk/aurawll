@@ -75,8 +75,8 @@ export function navigateTo(viewId, skipHistory = false) {
   const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
 
   if (island && !skipHeaderAnimation) {
-    const headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
-    const headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
+    const headerOutClass = direction === 'left' ? 'header-island-slide-out-right' : 'header-island-slide-out-left';
+    const headerInClass = direction === 'left' ? 'header-island-slide-in-left' : 'header-island-slide-in-right';
     
     island.classList.remove('header-island-slide-out-left', 'header-island-slide-out-right', 'header-island-slide-in-left', 'header-island-slide-in-right');
     island.classList.add(headerOutClass);
@@ -108,8 +108,8 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Handle View Transitions (Standard Physical Slide)
   if (currentView) {
-    const outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
-    const inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
+    const outClass = direction === 'left' ? 'view-slide-out-right' : 'view-slide-out-left';
+    const inClass = direction === 'left' ? 'view-slide-in-left' : 'view-slide-in-right';
 
     currentView.classList.add(outClass);
     target.classList.remove('hidden');
