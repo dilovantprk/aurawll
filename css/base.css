@@ -399,18 +399,32 @@ body {
   padding-bottom: 5rem;
 }
 
-h1, h2, h3 { font-weight: 500; line-height: 1.2; text-align: center; }
-h1 { font-size: var(--typography-h1); }
+h1, h2, h3 { 
+  font-weight: 500; 
+  line-height: 1.2; 
+  text-align: center; 
+  color: #FFFFFF; /* High-contrast white */
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Physical anchor against glass */
+  letter-spacing: -0.3px;
+}
+
+h1 { font-size: var(--typography-h1); font-weight: 600; }
 h2 { font-size: var(--typography-h2); }
-p { color: var(--text-muted); font-size: var(--typography-body); text-align: center; }
+p { 
+  color: rgba(255, 255, 255, 0.75); /* Stronger visibility on glass */
+  font-size: var(--typography-body); 
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
 
 .view-description {
-  margin-bottom: 2.2rem; /* Increased space between description and cards */
-  opacity: 0.85;
-  line-height: 1.4;
-  max-width: 280px;
+  margin-bottom: 2.2rem;
+  opacity: 0.95; /* Increased from 0.85 */
+  line-height: 1.5;
+  max-width: 300px; /* Slightly wider for better flow */
   margin-left: auto;
   margin-right: auto;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .mt-4 { margin-top: 1.25rem; }
