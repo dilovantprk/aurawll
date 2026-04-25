@@ -155,25 +155,26 @@
   font-family: monospace;
   font-size: 8px;
   color: var(--vagal-accent, #fff);
-  opacity: 0.4;
+  opacity: 0.6;
   letter-spacing: 1px;
 }
 
 .arc-h-name {
   font-size: 1.8rem;
   font-weight: 300;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.9);
   letter-spacing: -1px;
   margin: 0;
+  text-shadow: 0 0 20px rgba(var(--vagal-accent-rgb, 255,255,255), 0.2);
 }
 
 .vagal-signature-wrapper {
   height: 30px;
   width: 100%;
   margin: 0.5rem 0 1.2rem 0;
-  opacity: 0.6;
+  opacity: 0.8;
   color: var(--vagal-accent, #fff);
-  filter: drop-shadow(0 0 5px var(--vagal-accent, rgba(255,255,255,0.2)));
+  filter: drop-shadow(0 0 8px var(--vagal-accent, rgba(255,255,255,0.3)));
 }
 
 .vagal-signature-wrapper svg {
@@ -192,7 +193,7 @@
 
 .arc-h-label {
   color: var(--vagal-accent, #fff);
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .arc-h-value {
@@ -210,6 +211,43 @@
   display: flex;
   gap: 10px;
   min-height: 30px;
+}
+
+.arc-h-badges .badge-item {
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vagal-accent, #fff);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.arc-h-meta-box {
+  display: flex;
+  border: 1px solid var(--vagal-accent, #fff);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 9px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.arc-h-meta-label {
+  background: var(--vagal-accent, #fff);
+  color: rgba(0, 0, 0, 0.8);
+  padding: 5px 10px;
+  letter-spacing: 1px;
+}
+
+.arc-h-meta-value {
+  color: var(--vagal-accent, #fff);
+  padding: 5px 10px;
+  background: transparent;
 }
 
 .arc-h-bottom-row {
@@ -231,7 +269,8 @@
   width: 40px;
   height: 40px;
   color: var(--vagal-accent, #fff);
-  opacity: 0.25;
+  opacity: 0.35;
+  filter: drop-shadow(0 0 5px var(--vagal-accent, transparent));
   animation: stamp-rotate 20s infinite linear;
 }
 
