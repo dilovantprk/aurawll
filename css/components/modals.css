@@ -41,11 +41,11 @@
   border-radius: 32px 32px 0 0;
   padding: 2.5rem 2.2rem calc(2.8rem + var(--safe-bottom, 0px));
   position: relative;
-  background: rgba(25, 25, 35, 0.65); 
-  backdrop-filter: blur(35px) saturate(180%);
-  -webkit-backdrop-filter: blur(35px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Ultra-thin premium border */
-  box-shadow: 0 -20px 80px rgba(0, 0, 0, 0.9);
+  background: rgba(255, 255, 255, 0.08); /* Transparent Frost */
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12); /* Brighter thin border */
+  box-shadow: 0 -20px 80px rgba(0, 0, 0, 0.6);
   transform: translateY(105%); /* Start slightly below */
   transition: transform 0.5s cubic-bezier(0.32, 0, 0.67, 0); /* Organic exit */
 }
@@ -306,10 +306,10 @@
   left: 0;
   right: 0;
   z-index: 1000001 !important;
-  background: rgba(25, 25, 35, 0.95);
-  backdrop-filter: blur(35px) saturate(180%);
-  -webkit-backdrop-filter: blur(35px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08); /* Transparent Frost */
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 32px 32px 0 0;
   padding: 2rem 1.8rem calc(2rem + var(--safe-bottom)); /* Reduced padding */
   transform: translateY(105%);
@@ -388,9 +388,9 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  background: rgba(255, 255, 255, 0.03); /* Extremely thin glass */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   padding: 1.25rem;
