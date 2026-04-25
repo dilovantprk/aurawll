@@ -71,8 +71,8 @@ export function navigateTo(viewId, skipHistory = false) {
   const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
 
   if (island && !skipHeaderAnimation) {
-    const headerOutClass = direction === 'left' ? 'header-island-slide-out-right' : 'header-island-slide-out-left';
-    const headerInClass = direction === 'left' ? 'header-island-slide-in-left' : 'header-island-slide-in-right';
+    const headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
+    const headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
     
     island.classList.remove('header-island-slide-out-left', 'header-island-slide-out-right', 'header-island-slide-in-left', 'header-island-slide-in-right');
     island.classList.add(headerOutClass);
@@ -107,10 +107,10 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Handle View Transitions (Physical Slide)
   if (currentView) {
-    const outClass = direction === 'left' ? 'view-slide-out-right' : 'view-slide-out-left';
+    const outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
     currentView.classList.add(outClass);
     
-    const inClass = direction === 'left' ? 'view-slide-in-left' : 'view-slide-in-right';
+    const inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
     target.classList.remove('hidden');
     target.classList.add('active', inClass);
     target.scrollTop = 0;
@@ -394,9 +394,11 @@ async function initAppBootstrap() {
         let direction = 'right';
         // If coming from a deep view (not in main tabs) to a main tab, always treat as 'left'
         if (currentIndex === -1 && targetIndex !== -1) {
-          direction = 'left';
+          direction = 'right'; // Inverted
         } else if (targetIndex < currentIndex) {
-          direction = 'left';
+          direction = 'right'; // Inverted
+        } else {
+          direction = 'left'; // Inverted
         }
         
         navigateTo('view-' + targetSlug, direction);
@@ -473,7 +475,7 @@ function initSwipeNavigation() {
     }
 
     // Determine target view
-    const direction = currentDeltaX < 0 ? 1 : -1;
+    const direction = currentDeltaX < 0 ? 1 : -1; // -1 for right swipe (prev), 1 for left swipe (next)
     const newTargetIndex = currentIndex + direction;
     
     if (newTargetIndex >= 0 && newTargetIndex < tabs.length) {
@@ -492,14 +494,13 @@ function initSwipeNavigation() {
         }
       }
       
-      // Move both views
+      // Move both views - INVERTED LOGIC
       currentView.style.transform = `translateX(${currentDeltaX}px)`;
       if (targetView) {
-        const offset = direction > 0 ? '100%' : '-100%';
+        const offset = direction > 0 ? '-100%' : '100%';
         targetView.style.transform = `translateX(calc(${offset} + ${currentDeltaX}px))`;
       }
     } else {
-      // Resistance at edges
       currentView.style.transform = `translateX(${currentDeltaX * 0.3}px)`;
     }
   }, { passive: false });
@@ -512,12 +513,12 @@ function initSwipeNavigation() {
     const success = Math.abs(currentDeltaX) > threshold && targetView;
 
     if (success) {
-      const direction = currentDeltaX < 0 ? 'right' : 'left';
+      const direction = currentDeltaX < 0 ? 'left' : 'right'; // Inverted
       // Cleanup inline styles and navigate
       currentView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       if (targetView) targetView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       
-      const finalX = currentDeltaX < 0 ? '-100%' : '100%';
+      const finalX = currentDeltaX < 0 ? '100%' : '-100%'; // Inverted
       currentView.style.transform = `translateX(${finalX})`;
       currentView.style.opacity = '0';
       if (targetView) {
