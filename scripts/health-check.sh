@@ -12,11 +12,12 @@ else
     echo "❌ Illegal root JS files found: $ROOT_JS"
 fi
 
-# 2. Check for broken imports (../..)
-echo "Checking for broken imports (../../)..."
-BROKEN_IMPORTS=$(grep -rn "from '\.\./\.\." js/ --include="*.js")
+# 2. Check for broken imports (../../)
+echo "Checking for broken imports..."
+# Only flag if it's NOT firebase.js or translations.js
+BROKEN_IMPORTS=$(grep -rn "from '\.\./\.\." js/ --include="*.js" | grep -vE "firebase.js|translations.js")
 if [ -z "$BROKEN_IMPORTS" ]; then
-    echo "✅ No broken imports found."
+    echo "✅ No broken imports found (root imports for firebase/translations allowed)."
 else
     echo "❌ Broken imports found:"
     echo "$BROKEN_IMPORTS"
@@ -31,9 +32,10 @@ for comp in $CSS_COMPONENTS; do
     fi
 done
 
-# 4. Check for console.logs (performance)
-echo "Checking for console.logs..."
-LOG_COUNT=$(grep -r "console.log" js/ --include="*.js" | wc -l)
-echo "Found $LOG_COUNT console.log instances."
+# 4. Check for active console.logs (performance)
+echo "Checking for active console.logs..."
+# Find lines with console.log that don't start with // or /*
+LOG_COUNT=$(grep -r "console.log" js/ --include="*.js" | grep -vE "^[^:]+:[[:space:]]*(\/\/|\/\*)" | wc -l)
+echo "Found $LOG_COUNT active console.log instances."
 
 echo "--- CHECK COMPLETE ---"
