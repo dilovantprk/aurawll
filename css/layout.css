@@ -512,11 +512,11 @@ body.has-nav .dashboard-content {
 
 #active-tab-name {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.1rem; /* Reverted to more prominent size */
-  font-weight: 500; /* Reverted to stronger weight for legibility */
-  color: rgba(255, 255, 255, 0.7); /* Slightly brighter but still distinct */
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
   -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
-  margin-left: 1rem;
+  margin-left: 1.4rem; /* Increased gap for better centering */
   position: relative;
   text-transform: capitalize;
   letter-spacing: -0.3px;
@@ -525,17 +525,17 @@ body.has-nav .dashboard-content {
   line-height: 1;
 }
 
-/* Elegant Divider Glow */
+/* Elegant Divider Centered */
 #active-tab-name::before {
   content: '';
   position: absolute;
-  left: -1rem;
+  left: -0.75rem; /* Exactly halfway in the 1.4rem gap */
   top: 50%;
   transform: translateY(-50%);
   width: 2px;
   height: 14px;
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
   border-radius: 2px;
 }
 
