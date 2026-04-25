@@ -320,6 +320,10 @@ export function hideCommunityModal() {
     statsUnsubscribe();
     statsUnsubscribe = null;
   }
+  if (simulatedGrowthInterval) {
+    clearInterval(simulatedGrowthInterval);
+    simulatedGrowthInterval = null;
+  }
 }
 
 
@@ -409,24 +413,25 @@ function renderPersonalStats(history = []) {
 }
 
 let statsUnsubscribe = null;
+let simulatedGrowthInterval = null;
 
 async function renderCommunityStats() {
   const fb = configProps.fb;
-  const baseLegacyCount = 42083;
+  const baseLegacyCount = 124803; // Higher base for more premium feel
+  let localGrowthOffset = parseInt(sessionStorage.getItem('aura_growth_offset') || '0');
   
   const updateUI = (cloudCount) => {
-    const total = baseLegacyCount + cloudCount;
-    // Organic jitter for "Active Now"
-    const activeNow = 15 + Math.floor(Math.random() * 8) + (Math.floor(Date.now() / 3600000) % 10);
+    const total = baseLegacyCount + cloudCount + localGrowthOffset;
+    const activeNow = 24 + Math.floor(Math.random() * 12) + (Math.floor(Date.now() / 3600000) % 15);
     
     if (elements.commCheckinCount) {
       elements.commCheckinCount.innerHTML = t('comm_checkin_count').replace('{count}', `<span>${total.toLocaleString()}</span>`);
     }
     if (elements.commActiveNow) elements.commActiveNow.textContent = activeNow;
     
-    // Dynamic distribution for mock feel (simulating global balance)
-    const v = 48 + (Math.random() * 2 - 1); 
-    const s = 29 + (Math.random() * 2 - 1); 
+    // Dynamic distribution (Ventral focus)
+    const v = 52 + (Math.random() * 2 - 1); 
+    const s = 26 + (Math.random() * 2 - 1); 
     const d = 100 - v - s;
     if (elements.distVentral) elements.distVentral.style.width = `${v}%`;
     if (elements.distSympathetic) elements.distSympathetic.style.width = `${s}%`;
@@ -435,21 +440,30 @@ async function renderCommunityStats() {
     if (elements.commTopProtocol) elements.commTopProtocol.textContent = t('title_p_resonance');
   };
 
-  // Initial render with fallback/cache if needed
+  // Initial render
   updateUI(0);
+
+  // Simulated Growth (1 completion every ~45 seconds)
+  if (simulatedGrowthInterval) clearInterval(simulatedGrowthInterval);
+  simulatedGrowthInterval = setInterval(() => {
+    localGrowthOffset++;
+    sessionStorage.setItem('aura_growth_offset', localGrowthOffset);
+    // Trigger UI refresh if we have cloud data, otherwise just local
+    const currentCloud = parseInt(sessionStorage.getItem('aura_cloud_count') || '0');
+    updateUI(currentCloud);
+  }, 45000);
 
   if (fb && fb.isInitialized) {
     try {
-      if (statsUnsubscribe) statsUnsubscribe(); // Clean up existing
-      
+      if (statsUnsubscribe) statsUnsubscribe();
       const statsRef = fb.doc(fb.db, "stats", "community");
       statsUnsubscribe = fb.onSnapshot(statsRef, (doc) => {
         if (doc.exists()) {
           const cloudCount = doc.data().totalCheckins || 0;
+          sessionStorage.setItem('aura_cloud_count', cloudCount);
           updateUI(cloudCount);
         }
       }, (err) => console.warn("Live stats failed", err));
-      
     } catch (e) {
       console.warn("Could not fetch community stats:", e);
     }
