@@ -202,9 +202,39 @@ export function updateSettingsView() {
     const badgeIconsHtml = earnedBadgeIds.map(id => {
       const badge = BADGES[id];
       if (!badge) return '';
-      return `<div class="id-badge-icon" title="${t(badge.titleKey)}" style="width: 20px; height: 20px; cursor: help; color: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center;">${badge.icon}</div>`;
+      return `<div class="id-badge-icon" title="${t(badge.titleKey)}" style="width: 24px; height: 24px; cursor: help; color: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center;">${badge.icon}</div>`;
     }).join('');
     elements.identityBadges.innerHTML = badgeIconsHtml;
+  }
+
+  // Update Biometric Signature & Serial
+  const serialEl = document.getElementById('neural-id-serial');
+  if (serialEl) {
+    const uid = AppState.user?.uid || 'GUEST-492';
+    const shortUid = uid.substring(0, 6).toUpperCase();
+    serialEl.textContent = `AUR-${shortUid}-X${localHistory.length}`;
+  }
+
+  const sigPath = document.querySelector('#vagal-signature-svg path');
+  if (sigPath && localHistory.length > 0) {
+    const states = localHistory.slice(-10).map(h => {
+      const s = h.polyvagal_state || h.state;
+      if (s === 'ventral') return 10;
+      if (s === 'sympathetic') return 30;
+      return 20; // dorsal
+    });
+    
+    if (states.length < 10) {
+      const filler = new Array(10 - states.length).fill(20);
+      states.unshift(...filler);
+    }
+    
+    let d = `M 0 20`;
+    states.forEach((y, i) => {
+      const x = (i + 1) * 20;
+      d += ` L ${x} ${y}`;
+    });
+    sigPath.setAttribute('d', d);
   }
 
   // Show/hide logout vs login button based on guest status

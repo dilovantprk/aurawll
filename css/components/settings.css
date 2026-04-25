@@ -145,12 +145,40 @@
   gap: 0.6rem;
 }
 
+.arc-h-upper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -0.5rem;
+}
+
+.arc-h-serial {
+  font-family: monospace;
+  font-size: 8px;
+  color: var(--vagal-accent, #fff);
+  opacity: 0.4;
+  letter-spacing: 1px;
+}
+
 .arc-h-name {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 300;
   color: #fff;
   letter-spacing: -1px;
   margin: 0;
+}
+
+.vagal-signature-wrapper {
+  height: 30px;
+  width: 100%;
+  margin: 0.5rem 0 1.2rem 0;
+  opacity: 0.6;
+  color: var(--vagal-accent, #fff);
+  filter: drop-shadow(0 0 5px var(--vagal-accent, rgba(255,255,255,0.2)));
+}
+
+.vagal-signature-wrapper svg {
+  width: 100%;
+  height: 100%;
 }
 
 .arc-h-meta {
@@ -175,13 +203,19 @@
 .arc-h-footer {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .arc-h-badges {
   display: flex;
   gap: 10px;
   min-height: 30px;
+}
+
+.arc-h-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .arc-h-brand {
@@ -191,6 +225,19 @@
   opacity: 0.15;
   letter-spacing: 4px;
   font-family: monospace;
+}
+
+.neural-stamp {
+  width: 40px;
+  height: 40px;
+  color: var(--vagal-accent, #fff);
+  opacity: 0.25;
+  animation: stamp-rotate 20s infinite linear;
+}
+
+@keyframes stamp-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .data-sov-card-title {

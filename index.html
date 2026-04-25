@@ -561,14 +561,15 @@
       </div>
     </section>
 
-    <section id="view-settings" class="view hidden">
-      <div class="settings-content standard-view-content fade-in-up">
-        
-        <div class="view-header">
-          <h1 data-i18n="nav_profile">Profil</h1>
-          <p data-i18n="prof_desc">Manage your wellness identity and senses.</p>
-        </div>
-        <!-- IDENTITY CARD (Liquid Arc - Horizontal) -->
+     <section id="view-settings" class="view hidden">
+       <div class="settings-content standard-view-content fade-in-up">
+         
+         <div class="view-header">
+           <h1 data-i18n="nav_profile">Profil</h1>
+           <p data-i18n="prof_desc">Manage your wellness identity and senses.</p>
+         </div>
+
+         <!-- IDENTITY CARD (Neural Passport - Horizontal) -->
         <div class="identity-card-v2 arc-horizontal stagger-1">
              <!-- Left Side: Visual Core -->
              <div class="arc-h-visual">
@@ -581,7 +582,18 @@
              <!-- Right Side: Data -->
              <div class="arc-h-content">
                 <div class="arc-h-header">
+                   <div class="arc-h-upper">
+                      <span id="neural-id-serial" class="arc-h-serial">AUR-000-000-X</span>
+                   </div>
                    <h2 id="user-display-name" class="arc-h-name">Explorer</h2>
+                   
+                   <!-- Vagal Biometric Signature -->
+                   <div class="vagal-signature-wrapper">
+                      <svg id="vagal-signature-svg" viewBox="0 0 200 40" preserveAspectRatio="none">
+                         <path d="M0 20 Q 50 10, 100 20 T 200 20" fill="none" stroke="currentColor" stroke-width="1.5" />
+                      </svg>
+                   </div>
+
                    <div class="arc-h-meta">
                       <span class="arc-h-label">AURA ID</span>
                       <span id="unique-days-stats" class="arc-h-value">8 RECORDS</span>
@@ -590,7 +602,15 @@
                 
                 <div class="arc-h-footer">
                    <div id="identity-badges" class="arc-h-badges"></div>
-                   <div class="arc-h-brand">AURA.SPACE // NEURAL RECORD</div>
+                   <div class="arc-h-bottom-row">
+                      <div class="arc-h-brand">AURA.SPACE // NEURAL RECORD</div>
+                      <div class="neural-stamp">
+                         <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 2" />
+                            <text x="50" y="55" font-size="12" text-anchor="middle" fill="currentColor" font-weight="900">AURA</text>
+                         </svg>
+                      </div>
+                   </div>
                 </div>
              </div>
         </div>
