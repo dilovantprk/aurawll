@@ -66,7 +66,7 @@ export function navigateTo(viewId, skipHistory = false) {
   const island = elements.activeTabName?.closest('.header-island');
   const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
   
-  const isCurrentlyCheckin = checkinSteps.includes(AppState.currentView.replace('view-', ''));
+  const isCurrentlyCheckin = checkinSteps.includes(AppState.currentView?.replace('view-', '') || '');
   const isTargetingCheckin = checkinSteps.includes(newSlug);
   const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
 
@@ -387,7 +387,7 @@ async function initAppBootstrap() {
         SensoryEngine.triggerHaptic('light');
         SensoryEngine.playTick();
         
-        const currentSlug = AppState.currentView.replace('view-', '');
+        const currentSlug = AppState.currentView?.replace('view-', '') || '';
         const currentIndex = tabsOrder.indexOf(currentSlug);
         const targetIndex = tabsOrder.indexOf(targetSlug);
         
