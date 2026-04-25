@@ -774,4 +774,11 @@ textarea.glass-input { resize: vertical; min-height: 140px; }
 .hero-icon { font-size: 3rem; margin-bottom: 1.2rem; }
 .hero-btn h3 { font-size: 1.6rem; color: var(--text-main); margin-bottom: 0.6rem; }
 .hero-btn p { font-size: 1.05rem; opacity: 0.8; }
+ 
+/* Mobile Padding Refinement */
+@media (max-width: 600px) {
+  .view {
+    padding: 0 0.75rem;
+  }
+}
 
