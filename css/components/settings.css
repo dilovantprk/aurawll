@@ -66,14 +66,17 @@
 }
 
 /* Data Sovereignty Card Specifics (Advanced Liquid Glass) */
-.data-sov-card-wrapper {
-  margin-top: 4rem;
-  padding: 0 1rem 4rem 1rem;
-}
-
-.data-sov-card {
+.identity-card-v2 {
   border-radius: 48px;
-  padding: 2.2rem 1.8rem;
+  padding: 2.5rem 2.2rem;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  
   /* Passport Base: Multiple Layers for Rich Texture */
   background: 
     /* Layer 1: Grainy Texture */
@@ -93,12 +96,10 @@
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     inset 0 -10px 30px rgba(0, 0, 0, 0.2);
   transition: all 0.7s var(--spring-easing);
-  overflow: hidden;
-  position: relative;
 }
 
 /* Holographic Security Sheen */
-.data-sov-card::after {
+.identity-card-v2::after {
   content: "";
   position: absolute;
   inset: -100%;
@@ -123,7 +124,7 @@
   100% { transform: translate(30%, 30%) rotate(25deg); }
 }
 
-.data-sov-card::before {
+.identity-card-v2::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -133,11 +134,11 @@
   z-index: 1;
 }
 
-.data-sov-card:hover {
+.identity-card-v2:hover {
   transform: translateY(-10px) scale(1.01);
   border-color: rgba(133, 141, 255, 0.25);
   box-shadow: 
-    0 50px 120px rgba(0, 0, 0, 0.5), 
+    0 50px 120px rgba(0, 0, 0, 0.6), 
     inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
 
