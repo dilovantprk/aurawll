@@ -330,63 +330,73 @@ body.has-nav .dashboard-content {
 /* === MODERN FULL-WIDTH BOTTOM NAVIGATION (Spotify/Instagram Style) === */
 .mobile-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: calc(64px + env(safe-area-inset-bottom, 20px));
-  background: rgba(10, 10, 15, 0.85); /* Deep dark glassmorphism */
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+  bottom: 1.2rem;
+  left: 1rem;
+  right: 1rem;
+  width: auto;
+  height: 64px;
+  background: rgba(15, 15, 20, 0.7); /* Lighter, more liquid glass */
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 32px;
   display: flex;
   align-items: stretch;
   justify-content: space-around;
-  padding-bottom: env(safe-area-inset-bottom, 20px);
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
-  z-index: 100;
-  transition: transform 0.6s var(--spring-easing), opacity 0.4s ease;
+  padding: 0 0.5rem;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  z-index: 1000;
+  transition: transform 0.8s var(--spring-easing), opacity 0.4s ease;
   overflow: hidden;
 }
 
+/* Adjust for safe areas on taller devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-nav {
+    bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px) * 0.5);
+  }
+}
+
 .mobile-nav.nav-hidden {
-  transform: translateY(100%);
+  transform: translateY(150%) scale(0.9);
   opacity: 0;
 }
 
-/* Sliding Glass Pill Indicator */
+/* Sliding Liquid Pill Indicator */
 .nav-indicator {
   position: absolute;
-  top: 14px; /* Center relative to icons */
+  top: 10px;
   left: 0;
-  height: 42px;
+  height: 44px;
   width: var(--nav-width, 0);
   display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), width 0.4s ease;
   transform: translateX(var(--nav-left, 0));
   z-index: 0;
 }
 
 .nav-indicator::after {
   content: '';
-  width: 68px; /* Slightly wider */
+  width: 85%;
   height: 100%;
-  background: rgba(133, 141, 255, 0.18); /* More vibrant */
-  border: 1px solid rgba(133, 141, 255, 0.3);
-  border-radius: 24px;
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  background: rgba(var(--vagal-accent-rgb, 133, 141, 255), 0.15);
+  border: 1.5px solid rgba(var(--vagal-accent-rgb, 133, 141, 255), 0.3);
+  border-radius: 22px;
+  backdrop-filter: blur(5px);
   box-shadow: 
-    0 0 20px rgba(133, 141, 255, 0.15),
-    inset 0 0 10px rgba(255, 255, 255, 0.1);
+    0 0 20px rgba(var(--vagal-accent-rgb, 133, 141, 255), 0.1),
+    inset 0 0 10px rgba(255, 255, 255, 0.05);
   transition: transform 0.4s var(--spring-bounce);
 }
 
 .nav-pill-stretch::after {
-  transform: scaleX(1.25) scaleY(0.92);
+  transform: scaleX(1.35) scaleY(0.85);
   filter: blur(1px);
+  opacity: 0.8;
 }
 
 .nav-item {
@@ -397,42 +407,44 @@ body.has-nav .dashboard-content {
   flex: 1;
   height: 100%;
   background: transparent;
-  color: rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.35);
+  transition: all 0.4s var(--spring-easing);
   position: relative;
   gap: 2px;
   z-index: 1;
 }
 
 .nav-item.active {
-  color: var(--accent-primary);
-  text-shadow: 0 0 10px rgba(133, 141, 255, 0.3);
+  color: var(--vagal-accent, #fff);
+  transform: translateY(-2px);
 }
 
 .nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s var(--spring-bounce), filter 0.3s ease;
 }
 
 .nav-item.active .nav-icon {
-  transform: scale(1.1);
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 8px rgba(var(--vagal-accent-rgb, 255,255,255), 0.4));
 }
 
 .nav-label {
   display: block;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  opacity: 0.5;
-  transition: opacity 0.3s ease;
+  opacity: 0.4;
+  transition: all 0.3s ease;
   white-space: nowrap;
 }
 
 .nav-item.active .nav-label {
   opacity: 1;
+  letter-spacing: 1.2px;
 }
 
 @keyframes slideInRight {
