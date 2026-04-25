@@ -840,53 +840,55 @@
 
     <!-- Mobile Bottom Navigation -->
     <nav id="mobile-nav" class="mobile-nav nav-hidden">
-      <div class="nav-indicator"></div>
-      <button id="navHome" class="nav-item active" data-view="dashboard" aria-label="Home">
-        <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
-          </svg>
-        </div>
-        <span class="nav-label" data-i18n="nav_home">Ana Sayfa</span>
-      </button>
+      <div class="mobile-nav-container">
+        <div class="nav-indicator"></div>
+        <button id="navHome" class="nav-item active" data-view="dashboard" aria-label="Home">
+          <div class="nav-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+            </svg>
+          </div>
+          <span class="nav-label" data-i18n="nav_home">Ana Sayfa</span>
+        </button>
 
-      <button id="navBreathe" class="nav-item" data-view="meditations" aria-label="Breathe">
-        <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
-            <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
-            <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
-          </svg>
-        </div>
-        <span class="nav-label" data-i18n="nav_breathe">Nefes</span>
-      </button>
+        <button id="navBreathe" class="nav-item" data-view="meditations" aria-label="Breathe">
+          <div class="nav-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+              <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+              <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+            </svg>
+          </div>
+          <span class="nav-label" data-i18n="nav_breathe">Nefes</span>
+        </button>
 
-      <button id="navNotebook" class="nav-item" data-view="notebook" aria-label="Notes">
-        <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/>
-            <path d="M16 8 2 22"/>
-            <path d="M17.5 15H9"/>
-          </svg>
-        </div>
-        <span class="nav-label" data-i18n="nav_notebook">Notlar</span>
-      </button>
+        <button id="navNotebook" class="nav-item" data-view="notebook" aria-label="Notes">
+          <div class="nav-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/>
+              <path d="M16 8 2 22"/>
+              <path d="M17.5 15H9"/>
+            </svg>
+          </div>
+          <span class="nav-label" data-i18n="nav_notebook">Notlar</span>
+        </button>
 
-      <button id="navProfile" class="nav-item" data-view="settings" aria-label="Profile">
-        <div class="nav-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 11a2 2 0 1 1-2 2"/>
-            <path d="M17 13a5 5 0 1 0-10 0"/>
-            <path d="M22 13a10 10 0 1 0-20 0"/>
-            <path d="M2 13c0 2.8 1.1 5.3 3 7.1"/>
-            <path d="M19 20.1c1.9-1.8 3-4.3 3-7.1"/>
-            <path d="M16 19.3c-1-1.3-1.6-2.9-1.6-4.6"/>
-            <path d="M9.6 20.6c-.7-1.1-1.1-2.5-1.1-4"/>
-          </svg>
-        </div>
-        <span class="nav-label" data-i18n="nav_profile">Profil</span>
-      </button>
+        <button id="navProfile" class="nav-item" data-view="settings" aria-label="Profile">
+          <div class="nav-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 11a2 2 0 1 1-2 2"/>
+              <path d="M17 13a5 5 0 1 0-10 0"/>
+              <path d="M22 13a10 10 0 1 0-20 0"/>
+              <path d="M2 13c0 2.8 1.1 5.3 3 7.1"/>
+              <path d="M19 20.1c1.9-1.8 3-4.3 3-7.1"/>
+              <path d="M16 19.3c-1-1.3-1.6-2.9-1.6-4.6"/>
+              <path d="M9.6 20.6c-.7-1.1-1.1-2.5-1.1-4"/>
+            </svg>
+          </div>
+          <span class="nav-label" data-i18n="nav_profile">Profil</span>
+        </button>
+      </div>
     </nav>
 
   </div>
