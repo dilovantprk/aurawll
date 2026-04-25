@@ -72,28 +72,65 @@
 }
 
 .data-sov-card {
-  border-radius: 48px; /* Unified Liquid standard */
+  border-radius: 48px;
   padding: 2.2rem 1.8rem;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  /* Passport Base: Multiple Layers for Rich Texture */
+  background: 
+    /* Layer 1: Grainy Texture */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+    /* Layer 2: Security Guilloche Pattern */
+    repeating-radial-gradient(circle at 100% 100%, transparent 0, transparent 40px, rgba(255,255,255,0.02) 41px, rgba(255,255,255,0.02) 42px, transparent 43px),
+    repeating-radial-gradient(circle at 0% 0%, transparent 0, transparent 20px, rgba(255,255,255,0.02) 21px, rgba(255,255,255,0.02) 22px, transparent 23px),
+    /* Layer 3: Glass Gradient */
+    linear-gradient(165deg, rgba(30, 32, 45, 0.8), rgba(15, 17, 26, 0.95));
+  
+  background-blend-mode: overlay, normal, normal, normal;
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 
-    0 40px 100px rgba(0, 0, 0, 0.4), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.1),
-    inset 0 -10px 20px rgba(0, 0, 0, 0.1);
+    0 40px 100px rgba(0, 0, 0, 0.5), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -10px 30px rgba(0, 0, 0, 0.2);
   transition: all 0.7s var(--spring-easing);
   overflow: hidden;
   position: relative;
+}
+
+/* Holographic Security Sheen */
+.data-sov-card::after {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 45%,
+    rgba(255, 255, 255, 0.05) 48%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.05) 52%,
+    transparent 55%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  animation: passport-hologram 8s infinite linear;
+  opacity: 0.6;
+}
+
+@keyframes passport-hologram {
+  0% { transform: translate(-30%, -30%) rotate(25deg); }
+  100% { transform: translate(30%, 30%) rotate(25deg); }
 }
 
 .data-sov-card::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 40%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+  height: 45%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.07), transparent);
   pointer-events: none;
+  z-index: 1;
 }
 
 .data-sov-card:hover {
