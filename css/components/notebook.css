@@ -252,11 +252,11 @@
   opacity: 0.6;
 }
 
-/* Animations */
-.fade-in-up { animation: fadeInUp 0.8s var(--spring-easing) forwards; }
-@keyframes fadeInUp { 
-  from { opacity: 0; transform: translateY(30px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+/* Animations — CLEAN FADE ONLY for Carousel Stability */
+.fade-in-up { animation: fadeInNotebook 0.8s var(--spring-easing) forwards; }
+@keyframes fadeInNotebook { 
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Identity Card v2 (Neuro-Cockpit) */
