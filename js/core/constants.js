@@ -237,11 +237,20 @@ export const EMOTION_PROTOCOL_MAP = {
   emo_dull: 'p_fire'
 };
 
+export const BADGE_ICONS = {
+  explorer: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></svg>`,
+  earlybird: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-7.925 0"/><path d="M3 21h18"/><path d="M12 10V2"/></svg>`,
+  nightowl: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+  streak7: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+  master: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3 8 9l4 12 4-12-3-6"/><path d="M2 9h20"/></svg>`,
+  zen: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`
+};
+
 export const BADGES = {
-  explorer: { id: 'explorer', icon: '🧭', titleKey: 'badge_explorer', descKey: 'badge_explorer_desc' },
-  earlybird: { id: 'earlybird', icon: '🌅', titleKey: 'badge_earlybird', descKey: 'badge_earlybird_desc' },
-  nightowl: { id: 'nightowl', icon: '🦉', titleKey: 'badge_nightowl', descKey: 'badge_nightowl_desc' },
-  streak7: { id: 'streak7', icon: '🔥', titleKey: 'badge_streak7', descKey: 'badge_streak7_desc' },
-  master: { id: 'master', icon: '💎', titleKey: 'badge_master', descKey: 'badge_master_desc' },
-  zen: { id: 'zen', icon: '🧘', titleKey: 'badge_zen', descKey: 'badge_zen_desc' }
+  explorer: { id: 'explorer', icon: BADGE_ICONS.explorer, titleKey: 'badge_explorer', descKey: 'badge_explorer_desc' },
+  earlybird: { id: 'earlybird', icon: BADGE_ICONS.earlybird, titleKey: 'badge_earlybird', descKey: 'badge_earlybird_desc' },
+  nightowl: { id: 'nightowl', icon: BADGE_ICONS.nightowl, titleKey: 'badge_nightowl', descKey: 'badge_nightowl_desc' },
+  streak7: { id: 'streak7', icon: BADGE_ICONS.streak7, titleKey: 'badge_streak7', descKey: 'badge_streak7_desc' },
+  master: { id: 'master', icon: BADGE_ICONS.master, titleKey: 'badge_master', descKey: 'badge_master_desc' },
+  zen: { id: 'zen', icon: BADGE_ICONS.zen, titleKey: 'badge_zen', descKey: 'badge_zen_desc' }
 };

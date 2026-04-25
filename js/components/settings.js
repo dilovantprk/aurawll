@@ -199,7 +199,7 @@ export function updateSettingsView() {
     const badgeIconsHtml = earnedBadgeIds.map(id => {
       const badge = BADGES[id];
       if (!badge) return '';
-      return `<div class="id-badge-icon" title="${t(badge.titleKey)}" style="font-size: 1.2rem; cursor: help;">${badge.icon}</div>`;
+      return `<div class="id-badge-icon" title="${t(badge.titleKey)}" style="width: 20px; height: 20px; cursor: help; color: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center;">${badge.icon}</div>`;
     }).join('');
     elements.identityBadges.innerHTML = badgeIconsHtml;
   }

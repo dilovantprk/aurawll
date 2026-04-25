@@ -546,11 +546,25 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
+  color: var(--text-main);
   transition: all 0.4s var(--spring-easing);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: hidden;
+}
+
+.badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.id-badge-icon svg,
+.badge-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
 }
 
 .badge-item.active .badge-inner {
