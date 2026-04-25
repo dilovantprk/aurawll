@@ -62,31 +62,33 @@ export function navigateTo(viewId, skipHistory = false) {
     history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', ''));
   }
 
-  // Update Header with Slide Effect
-  if (elements.activeTabName) {
-    let slug = newSlug;
-    const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
-    if (checkinSteps.includes(slug)) slug = 'checkin';
-    const tabLabel = t('nav_' + slug) || slug;
+  // Update Header with Physical Glass Slide Effect
+  const island = elements.activeTabName?.closest('.header-island');
+  if (island) {
+    const headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
+    const headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
     
-    if (elements.activeTabName.textContent !== tabLabel) {
-      elements.activeTabName.classList.add('header-text-slide-out');
+    island.classList.remove('header-island-slide-out-left', 'header-island-slide-out-right', 'header-island-slide-in-left', 'header-island-slide-in-right');
+    island.classList.add(headerOutClass);
+    
+    setTimeout(() => {
+      let slug = newSlug;
+      const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
+      if (checkinSteps.includes(slug)) slug = 'checkin';
+      const tabLabel = t('nav_' + slug) || slug;
       
-      setTimeout(() => {
-        elements.activeTabName.textContent = tabLabel;
-        elements.activeTabName.classList.remove('header-text-slide-out');
-        elements.activeTabName.classList.add('header-text-slide-in');
-        
-        const island = elements.activeTabName.closest('.header-island');
-        if (island) {
-          island.classList.remove('liquid-pulse-animate');
-          void island.offsetWidth;
-          island.classList.add('liquid-pulse-animate');
-        }
-        
-        setTimeout(() => elements.activeTabName.classList.remove('header-text-slide-in'), 300);
-      }, 150);
-    }
+      if (elements.activeTabName) elements.activeTabName.textContent = tabLabel;
+      
+      island.classList.remove(headerOutClass);
+      island.classList.add(headerInClass);
+      
+      // Pulse effect on arrival
+      island.classList.remove('liquid-pulse-animate');
+      void island.offsetWidth;
+      island.classList.add('liquid-pulse-animate');
+      
+      setTimeout(() => island.classList.remove(headerInClass), 400);
+    }, 250);
   }
 
   // Handle View Transitions (Physical Slide)
