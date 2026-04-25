@@ -427,33 +427,137 @@ function initSwipeNavigation() {
   const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
   let touchStartX = 0;
   let touchStartY = 0;
+  let currentDeltaX = 0;
+  let isSwiping = false;
+  let currentView = null;
+  let targetView = null;
+  let currentIndex = -1;
+  let targetIndex = -1;
   let startedOnScrollable = false;
   
   document.addEventListener('touchstart', (e) => {
+    if (isNavigating) return;
+    const scrollable = e.target.closest('.filter-chips, .filter-chips-container, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe], #savoringNote, textarea');
+    startedOnScrollable = !!scrollable;
+    if (startedOnScrollable) return;
+
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
-    const scrollable = e.target.closest('.filter-chips, .filter-chips-container, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe]');
-    startedOnScrollable = !!scrollable;
+    currentDeltaX = 0;
+    
+    currentView = Array.from(elements.views).find(v => v.classList.contains('active') && !v.classList.contains('hidden'));
+    if (!currentView) return;
+    
+    const currentTab = currentView.id.replace('view-', '');
+    currentIndex = tabs.indexOf(currentTab);
+    if (currentIndex === -1) return;
+    
+    isSwiping = true;
+    currentView.style.transition = 'none';
+    currentView.style.willChange = 'transform';
   }, { passive: true });
 
-  document.addEventListener('touchend', (e) => {
-    if (startedOnScrollable) return;
-    const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
-    if (!currentView) return;
-    const currentTab = currentView.id.replace('view-', '');
-    const currentIndex = tabs.indexOf(currentTab);
-    if (currentIndex === -1) return;
-    if (e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
-    const touchEndX = e.changedTouches[0].screenX;
-    const touchEndY = e.changedTouches[0].screenY;
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
-      if (deltaX < 0 && currentIndex < tabs.length - 1) {
-        navigateTo(`view-${tabs[currentIndex + 1]}`, 'right');
-      } else if (deltaX > 0 && currentIndex > 0) {
-        navigateTo(`view-${tabs[currentIndex - 1]}`, 'left');
+  document.addEventListener('touchmove', (e) => {
+    if (!isSwiping || startedOnScrollable) return;
+    
+    const touchX = e.changedTouches[0].screenX;
+    const touchY = e.changedTouches[0].screenY;
+    currentDeltaX = touchX - touchStartX;
+    const deltaY = touchY - touchStartY;
+
+    // Detect horizontal intent
+    if (Math.abs(currentDeltaX) < 10) return;
+    if (Math.abs(deltaY) > Math.abs(currentDeltaX)) {
+      isSwiping = false;
+      return;
+    }
+
+    // Determine target view
+    const direction = currentDeltaX < 0 ? 1 : -1;
+    const newTargetIndex = currentIndex + direction;
+    
+    if (newTargetIndex >= 0 && newTargetIndex < tabs.length) {
+      const newTargetView = document.getElementById(`view-${tabs[newTargetIndex]}`);
+      if (newTargetView !== targetView) {
+        if (targetView) {
+          targetView.classList.add('hidden');
+          targetView.style.transform = '';
+        }
+        targetView = newTargetView;
+        targetIndex = newTargetIndex;
+        if (targetView) {
+          targetView.classList.remove('hidden');
+          targetView.style.transition = 'none';
+          targetView.style.willChange = 'transform';
+        }
       }
+      
+      // Move both views
+      currentView.style.transform = `translateX(${currentDeltaX}px)`;
+      if (targetView) {
+        const offset = direction > 0 ? '100%' : '-100%';
+        targetView.style.transform = `translateX(calc(${offset} + ${currentDeltaX}px))`;
+      }
+    } else {
+      // Resistance at edges
+      currentView.style.transform = `translateX(${currentDeltaX * 0.3}px)`;
+    }
+  }, { passive: false });
+
+  document.addEventListener('touchend', (e) => {
+    if (!isSwiping) return;
+    isSwiping = false;
+
+    const threshold = window.innerWidth * 0.2;
+    const success = Math.abs(currentDeltaX) > threshold && targetView;
+
+    if (success) {
+      const direction = currentDeltaX < 0 ? 'right' : 'left';
+      // Cleanup inline styles and navigate
+      currentView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
+      if (targetView) targetView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
+      
+      const finalX = currentDeltaX < 0 ? '-100%' : '100%';
+      currentView.style.transform = `translateX(${finalX})`;
+      currentView.style.opacity = '0';
+      if (targetView) {
+        targetView.style.transform = 'translateX(0)';
+        targetView.style.opacity = '1';
+      }
+
+      setTimeout(() => {
+        // Reset styles and let navigateTo handle state
+        currentView.style.transform = '';
+        currentView.style.transition = '';
+        currentView.style.opacity = '';
+        if (targetView) {
+          targetView.style.transform = '';
+          targetView.style.transition = '';
+          targetView.style.opacity = '';
+        }
+        navigateTo(`view-${tabs[targetIndex]}`, direction);
+        targetView = null;
+      }, 400);
+    } else {
+      // Snap back
+      currentView.style.transition = 'transform 0.5s var(--spring-easing)';
+      currentView.style.transform = 'translateX(0)';
+      if (targetView) {
+        targetView.style.transition = 'transform 0.5s var(--spring-easing)';
+        const offset = targetIndex > currentIndex ? '100%' : '-100%';
+        targetView.style.transform = `translateX(${offset})`;
+        setTimeout(() => {
+          if (!isSwiping && targetView) {
+            targetView.classList.add('hidden');
+            targetView.style.transform = '';
+            targetView = null;
+          }
+        }, 500);
+      }
+      setTimeout(() => {
+        currentView.style.transition = '';
+        currentView.style.transform = '';
+      }, 500);
     }
   }, { passive: true });
 }
