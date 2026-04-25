@@ -115,7 +115,7 @@ function initSwipeToDismiss(modal, backdrop, closeFn) {
     if (startTf === 'none') startTf = '';
     content.style.transition = 'none';
     if (handle) handle.style.background = 'rgba(255, 255, 255, 0.4)';
-    console.log("[Aura] Drag started at Y:", y, "isHandle:", isHandle);
+    // console.log("[Aura] Drag started at Y:", y, "isHandle:", isHandle);
   };
 
   const moveDrag = (y) => {
@@ -138,7 +138,7 @@ function initSwipeToDismiss(modal, backdrop, closeFn) {
     isDragging = false;
     
     const deltaY = currentY - startY;
-    console.log("[Aura] Drag ended. DeltaY:", deltaY);
+    // console.log("[Aura] Drag ended. DeltaY:", deltaY);
 
     if (deltaY > 100) { 
       // Successful swipe down - clear inline styles to allow CSS transition to take over
@@ -559,7 +559,7 @@ function getAuraSVGIcon(type) {
 }
 
 export function openInfoArchive(key, triggerBtn) {
-  console.log("Aura Modal Triggered with key:", key);
+  // console.log("Aura Modal Triggered with key:", key);
   if (!elements.infoModal) return;
 
   // Close any existing modals first to prevent "ghosting" or layering issues

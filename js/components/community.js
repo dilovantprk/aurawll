@@ -9,7 +9,7 @@ import { elements } from '../core/dom.js';
  * Initializes the identity modal tabs.
  */
 export function initCommunity({ navigateTo }) {
-  console.log("[Community] Initializing Stats Hub...");
+  // console.log("[Community] Initializing Stats Hub...");
 
   const tabBtns = document.querySelectorAll('.comm-tab-btn');
   tabBtns.forEach(btn => {

@@ -1,5 +1,5 @@
 import { elements } from '../core/dom.js';
-import { loginWithEmail, registerWithEmail, signInAsGuest } from '../../authService.js';
+import { loginWithEmail, registerWithEmail, signInAsGuest } from '../services/auth.js';
 import { t } from '../core/i18n.js';
 
 /**

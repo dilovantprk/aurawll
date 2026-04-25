@@ -179,9 +179,6 @@
   text-align: center;
   transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
   overflow: hidden; /* For liquid content */
-  animation: float-biological var(--speed, 8s) infinite alternate ease-in-out, 
-             blob-morph 12s infinite alternate ease-in-out; /* Dual Animation */
-  animation-delay: var(--delay, 0s);
   cursor: pointer;
 }
 
@@ -208,7 +205,6 @@
   opacity: 0.12;
   border-radius: 38%;
   z-index: 1;
-  animation: wave-morph var(--speed, 8s) infinite linear;
   pointer-events: none;
 }
 
@@ -232,7 +228,6 @@
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.3);
   color: white;
-  transform: translateY(-5px) scale(1.05);
 }
 
 #view-savoring .rhizome-chip.selected {
@@ -240,7 +235,6 @@
   border-color: rgba(var(--vagal-accent-rgb), 0.6) !important;
   color: white;
   box-shadow: 0 0 30px rgba(var(--vagal-accent-rgb), 0.3) !important;
-  transform: scale(1.1);
 }
 
 @keyframes ripple-wave {
@@ -262,7 +256,8 @@
   display: flex !important;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 2rem;
   overflow: visible;
 }
 
@@ -532,10 +527,10 @@
   width: 320px;
   height: 320px;
   background: 
-    radial-gradient(circle at 100% 0%,   rgba(251, 160, 68, 0.4), transparent 55%), /* Amber - TR Flow */
-    radial-gradient(circle at 0% 0%,     rgba(255, 107, 107, 0.35), transparent 55%), /* Red - TL Tension */
-    radial-gradient(circle at 0% 100%,   rgba(98, 164, 255, 0.35), transparent 55%), /* Blue - BL Fog */
-    radial-gradient(circle at 100% 100%, rgba(100, 228, 159, 0.4), transparent 55%), /* Green - BR Rest */
+    radial-gradient(circle at 100% 0%,   rgba(251, 160, 68, 0.4), transparent 55%),
+    radial-gradient(circle at 0% 0%,     rgba(255, 107, 107, 0.35), transparent 55%),
+    radial-gradient(circle at 0% 100%,   rgba(98, 164, 255, 0.35), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(100, 228, 159, 0.4), transparent 55%),
     rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(15px) saturate(140%);
   -webkit-backdrop-filter: blur(15px) saturate(140%);

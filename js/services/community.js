@@ -69,7 +69,7 @@ export const communityService = {
 
   publishExercise: async (exerciseData) => {
     return new Promise(resolve => {
-      console.log("[Community Service] Publishing exercise:", exerciseData);
+      // console.log("[Community Service] Publishing exercise:", exerciseData);
       MOCK_DATA.customExercises.push(exerciseData);
       setTimeout(() => resolve({ success: true, id: exerciseData.id }), 500);
     });

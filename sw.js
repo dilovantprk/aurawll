@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aura-v52';
+const CACHE_NAME = 'aura-v53';
 const ASSETS = [
   '/',
   '/index.html',
@@ -6,14 +6,34 @@ const ASSETS = [
   '/app.js',
   '/translations.js',
   '/firebase.js',
-  '/icon.svg'
+  '/manifest.json',
+  '/icon.svg',
+  '/css/base.css',
+  '/css/layout.css',
+  '/css/animations.css'
+];
+
+// Dynamically cache components and services
+const DYNAMIC_ASSETS = [
+  '/js/core/state.js',
+  '/js/core/dom.js',
+  '/js/core/i18n.js',
+  '/js/core/utils.js',
+  '/js/core/constants.js',
+  '/js/core/vagal-engine.js',
+  '/js/services/auth.js',
+  '/js/services/sensory.js',
+  '/js/services/meditation-audio.js',
+  '/js/services/insight-engine.js',
+  '/js/services/notifications.js'
 ];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll([...ASSETS, ...DYNAMIC_ASSETS]);
+    })
   );
 });
 
@@ -31,16 +51,21 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Network-first strategy: always try network, fall back to cache
 self.addEventListener('fetch', event => {
+  // Stale-While-Revalidate Strategy
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Clone and cache the fresh response
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      })
-      .catch(() => caches.match(event.request))
+    caches.match(event.request).then(cachedResponse => {
+      const fetchPromise = fetch(event.request).then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return networkResponse;
+      }).catch(() => {
+        // If network fails, we already return cachedResponse if it exists
+      });
+
+      return cachedResponse || fetchPromise;
+    })
   );
 });

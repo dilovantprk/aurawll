@@ -27,7 +27,7 @@ import { initAuth } from './js/components/auth.js';
 import { NotificationService } from './js/services/notifications.js';
 
 // Services
-import { signInAsGuest, logoutUser } from './authService.js';
+import { signInAsGuest, logoutUser } from './js/services/auth.js';
 
 let fb;
 let isNavigating = false;
@@ -46,15 +46,8 @@ export function navigateTo(viewId, skipHistory = false) {
 
   isNavigating = true;
 
-  // Determine Direction
-  const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
-  const oldSlug = currentView ? currentView.id.replace('view-', '') : 'dashboard';
   const newSlug = viewId.replace('view-', '');
-  const oldIndex = tabs.indexOf(oldSlug);
-  const newIndex = tabs.indexOf(newSlug);
   
-  const direction = (newIndex > oldIndex) ? 'left' : 'right';
-
   // Global HUD Reset
   setHUD(null);
 
@@ -75,11 +68,8 @@ export function navigateTo(viewId, skipHistory = false) {
   const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
 
   if (island && !skipHeaderAnimation) {
-    const headerOutClass = direction === 'left' ? 'header-island-slide-out-right' : 'header-island-slide-out-left';
-    const headerInClass = direction === 'left' ? 'header-island-slide-in-left' : 'header-island-slide-in-right';
-    
-    island.classList.remove('header-island-slide-out-left', 'header-island-slide-out-right', 'header-island-slide-in-left', 'header-island-slide-in-right');
-    island.classList.add(headerOutClass);
+    island.classList.remove('header-fade-out', 'header-fade-in');
+    island.classList.add('header-fade-out');
 
     setTimeout(() => {
       let slug = newSlug;
@@ -87,15 +77,12 @@ export function navigateTo(viewId, skipHistory = false) {
       const tabLabel = t('nav_' + slug) || slug;
       if (elements.activeTabName) elements.activeTabName.textContent = tabLabel;
       
-      island.classList.remove(headerOutClass);
-      island.classList.add(headerInClass);
+      island.classList.remove('header-fade-out');
+      island.classList.add('header-fade-in');
       
-      // Pulse effect on arrival
-      island.classList.remove('liquid-pulse-animate');
-      void island.offsetWidth;
-      island.classList.add('liquid-pulse-animate');
+      // Pulse effect on arrival (Removed as per user request for fade-only)
       
-      setTimeout(() => island.classList.remove(headerInClass), 400);
+      setTimeout(() => island.classList.remove('header-fade-in'), 400);
     }, 250);
   } else if (island && skipHeaderAnimation) {
     let slug = newSlug;
@@ -106,32 +93,19 @@ export function navigateTo(viewId, skipHistory = false) {
     }
   }
 
-  // Handle View Transitions (Physical Slide)
+  // Handle View Transitions (Human Fade)
   if (currentView) {
-    let outClass, inClass;
-    const isCheckin = checkinSteps.includes(newSlug);
-
-    if (isCheckin) {
-      // Check-in Flow: Standard Forward/Backward
-      outClass = direction === 'right' ? 'view-slide-out-left' : 'view-slide-out-right';
-      inClass = direction === 'right' ? 'view-slide-in-right' : 'view-slide-in-left';
-    } else {
-      // Home Tabs: Spatial Navigation
-      outClass = direction === 'left' ? 'view-slide-out-right' : 'view-slide-out-left';
-      inClass = direction === 'left' ? 'view-slide-in-left' : 'view-slide-in-right';
-    }
-
-    currentView.classList.add(outClass);
+    currentView.classList.add('view-human-out');
     target.classList.remove('hidden');
-    target.classList.add('active', inClass);
+    target.classList.add('active', 'view-human-in');
     target.scrollTop = 0;
     
     setTimeout(() => {
       currentView.classList.add('hidden');
-      currentView.classList.remove('active', 'view-slide-out-left', 'view-slide-out-right');
-      target.classList.remove('view-slide-in-right', 'view-slide-in-left');
+      currentView.classList.remove('active', 'view-human-out');
+      target.classList.remove('view-human-in');
       isNavigating = false;
-    }, 500);
+    }, 600);
   } else {
     if (elements.views) {
       Array.from(elements.views).forEach(v => v.classList.add('hidden'));
@@ -214,8 +188,7 @@ export function navigateTo(viewId, skipHistory = false) {
       const distance = Math.abs(newLeft - oldLeft);
 
       if (distance > 20) {
-        indicator.classList.add('nav-pill-stretch');
-        setTimeout(() => indicator.classList.remove('nav-pill-stretch'), 400);
+        // Indicator stretch removed
       }
 
       container.style.setProperty('--nav-width', activeItem.offsetWidth + 'px');
@@ -398,21 +371,7 @@ async function initAppBootstrap() {
         SensoryEngine.triggerHaptic('light');
         SensoryEngine.playTick();
         
-        const currentSlug = AppState.currentView?.replace('view-', '') || '';
-        const currentIndex = tabsOrder.indexOf(currentSlug);
-        const targetIndex = tabsOrder.indexOf(targetSlug);
-        
-        let direction = 'right';
-        // If coming from a deep view (not in main tabs) to a main tab, always treat as 'left'
-        if (currentIndex === -1 && targetIndex !== -1) {
-          direction = 'left';
-        } else if (targetIndex < currentIndex) {
-          direction = 'left';
-        } else {
-          direction = 'right';
-        }
-        
-        navigateTo('view-' + targetSlug, direction);
+        navigateTo('view-' + targetSlug);
       }
     };
   });
@@ -440,34 +399,18 @@ function initSwipeNavigation() {
   const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
   let touchStartX = 0;
   let touchStartY = 0;
-  let currentDeltaX = 0;
   let isSwiping = false;
-  let currentView = null;
-  let targetView = null;
-  let currentIndex = -1;
-  let targetIndex = -1;
   let startedOnScrollable = false;
   
   document.addEventListener('touchstart', (e) => {
     if (isNavigating) return;
-    const scrollable = e.target.closest('.filter-chips, .filter-chips-container, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe], #savoringNote, textarea');
+    const scrollable = e.target.closest('.filter-chips, .filter-chips-container, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe], #savoringNote, textarea, .vagal-triangle-container, .identity-card-v2');
     startedOnScrollable = !!scrollable;
     if (startedOnScrollable) return;
 
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
-    currentDeltaX = 0;
-    
-    currentView = Array.from(elements.views).find(v => v.classList.contains('active') && !v.classList.contains('hidden'));
-    if (!currentView) return;
-    
-    const currentTab = currentView.id.replace('view-', '');
-    currentIndex = tabs.indexOf(currentTab);
-    if (currentIndex === -1) return;
-    
     isSwiping = true;
-    currentView.style.transition = 'none';
-    currentView.style.willChange = 'transform';
   }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
@@ -475,102 +418,37 @@ function initSwipeNavigation() {
     
     const touchX = e.changedTouches[0].screenX;
     const touchY = e.changedTouches[0].screenY;
-    currentDeltaX = touchX - touchStartX;
+    const deltaX = touchX - touchStartX;
     const deltaY = touchY - touchStartY;
 
     // Detect horizontal intent
-    if (Math.abs(currentDeltaX) < 10) return;
-    if (Math.abs(deltaY) > Math.abs(currentDeltaX)) {
+    if (Math.abs(deltaX) > 10 && Math.abs(deltaY) > Math.abs(deltaX)) {
       isSwiping = false;
-      return;
     }
-    // Determine target view based on STANDARD mobile logic
-    // Swipe LEFT (deltaX < 0) pulls the NEXT page from the right (100%)
-    // Swipe RIGHT (deltaX > 0) pulls the PREVIOUS page from the left (-100%)
-    const direction = currentDeltaX < 0 ? 1 : -1; 
-    const newTargetIndex = currentIndex + direction;
-    
-    if (newTargetIndex >= 0 && newTargetIndex < tabs.length) {
-      const newTargetView = document.getElementById(`view-${tabs[newTargetIndex]}`);
-      if (newTargetView !== targetView) {
-        if (targetView) {
-          targetView.classList.add('hidden');
-          targetView.style.transform = '';
-        }
-        targetView = newTargetView;
-        targetIndex = newTargetIndex;
-        if (targetView) {
-          targetView.classList.remove('hidden');
-          targetView.style.transition = 'none';
-          targetView.style.willChange = 'transform';
-        }
-      }
-      
-      // Move both views - STANDARD PHYSICAL SYNC
-      currentView.style.transform = `translateX(${currentDeltaX}px)`;
-      if (targetView) {
-        const offset = direction > 0 ? '100%' : '-100%';
-        targetView.style.transform = `translateX(calc(${offset} + ${currentDeltaX}px))`;
-      }
-    } else {
-      currentView.style.transform = `translateX(${currentDeltaX * 0.3}px)`;
-    }
-  }, { passive: false });
+  }, { passive: true });
 
   document.addEventListener('touchend', (e) => {
-    if (!isSwiping) return;
+    if (!isSwiping || startedOnScrollable) return;
     isSwiping = false;
 
-    const threshold = window.innerWidth * 0.2;
-    const success = Math.abs(currentDeltaX) > threshold && targetView;
+    const touchEndX = e.changedTouches[0].screenX;
+    const deltaX = touchEndX - touchStartX;
+    const threshold = 60; // Minimal swipe distance
 
-    if (success) {
-      const direction = currentDeltaX < 0 ? 'right' : 'left'; 
-      // Cleanup inline styles and navigate
-      currentView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
-      if (targetView) targetView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
-      
-      const finalX = currentDeltaX < 0 ? '-100%' : '100%'; 
-      currentView.style.transform = `translateX(${finalX})`;
-      currentView.style.opacity = '0';
-      if (targetView) {
-        targetView.style.transform = 'translateX(0)';
-        targetView.style.opacity = '1';
-      }
+    if (Math.abs(deltaX) < threshold) return;
 
-      setTimeout(() => {
-        // Reset styles and let navigateTo handle state
-        currentView.style.transform = '';
-        currentView.style.transition = '';
-        currentView.style.opacity = '';
-        if (targetView) {
-          targetView.style.transform = '';
-          targetView.style.transition = '';
-          targetView.style.opacity = '';
-        }
-        navigateTo(`view-${tabs[targetIndex]}`, direction);
-        targetView = null;
-      }, 400);
-    } else {
-      // Snap back
-      currentView.style.transition = 'transform 0.5s var(--spring-easing)';
-      currentView.style.transform = 'translateX(0)';
-      if (targetView) {
-        targetView.style.transition = 'transform 0.5s var(--spring-easing)';
-        const offset = targetIndex > currentIndex ? '100%' : '-100%';
-        targetView.style.transform = `translateX(${offset})`;
-        setTimeout(() => {
-          if (!isSwiping && targetView) {
-            targetView.classList.add('hidden');
-            targetView.style.transform = '';
-            targetView = null;
-          }
-        }, 500);
-      }
-      setTimeout(() => {
-        currentView.style.transition = '';
-        currentView.style.transform = '';
-      }, 500);
+    const currentView = Array.from(elements.views).find(v => v.classList.contains('active') && !v.classList.contains('hidden'));
+    if (!currentView) return;
+    
+    const currentTab = currentView.id.replace('view-', '');
+    const currentIndex = tabs.indexOf(currentTab);
+    if (currentIndex === -1) return;
+
+    const direction = deltaX < 0 ? 1 : -1; 
+    const targetIndex = currentIndex + direction;
+    
+    if (targetIndex >= 0 && targetIndex < tabs.length) {
+      navigateTo(`view-${tabs[targetIndex]}`);
     }
   }, { passive: true });
 }

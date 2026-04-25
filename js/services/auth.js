@@ -6,7 +6,11 @@ import {
 import { 
   signInAnonymously, 
   linkWithCredential, 
-  GoogleAuthProvider 
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
 const MOCK_MODE = !isInitialized;
@@ -22,6 +26,30 @@ export async function signInAsGuest() {
     console.warn('[Aura] Firebase Guest Auth failed, falling back to Mock:', err.code);
     return { uid: 'mock-guest-fallback-' + Date.now(), isAnonymous: true, displayName: null, guest: true };
   }
+}
+
+export async function loginWithEmail(email, password) {
+  if (MOCK_MODE) return { uid: 'mock-user', email, displayName: 'Mock User' };
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (err) { throw err; }
+}
+
+export async function registerWithEmail(email, password, displayName) {
+  if (MOCK_MODE) return { uid: 'mock-user', email, displayName };
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    if (displayName) {
+      await updateProfile(result.user, { displayName });
+    }
+    return auth.currentUser;
+  } catch (err) { throw err; }
+}
+
+export async function logoutUser() {
+  if (MOCK_MODE) return;
+  await signOut(auth);
 }
 
 export async function upgradeGuestWithGoogle() {

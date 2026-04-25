@@ -28,7 +28,7 @@ export const NotificationService = {
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        console.log('[Aura] Notification permission granted.');
+        // console.log('[Aura] Notification permission granted.');
         await this.registerToken();
         return true;
       }
@@ -46,13 +46,13 @@ export const NotificationService = {
       });
 
       if (currentToken) {
-        console.log('[Aura] FCM Token obtained:', currentToken);
+        // console.log('[Aura] FCM Token obtained:', currentToken);
         localStorage.setItem('aura_fcm_token', currentToken);
         
         // If user is logged in, sync to Firestore
         if (AppState.user && AppState.user.uid) {
           // This would typically go to a 'users' collection
-          console.log('[Aura] Syncing token to user profile:', AppState.user.uid);
+          // console.log('[Aura] Syncing token to user profile:', AppState.user.uid);
         }
       }
     } catch (err) {
