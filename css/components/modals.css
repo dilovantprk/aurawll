@@ -41,13 +41,19 @@
   border-radius: 32px 32px 0 0;
   padding: 2.5rem 2.2rem calc(2.8rem + var(--safe-bottom, 0px));
   position: relative;
-  background: rgba(255, 255, 255, 0.08); /* Transparent Frost */
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12); /* Brighter thin border */
-  box-shadow: 0 -20px 80px rgba(0, 0, 0, 0.6);
-  transform: translateY(105%); /* Start slightly below */
-  transition: transform 0.5s cubic-bezier(0.32, 0, 0.67, 0); /* Organic exit */
+  /* Physical Glass Surface Gradient */
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(35px) saturate(210%);
+  -webkit-backdrop-filter: blur(35px) saturate(210%);
+  /* Specular Highlights & Inner Glow */
+  border-top: 1.5px solid rgba(255, 255, 255, 0.35); 
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 -20px 80px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transform: translateY(105%);
+  transition: transform 0.5s cubic-bezier(0.32, 0, 0.67, 0);
 }
 
 .modal.active .modal-content {
@@ -306,10 +312,12 @@
   left: 0;
   right: 0;
   z-index: 1000001 !important;
-  background: rgba(255, 255, 255, 0.08); /* Transparent Frost */
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  /* Crystal Surface Logic */
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.06) 100%);
+  backdrop-filter: blur(35px) saturate(200%);
+  -webkit-backdrop-filter: blur(35px) saturate(200%);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 -15px 50px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.15);
   border-radius: 32px 32px 0 0;
   padding: 2rem 1.8rem calc(2rem + var(--safe-bottom)); /* Reduced padding */
   transform: translateY(105%);
