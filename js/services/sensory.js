@@ -98,7 +98,12 @@ export const SensoryEngine = {
 
   resumeAudio() {
     if (this.audioCtx && this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume().catch(() => {});
+      // Browsers often log a warning even with .catch(), but this is the correct way to handle it
+      this.audioCtx.resume().then(() => {
+        // Successfully resumed
+      }).catch(err => {
+        // Silently fail if interaction policy blocks it
+      });
     }
   },
 

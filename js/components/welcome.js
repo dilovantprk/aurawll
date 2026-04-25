@@ -44,7 +44,12 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
     core.classList.add('focusing');
     
     // Immediate Feedback
-    if ('vibrate' in navigator) { try { navigator.vibrate([15, 30, 15]); } catch(e) {} }
+    let vibrationSuccess = false;
+    if ('vibrate' in navigator) { 
+      try { 
+        vibrationSuccess = navigator.vibrate([15, 30, 15]); 
+      } catch(e) {} 
+    }
     
     if (onGesture && typeof onGesture === 'function') {
       try { onGesture(); } catch(e) {}
@@ -57,18 +62,21 @@ export function initWelcomeScreen({ onComplete, onGesture, t, lang, user = null 
       completeFocus();
     }, FOCUS_DURATION);
 
-    let startTime = Date.now();
-    hapticInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / FOCUS_DURATION, 1);
-      
-      if (navigator.vibrate && focusActive) {
-        const pulseFreq = Math.max(80, 400 - (progress * 320));
-        if (Math.floor(elapsed / pulseFreq) % 2 === 0) {
-          navigator.vibrate(5 + (progress * 15));
+    // Only start interval if first vibration succeeded (browser allowed it)
+    if (vibrationSuccess) {
+      let startTime = Date.now();
+      hapticInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / FOCUS_DURATION, 1);
+        
+        if (navigator.vibrate && focusActive) {
+          const pulseFreq = Math.max(80, 400 - (progress * 320));
+          if (Math.floor(elapsed / pulseFreq) % 2 === 0) {
+            navigator.vibrate(5 + (progress * 15));
+          }
         }
-      }
-    }, 100);
+      }, 100);
+    }
   };
 
   const onEnd = () => {

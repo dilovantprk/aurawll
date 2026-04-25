@@ -39,8 +39,11 @@ export async function registerWithEmail(email, password, displayName) {
   if (MOCK_MODE) return { uid: 'mock-user', email, displayName };
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password);
-    if (displayName) await updateProfile(result.user, { displayName });
-    return result.user;
+    if (displayName) {
+      await updateProfile(result.user, { displayName });
+    }
+    // Return latest user object from auth state
+    return auth.currentUser;
   } catch (err) { throw err; }
 }
 

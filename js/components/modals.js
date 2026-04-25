@@ -7,6 +7,7 @@ import { vibrate } from '../core/utils.js';
 let galaxyAnimationId = null;
 
 let isModalOpen = false;
+let lastInfoBtn = null;
 let configProps = {
   pauseExercise: null,
   pauseMeditation: null,
@@ -24,6 +25,7 @@ export function initModals(config) {
     hideInfoModal();
     hideCommunityModal();
     hideVagalModal();
+    lastInfoBtn = null;
   };
 
   // Global Info Support & Close Buttons
@@ -35,7 +37,16 @@ export function initModals(config) {
 
     if (infoBtn) {
       const infoKey = infoBtn.getAttribute('data-info') || infoBtn.getAttribute('data-type');
-      if (infoKey) openInfoArchive(infoKey, infoBtn);
+      const isCurrentlyActive = elements.infoModal.classList.contains('active') || elements.vagalModal.classList.contains('active');
+      
+      if (isCurrentlyActive && lastInfoBtn === infoBtn) {
+        closeAll();
+      } else {
+        if (infoKey) {
+          openInfoArchive(infoKey, infoBtn);
+          lastInfoBtn = infoBtn;
+        }
+      }
     } else if (isCloseBtn || isBackdrop) {
       closeAll();
     }

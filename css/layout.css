@@ -63,8 +63,8 @@
 /* Mobile Specific Width Polish */
 @media (max-width: 600px) {
   .dashboard-view-content, .standard-view-content {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
   }
   
   .dash-grid-wrapper {
@@ -238,21 +238,20 @@
 }
 
 .active-tab-name {
-  font-weight: 400;
-  color: var(--text-muted);
+  font-weight: 500;
+  color: #fff;
   font-size: 0.95rem;
   margin-left: 0.8rem;
   padding-left: 0.8rem;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.5s var(--spring-easing);
+  transition: opacity 0.5s ease;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .active-tab-name.visible {
-  opacity: 1;
-  transform: translateX(0);
+  opacity: 0.95;
 }
 
 /* Desktop Indicator - Dynamic Glass Pill style */

@@ -57,9 +57,13 @@ export function startOnboardingFlow(config) {
         sensations: [], 
         timestamp: null 
     };
-    loadDashboard();
+    if (configProps.navigateTo) {
+      configProps.navigateTo('view-dashboard');
+    } else {
+      loadDashboard();
+    }
   };
 
-  if (elements.onbSkipBtn) elements.onbSkipBtn.onclick = finish;
-  if (elements.onbLetsGoBtn) elements.onbLetsGoBtn.onclick = finish;
+  if (elements.onbSkipBtn) elements.onbSkipBtn.onclick = (e) => { e.stopPropagation(); finish(); };
+  if (elements.onbLetsGoBtn) elements.onbLetsGoBtn.onclick = (e) => { e.stopPropagation(); finish(); };
 }

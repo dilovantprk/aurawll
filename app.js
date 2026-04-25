@@ -209,12 +209,21 @@ async function migrateGuestData(uid) {
  */
 function startAppFlow(user) {
   if (user && AppState.user && AppState.user.uid === user.uid) return;
+  
   if (user) { 
     AppState.user = user; 
     migrateGuestData(user.uid); 
     document.body.classList.add('is-authenticated');
+  } else {
+    document.body.classList.remove('is-authenticated');
+  }
 
-    // If authenticated, skip welcome and go to dashboard/onboarding
+  // Check if we are already on the welcome screen
+  const currentView = elements.views ? Array.from(elements.views).find(v => !v.classList.contains('hidden')) : null;
+  const isOnWelcome = currentView && currentView.id === 'view-welcome';
+
+  if (user && !isOnWelcome) {
+    // If authenticated and NOT on welcome, skip to dashboard/onboarding
     if (safeGetItem('aura_onboarded')) {
       loadDashboard();
       navigateTo('view-dashboard');
@@ -222,11 +231,11 @@ function startAppFlow(user) {
       startOnboardingFlow({ navigateTo });
     }
     return;
-  } else {
-    document.body.classList.remove('is-authenticated');
+  } else if (!user && !isOnWelcome) {
     navigateTo('view-welcome');
   }
 
+  // Always init/refresh welcome screen if we are there
   initWelcomeScreen({
     user: AppState.user,
     onGesture: () => SensoryEngine.initAudio(),

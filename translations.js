@@ -133,9 +133,9 @@ export const locales = {
 
     // Dashboard View
     "dash_morning": "Good morning, {name}.",
-    "dash_afternoon": "Good afternoon.",
+    "dash_afternoon": "Good afternoon, {name}.",
     "dash_evening": "Good evening, {name}.",
-    "dash_night": "Good night.",
+    "dash_night": "Good night, {name}.",
     "dash_special_2": "I can't sleep; can't stop this head... Are you there too?",
     "dash_special_4": "There's one sleepless one, can't sleep at night...",
     "checkin_ventral": "You're balanced, {name}.",
@@ -775,9 +775,9 @@ export const locales = {
 
     // Dashboard View
     "dash_morning": "Günaydın, {name}.",
-    "dash_afternoon": "İyi günler.",
+    "dash_afternoon": "İyi günler, {name}.",
     "dash_evening": "İyi akşamlar, {name}.",
-    "dash_night": "İyi geceler.",
+    "dash_night": "İyi geceler, {name}.",
     "dash_special_2": "Ben uyuyamıyorum; kafa durmuyor... Sen de mi oradasın?",
     "dash_special_4": "Bir tane uykusuz var, uyuyamıyor geceleri...",
     "checkin_ventral": "Dengedesin, {name}.",

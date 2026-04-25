@@ -387,11 +387,11 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -538,12 +538,15 @@
   
   /* Flex Child Modal Content */
   .modal-content {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
     border-radius: 24px;
     padding-bottom: 2.5rem;
     transform: translateY(20px) scale(0.95);
     opacity: 0;
     transition: transform 0.4s cubic-bezier(0.32, 0, 0.67, 0), opacity 0.4s ease;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
@@ -577,16 +580,16 @@
     top: auto !important;
     bottom: 20px !important;
     right: 20px !important;
-    border-radius: 14px;
+    border-radius: 24px;
     transform: translateY(20px) !important; /* Shorter slide up animation */
     opacity: 0;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, visibility 0s 0.5s;
     
     /* Transparent Liquid Glass Effect */
-    background: rgba(25, 25, 30, 0.5) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
     backdrop-filter: blur(25px) saturate(200%) !important;
     -webkit-backdrop-filter: blur(25px) saturate(200%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     padding: 1.2rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
     display: flex;

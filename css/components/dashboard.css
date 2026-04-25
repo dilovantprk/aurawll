@@ -4,14 +4,14 @@
 
 /* === COCKPIT CARDS === */
 .cockpit-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(30px) saturate(140%);
-  -webkit-backdrop-filter: blur(30px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
   padding: 1.5rem 1.8rem;
   transition: all 0.5s var(--spring-easing);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow: none;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -58,7 +58,7 @@
   align-items: center;
   gap: 1.2rem;
   width: 100%;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: none;
 }
 
 .cockpit-grid {
@@ -70,21 +70,24 @@
   width: 100%;
 }
 
-/* === AURA CARD (History Items) === */
 .aura-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
   padding: 1.4rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  box-shadow: none;
   transition: all 0.4s var(--spring-easing);
 }
 
 .aura-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  transform: translateX(5px);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
 }
 
 /* Heatmap Mini Card Adjustments */
@@ -241,14 +244,14 @@
 .guest-cta-box .glass-panel { border-color: rgba(133,141,255,0.3); box-shadow: 0 0 20px rgba(133,141,255,0.1), inset 0 0 10px rgba(133,141,255,0.05); }
 
 .vagal-heatmap-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(30px) saturate(140%);
-  -webkit-backdrop-filter: blur(30px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
   padding: 2.5rem 2rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow: none;
   position: relative;
   overflow: hidden;
 }
