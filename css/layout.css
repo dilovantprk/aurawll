@@ -452,6 +452,12 @@ body.has-nav .dashboard-content {
   letter-spacing: 1.2px;
 }
 
+/* === CRYSTAL CLARITY (Dashboard Entry) — CLEAN FADE ONLY === */
+@keyframes crystalClarify {
+  from { opacity: 0; transform: scale(1.02); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
 @keyframes slideInRight {
   from { transform: translateX(-5px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
