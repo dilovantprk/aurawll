@@ -63,8 +63,8 @@
 /* Mobile Specific Width Polish */
 @media (max-width: 600px) {
   .dashboard-view-content, .standard-view-content {
-    padding-left: 0.3rem;
-    padding-right: 0.3rem;
+    padding-left: 0.15rem;
+    padding-right: 0.15rem;
   }
   
   .dash-grid-wrapper {
