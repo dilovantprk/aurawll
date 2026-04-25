@@ -11,8 +11,19 @@ let configProps = {};
 export function initMeditations(config) {
   Object.assign(configProps, config);
   
-  // Bind Card Clicks (One-time delegation)
+  // Bind Card Clicks & Touch Tracking
   if (elements.meditationsList) {
+    // Track touch position for dynamic glow effect
+    elements.meditationsList.addEventListener('touchstart', (e) => {
+      const card = e.target.closest('.meditation-card');
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const y = e.touches[0].clientY - rect.top;
+      card.style.setProperty('--touch-x', `${x}px`);
+      card.style.setProperty('--touch-y', `${y}px`);
+    }, { passive: true });
+
     elements.meditationsList.onclick = (e) => {
       const infoTrigger = e.target.closest('.info-trigger');
       if (infoTrigger) {
@@ -53,7 +64,7 @@ export function renderMeditationsList() {
       <div class="meditation-card" 
            data-protocol="${id}" 
            data-category="${p.category || 'all'}" 
-           style="border-left: 3px solid ${metaData.accent};">
+           style="--card-accent: ${metaData.accent};">
         <div class="meditation-card-icon">
           <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             ${metaData.icon}

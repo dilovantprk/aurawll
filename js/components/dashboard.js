@@ -115,16 +115,51 @@ export function renderHistory(data) {
   elements.historyList.innerHTML = data.map((doc, index) => {
     const item = normalizeCheckinData(doc);
     const timeStr = getHumanizedTime(item.timestamp);
-    const stateName = { 'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic', 'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal', 'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral' }[item.state] || '...';
-    let emotionLabel = item.customEmotion || (item.subEmotion ? t(item.subEmotion) : '');
-    if (emotionLabel === 'null' || !emotionLabel || emotionLabel === item.subEmotion) emotionLabel = stateName; 
+    
+    const stateKey = item.polyvagal_state || item.state;
+    const stateNameMap = { 
+      'ventral': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
+      'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
+      'sympathetic': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
+      'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
+      'dorsal': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal',
+      'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal'
+    };
+    const stateName = stateNameMap[stateKey] || '...';
+
+    let emotionLabel = '';
+    if (item.selected_emotions && item.selected_emotions.length > 0) {
+      emotionLabel = item.selected_emotions.map(e => t(e)).join(', ');
+    } else {
+      emotionLabel = item.customEmotion || (item.subEmotion ? t(item.subEmotion) : '');
+    }
+    if (!emotionLabel || emotionLabel === 'null') emotionLabel = stateName;
+
     const tags = [];
     if (item.somatic_selections) item.somatic_selections.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
+
+    let somaticSummary = '';
+    if (tags.length > 0) {
+      const prefix = AppState.lang === 'tr' ? 'Odak: ' : 'Focus: ';
+      if (tags.length <= 2) {
+        somaticSummary = prefix + tags.join(', ');
+      } else {
+        const otherText = AppState.lang === 'tr' ? ' diğer' : ' others';
+        somaticSummary = `${prefix}${tags[0]}, ${tags[1]} +${tags.length - 2}${otherText}`;
+      }
+    }
+
     return `
       <div class="aura-card stagger-${(index % 4) + 3}" onclick="window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}))">
-        <div class="card-header"><div class="aura-orb ${item.polyvagal_state || 'ventral'}"></div><div class="time-meta">${timeStr}</div><div class="state-label">${emotionLabel}</div></div>
-        <div class="card-body"><p class="user-note">${item.savoringText ? `"${item.savoringText}"` : '...'}</p><div class="delta-mini-grid">${renderMiniDeltaSVG(item)}</div></div>
-        ${tags.length > 0 ? `<div class="card-footer">${tags.map(tag => `<span class="somatic-tag">${tag}</span>`).join('')}</div>` : ''}
+        <div class="card-header">
+          <div class="aura-orb ${item.polyvagal_state || 'ventral'}"></div>
+          <div class="time-meta">${timeStr}</div>
+          <div class="state-label">${emotionLabel}</div>
+        </div>
+        <div class="card-body">
+          <p class="user-note">${item.savoringText || '...'}</p>
+        </div>
+        ${somaticSummary ? `<div class="card-footer"><span class="somatic-summary">${somaticSummary}</span></div>` : ''}
       </div>`;
   }).join('');
 }
@@ -208,6 +243,32 @@ function checkCompassionateIntervention(weeklyData) {
 
 export function renderVagalHeatmap(data, isModal = false) {
   const targetBlob = isModal ? document.querySelector('#vagalModalHeatmap .vagal-blob') : elements.vagalBlob;
-  const point = calculateVagalPoint(data?.ventral || 33, data?.sympathetic || 33, data?.dorsal || 34);
-  if (targetBlob) { targetBlob.style.left = point.x; targetBlob.style.top = point.y; targetBlob.style.opacity = data ? '1' : '0.5'; }
+  if (!targetBlob) return;
+
+  // Map state to weights if exact numeric data is missing (for the new flow)
+  let v = data?.ventral || 0;
+  let s = data?.sympathetic || 0;
+  let d = data?.dorsal || 0;
+
+  if (v === 0 && s === 0 && d === 0 && data?.polyvagal_state) {
+    if (data.polyvagal_state === 'ventral') { v = 80; s = 10; d = 10; }
+    else if (data.polyvagal_state === 'sympathetic') { v = 10; s = 80; d = 10; }
+    else if (data.polyvagal_state === 'dorsal') { v = 10; s = 10; d = 80; }
+  } else if (v === 0 && s === 0 && d === 0) {
+    // Default center
+    v = 33; s = 33; d = 34;
+  }
+
+  const point = calculateVagalPoint(v, s, d);
+  
+  // Apply with transition for "living" feel
+  targetBlob.style.transition = 'all 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+  targetBlob.style.left = point.x;
+  targetBlob.style.top = point.y;
+  targetBlob.style.opacity = data ? '1' : '0.4';
+
+  // Add a subtle "pulse" based on state
+  targetBlob.classList.remove('pulse-slow', 'pulse-fast');
+  if (data?.polyvagal_state === 'sympathetic') targetBlob.classList.add('pulse-fast');
+  else targetBlob.classList.add('pulse-slow');
 }

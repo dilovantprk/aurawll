@@ -383,13 +383,23 @@ function initSwipeNavigation() {
   const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
   let touchStartX = 0;
   let touchStartY = 0;
+  let startedOnScrollable = false;
   
   document.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
+    
+    // Check if the swipe starts on a horizontally scrollable element
+    // .filter-chips-container: The chips on Breathe page
+    // .rec-scroll-row: The horizontal recommendation row
+    // .meditation-grid-scroll: Legacy support
+    const scrollable = e.target.closest('.filter-chips, .filter-chips-container, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe]');
+    startedOnScrollable = !!scrollable;
   }, { passive: true });
 
   document.addEventListener('touchend', (e) => {
+    if (startedOnScrollable) return;
+
     const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
     if (!currentView) return;
     
@@ -397,6 +407,7 @@ function initSwipeNavigation() {
     const currentIndex = tabs.indexOf(currentTab);
     if (currentIndex === -1) return;
 
+    // Skip range inputs
     if (e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
 
     const touchEndX = e.changedTouches[0].screenX;
@@ -404,15 +415,14 @@ function initSwipeNavigation() {
     const deltaX = touchEndX - touchStartX;
     const deltaY = touchEndY - touchStartY;
     
-    if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    // Improved threshold and ratio for smoother detection
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
       if (deltaX < 0 && currentIndex < tabs.length - 1) {
         const nextTab = tabs[currentIndex + 1];
-        if (nextTab === 'dashboard') loadDashboard();
-        else navigateTo(`view-${nextTab}`);
+        navigateTo(`view-${nextTab}`);
       } else if (deltaX > 0 && currentIndex > 0) {
         const prevTab = tabs[currentIndex - 1];
-        if (prevTab === 'dashboard') loadDashboard();
-        else navigateTo(`view-${prevTab}`);
+        navigateTo(`view-${prevTab}`);
       }
     }
   }, { passive: true });

@@ -121,22 +121,24 @@
 }
 
 .aura-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px;
-  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  transition: all 0.4s ease;
+  gap: 0.8rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .aura-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .card-header {
@@ -146,8 +148,8 @@
 }
 
 .aura-orb {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   position: relative;
   filter: blur(2px);
@@ -157,51 +159,68 @@
 .aura-orb::after {
   content: '';
   position: absolute;
-  inset: -8px;
+  inset: -6px;
   border-radius: 50%;
   background: inherit;
   opacity: 0.3;
-  filter: blur(8px);
+  filter: blur(6px);
 }
 
-.aura-orb.ventral { background: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
-.aura-orb.sympathetic { background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+.aura-orb.ventral { background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+.aura-orb.sympathetic { background: #f43f5e; box-shadow: 0 0 15px rgba(244, 63, 94, 0.5); }
 .aura-orb.dorsal { background: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
 
 .time-meta {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-family: monospace;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.35);
   letter-spacing: 0.5px;
 }
 
 .state-label {
   margin-left: auto;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.65rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.05);
   padding: 0.2rem 0.6rem;
-  border-radius: 6px;
+  border-radius: 4px;
+}
+
+.time-meta {
+  font-size: 0.75rem;
+  font-family: monospace;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.state-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
 }
 
 .card-body {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
+  padding: 0.2rem 0;
 }
 
 .user-note {
-  flex: 1;
-  font-size: 1.15rem;
-  line-height: 1.4;
+  font-size: 1rem;
+  line-height: 1.5;
   color: #fff;
-  font-style: italic;
+  opacity: 0.9;
   margin: 0;
   font-weight: 400;
+  letter-spacing: -0.2px;
 }
 
 .delta-mini-grid {
@@ -209,23 +228,15 @@
 }
 
 .card-footer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.somatic-tag {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.3rem 0.7rem;
-  border-radius: 100px;
+.somatic-summary {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
 }
 
 @keyframes aura-breathe {

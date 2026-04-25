@@ -55,13 +55,41 @@ export function renderNotebook(providedEntries) {
     html = `<div class="notebook-list">`;
     history.forEach(entry => {
       const timeStr = getHumanizedTime(entry.timestamp);
-      const stateName = { 'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic', 'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal', 'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral' }[entry.state] || '...';
-      let emotionLabel = entry.customEmotion || (entry.subEmotion ? t(entry.subEmotion) : '');
-      if (emotionLabel === 'null' || !emotionLabel || emotionLabel === entry.subEmotion) emotionLabel = stateName; 
+      const stateKey = entry.polyvagal_state || entry.state;
+      const stateNameMap = { 
+        'ventral': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
+        'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
+        'sympathetic': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
+        'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
+        'dorsal': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal',
+        'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal'
+      };
+      const stateName = stateNameMap[stateKey] || '...';
+
+      // New flow: selected_emotions (array). Old flow: subEmotion/customEmotion (string)
+      let emotionLabel = '';
+      if (entry.selected_emotions && entry.selected_emotions.length > 0) {
+        emotionLabel = entry.selected_emotions.map(e => t(e)).join(', ');
+      } else {
+        emotionLabel = entry.customEmotion || (entry.subEmotion ? t(entry.subEmotion) : '');
+      }
+
+      if (!emotionLabel || emotionLabel === 'null') emotionLabel = stateName;
       const tags = [];
       if (entry.somatic_selections) entry.somatic_selections.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
       if (entry.sensations) entry.sensations.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
       
+      let somaticSummary = '';
+      if (tags.length > 0) {
+        const prefix = AppState.lang === 'tr' ? 'Odak: ' : 'Focus: ';
+        if (tags.length <= 2) {
+          somaticSummary = prefix + tags.join(', ');
+        } else {
+          const otherText = AppState.lang === 'tr' ? ' diğer' : ' others';
+          somaticSummary = `${prefix}${tags[0]}, ${tags[1]} +${tags.length - 2}${otherText}`;
+        }
+      }
+
       html += `
         <div class="aura-card fade-in-up">
           <div class="card-header">
@@ -70,10 +98,9 @@ export function renderNotebook(providedEntries) {
             <div class="state-label">${emotionLabel}</div>
           </div>
           <div class="card-body">
-            <p class="user-note">${entry.savoringText ? `"${entry.savoringText}"` : '...'}</p>
-            <div class="delta-mini-grid">${renderMiniDeltaSVG(entry)}</div>
+            <p class="user-note">${entry.savoringText || '...'}</p>
           </div>
-          ${tags.length > 0 ? `<div class="card-footer">${tags.map(tag => `<span class="somatic-tag">${tag}</span>`).join('')}</div>` : ''}
+          ${somaticSummary ? `<div class="card-footer"><span class="somatic-summary">${somaticSummary}</span></div>` : ''}
         </div>`;
     });
     html += '</div>';
