@@ -387,12 +387,14 @@ async function submitSavoringLog() {
   syncGlobalTheme();
   
   if (configProps.navigateTo) configProps.navigateTo('view-completion');
-  if (configProps.setHUD) configProps.setHUD(null);
   
-  if (elements.returnHomeBtn) {
-    elements.returnHomeBtn.onclick = () => {
+  // Modern HUD-based navigation
+  if (elements.returnHomeBtn) elements.returnHomeBtn.style.display = 'none';
+  
+  if (configProps.setHUD) {
+    configProps.setHUD('home', () => {
       if (configProps.loadDashboard) configProps.loadDashboard();
-      if (configProps.navigateTo) configProps.navigateTo('view-dashboard');
-    };
+      if (configProps.navigateTo) configProps.navigateTo('view-dashboard', 'left');
+    });
   }
 }

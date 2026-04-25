@@ -248,12 +248,13 @@ export function advanceFromExercise() {
     setHUD(null);
     if (configProps.navigateTo) configProps.navigateTo('view-completion');
     vibrate('success');
-    if (elements.returnHomeBtn) {
-      elements.returnHomeBtn.onclick = () => {
-        if (configProps.loadDashboard) configProps.loadDashboard();
-        if (configProps.navigateTo) configProps.navigateTo('view-dashboard');
-      };
-    }
+    // Hide the old button and use HUD instead
+    if (elements.returnHomeBtn) elements.returnHomeBtn.style.display = 'none';
+    
+    setHUD('home', () => {
+      if (configProps.loadDashboard) configProps.loadDashboard();
+      if (configProps.navigateTo) configProps.navigateTo('view-dashboard', 'left');
+    });
     return;
   }
 
@@ -280,7 +281,8 @@ export function setHUD(mode, onClick) {
   const svgs = {
     arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`,
     check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
-    skip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>`
+    skip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>`,
+    home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`
   };
   elements.globalHUDBtn.innerHTML = svgs[mode] || '';
   elements.globalHUD.classList.add('active');
