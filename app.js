@@ -30,16 +30,21 @@ import { NotificationService } from './js/services/notifications.js';
 import { signInAsGuest, logoutUser } from './authService.js';
 
 let fb;
+let isNavigating = false;
 
 /**
  * Global Routing System
  */
 export function navigateTo(viewId, skipHistory = false) {
+  if (isNavigating) return;
+  
   const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
   if (currentView && currentView.id === viewId) return;
 
   const target = document.getElementById(viewId);
   if (!target) return;
+
+  isNavigating = true;
 
   // Determine Direction
   const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
@@ -48,9 +53,6 @@ export function navigateTo(viewId, skipHistory = false) {
   const oldIndex = tabs.indexOf(oldSlug);
   const newIndex = tabs.indexOf(newSlug);
   
-  // Decide if we are going left or right (physical sense)
-  // If newIndex > oldIndex -> Everything moves LEFT (incoming from right)
-  // If newIndex < oldIndex -> Everything moves RIGHT (incoming from left)
   const direction = (newIndex > oldIndex) ? 'left' : 'right';
 
   // Global HUD Reset
@@ -89,29 +91,27 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Handle View Transitions (Physical Slide)
   if (currentView) {
-    // 1. Prepare outgoing view
     const outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
     currentView.classList.add(outClass);
     
-    // 2. Prepare incoming view
     const inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
     target.classList.remove('hidden');
     target.classList.add('active', inClass);
     target.scrollTop = 0;
     
-    // 3. Cleanup after animation
     setTimeout(() => {
       currentView.classList.add('hidden');
       currentView.classList.remove('active', 'view-slide-out-left', 'view-slide-out-right');
       target.classList.remove('view-slide-in-right', 'view-slide-in-left');
+      isNavigating = false;
     }, 500);
   } else {
-    // Initial load
     if (elements.views) {
       Array.from(elements.views).forEach(v => v.classList.add('hidden'));
     }
     target.classList.remove('hidden');
     target.classList.add('active');
+    isNavigating = false;
   }
 
   // Feature Triggers
@@ -123,9 +123,18 @@ export function navigateTo(viewId, skipHistory = false) {
   
   renderLocalization();
 
+  const hideMobileHeaderViews = ['view-welcome', 'view-auth', 'view-onboarding'];
   const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-onboarding', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
+  
+  const shouldHideMobileHeader = hideMobileHeaderViews.includes(viewId);
   const shouldHideImmersionNav = hideImmersionNavViews.includes(viewId);
   
+  // Mobile Header Visibility
+  if (elements.header) {
+    if (shouldHideMobileHeader) elements.header.classList.add('hidden');
+    else elements.header.classList.remove('hidden');
+  }
+
   // Nav Visibility
   if (elements.mobileNav) {
     if (shouldHideImmersionNav) {
@@ -137,7 +146,6 @@ export function navigateTo(viewId, skipHistory = false) {
     }
   }
 
-  // Sync Nav Active States
   const slug = viewId.replace('view-', '');
   const navItems = elements.navItems ? Array.from(elements.navItems) : [];
   const navLinks = elements.navLinks ? Array.from(elements.navLinks) : [];
@@ -149,7 +157,6 @@ export function navigateTo(viewId, skipHistory = false) {
     else btn.classList.remove('active');
   });
 
-  // Update Liquid Pill Position
   const updatePill = (containerId) => {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -162,7 +169,6 @@ export function navigateTo(viewId, skipHistory = false) {
       const newLeft = activeItem.offsetLeft;
       const distance = Math.abs(newLeft - oldLeft);
 
-      // Apply organic "stretch" class if moving significantly
       if (distance > 20) {
         indicator.classList.add('nav-pill-stretch');
         setTimeout(() => indicator.classList.remove('nav-pill-stretch'), 400);
@@ -178,7 +184,6 @@ export function navigateTo(viewId, skipHistory = false) {
     updatePill('mobile-nav');
   });
 
-  // Sensory Feedback
   if (!skipHistory) {
     SensoryEngine.triggerHaptic('medium');
     SensoryEngine.playSwipe();
@@ -219,12 +224,10 @@ function startAppFlow(user) {
 
   syncGlobalTheme();
 
-  // Check if we are already on the welcome screen
   const currentView = elements.views ? Array.from(elements.views).find(v => !v.classList.contains('hidden')) : null;
   const isOnWelcome = currentView && currentView.id === 'view-welcome';
 
   if (user && !isOnWelcome) {
-    // If authenticated and NOT on welcome, skip to dashboard/onboarding
     if (safeGetItem('aura_onboarded')) {
       loadDashboard();
       navigateTo('view-dashboard');
@@ -236,7 +239,6 @@ function startAppFlow(user) {
     navigateTo('view-welcome');
   }
 
-  // Always init/refresh welcome screen if we are there
   initWelcomeScreen({
     user: AppState.user,
     onGesture: () => SensoryEngine.initAudio(),
@@ -274,7 +276,7 @@ async function initAppBootstrap() {
       import('./firebase.js'),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase timeout')), 3000))
     ]);
-    if (fb) initModals({ fb }); // Pass fb to existing modals config
+    if (fb) initModals({ fb });
   } catch (err) {
     console.error("[Aura] Firebase load failed", err);
   }
@@ -320,12 +322,10 @@ async function initAppBootstrap() {
     }
   });
 
-  // Global Haptic Bridge
   window.addEventListener('aura-haptic', (e) => {
     if (SensoryEngine) SensoryEngine.triggerHaptic(e.detail || 'light');
   });
 
-  // Throttled Parallax Scroll
   let scrollTicking = false;
   if (elements.app) {
     elements.app.addEventListener('scroll', () => {
@@ -340,7 +340,6 @@ async function initAppBootstrap() {
     }, { passive: true });
   }
 
-  // Navigation Setup
   const navItems = elements.navItems ? Array.from(elements.navItems) : [];
   const navLinks = elements.navLinks ? Array.from(elements.navLinks) : [];
   const allNavs = [...navItems, ...navLinks];
@@ -357,7 +356,6 @@ async function initAppBootstrap() {
     };
   });
 
-  // INITIAL UI SHOW - Show welcome immediately without waiting for Firebase
   startAppFlow(null);
 
   try {
@@ -377,9 +375,6 @@ async function initAppBootstrap() {
   initSwipeNavigation();
 }
 
-/**
- * Swipe to Navigate Logic
- */
 function initSwipeNavigation() {
   const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
   let touchStartX = 0;
@@ -389,67 +384,32 @@ function initSwipeNavigation() {
   document.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
-    
-    // Check if the swipe starts on a horizontally scrollable element
-    // .filter-chips-container: The chips on Breathe page
-    // .rec-scroll-row: The horizontal recommendation row
-    // .meditation-grid-scroll: Legacy support
     const scrollable = e.target.closest('.filter-chips, .filter-chips-container, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe]');
     startedOnScrollable = !!scrollable;
   }, { passive: true });
 
   document.addEventListener('touchend', (e) => {
     if (startedOnScrollable) return;
-
     const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
     if (!currentView) return;
-    
     const currentTab = currentView.id.replace('view-', '');
     const currentIndex = tabs.indexOf(currentTab);
     if (currentIndex === -1) return;
-
-    // Skip range inputs
     if (e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
-
     const touchEndX = e.changedTouches[0].screenX;
     const touchEndY = e.changedTouches[0].screenY;
     const deltaX = touchEndX - touchStartX;
     const deltaY = touchEndY - touchStartY;
-    
-    // Improved threshold and ratio for smoother detection
     if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
       if (deltaX < 0 && currentIndex < tabs.length - 1) {
-        const nextTab = tabs[currentIndex + 1];
-        navigateTo(`view-${nextTab}`);
+        navigateTo(`view-${tabs[currentIndex + 1]}`);
       } else if (deltaX > 0 && currentIndex > 0) {
-        const prevTab = tabs[currentIndex - 1];
-        navigateTo(`view-${prevTab}`);
+        navigateTo(`view-${tabs[currentIndex - 1]}`);
       }
     }
   }, { passive: true });
 }
 
-function updateUI() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.textContent = t(el.getAttribute('data-i18n'));
-  });
-}
-
-// Service Worker Registration
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('[Aura] SW Registered', reg.scope))
-      .catch(err => console.warn('[Aura] SW Registration failed', err));
-    
-    // Firebase Messaging SW registration (specifically for push)
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then(reg => console.log('[Aura] FCM SW Registered'))
-      .catch(err => console.warn('[Aura] FCM SW failed', err));
-  });
-}
-
-// Global Startup
 document.addEventListener('DOMContentLoaded', initAppBootstrap);
 window.addEventListener('popstate', (e) => {
   if (e.state && e.state.view) navigateTo(e.state.view, true);
