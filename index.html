@@ -42,7 +42,7 @@
   <div id="app" class="app-container">
     
     <!-- Top Header Navigation (Glass Island Design) -->
-    <header id="mobile-header" class="fade-in-up hidden">
+    <header id="mobile-header" class="fade-in-pure hidden">
       <div class="header-island">
         <div class="logo">Aura. <span id="active-tab-name"></span></div>
         <div id="headerActions" class="header-actions">
@@ -188,7 +188,7 @@
 
     <!-- DASHBOARD VIEW -->
     <section id="view-dashboard" class="view hidden">
-      <div class="dashboard-content dashboard-view-content fade-in-up">
+      <div class="dashboard-content dashboard-view-content fade-in-pure">
         
         <div class="dash-grid-wrapper">
           <!-- Welcome Section (Aligned to top-left) -->
@@ -294,7 +294,7 @@
 
           <!-- Right Column: Recent Moments -->
           <div class="dash-side">
-            <div class="history-section fade-in-up delay-2">
+            <div class="history-section fade-in-pure delay-2">
               <h3 data-i18n="dash_recent" class="section-title">Recent Moments</h3>
               <div id="historyList" class="history-list">
                 <!-- Populated by JS -->
@@ -316,7 +316,7 @@
         <p class="subtitle" data-i18n="somatic_subtitle" style="opacity: 0.6; margin-top: 0.5rem;">Select up to 3 options.</p>
       </div>
 
-      <div id="somaticContainer" class="rhizome-container fade-in-up delay-1">
+      <div id="somaticContainer" class="rhizome-container fade-in-pure delay-1">
         <!-- Rendered by JS -->
       </div>
       
@@ -331,7 +331,7 @@
         <h2 data-i18n="grid_title">Tap the grid to pinpoint your state</h2>
       </div>
 
-      <div class="grid-container-wrapper fade-in-up delay-1" style="margin: 2rem 0;">
+      <div class="grid-container-wrapper fade-in-pure delay-1" style="margin: 2rem 0;">
         <div id="affect-grid" class="relative-grid">
           <span class="label grid-label top" data-i18n="grid_label_high_energy">High Energy</span>
           <span class="label grid-label bottom" data-i18n="grid_label_low_energy">Low Energy</span>
@@ -362,7 +362,7 @@
         <p class="subtitle" data-i18n="emotion_subtitle" style="opacity: 0.6; margin-top: 0.5rem;">Pick what resonates most (max 3)</p>
       </div>
 
-      <div id="emotionRefinementContainer" class="rhizome-container fade-in-up delay-1">
+      <div id="emotionRefinementContainer" class="rhizome-container fade-in-pure delay-1">
         <!-- Rendered by JS -->
       </div>
       <!-- HUD removed from here, moving to globalHUD -->
@@ -371,7 +371,7 @@
     <!-- STEP 2.5: MEDITATION LOADING -->
     <section id="view-meditation-loading" class="view hidden center-content">
       <div class="aw-bg"></div>
-      <div class="loading-prep-container fade-in-up">
+      <div class="loading-prep-container fade-in-pure">
         
         <div class="loading-circle-box">
           <!-- Circular Progress SVG -->
@@ -417,7 +417,7 @@
       </div>
 
       <!-- Phase 1: Body Scan Prompt (5s) -->
-      <div id="marPhase1" class="marination-phase fade-in-up">
+      <div id="marPhase1" class="marination-phase fade-in-pure">
         <h2 class="soft-pulse" data-i18n="mar_notice">Notice what's shifted in your body right now.</h2>
       </div>
 
@@ -432,7 +432,7 @@
       </div>
 
       <!-- Phase 2b: Meditation Offer -->
-      <div id="marPhaseOffer" class="marination-phase fade-in-up hidden" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+      <div id="marPhaseOffer" class="marination-phase fade-in-pure hidden" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
         <h3 style="margin-bottom: 2rem; font-weight: 500; opacity: 0.9;" data-i18n="mar_offer_title">Derinleşmek ister misin?</h3>
       </div>
 
@@ -473,7 +473,7 @@
 
     <!-- Completion Overlay -->
     <section id="view-completion" class="view hidden center-content">
-      <div class="completion-box fade-in-up">
+      <div class="completion-box fade-in-pure">
         <div class="success-icon">✨</div>
         <h2 data-i18n="done_title">Well done.</h2>
         <p data-i18n="done_desc">Your nervous system thanks you.</p>
@@ -483,7 +483,7 @@
 
     <!-- MEDITATIONS VIEW -->
     <section id="view-meditations" class="view hidden">
-      <div class="meditations-content standard-view-content fade-in-up">
+      <div class="meditations-content standard-view-content fade-in-pure">
         <div class="view-header">
           <h2 data-i18n="nav_breathe">Breathe</h2>
           <p data-i18n="med_desc">Select a protocol for your current state.</p>
@@ -491,7 +491,7 @@
         <div id="recommendationsContainer" class="rec-section-container hidden">
           <!-- Rendered by JS -->
         </div>
-        <div id="filterChips" class="filter-chips-container fade-in-up delay-1">
+        <div id="filterChips" class="filter-chips-container fade-in-pure delay-1">
           <!-- Rendered by JS -->
         </div>
         <div id="meditationsList" class="meditations-list">
@@ -502,7 +502,7 @@
 
     <!-- NOTEBOOK VIEW -->
     <section id="view-notebook" class="view hidden">
-      <div class="notebook-content standard-view-content fade-in-up">
+      <div class="notebook-content standard-view-content fade-in-pure">
         <div class="view-header">
           <h2 data-i18n="nav_notebook">Notes</h2>
           <p data-i18n="notebook_desc">Your wellness journey history.</p>
@@ -562,7 +562,7 @@
     </section>
 
      <section id="view-settings" class="view hidden">
-       <div class="settings-content standard-view-content fade-in-up">
+       <div class="settings-content standard-view-content fade-in-pure">
          
          <div class="view-header">
            <h1 data-i18n="nav_profile">Profil</h1>
@@ -706,7 +706,7 @@
 
     <!-- Custom Notification Permission Modal -->
     <div id="notifModal" class="notif-modal-wrapper hidden fade-in">
-      <div class="notif-modal-card glass-panel fade-in-up">
+      <div class="notif-modal-card glass-panel fade-in-pure">
         <div class="notif-icon">🌬️</div>
         <h3 data-i18n="notif_modal_title">Want a daily nudge from Aura?</h3>
         <p data-i18n="notif_modal_desc">We'll gently reach out around the time you checked in today. No streaks, no guilt.</p>

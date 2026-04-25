@@ -156,7 +156,7 @@ function finishGuidedScan() {
   setTimeout(() => {
     elements.marPhase1.classList.add('hidden');
     elements.marPhase2.classList.remove('hidden');
-    elements.marPhase2.classList.add('fade-in-up');
+    elements.marPhase2.classList.add('fade-in-pure');
     renderMarinationSensations();
   }, 4000);
 }
