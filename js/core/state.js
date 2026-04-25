@@ -33,17 +33,7 @@ export const AppState = {
     savoringText: '',
     timestamp: null
   },
-  mockHistory: JSON.parse(safeGetItem('aura_history')) || [
-    { state: 'foggy', subEmotion: 'se_exhausted', sensations: ['mar_tense'], savoringText: 'A good cup of tea', timestamp: Date.now() - 86400000 },
-    { state: 'wired', subEmotion: 'se_anxious', sensations: ['mar_lighter'], savoringText: 'Finished a hard task', timestamp: Date.now() - 172800000 },
-    { state: 'okay', subEmotion: 'se_calm', sensations: ['mar_calmer'], savoringText: 'Sunset walk', timestamp: Date.now() - 259200000 },
-    { state: 'wired', subEmotion: 'se_overwhelmed', sensations: ['mar_tense'], savoringText: 'Deep breathing helped', timestamp: Date.now() - 345600000 },
-    { state: 'okay', subEmotion: 'se_grateful', sensations: ['mar_warmer'], savoringText: 'Call with a friend', timestamp: Date.now() - 432000000 },
-    { state: 'foggy', subEmotion: 'se_heavy', sensations: ['mar_slower'], savoringText: 'Quick nap', timestamp: Date.now() - 518400000 },
-    { state: 'okay', subEmotion: 'se_focused', sensations: ['mar_clearer'], savoringText: 'Flow state in coding', timestamp: Date.now() - 604800000 },
-    { state: 'wired', subEmotion: 'se_anxious', sensations: ['mar_tense'], savoringText: 'Late night project', timestamp: Date.now() - 7200000 }, // Today
-    { state: 'okay', subEmotion: 'se_calm', sensations: ['mar_calmer'], savoringText: 'Tea session', timestamp: Date.now() - 3600000 } // Today
-  ]
+  mockHistory: JSON.parse(safeGetItem('aura_history')) || []
 };
 
 export function saveHistoryToLocal() {
