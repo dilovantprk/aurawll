@@ -474,7 +474,19 @@
     <!-- Completion Overlay -->
     <section id="view-completion" class="view hidden center-content">
       <div class="completion-box fade-in-pure">
-        <div class="success-icon">✨</div>
+        <div class="success-icon">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));">
+            <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="url(#grad_sparkle)" />
+            <path d="M19 3L19.5 5.5L22 6L19.5 6.5L19 9L18.5 6.5L16 6L18.5 5.5L19 3Z" fill="url(#grad_sparkle)" opacity="0.8" />
+            <path d="M5 15L5.5 17.5L8 18L5.5 18.5L5 21L4.5 18.5L2 18L4.5 17.5L5 15Z" fill="url(#grad_sparkle)" opacity="0.6" />
+            <defs>
+              <linearGradient id="grad_sparkle" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFD700" />
+                <stop offset="1" stop-color="#FFA500" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
         <h2 data-i18n="done_title">Well done.</h2>
         <p data-i18n="done_desc">Your nervous system thanks you.</p>
         <button id="returnHomeBtn" class="ghost-btn mt-4" data-i18n="btn_return">Return Home</button>
