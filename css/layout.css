@@ -503,23 +503,23 @@ body.has-nav .dashboard-content {
 }
 
 .header-island .logo {
-  font-weight: 700; /* Bold branding */
-  font-size: 1.3rem;
-  letter-spacing: -0.5px;
+  font-weight: 600; /* Reverted to more balanced branding */
+  font-size: 1.35rem;
+  letter-spacing: -0.6px;
   display: flex;
   align-items: center;
 }
 
 #active-tab-name {
   font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 300; /* Thin page title for contrast */
-  color: rgba(255, 255, 255, 0.6); /* Slightly dimmed */
-  -webkit-text-fill-color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem; /* Reverted to more prominent size */
+  font-weight: 500; /* Reverted to stronger weight for legibility */
+  color: rgba(255, 255, 255, 0.7); /* Slightly brighter but still distinct */
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
   margin-left: 1rem;
   position: relative;
   text-transform: capitalize;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
   display: inline-block;
   vertical-align: middle;
   line-height: 1;
