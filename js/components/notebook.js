@@ -13,7 +13,6 @@ export function initNotebook(config) {
 }
 
 export async function loadNotebook() {
-  if (configProps.navigateTo) configProps.navigateTo('view-notebook');
   if (!elements.notebookEntries) return;
 
   elements.notebookEntries.innerHTML = `

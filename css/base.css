@@ -128,9 +128,8 @@ body {
   flex-direction: column;
   position: relative;
   z-index: 1;
-  overflow: hidden;
-  background: rgba(10, 10, 15, 0.15); /* More transparent for deep bio-gradient integration */
-  box-shadow: 0 0 100px rgba(0,0,0,0.8);
+  overflow: hidden; /* HARD LOCK */
+  background: rgba(10, 10, 15, 0.15);
 }
 
 .view {
@@ -143,15 +142,17 @@ body {
   margin: 0 auto;
   opacity: 0;
   position: absolute;
-  inset: 0; /* Pinned to all corners to prevent vertical jitter */
+  inset: 0; /* Pinned to all corners to prevent ANY jitter */
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal spill during slide */
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   pointer-events: none;
   visibility: hidden;
   will-change: transform, opacity;
-  transform: translateX(0); /* Ensure no vertical default */
+  contain: layout paint; /* Radical stability boost */
+  transform: translateX(0); 
 }
 
 .view.active {
