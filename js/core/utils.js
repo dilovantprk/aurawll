@@ -45,6 +45,7 @@ export function getHumanizedTime(timestamp) {
   
   if (diff < 7 * 24 * 60 * 60 * 1000) {
     const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+    if (days <= 1 || isYesterday) return `${t('time_yesterday')} ${timeStr}`;
     return `${days} ${t('time_days_ago')}`;
   }
 
