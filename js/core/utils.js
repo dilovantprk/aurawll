@@ -121,17 +121,25 @@ export function syncGlobalTheme() {
   const latest = history[0];
   const state = latest.polyvagal_state || latest.state;
   
-  // High-fidelity color mapping (RGB strings for CSS variables)
+  // High-fidelity color mapping
   const colors = {
-    okay: '100, 228, 159',        // Ventral Green
-    ventral: '100, 228, 159',
-    wired: '251, 160, 68',        // Sympathetic Amber
-    sympathetic: '251, 160, 68',
-    foggy: '98, 164, 255',        // Dorsal Blue
-    dorsal: '98, 164, 255'
+    okay: { rgb: '100, 228, 159', hex: '#64E49F' },
+    ventral: { rgb: '100, 228, 159', hex: '#64E49F' },
+    wired: { rgb: '251, 160, 68', hex: '#FBA044' },
+    sympathetic: { rgb: '251, 160, 68', hex: '#FBA044' },
+    foggy: { rgb: '98, 164, 255', hex: '#62A4FF' },
+    dorsal: { rgb: '98, 164, 255', hex: '#62A4FF' }
   };
   
-  const rgb = colors[state] || '133, 141, 255'; // Default Vagal Indigo
-  document.documentElement.style.setProperty('--vagal-color-rgb', rgb);
-  console.log(`[Aura Theme] Syncing background to state: ${state}`);
+  const theme = colors[state] || { rgb: '133, 141, 255', hex: '#858DFF' };
+  
+  const root = document.documentElement;
+  root.style.setProperty('--vagal-color-rgb', theme.rgb);
+  root.style.setProperty('--accent-primary', theme.hex);
+  root.style.setProperty('--vagal-accent', theme.hex);
+  
+  // Also update a slightly brighter version for hover if needed (automated)
+  root.style.setProperty('--accent-primary-hover', theme.hex); 
+
+  console.log(`[Aura Theme] Syncing background & accents to state: ${state}`);
 }
