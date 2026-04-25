@@ -1,6 +1,7 @@
 import { elements } from '../core/dom.js';
 import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
+import { syncGlobalTheme } from '../core/utils.js';
 import { protocols, subEmotionMap, PROTOCOL_META } from '../core/constants.js';
 
 let configProps = {
@@ -383,6 +384,7 @@ async function submitSavoringLog() {
   if (configProps.resetBioFeedback) configProps.resetBioFeedback();
   AppState.justFinishedCheckIn = true;
   AppState.lastCheckInState = AppState.currentCheckIn.state;
+  syncGlobalTheme();
   
   if (configProps.navigateTo) configProps.navigateTo('view-completion');
   if (configProps.setHUD) configProps.setHUD(null);

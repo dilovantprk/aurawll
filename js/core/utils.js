@@ -109,3 +109,29 @@ export function vibrate(type = 'light') {
   
   window.navigator.vibrate(patterns[type] || patterns.light);
 }
+
+/**
+ * Synchronizes the global application theme (background gradient)
+ * based on the user's most recent polyvagal state.
+ */
+export function syncGlobalTheme() {
+  const history = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : (AppState.mockHistory || []);
+  if (!history || history.length === 0) return;
+  
+  const latest = history[0];
+  const state = latest.polyvagal_state || latest.state;
+  
+  // High-fidelity color mapping (RGB strings for CSS variables)
+  const colors = {
+    okay: '100, 228, 159',        // Ventral Green
+    ventral: '100, 228, 159',
+    wired: '251, 160, 68',        // Sympathetic Amber
+    sympathetic: '251, 160, 68',
+    foggy: '98, 164, 255',        // Dorsal Blue
+    dorsal: '98, 164, 255'
+  };
+  
+  const rgb = colors[state] || '133, 141, 255'; // Default Vagal Indigo
+  document.documentElement.style.setProperty('--vagal-color-rgb', rgb);
+  console.log(`[Aura Theme] Syncing background to state: ${state}`);
+}
