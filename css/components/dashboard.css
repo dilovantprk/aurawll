@@ -198,7 +198,7 @@
 
 .hero-btn {
   width: 100%;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   text-align: left;
   margin-top: 1rem;
