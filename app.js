@@ -64,7 +64,13 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Update Header with Physical Glass Slide Effect
   const island = elements.activeTabName?.closest('.header-island');
-  if (island) {
+  const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
+  
+  const isCurrentlyCheckin = checkinSteps.includes(AppState.currentView.replace('view-', ''));
+  const isTargetingCheckin = checkinSteps.includes(newSlug);
+  const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
+
+  if (island && !skipHeaderAnimation) {
     const headerOutClass = direction === 'left' ? 'header-island-slide-out-right' : 'header-island-slide-out-left';
     const headerInClass = direction === 'left' ? 'header-island-slide-in-left' : 'header-island-slide-in-right';
     
@@ -89,6 +95,14 @@ export function navigateTo(viewId, skipHistory = false) {
       
       setTimeout(() => island.classList.remove(headerInClass), 400);
     }, 250);
+  } else if (island && skipHeaderAnimation) {
+    // Just ensure text is synced if needed, but no slide
+    let slug = newSlug;
+    if (checkinSteps.includes(slug)) slug = 'checkin';
+    const tabLabel = t('nav_' + slug) || slug;
+    if (elements.activeTabName && elements.activeTabName.textContent !== tabLabel) {
+      elements.activeTabName.textContent = tabLabel;
+    }
   }
 
   // Handle View Transitions (Physical Slide)
