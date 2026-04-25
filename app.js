@@ -65,8 +65,8 @@ export function navigateTo(viewId, skipHistory = false) {
   // Update Header with Physical Glass Slide Effect
   const island = elements.activeTabName?.closest('.header-island');
   if (island) {
-    const headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
-    const headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
+    const headerOutClass = 'header-island-slide-out-left';
+    const headerInClass = 'header-island-slide-in-right';
     
     island.classList.remove('header-island-slide-out-left', 'header-island-slide-out-right', 'header-island-slide-in-left', 'header-island-slide-in-right');
     island.classList.add(headerOutClass);
