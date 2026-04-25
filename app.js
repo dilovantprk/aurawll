@@ -106,10 +106,20 @@ export function navigateTo(viewId, skipHistory = false) {
     }
   }
 
-  // Handle View Transitions (Standard Physical Slide)
+  // Handle View Transitions (Physical Slide)
   if (currentView) {
-    const outClass = direction === 'left' ? 'view-slide-out-right' : 'view-slide-out-left';
-    const inClass = direction === 'left' ? 'view-slide-in-left' : 'view-slide-in-right';
+    let outClass, inClass;
+    const isCheckin = checkinSteps.includes(newSlug);
+
+    if (isCheckin) {
+      // Check-in Flow: Standard Forward/Backward
+      outClass = direction === 'right' ? 'view-slide-out-left' : 'view-slide-out-right';
+      inClass = direction === 'right' ? 'view-slide-in-right' : 'view-slide-in-left';
+    } else {
+      // Home Tabs: Spatial Navigation
+      outClass = direction === 'left' ? 'view-slide-out-right' : 'view-slide-out-left';
+      inClass = direction === 'left' ? 'view-slide-in-left' : 'view-slide-in-right';
+    }
 
     currentView.classList.add(outClass);
     target.classList.remove('hidden');
@@ -118,6 +128,7 @@ export function navigateTo(viewId, skipHistory = false) {
     
     setTimeout(() => {
       currentView.classList.add('hidden');
+      currentView.classList.remove('active', 'view-slide-out-left', 'view-slide-out-right');
       target.classList.remove('view-slide-in-right', 'view-slide-in-left');
       isNavigating = false;
     }, 500);
