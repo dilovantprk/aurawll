@@ -8,6 +8,8 @@ let galaxyAnimationId = null;
 
 let isModalOpen = false;
 let lastInfoBtn = null;
+let isInitialized = false;
+
 let configProps = {
   pauseExercise: null,
   pauseMeditation: null,
@@ -20,6 +22,8 @@ let configProps = {
 
 export function initModals(config) {
   Object.assign(configProps, config);
+  if (isInitialized) return;
+  isInitialized = true;
   
   const closeAll = () => {
     hideInfoModal();
