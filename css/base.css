@@ -191,68 +191,11 @@ body {
 
 /* Removed duplicate .view rules */
 
-#macro-heatmap {
-    height: 280px;
-    background: radial-gradient(circle at center, rgba(var(--vagal-color-rgb, 133, 141, 255), 0.05) 0%, transparent 70%);
-}
 
-.insight-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(16px); /* Reduced from 25px */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 1.5rem;
-    transition: transform 0.5s var(--spring-easing), background 0.5s ease, box-shadow 0.5s ease;
-    will-change: transform;
-}
 
-.insight-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.4);
-}
 
-.glass-panel {
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1.5px solid var(--glass-border);
-    border-radius: 36px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--glass-shadow);
-    transition: transform 0.5s var(--spring-easing), opacity 0.5s ease;
-    will-change: transform;
-    cursor: pointer;
-}
 
-.glass-panel:active {
-    transform: scale(0.97);
-    transition: transform 0.15s ease;
-}
 
-#view-insight {
-    padding-top: 1rem;
-    padding-bottom: 5rem;
-}
-
-#view-insight .standard-view-content {
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-#insight-hero-title {
-    font-weight: 300;
-    font-size: clamp(1.6rem, 5vw, 2.2rem);
-    letter-spacing: -0.5px;
-    margin-bottom: 0.2rem;
-    background: linear-gradient(to bottom, #fff, var(--vagal-accent, #A8E6CF));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
 
 .liquid-border {
   position: relative;
@@ -321,20 +264,6 @@ body {
 @keyframes drawPath {
     to { stroke-dashoffset: 0; }
 }
-
-.resilience-pulse {
-    animation: resiliencePulsing 3s ease-in-out infinite;
-}
-
-@keyframes resiliencePulsing {
-    0%, 100% { filter: drop-shadow(0 0 5px var(--vagal-accent)) brightness(1); }
-    50% { filter: drop-shadow(0 0 15px #fff) brightness(1.2); color: #fff; }
-}
-
-/* Dynamic Themes */
-#view-insight.theme-ventral { --vagal-accent: #A8E6CF; --vagal-glow: rgba(168, 230, 207, 0.4); }
-#view-insight.theme-sympathetic { --vagal-accent: #FFAA75; --vagal-glow: rgba(255, 170, 117, 0.4); }
-#view-insight.theme-dorsal { --vagal-accent: #A2D1FF; --vagal-glow: rgba(162, 209, 255, 0.4); }
 
 /* Animation System — CLEAN FADE ONLY */
 /* Stagger animations moved to animations.css for unification */
@@ -429,115 +358,8 @@ button {
   transition: var(--transition-smooth);
 }
 
-/* Meditation Loading Transition */
-.loading-prep-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 320px;
-  width: 100%;
-}
-
-.loading-prep-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-  width: 100%;
-}
-
-.loading-circle-box {
-  position: relative;
-  width: 240px;
-  height: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.loading-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.loading-circle-bg {
-  fill: none;
-  stroke: rgba(133, 141, 255, 0.1);
-  stroke-width: 8;
-}
-
-.loading-circle-fill {
-  fill: none;
-  stroke: #858DFF;
-  stroke-width: 8;
-  stroke-linecap: round;
-  stroke-dasharray: 283; /* 2 * PI * 45 */
-  stroke-dashoffset: 283;
-  transition: stroke-dashoffset 5s linear;
-  filter: drop-shadow(0 0 16px rgba(133, 141, 255, 0.4));
-}
-
-.loading-icon {
-  font-size: 4rem;
-  font-weight: 500;
-  color: var(--text-main);
-  filter: drop-shadow(0 0 15px rgba(133, 141, 255, 0.4));
-  transition: all 0.3s ease;
-}
-
-.hero-btn {
-  width: 100%;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 1.8rem;
-  padding: 2.2rem 2rem;
-}
-
-.hero-btn .cockpit-icon {
-  width: 56px;
-  height: 56px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.hero-btn .cockpit-label {
-  color: var(--vagal-accent, #6ee7c7);
-  opacity: 1;
-  font-weight: 700;
-}
-
-.hero-btn .cockpit-title {
-  font-size: 1.4rem;
-  margin-top: 2px;
-}
-
-.loading-text-box h2 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-main);
-}
-
-.loading-text-box p {
-  font-size: 1rem;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
+/* hero-btn lives in css/components/dashboard.css */
+/* loading-prep styles live in css/components/meditation.css */
 
 .primary-btn {
   background: rgba(255, 255, 255, 0.05);
@@ -659,139 +481,8 @@ textarea.glass-input { resize: vertical; min-height: 140px; }
   text-align: center;
 }
 
-/* Loader (Refactored to mirror Orbits theme) */
-#view-loading {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12vh 0 10vh;
-  background: var(--bg-primary);
-  opacity: 1;
-  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-#view-loading.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-.aw-loading-pulse {
-  animation: aw-loading-glow 1.5s ease-in-out infinite alternate !important;
-}
-@keyframes aw-loading-glow {
-  from { opacity: 0.4; transform: scale(0.95); box-shadow: 0 0 10px rgba(133, 141, 255, 0.3); }
-  to   { opacity: 1; transform: scale(1.1); box-shadow: 0 0 30px rgba(133, 141, 255, 0.6); }
-}
-
-/* Auth View (Aura Entry v3) */
-.auth-card {
-  margin: auto;
-  width: 100%;
-  max-width: 400px;
-  padding: 2.5rem;
-  border-radius: 32px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-}
-
-.logo-large { 
-  font-size: clamp(2.5rem, 8vw, 3.5rem); 
-  font-weight: 600; 
-  letter-spacing: -1.5px;
-  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.4));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.auth-tabs { 
-  display: flex; 
-  position: relative;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 4px;
-  border-radius: 99px;
-  margin-bottom: 2.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.tabs-pill {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  height: calc(100% - 8px);
-  width: calc(50% - 4px);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 99px;
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  pointer-events: none;
-}
-
-.auth-tab {
-  flex: 1; 
-  padding: 0.8rem; 
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  position: relative;
-  z-index: 1;
-  transition: color 0.3s ease;
-  border-bottom: none !important;
-}
-
-.auth-tab.active { 
-  color: #fff; 
-}
-
-.auth-form .input-group {
-  position: relative;
-  margin-bottom: 1.5rem;
-}
-
-.auth-form input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1rem 0;
-  color: #fff;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  border-radius: 0;
-}
-
-.auth-form input:focus {
-  outline: none;
-  border-bottom-color: var(--vagal-accent, var(--accent-primary));
-  box-shadow: 0 4px 15px -10px rgba(255, 255, 255, 0.2);
-}
-
-.auth-form input::placeholder {
-  color: rgba(255, 255, 255, 0.2);
-  font-weight: 300;
-  letter-spacing: 0.5px;
-}
-
-/* Dashboard Hero styling integrated into main .hero-btn and .cockpit-card classes */
-.welcome-box { margin-bottom: 2rem; }
-.welcome-box h2 { font-size: clamp(2rem, 10vw, 2.8rem); margin-bottom: 0.2rem; letter-spacing: -1px; }
-.hero-btn::before {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle at center, rgba(133, 141, 255, 0.2) 0%, transparent 70%);
-  opacity: 0; transition: opacity 0.6s ease;
-}
-.hero-btn:hover::before { opacity: 1; }
-.pulse-hover:hover { transform: translateY(-4px) scale(1.01); border-color: rgba(133, 141, 255, 0.4); }
-.pulse-hover:active { transform: scale(0.98); }
-
-.hero-icon { font-size: 3rem; margin-bottom: 1.2rem; }
-.hero-btn h3 { font-size: 1.6rem; color: var(--text-main); margin-bottom: 0.6rem; }
-.hero-btn p { font-size: 1.05rem; opacity: 0.8; }
+/* Auth styles → css/components/auth.css */
+/* Dashboard hero styles → css/components/dashboard.css */
  
 /* Mobile Padding Refinement */
 @media (max-width: 600px) {

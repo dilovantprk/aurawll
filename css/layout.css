@@ -287,45 +287,7 @@ body.has-nav .dashboard-content {
 }
 
 
-/* --- MARINATION & SAVORING LOG --- */
-.marination-phase {
-  width: 100%;
-  max-width: 600px;
-  min-height: 450px;
-  padding: 2rem;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-  text-align: center;
-}
 
-.meditation-card:hover {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-}
-
-.meditation-card:active {
-  transform: scale(0.97);
-}
-
-.marination-phase {
-  width: 100%;
-  max-width: 600px;
-  min-height: 450px;
-  padding: 2rem;
-  display: none; /* Changed to display:none by default */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-  text-align: center;
-}
-.marination-phase:not(.hidden) {
-  display: flex !important;
-}
 
 /* === MODERN FULL-WIDTH BOTTOM NAVIGATION (Spotify/Instagram Style) === */
 .mobile-nav {
@@ -558,112 +520,9 @@ body.has-nav .dashboard-content {
   }
 }
 
-.meditation-card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  background: rgba(133, 141, 255, 0.1);
-  border: 1px solid rgba(133, 141, 255, 0.15);
-  flex-shrink: 0;
-}
 
-.meditation-card-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
 
-.meditation-card-title {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--text-main);
-}
 
-.meditation-card-meta {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.65); /* Increased contrast */
-  font-weight: 300;
-}
-
-.meditation-card-arrow {
-  color: rgba(255, 255, 255, 0.5); /* Clearer presence */
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.meditation-card:hover .meditation-card-arrow {
-  opacity: 1;
-  transform: translateX(3px);
-}
-
-/* --- DESKTOP REFINEMENTS FOR MEDITATIONS (768px+) --- */
-@media (min-width: 768px) {
-  #view-meditations .standard-view-content {
-    max-width: 800px; /* Wider canvas for desktop list */
-    padding-top: 8.5rem; /* Increased top space as requested */
-    padding-bottom: 4rem; /* Less excessive bottom space */
-  }
-
-  /* Stable 2-Column Grid for Meditations */
-  #view-meditations .meditations-list {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-    width: 100%;
-  }
-
-  #view-meditations .meditations-list .meditation-card {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  /* Unified Profile Width & Alignment (540px for better presence) */
-  #view-settings .standard-view-content {
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #view-settings .identity-card-v2,
-  #view-settings .stagger-2,
-  #view-settings .stagger-3 {
-    width: 100% !important;
-    max-width: 540px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-
-  /* --- INSIGHT (THE VAGAL MIRROR) DESKTOP OVERHAUL --- */
-  #view-insight .standard-view-content {
-    padding-top: 6rem;
-  }
-
-  #view-insight .heatmap-container {
-    height: 420px !important;
-  }
-
-  #view-insight .vagal-triangle-container {
-    max-width: 400px !important;
-    margin-top: 40px;
-  }
-
-  #insight-hero-title {
-    font-size: 2.4rem;
-  }
-
-  /* Insight cards: better spacing on wide screens */
-  #view-insight .glass-panel {
-    padding: 2.5rem 2rem;
-  }
-}
 
 
 body.nav-hidden .desktop-header-nav {

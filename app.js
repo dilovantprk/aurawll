@@ -293,7 +293,14 @@ async function initAppBootstrap() {
       import('./firebase.js'),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase timeout')), 3000))
     ]);
-    if (fb) initModals({ fb });
+    if (fb) {
+      initModals({ fb });
+      if (fb.isInitialized && fb.auth) {
+        fb.onAuthStateChanged(fb.auth, (user) => {
+          if (user) startAppFlow(user);
+        });
+      }
+    }
   } catch (err) {
     console.error("[Aura] Firebase load failed", err);
   }
@@ -377,20 +384,6 @@ async function initAppBootstrap() {
   });
 
   startAppFlow(null);
-
-  try {
-    fb = await Promise.race([
-      import('./firebase.js'),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase timeout')), 3000))
-    ]);
-    if (fb && fb.isInitialized && fb.auth) {
-      fb.onAuthStateChanged(fb.auth, (user) => {
-        if (user) startAppFlow(user);
-      });
-    }
-  } catch (err) {
-    console.error("[Aura] Firebase load failed", err);
-  }
 
   initSwipeNavigation();
 }

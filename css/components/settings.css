@@ -561,3 +561,22 @@
   }
 }
 
+/* --- DESKTOP REFINEMENTS FOR SETTINGS (768px+) --- */
+@media (min-width: 768px) {
+  /* Unified Profile Width & Alignment (540px for better presence) */
+  #view-settings .standard-view-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #view-settings .identity-card-v2,
+  #view-settings .stagger-2,
+  #view-settings .stagger-3 {
+    width: 100% !important;
+    max-width: 540px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}

@@ -69,4 +69,27 @@
 #view-insight.theme-sympathetic { --vagal-accent: #FFAA75; --vagal-glow: rgba(255, 170, 117, 0.4); }
 #view-insight.theme-dorsal { --vagal-accent: #A2D1FF; --vagal-glow: rgba(162, 209, 255, 0.4); }
 
+/* --- INSIGHT (THE VAGAL MIRROR) DESKTOP OVERHAUL --- */
+@media (min-width: 768px) {
+  #view-insight .standard-view-content {
+    padding-top: 6rem;
+  }
 
+  #view-insight .heatmap-container {
+    height: 420px !important;
+  }
+
+  #view-insight .vagal-triangle-container {
+    max-width: 400px !important;
+    margin-top: 40px;
+  }
+
+  #insight-hero-title {
+    font-size: 2.4rem;
+  }
+
+  /* Insight cards: better spacing on wide screens */
+  #view-insight .glass-panel {
+    padding: 2.5rem 2rem;
+  }
+}
