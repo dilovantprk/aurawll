@@ -166,9 +166,19 @@ export function initSettings(config) {
 
 export function updateSettingsView() {
   const localHistory = AppState.mockHistory || [];
-  const name = AppState.user?.displayName || localStorage.getItem('aura_guest_name') || (AppState.lang === 'tr' ? 'Kaşif' : 'Explorer');
+  const name = AppState.user?.displayName || localStorage.getItem('aura_guest_name');
+  const earnedBadgeIds = calculateEarnedBadges(localHistory);
   
-  if (elements.userDisplayName) elements.userDisplayName.textContent = name;
+  let displayTitle = AppState.lang === 'tr' ? 'Kaşif' : 'Explorer';
+  if (earnedBadgeIds.length > 0) {
+    const lastBadgeId = earnedBadgeIds[earnedBadgeIds.length - 1];
+    const lastBadge = BADGES[lastBadgeId];
+    if (lastBadge) displayTitle = t(lastBadge.titleKey);
+  }
+
+  const finalName = name ? `${name} | ${displayTitle}` : displayTitle;
+  
+  if (elements.userDisplayName) elements.userDisplayName.textContent = finalName;
   
   if (elements.uniqueDaysStats) {
     const uniqueDays = new Set(localHistory.map(h => new Date(h.timestamp).toDateString())).size || 0;
