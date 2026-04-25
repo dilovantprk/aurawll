@@ -143,8 +143,7 @@ body {
   margin: 0 auto;
   opacity: 0;
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0; /* Pinned to all corners to prevent vertical jitter */
   height: 100%;
   overflow-y: auto;
   scrollbar-width: none;
@@ -152,7 +151,7 @@ body {
   pointer-events: none;
   visibility: hidden;
   will-change: transform, opacity;
-  /* Transitions removed to prevent conflict with carousel animations */
+  transform: translateX(0); /* Ensure no vertical default */
 }
 
 .view.active {
@@ -160,7 +159,6 @@ body {
   transform: translateX(0);
   pointer-events: auto;
   visibility: visible;
-  position: relative;
   z-index: 10;
 }
 
