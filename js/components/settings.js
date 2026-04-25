@@ -4,6 +4,8 @@ import { AppState, safeSetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
 import { openCommunityModal } from './modals.js';
 
+import { NotificationService } from '../services/notifications.js';
+
 let configProps = {};
 
 export function initSettings(config) {
@@ -13,6 +15,8 @@ export function initSettings(config) {
     elements.hapticToggle.addEventListener('change', (e) => {
       AppState.hapticEnabled = e.target.checked;
       safeSetItem('aura_haptic', AppState.hapticEnabled);
+      // Update engine immediately
+      if (typeof SensoryEngine !== 'undefined') SensoryEngine.hapticEnabled = AppState.hapticEnabled;
     });
     elements.hapticToggle.checked = AppState.hapticEnabled;
   }
@@ -21,9 +25,8 @@ export function initSettings(config) {
     elements.uiSoundsToggle.addEventListener('change', (e) => {
       AppState.uiSoundsEnabled = e.target.checked;
       safeSetItem('aura_ui_sounds', AppState.uiSoundsEnabled);
-      // Directly update engine
+      // Update engine immediately
       if (typeof SensoryEngine !== 'undefined') SensoryEngine.uiSoundsEnabled = AppState.uiSoundsEnabled;
-      else if (configProps.setUISoundsEnabled) configProps.setUISoundsEnabled(AppState.uiSoundsEnabled);
     });
     elements.uiSoundsToggle.checked = AppState.uiSoundsEnabled;
   }
@@ -56,23 +59,9 @@ export function initSettings(config) {
     if (elements.volumeValLabel) elements.volumeValLabel.textContent = `${AppState.appVolume}%`;
   }
 
-  // Notifications — auto-detect most frequent check-in time
-  function getMostFrequentCheckinTime() {
-    const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
-    if (!data || data.length === 0) return '21:00';
-    const hourCounts = {};
-    let maxCount = 0;
-    let mostFrequentHour = 21;
-    data.forEach(item => {
-      const hour = new Date(item.timestamp).getHours();
-      hourCounts[hour] = (hourCounts[hour] || 0) + 1;
-      if (hourCounts[hour] > maxCount) { maxCount = hourCounts[hour]; mostFrequentHour = hour; }
-    });
-    return `${mostFrequentHour.toString().padStart(2, '0')}:00`;
-  }
-
+  // Notifications
   const savedNotif = localStorage.getItem('aura_notif') === 'true';
-  const autoTime = getMostFrequentCheckinTime();
+  const savedTime = localStorage.getItem('aura_notif_time') || '21:00';
 
   if (elements.notifToggleCheckbox) {
     elements.notifToggleCheckbox.checked = savedNotif;
@@ -81,17 +70,22 @@ export function initSettings(config) {
       const enabled = e.target.checked;
       localStorage.setItem('aura_notif', enabled);
       if (elements.nudgeTimeContainer) {
-        if (enabled) elements.nudgeTimeContainer.classList.remove('hidden');
-        else elements.nudgeTimeContainer.classList.add('hidden');
+        if (enabled) {
+          elements.nudgeTimeContainer.classList.remove('hidden');
+          // Ask for permission if enabling
+          NotificationService.showModal();
+        } else {
+          elements.nudgeTimeContainer.classList.add('hidden');
+        }
       }
     });
   }
 
   if (elements.nudgeTimePicker) {
-    elements.nudgeTimePicker.value = autoTime;
-    elements.nudgeTimePicker.disabled = true;
-    elements.nudgeTimePicker.style.opacity = '0.7';
-    elements.nudgeTimePicker.style.cursor = 'default';
+    elements.nudgeTimePicker.value = savedTime;
+    elements.nudgeTimePicker.addEventListener('change', (e) => {
+      localStorage.setItem('aura_notif_time', e.target.value);
+    });
   }
 
   // Export Data

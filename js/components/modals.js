@@ -377,19 +377,25 @@ function renderPersonalStats(history = []) {
 }
 
 async function renderCommunityStats() {
-  const totalCheckins = 42083 + Math.floor(Math.random() * 100);
+  const baseCount = 42083;
+  const growth = Math.floor(Date.now() / 100000) % 500; // Fake but stable growth
+  const totalCheckins = baseCount + growth;
+  
   if (elements.commCheckinCount) {
     elements.commCheckinCount.innerHTML = t('comm_checkin_count').replace('{count}', `<span>${totalCheckins.toLocaleString()}</span>`);
   }
   
-  // Random distribution for mock feel
-  const v = 45, s = 30, d = 25;
+  // Dynamic distribution for mock feel
+  const v = 48, s = 29, d = 23;
   if (elements.distVentral) elements.distVentral.style.width = `${v}%`;
   if (elements.distSympathetic) elements.distSympathetic.style.width = `${s}%`;
   if (elements.distDorsal) elements.distDorsal.style.width = `${d}%`;
   
   if (elements.commTopProtocol) elements.commTopProtocol.textContent = t('title_p_resonance');
-  if (elements.commActiveNow) elements.commActiveNow.textContent = 12 + Math.floor(Math.random() * 20);
+  if (elements.commActiveNow) {
+    const active = 18 + (Math.floor(Date.now() / 60000) % 15);
+    elements.commActiveNow.textContent = active;
+  }
 }
 
 function startGalaxy() {

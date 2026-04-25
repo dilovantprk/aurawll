@@ -28,12 +28,27 @@ export function calculatePolyvagalState(a, v) {
 
 export function getHumanizedTime(timestamp) {
   if (!timestamp) return '...';
-  const now = Date.now();
-  const diff = now - timestamp;
-  if (diff < 60000) return t('time_just_now');
-  if (diff < 3600000) return `${Math.floor(diff / 60000)} ${t('time_mins_ago')}`;
+  const now = new Date();
   const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const diff = now.getTime() - date.getTime();
+  
+  const isToday = now.toDateString() === date.toDateString();
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = yesterday.toDateString() === date.toDateString();
+
+  const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  if (diff < 60000) return t('time_just_now');
+  if (isToday) return `${t('time_today')} ${timeStr}`;
+  if (isYesterday) return `${t('time_yesterday')} ${timeStr}`;
+  
+  if (diff < 7 * 24 * 60 * 60 * 1000) {
+    const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+    return `${days} ${t('time_days_ago')}`;
+  }
+
+  return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
 }
 
 export function renderMiniDeltaSVG(entry) {

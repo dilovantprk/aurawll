@@ -372,6 +372,7 @@
 .comm-tab-pane {
   display: none;
   animation: fadeIn 0.4s ease forwards;
+  padding-top: 1.5rem; /* Space below tabs */
 }
 
 .comm-tab-pane.active {
@@ -383,7 +384,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem; /* Increased margin */
 }
 
 .stat-card {
@@ -697,5 +698,74 @@
   }
   .aw-orbits { width: 240px; height: 240px; }
   .info-bottom-sheet { padding: 1.5rem 1.5rem calc(1.5rem + var(--safe-bottom)); }
+}
+
+/* --- NOTIFICATION PERMISSION MODAL --- */
+.notif-modal-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 1000005; /* Above standard modals & nav */
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  display: flex;
+  align-items: center; /* Center vertically for focus */
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0s 0.5s;
+}
+
+.notif-modal-wrapper:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease, visibility 0s 0s;
+}
+
+.notif-modal-card {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(20, 20, 25, 0.85);
+  backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 36px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.6s var(--spring-easing);
+}
+
+.notif-modal-wrapper:not(.hidden) .notif-modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.notif-icon {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
+}
+
+.notif-modal-card h3 {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.notif-modal-card p {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 300;
 }
 

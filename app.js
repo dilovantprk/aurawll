@@ -24,6 +24,7 @@ import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth } from './js/components/auth.js';
+import { NotificationService } from './js/services/notifications.js';
 
 // Services
 import { signInAsGuest, logoutUser } from './authService.js';
@@ -266,8 +267,7 @@ async function initAppBootstrap() {
     getExerciseParams: () => AppState.currentExercise
   });
   renderLocalization(); 
-  
-  renderLocalization(); 
+  NotificationService.init();
 
   try {
     fb = await Promise.race([
@@ -431,6 +431,20 @@ function initSwipeNavigation() {
 function updateUI() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.getAttribute('data-i18n'));
+  });
+}
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('[Aura] SW Registered', reg.scope))
+      .catch(err => console.warn('[Aura] SW Registration failed', err));
+    
+    // Firebase Messaging SW registration (specifically for push)
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then(reg => console.log('[Aura] FCM SW Registered'))
+      .catch(err => console.warn('[Aura] FCM SW failed', err));
   });
 }
 
