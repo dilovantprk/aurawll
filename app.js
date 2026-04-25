@@ -450,9 +450,9 @@ function initSwipeNavigation() {
     const deltaY = touchEndY - touchStartY;
     if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
       if (deltaX < 0 && currentIndex < tabs.length - 1) {
-        navigateTo(`view-${tabs[currentIndex + 1]}`);
+        navigateTo(`view-${tabs[currentIndex + 1]}`, 'right');
       } else if (deltaX > 0 && currentIndex > 0) {
-        navigateTo(`view-${tabs[currentIndex - 1]}`);
+        navigateTo(`view-${tabs[currentIndex - 1]}`, 'left');
       }
     }
   }, { passive: true });
