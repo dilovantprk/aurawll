@@ -41,6 +41,18 @@ export function navigateTo(viewId, skipHistory = false) {
   const target = document.getElementById(viewId);
   if (!target) return;
 
+  // Determine Direction
+  const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
+  const oldSlug = currentView ? currentView.id.replace('view-', '') : 'dashboard';
+  const newSlug = viewId.replace('view-', '');
+  const oldIndex = tabs.indexOf(oldSlug);
+  const newIndex = tabs.indexOf(newSlug);
+  
+  // Decide if we are going left or right (physical sense)
+  // If newIndex > oldIndex -> Everything moves LEFT (incoming from right)
+  // If newIndex < oldIndex -> Everything moves RIGHT (incoming from left)
+  const direction = (newIndex > oldIndex) ? 'left' : 'right';
+
   // Global HUD Reset
   setHUD(null);
 
@@ -48,53 +60,59 @@ export function navigateTo(viewId, skipHistory = false) {
     history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', ''));
   }
 
-  // Update Active Tab Name in Header
+  // Update Header with Slide Effect
   if (elements.activeTabName) {
-    let slug = viewId.replace('view-', '');
-    
-    // Map check-in steps to "Check-in"
+    let slug = newSlug;
     const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
     if (checkinSteps.includes(slug)) slug = 'checkin';
-    
     const tabLabel = t('nav_' + slug) || slug;
     
-    if (elements.activeTabName && elements.activeTabName.textContent !== tabLabel) {
-      elements.activeTabName.textContent = tabLabel;
-      elements.activeTabName.classList.remove('header-text-animate');
-      const island = elements.activeTabName.closest('.header-island');
-      if (island) island.classList.remove('liquid-pulse-animate');
+    if (elements.activeTabName.textContent !== tabLabel) {
+      elements.activeTabName.classList.add('header-text-slide-out');
       
-      void elements.activeTabName.offsetWidth; // trigger reflow
-      
-      elements.activeTabName.classList.add('header-text-animate');
-      if (island) island.classList.add('liquid-pulse-animate');
-    }
-
-    // Desktop Sync
-    const desktopActiveName = document.getElementById('desktop-active-tab-name');
-    if (desktopActiveName) {
-      desktopActiveName.classList.remove('visible');
       setTimeout(() => {
-        if (tabLabel) desktopActiveName.textContent = tabLabel;
-        desktopActiveName.classList.add('visible');
-      }, 50);
+        elements.activeTabName.textContent = tabLabel;
+        elements.activeTabName.classList.remove('header-text-slide-out');
+        elements.activeTabName.classList.add('header-text-slide-in');
+        
+        const island = elements.activeTabName.closest('.header-island');
+        if (island) {
+          island.classList.remove('liquid-pulse-animate');
+          void island.offsetWidth;
+          island.classList.add('liquid-pulse-animate');
+        }
+        
+        setTimeout(() => elements.activeTabName.classList.remove('header-text-slide-in'), 300);
+      }, 150);
     }
   }
 
-  if (elements.views) {
-    Array.from(elements.views).forEach(v => {
-      v.classList.add('hidden');
-      v.classList.remove('active', 'opacity-100', 'translate-y-0');
-    });
+  // Handle View Transitions (Physical Slide)
+  if (currentView) {
+    // 1. Prepare outgoing view
+    const outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
+    currentView.classList.add(outClass);
+    
+    // 2. Prepare incoming view
+    const inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
+    target.classList.remove('hidden');
+    target.classList.add('active', inClass);
+    target.scrollTop = 0;
+    
+    // 3. Cleanup after animation
+    setTimeout(() => {
+      currentView.classList.add('hidden');
+      currentView.classList.remove('active', 'view-slide-out-left', 'view-slide-out-right');
+      target.classList.remove('view-slide-in-right', 'view-slide-in-left');
+    }, 500);
+  } else {
+    // Initial load
+    if (elements.views) {
+      Array.from(elements.views).forEach(v => v.classList.add('hidden'));
+    }
+    target.classList.remove('hidden');
+    target.classList.add('active');
   }
-
-  target.classList.remove('hidden');
-  target.scrollTop = 0;
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      target.classList.add('active', 'opacity-100', 'translate-y-0');
-    });
-  });
 
   // Feature Triggers
   if (viewId === 'view-dashboard') loadDashboard();
@@ -103,39 +121,19 @@ export function navigateTo(viewId, skipHistory = false) {
   if (viewId === 'view-insight') updateInsightView(AppState.userHistory || AppState.mockHistory);
   if (viewId === 'view-settings') updateSettingsView();
   
-  // Push physical translations to static DOM elements
   renderLocalization();
 
-  const hideMobileHeaderViews = ['view-welcome', 'view-auth', 'view-onboarding'];
   const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-onboarding', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
-  
-  const shouldHideMobileHeader = hideMobileHeaderViews.includes(viewId);
   const shouldHideImmersionNav = hideImmersionNavViews.includes(viewId);
   
-  // Mobile Header Visibility (#mobile-header)
-  if (elements.header) {
-    if (shouldHideMobileHeader) elements.header.classList.add('hidden');
-    else elements.header.classList.remove('hidden');
-  }
-
-  // Desktop Nav Visibility (Immersive behavior)
-  if (elements.desktopNav) {
-    if (shouldHideImmersionNav) elements.desktopNav.classList.add('hidden', 'nav-hidden');
-    else elements.desktopNav.classList.remove('hidden', 'nav-hidden');
-  }
-
-  // Mobile Nav Visibility (Immersive behavior)
+  // Nav Visibility
   if (elements.mobileNav) {
     if (shouldHideImmersionNav) {
       elements.mobileNav.classList.add('nav-hidden');
-      elements.mobileNav.classList.remove('nav-visible');
       document.body.classList.add('nav-hidden');
-      document.body.classList.remove('has-nav');
     } else {
       elements.mobileNav.classList.remove('nav-hidden');
-      elements.mobileNav.classList.add('nav-visible');
       document.body.classList.remove('nav-hidden');
-      document.body.classList.add('has-nav');
     }
   }
 
