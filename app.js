@@ -65,24 +65,18 @@ export function navigateTo(viewId, skipHistory = false) {
   const checkinSteps = ['somatic-entry', 'affect-grid', 'emotion-refinement', 'exercise', 'savoring', 'completion', 'meditation-loading'];
   const isCurrentlyCheckin = checkinSteps.includes(AppState.currentView?.replace('view-', '') || '');
   const isTargetingCheckin = checkinSteps.includes(newSlug);
-  const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
-  const isCheckin = checkinSteps.includes(newSlug);
+  
+  // Standard Navigation Logic (Standard Mobile Wizard)
+  // Forward (right) = Slide Out Left, In from Right
+  // Backward (left) = Slide Out Right, In from Left
   
   // Update Header with Physical Glass Slide Effect
   const island = elements.activeTabName?.closest('.header-island');
+  const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
 
   if (island && !skipHeaderAnimation) {
-    let headerOutClass, headerInClass;
-    
-    if (isCheckin) {
-      // STANDARD Header Logic
-      headerOutClass = direction === 'left' ? 'header-island-slide-out-right' : 'header-island-slide-out-left';
-      headerInClass = direction === 'left' ? 'header-island-slide-in-left' : 'header-island-slide-in-right';
-    } else {
-      // INVERTED Header Logic
-      headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
-      headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
-    }
+    const headerOutClass = direction === 'left' ? 'header-island-slide-out-left' : 'header-island-slide-out-right';
+    const headerInClass = direction === 'left' ? 'header-island-slide-in-right' : 'header-island-slide-in-left';
     
     island.classList.remove('header-island-slide-out-left', 'header-island-slide-out-right', 'header-island-slide-in-left', 'header-island-slide-in-right');
     island.classList.add(headerOutClass);
@@ -112,19 +106,10 @@ export function navigateTo(viewId, skipHistory = false) {
     }
   }
 
-  // Handle View Transitions (Physical Slide)
+  // Handle View Transitions (Standard Physical Slide)
   if (currentView) {
-    let outClass, inClass;
-    
-    if (isCheckin) {
-      // STANDARD View Logic
-      outClass = direction === 'left' ? 'view-slide-out-right' : 'view-slide-out-left';
-      inClass = direction === 'left' ? 'view-slide-in-left' : 'view-slide-in-right';
-    } else {
-      // INVERTED View Logic
-      outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
-      inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
-    }
+    const outClass = direction === 'left' ? 'view-slide-out-left' : 'view-slide-out-right';
+    const inClass = direction === 'left' ? 'view-slide-in-right' : 'view-slide-in-left';
 
     currentView.classList.add(outClass);
     target.classList.remove('hidden');
@@ -409,11 +394,11 @@ async function initAppBootstrap() {
         let direction = 'right';
         // If coming from a deep view (not in main tabs) to a main tab, always treat as 'left'
         if (currentIndex === -1 && targetIndex !== -1) {
-          direction = 'right'; // Inverted
+          direction = 'left';
         } else if (targetIndex < currentIndex) {
-          direction = 'right'; // Inverted
+          direction = 'left';
         } else {
-          direction = 'left'; // Inverted
+          direction = 'right';
         }
         
         navigateTo('view-' + targetSlug, direction);
@@ -488,11 +473,11 @@ function initSwipeNavigation() {
       isSwiping = false;
       return;
     }
-    // Determine target view based on INVERTED CAROUSEL logic
-    // In this model: Swipe RIGHT (deltaX > 0) pulls the NEXT page from the left.
-    // Swipe LEFT (deltaX < 0) pulls the PREVIOUS page from the right.
-    const direction = currentDeltaX > 0 ? 1 : -1; 
-    const newTargetIndex = currentIndex - direction; // adjusted for swipe logic
+    // Determine target view based on STANDARD mobile logic
+    // Swipe LEFT (deltaX < 0) pulls the NEXT page from the right (100%)
+    // Swipe RIGHT (deltaX > 0) pulls the PREVIOUS page from the left (-100%)
+    const direction = currentDeltaX < 0 ? 1 : -1; 
+    const newTargetIndex = currentIndex + direction;
     
     if (newTargetIndex >= 0 && newTargetIndex < tabs.length) {
       const newTargetView = document.getElementById(`view-${tabs[newTargetIndex]}`);
@@ -510,11 +495,10 @@ function initSwipeNavigation() {
         }
       }
       
-      // Move both views - PHYSICALLY SYNCED WITH FINGER
+      // Move both views - STANDARD PHYSICAL SYNC
       currentView.style.transform = `translateX(${currentDeltaX}px)`;
       if (targetView) {
-        // If pulling next (direction > 0, currentDeltaX > 0), target is at -100%
-        const offset = currentDeltaX > 0 ? '-100%' : '100%';
+        const offset = direction > 0 ? '100%' : '-100%';
         targetView.style.transform = `translateX(calc(${offset} + ${currentDeltaX}px))`;
       }
     } else {
@@ -530,14 +514,13 @@ function initSwipeNavigation() {
     const success = Math.abs(currentDeltaX) > threshold && targetView;
 
     if (success) {
-      // In inverted logic: swipe right -> direction 'right' (forward)
-      const navDirection = currentDeltaX > 0 ? 'right' : 'left'; 
+      const navDirection = currentDeltaX < 0 ? 'right' : 'left'; 
       
       // Cleanup inline styles and navigate
       currentView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       if (targetView) targetView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       
-      const finalX = currentDeltaX > 0 ? '100%' : '-100%'; 
+      const finalX = currentDeltaX < 0 ? '-100%' : '100%'; 
       currentView.style.transform = `translateX(${finalX})`;
       currentView.style.opacity = '0';
       if (targetView) {
