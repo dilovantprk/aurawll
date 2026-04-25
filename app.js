@@ -488,10 +488,11 @@ function initSwipeNavigation() {
       isSwiping = false;
       return;
     }
-
-    // Determine target view
-    const direction = currentDeltaX < 0 ? 1 : -1; // -1 for right swipe (prev), 1 for left swipe (next)
-    const newTargetIndex = currentIndex + direction;
+    // Determine target view based on INVERTED CAROUSEL logic
+    // In this model: Swipe RIGHT (deltaX > 0) pulls the NEXT page from the left.
+    // Swipe LEFT (deltaX < 0) pulls the PREVIOUS page from the right.
+    const direction = currentDeltaX > 0 ? 1 : -1; 
+    const newTargetIndex = currentIndex - direction; // adjusted for swipe logic
     
     if (newTargetIndex >= 0 && newTargetIndex < tabs.length) {
       const newTargetView = document.getElementById(`view-${tabs[newTargetIndex]}`);
@@ -509,11 +510,11 @@ function initSwipeNavigation() {
         }
       }
       
-      // Move both views - SYNCED WITH INVERTED LOGIC
+      // Move both views - PHYSICALLY SYNCED WITH FINGER
       currentView.style.transform = `translateX(${currentDeltaX}px)`;
       if (targetView) {
-        // In the new inverted logic: Next page (direction > 0) is physically on the LEFT (-100%)
-        const offset = direction > 0 ? '-100%' : '100%';
+        // If pulling next (direction > 0, currentDeltaX > 0), target is at -100%
+        const offset = currentDeltaX > 0 ? '-100%' : '100%';
         targetView.style.transform = `translateX(calc(${offset} + ${currentDeltaX}px))`;
       }
     } else {
@@ -529,12 +530,14 @@ function initSwipeNavigation() {
     const success = Math.abs(currentDeltaX) > threshold && targetView;
 
     if (success) {
-      const direction = currentDeltaX < 0 ? 'right' : 'left'; // Match button logic: swipe left -> forward (right)
+      // In inverted logic: swipe right -> direction 'right' (forward)
+      const navDirection = currentDeltaX > 0 ? 'right' : 'left'; 
+      
       // Cleanup inline styles and navigate
       currentView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       if (targetView) targetView.style.transition = 'transform 0.4s var(--spring-easing), opacity 0.4s ease';
       
-      const finalX = currentDeltaX < 0 ? '-100%' : '100%'; // Swipe left completes to left (but triggers 'right' navigation)
+      const finalX = currentDeltaX > 0 ? '100%' : '-100%'; 
       currentView.style.transform = `translateX(${finalX})`;
       currentView.style.opacity = '0';
       if (targetView) {
