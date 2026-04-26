@@ -209,6 +209,30 @@
   border-radius: 4px;
 }
 
+.delete-entry-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.2);
+  padding: 8px;
+  margin: -8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.delete-entry-btn:hover {
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.1);
+  transform: scale(1.1);
+}
+
+.delete-entry-btn:active {
+  transform: scale(0.9);
+}
+
 .card-body {
   padding: 0.2rem 0;
 }
@@ -446,3 +470,37 @@
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.7);
 }
 
+/* === DESKTOP OPTIMIZATIONS === */
+@media (min-width: 1024px) {
+  .notebook-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Force horizontal centering for children */
+    width: 100%;
+    padding: 0 2rem;
+  }
+
+  .notebook-list, .notebook-entries {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Force 2 columns */
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 850px !important; /* Compact width for 2 cards */
+    margin: 0 auto !important;
+    padding: 2rem 0 8rem;
+  }
+  
+  .notebook-day-group {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .notebook-day-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin: 2rem 0 1rem;
+  }
+}

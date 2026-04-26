@@ -2,6 +2,7 @@ import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { getHumanizedTime, renderMiniDeltaSVG, vibrate } from '../core/utils.js';
+import { deleteSingleCheckin } from '../services/auth.js';
 
 let configProps = {
   fb: null,
@@ -10,6 +11,41 @@ let configProps = {
 
 export function initNotebook(config) {
   Object.assign(configProps, config);
+  
+  // Delegate delete clicks
+  elements.notebookEntries?.addEventListener('click', async (e) => {
+    const deleteBtn = e.target.closest('.delete-entry-btn');
+    if (!deleteBtn) return;
+    
+    const timestamp = parseInt(deleteBtn.getAttribute('data-ts'));
+    if (!timestamp) return;
+    
+    if (confirm(t('notebook_delete_confirm'))) {
+      try {
+        deleteBtn.disabled = true;
+        deleteBtn.style.opacity = '0.3';
+        
+        // 1. Delete from Cloud if authenticated
+        if (AppState.user && !AppState.user.guest) {
+          await deleteSingleCheckin(timestamp);
+        }
+        
+        // 2. Delete from Local
+        if (AppState.mockHistory) {
+          AppState.mockHistory = AppState.mockHistory.filter(h => h.timestamp !== timestamp);
+          localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+        }
+        
+        // 3. Refresh UI
+        loadNotebook();
+        vibrate('light');
+      } catch (err) {
+        console.error("Delete failed:", err);
+        deleteBtn.disabled = false;
+        deleteBtn.style.opacity = '1';
+      }
+    }
+  });
 }
 
 export async function loadNotebook() {
@@ -51,7 +87,6 @@ export function renderNotebook(providedEntries) {
   if (history.length === 0) {
     html = `<div class="empty-state">${t('notebook_empty')}</div>`;
   } else {
-    html = `<div class="notebook-list">`;
     history.forEach(entry => {
       const timeStr = getHumanizedTime(entry.timestamp);
       const stateKey = entry.polyvagal_state || entry.state;
@@ -65,7 +100,6 @@ export function renderNotebook(providedEntries) {
       };
       const stateName = stateNameMap[stateKey] || '...';
 
-      // New flow: selected_emotions (array). Old flow: subEmotion/customEmotion (string)
       let emotionLabel = '';
       if (entry.selected_emotions && entry.selected_emotions.length > 0) {
         emotionLabel = entry.selected_emotions.map(e => t(e)).join(', ');
@@ -95,6 +129,9 @@ export function renderNotebook(providedEntries) {
             <div class="aura-orb ${entry.polyvagal_state || 'ventral'}"></div>
             <div class="time-meta">${timeStr}</div>
             <div class="state-label">${emotionLabel}</div>
+            <button class="delete-entry-btn" data-ts="${entry.timestamp}" aria-label="Delete">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+            </button>
           </div>
           <div class="card-body">
             <p class="user-note">${entry.savoringText || '...'}</p>
@@ -102,7 +139,6 @@ export function renderNotebook(providedEntries) {
           ${somaticSummary ? `<div class="card-footer"><span class="somatic-summary">${somaticSummary}</span></div>` : ''}
         </div>`;
     });
-    html += '</div>';
   }
   elements.notebookEntries.innerHTML = html;
 }

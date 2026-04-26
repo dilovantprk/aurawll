@@ -350,6 +350,33 @@
   transition: all 0.4s var(--spring-easing);
 }
 
+/* Compact Time Picker for Settings */
+.nudge-time-input {
+  width: auto !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 100px !important;
+  padding: 0.6rem 1.2rem !important;
+  font-size: 0.95rem !important;
+  color: #fff !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  outline: none;
+}
+
+.nudge-time-input:focus {
+  background: rgba(133, 141, 255, 0.15) !important;
+  border-color: rgba(133, 141, 255, 0.4) !important;
+  box-shadow: 0 0 15px rgba(133, 141, 255, 0.2);
+}
+
+/* Chrome/Safari time picker icon override (optional but nice) */
+.nudge-time-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+}
+
 .settings-row:last-child {
   border-bottom: none;
 }
@@ -476,6 +503,16 @@
   box-shadow: 0 15px 30px rgba(255, 60, 60, 0.15);
 }
 
+.danger-text {
+  color: #f43f5e !important;
+  opacity: 0.6;
+}
+
+.danger-text:hover {
+  opacity: 1 !important;
+  text-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+}
+
 #langToggleBtn {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -563,20 +600,31 @@
 
 /* --- DESKTOP REFINEMENTS FOR SETTINGS (768px+) --- */
 @media (min-width: 768px) {
-  /* Unified Profile Width & Alignment (540px for better presence) */
   #view-settings .standard-view-content {
-    max-width: 800px;
+    max-width: 620px;
+    margin: 0 auto !important;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch; /* stretch so children fill the width */
   }
 
-  #view-settings .identity-card-v2,
-  #view-settings .stagger-2,
-  #view-settings .stagger-3 {
+  /* Identity card: same width as settings panels, form preserved via aspect-ratio */
+  #view-settings .identity-card-v2.arc-horizontal {
     width: 100% !important;
-    max-width: 540px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    max-width: 100% !important;
+    aspect-ratio: 1.7 / 1 !important; /* form korunuyor, height otomatik */
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-radius: 32px !important;
+  }
+
+  /* Settings groups: same 100% width */
+  #view-settings .settings-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }

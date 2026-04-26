@@ -12,4 +12,6 @@
 @import url('./css/components/settings.css');
 @import url('./css/components/insight.css');
 @import url('./css/components/community.css');
-@import url('./css/animations.css');
+@import "css/components/focus.css";
+@import "css/components/ambient.css";
+@import "css/animations.css";

@@ -11,26 +11,26 @@
   --bg-primary: #050508;
   --bg-secondary: #0a0a0f;
   --bg-tertiary: #111116;
-  
+
   --text-main: #E0E4EC;
   --text-muted: #8E96A4;
-  
+
   --accent-wired: #FBA044;
   --accent-foggy: #62A4FF;
-  --accent-okay:  #64E49F;
+  --accent-okay: #64E49F;
   --accent-primary: #858DFF;
   --accent-primary-hover: #98A0FF;
 
   --error: #FF6B6B;
-  
+
   --glass-bg: rgba(10, 12, 18, 0.6);
   --glass-border: rgba(255, 255, 255, 0.12);
-  
+
   --vagal-ventral-rgb: 16, 185, 129;
   --vagal-symp-rgb: 245, 158, 11;
   --vagal-dorsal-rgb: 59, 130, 246;
   --vagal-accent-rgb: 133, 141, 255;
-  
+
   --spring-easing: cubic-bezier(0.16, 1, 0.3, 1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
   --glass-blur: blur(45px) saturate(160%);
@@ -40,14 +40,14 @@
   --typography-h1: clamp(1.8rem, 6vw, 2.5rem);
   --typography-h2: clamp(1.2rem, 4.5vw, 1.6rem);
   --typography-body: clamp(0.9rem, 3.5vw, 1.05rem);
-  
+
   /* Antigravity Motion (v2) - Performance Optimized */
   --vagal-transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1.2s ease;
   --transition-fast: transform 0.2s ease, opacity 0.2s ease;
   --transition-smooth: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
   --transition-spring: transform 0.5s var(--spring-easing), opacity 0.5s ease;
   --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  
+
   /* Dynamic Parameters */
   --bg-brightness: 1;
   --jitter-strength: 0px;
@@ -70,11 +70,13 @@ body {
   color: var(--text-main);
   line-height: 1.6;
   overflow-x: hidden;
-  overflow-y: hidden; /* Prevent body scroll entirely, app-container handles it */
+  overflow-y: hidden;
+  /* Prevent body scroll entirely, app-container handles it */
   height: 100vh;
   height: 100dvh;
   width: 100vw;
-  position: fixed; /* Lock body in place */
+  position: fixed;
+  /* Lock body in place */
   display: flex;
   flex-direction: column;
 }
@@ -83,6 +85,7 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
+
 * {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -94,41 +97,37 @@ body {
   z-index: -1;
   pointer-events: none;
   /* Neural Cockpit v6.0 Triple-Layer Dynamic Bio-Gradient */
-  background-image: 
-    radial-gradient(
-      circle at var(--vagal-x, 50%) var(--vagal-y, 40%), 
-      rgba(var(--vagal-color-rgb, var(--vagal-accent-rgb)), calc(var(--bg-brightness, 1) * 0.65)) 0%, 
-      transparent 70%
-    ),
-    radial-gradient(
-      circle at 85% 15%, 
-      rgba(var(--vagal-ventral-rgb), 0.18) 0%, 
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 15% 85%, 
-      rgba(var(--vagal-dorsal-rgb), 0.18) 0%, 
-      transparent 50%
-    );
+  background-image:
+    radial-gradient(circle at var(--vagal-x, 50%) var(--vagal-y, 40%),
+      rgba(var(--vagal-color-rgb, var(--vagal-accent-rgb)), calc(var(--bg-brightness, 1) * 0.65)) 0%,
+      transparent 70%),
+    radial-gradient(circle at 85% 15%,
+      rgba(var(--vagal-ventral-rgb), 0.18) 0%,
+      transparent 50%),
+    radial-gradient(circle at 15% 85%,
+      rgba(var(--vagal-dorsal-rgb), 0.18) 0%,
+      transparent 50%);
   background-attachment: fixed;
-  transition: background 2.5s cubic-bezier(0.16, 1, 0.3, 1), 
-              --bg-brightness var(--breath-duration, 2.5s) ease-in-out,
-              transform var(--breath-duration, 2.5s) cubic-bezier(0.4, 0, 0.2, 1);
-  transform: scale(var(--breath-scale, 1.02)); /* Subtle default swell */
+  transition: background 2.5s cubic-bezier(0.16, 1, 0.3, 1),
+    --bg-brightness var(--breath-duration, 2.5s) ease-in-out,
+    transform var(--breath-duration, 2.5s) cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(var(--breath-scale, 1.02));
+  /* Subtle default swell */
   will-change: transform, background;
 }
 
 /* Base Layout */
 .app-container {
-  width: 100%;
-  max-width: 100vw;
+  width: 100% !important;
+  max-width: 100% !important;
   height: 100vh;
   height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 1;
-  overflow: hidden; /* HARD LOCK */
+  overflow-x: hidden;
+  margin: 0 !important;
   background: rgba(10, 10, 15, 0.15);
 }
 
@@ -136,23 +135,26 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
   opacity: 0;
   position: absolute;
-  inset: 0; /* Pinned to all corners to prevent ANY jitter */
+  inset: 0;
+  /* Pinned to all corners to prevent ANY jitter */
   height: 100%;
   overflow-y: auto;
-  overflow-x: hidden; /* Prevent horizontal spill during slide */
+  overflow-x: hidden;
+  /* Prevent horizontal spill during slide */
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   pointer-events: none;
   visibility: hidden;
   will-change: transform, opacity;
-  contain: layout paint; /* Radical stability boost */
-  transform: translateX(0); 
+  contain: layout paint;
+  /* Radical stability boost */
+  transform: translateX(0);
 }
 
 .view.active {
@@ -238,7 +240,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1.2px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent 40%, transparent 60%, rgba(255,255,255,0.15));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.15));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -248,21 +250,23 @@ body {
 }
 
 .energy-line {
-    fill: none;
-    stroke: url(#lineGradient);
-    stroke-width: 3;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 12px rgba(var(--vagal-color-rgb, 133, 141, 255), 0.4));
-    stroke-dasharray: 2000;
-    stroke-dashoffset: 2000;
+  fill: none;
+  stroke: url(#lineGradient);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 12px rgba(var(--vagal-color-rgb, 133, 141, 255), 0.4));
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
 }
 
 .energy-line.animating {
-    animation: drawPath 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: drawPath 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes drawPath {
-    to { stroke-dashoffset: 0; }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* Animation System — CLEAN FADE ONLY */
@@ -270,7 +274,10 @@ body {
 
 /* === ACCESSIBILITY: REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+
+  *,
+  ::before,
+  ::after {
     animation-delay: -1ms !important;
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
@@ -279,11 +286,18 @@ body {
     transition-duration: 1ms !important;
     transition-delay: -1ms !important;
   }
+
   .view {
     transform: none !important;
     transition: opacity 0.2s ease !important;
   }
-  .stagger-1, .stagger-2, .stagger-3, .stagger-4, .stagger-5, .stagger-6 {
+
+  .stagger-1,
+  .stagger-2,
+  .stagger-3,
+  .stagger-4,
+  .stagger-5,
+  .stagger-6 {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -291,7 +305,7 @@ body {
 }
 
 .view-transition {
-    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .view.hidden {
@@ -319,35 +333,51 @@ body {
   padding-bottom: 0 !important;
 }
 
-h1, h2, h3 { 
-  font-weight: 500; 
-  line-height: 1.2; 
-  text-align: center; 
-  color: #FFFFFF; /* High-contrast white */
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Physical anchor against glass */
+h1,
+h2,
+h3 {
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  color: #FFFFFF;
+  /* High-contrast white */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  /* Physical anchor against glass */
   letter-spacing: -0.3px;
 }
 
-h1 { font-size: var(--typography-h1); font-weight: 600; }
-h2 { font-size: var(--typography-h2); }
-p { 
-  color: rgba(255, 255, 255, 0.75); /* Stronger visibility on glass */
-  font-size: var(--typography-body); 
+h1 {
+  font-size: var(--typography-h1);
+  font-weight: 600;
+}
+
+h2 {
+  font-size: var(--typography-h2);
+}
+
+p {
+  color: rgba(255, 255, 255, 0.75);
+  /* Stronger visibility on glass */
+  font-size: var(--typography-body);
   text-align: center;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .view-description {
   margin-bottom: 2.2rem;
-  opacity: 0.95; /* Increased from 0.85 */
+  opacity: 0.95;
+  /* Increased from 0.85 */
   line-height: 1.5;
-  max-width: 300px; /* Slightly wider for better flow */
+  max-width: 300px;
+  /* Slightly wider for better flow */
   margin-left: auto;
   margin-right: auto;
   color: rgba(255, 255, 255, 0.8);
 }
 
-.mt-4 { margin-top: 1.25rem; }
+.mt-4 {
+  margin-top: 1.25rem;
+}
 
 /* Buttons */
 button {
@@ -415,8 +445,8 @@ button {
 
 .ghost-btn:hover {
   color: var(--text-main);
-  background: rgba(255,255,255,0.03);
-  border-color: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
   transform: translateY(-1px);
 }
 
@@ -435,8 +465,14 @@ button {
   -webkit-backdrop-filter: var(--glass-blur);
   transition: var(--transition-smooth);
 }
-.glass-btn:hover { background: rgba(255,255,255,0.1); }
-.glass-btn:active { transform: scale(0.92); }
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.glass-btn:active {
+  transform: scale(0.92);
+}
 
 /* Glass Panels */
 .glass-panel {
@@ -451,9 +487,12 @@ button {
 }
 
 /* Forms & Inputs */
-.input-group { margin-bottom: 1.5rem; }
+.input-group {
+  margin-bottom: 1.5rem;
+}
 
-input, textarea {
+input,
+textarea {
   width: 100%;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -466,13 +505,17 @@ input, textarea {
   outline: none;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   border-color: var(--accent-primary);
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 0 4px rgba(133, 141, 255, 0.1);
 }
 
-textarea.glass-input { resize: vertical; min-height: 140px; }
+textarea.glass-input {
+  resize: vertical;
+  min-height: 140px;
+}
 
 .error-text {
   color: var(--error);
@@ -483,11 +526,10 @@ textarea.glass-input { resize: vertical; min-height: 140px; }
 
 /* Auth styles → css/components/auth.css */
 /* Dashboard hero styles → css/components/dashboard.css */
- 
+
 /* Mobile Padding Refinement */
 @media (max-width: 600px) {
   .view {
-    padding: 0 0.75rem;
+    padding: 0;
   }
 }
-

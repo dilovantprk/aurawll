@@ -14,7 +14,7 @@ let configProps = {
 
 export function initDashboard(config) {
   Object.assign(configProps, config);
-  
+
   // Vagal Heatmap click handled by global info-trigger in modals.js
 }
 
@@ -76,16 +76,16 @@ export async function loadDashboard() {
       const snapshot = await fb.getDocs(q);
       snapshot.forEach(doc => historyData.push(doc.data()));
       historyData.sort((a, b) => b.timestamp - a.timestamp);
-      
+
       // Update Cache
       AppState.userHistory = historyData;
       AppState.lastHistoryFetch = Date.now();
-      
+
       renderDashboardComponents(historyData);
     } else {
       renderDashboardComponents(AppState.mockHistory);
     }
-  } catch(e) {
+  } catch (e) {
     console.warn("Could not load history", e);
     if (!AppState.userHistory) renderDashboardComponents(AppState.mockHistory);
   }
@@ -95,13 +95,13 @@ function renderDashboardComponents(data) {
   analyzeWeeklyPatterns(data);
   const displayData = data.slice(0, 5);
   renderHistory(displayData);
-  
+
   // ALWAYS SHOW: Ensure these are visible even if history is empty
   elements.vagalHeatmapCard?.classList.remove('hidden');
   elements.resilienceBar?.classList.remove('hidden');
-  
+
   if (data.length > 0) {
-    renderVagalHeatmap(data[0]); 
+    renderVagalHeatmap(data[0]);
   } else {
     renderVagalHeatmap(null); // Show initial/placeholder state
   }
@@ -115,9 +115,9 @@ export function renderHistory(data) {
   elements.historyList.innerHTML = data.map((doc, index) => {
     const item = normalizeCheckinData(doc);
     const timeStr = getHumanizedTime(item.timestamp);
-    
+
     const stateKey = item.polyvagal_state || item.state;
-    const stateNameMap = { 
+    const stateNameMap = {
       'ventral': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
       'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
       'sympathetic': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
@@ -178,21 +178,21 @@ export function analyzeWeeklyPatterns(historyData) {
     let dominantState = null;
     if (logsThisDay.length > 0) {
       const counts = { wired: 0, foggy: 0, okay: 0 };
-      logsThisDay.forEach(log => { if(log.state) counts[log.state] = (counts[log.state] || 0) + 1; });
+      logsThisDay.forEach(log => { if (log.state) counts[log.state] = (counts[log.state] || 0) + 1; });
       dominantState = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
     }
     timelineHTML += `<div class="day-col"><div class="day-label" data-i18n="${dayKey}">${t(dayKey)}</div><div class="${dominantState ? `day-circle day-${dominantState}` : 'day-circle'}"></div></div>`;
   }
   elements.weeklyTimeline.innerHTML = timelineHTML;
-  
+
   // ALWAYS SHOW: Keep the cards visible even with low data for premium presence
   elements.vagalHeatmapCard?.classList.remove('hidden');
   elements.resilienceBar?.classList.remove('hidden');
 
-  if (weeklyData.length < 3) { 
-    elements.weeklyEmpty?.classList.remove('hidden'); 
-    elements.weeklyExercise?.classList.add('hidden'); 
-    
+  if (weeklyData.length < 3) {
+    elements.weeklyEmpty?.classList.remove('hidden');
+    elements.weeklyExercise?.classList.add('hidden');
+
     // Show initial journey insight instead of hiding
     const initialInsight = getWeeklyInsight(null, AppState.lang);
     if (elements.insightTitle) elements.insightTitle.textContent = initialInsight.title;
@@ -202,28 +202,28 @@ export function analyzeWeeklyPatterns(historyData) {
     if (focusEl) focusEl.textContent = initialInsight.focus;
     if (recEl) recEl.textContent = initialInsight.recommendation;
     elements.weeklyInsight?.classList.remove('hidden');
-    return; 
+    return;
   }
 
   elements.weeklyEmpty?.classList.add('hidden');
   const compassionMessage = checkCompassionateIntervention(weeklyData);
-  if (compassionMessage) { 
-    if (elements.insightText) elements.insightText.innerHTML = compassionMessage; 
-    elements.weeklyInsight?.classList.remove('hidden'); 
-    elements.weeklyInsight?.classList.add('compassion-mode'); 
+  if (compassionMessage) {
+    if (elements.insightText) elements.insightText.innerHTML = compassionMessage;
+    elements.weeklyInsight?.classList.remove('hidden');
+    elements.weeklyInsight?.classList.add('compassion-mode');
   }
   else {
     const insight = getWeeklyInsight(weeklyData, AppState.lang);
     if (insight) {
       if (elements.insightTitle) elements.insightTitle.textContent = insight.title;
       if (elements.insightText) elements.insightText.textContent = insight.desc;
-      
+
       const focusEl = document.getElementById('insightFocus');
       const recEl = document.getElementById('insightRecommendation');
       if (focusEl) focusEl.textContent = insight.focus;
       if (recEl) recEl.textContent = insight.recommendation;
 
-    elements.weeklyInsight?.classList.remove('hidden');
+      elements.weeklyInsight?.classList.remove('hidden');
     }
   }
 }
@@ -260,7 +260,7 @@ export function renderVagalHeatmap(data, isModal = false) {
   }
 
   const point = calculateVagalPoint(v, s, d);
-  
+
   // Apply with transition for "living" feel
   targetBlob.style.transition = 'all 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
   targetBlob.style.left = point.x;

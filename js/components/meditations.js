@@ -10,7 +10,7 @@ let configProps = {};
  */
 export function initMeditations(config) {
   Object.assign(configProps, config);
-  
+
   // Bind Card Clicks & Touch Tracking
   if (elements.meditationsList) {
     // Track touch position for dynamic glow effect
@@ -42,7 +42,7 @@ export function initMeditations(config) {
   renderMeditationsList();
   renderFilterChips();
   renderRecommendations();
-  
+
   // Apply initial filter state if any
   applyFilter(AppState._activeFilter || 'all');
 }
@@ -54,12 +54,12 @@ export function renderMeditationsList() {
   if (!elements.meditationsList) return;
 
   const breatheProtocols = protocols || {};
-  
+
   const renderCard = (id, p) => {
     const metaData = PROTOCOL_META[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)', benefitKey: '' };
     const benefit = metaData.benefitKey ? t(metaData.benefitKey) : '';
     const mins = Math.ceil(p.totalDuration / 60);
-    
+
     return `
       <div class="meditation-card" 
            data-protocol="${id}" 
@@ -81,7 +81,7 @@ export function renderMeditationsList() {
   elements.meditationsList.innerHTML = Object.keys(breatheProtocols)
     .map(id => renderCard(id, breatheProtocols[id]))
     .join('');
-    
+
   // Ensure the current filter is applied to the newly rendered list
   applyFilter(AppState._activeFilter || 'all');
 }
@@ -91,16 +91,16 @@ export function renderMeditationsList() {
  */
 export function renderFilterChips() {
   if (!elements.filterChips) return;
-  
+
   const categories = [
     { id: 'all', label: t('cat_all') },
     { id: 'calm', label: t('cat_calm') },
     { id: 'focus', label: t('cat_focus') },
     { id: 'energize', label: t('cat_energize') }
   ];
-  
+
   const activeId = AppState._activeFilter || 'all';
-  
+
   elements.filterChips.innerHTML = categories.map(cat => `
     <button class="filter-chip ${activeId === cat.id ? 'active' : ''}" data-category="${cat.id}">
       ${cat.label}
@@ -111,15 +111,15 @@ export function renderFilterChips() {
   elements.filterChips.onclick = (e) => {
     const chip = e.target.closest('.filter-chip');
     if (!chip) return;
-    
+
     const category = chip.getAttribute('data-category');
     AppState._activeFilter = category;
-    
+
     // Update visual active state of chips
     elements.filterChips.querySelectorAll('.filter-chip').forEach(c => {
       c.classList.toggle('active', c === chip);
     });
-    
+
     applyFilter(category);
   };
 }

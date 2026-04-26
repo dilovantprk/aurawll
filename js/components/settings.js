@@ -3,10 +3,11 @@ import { t } from '../core/i18n.js';
 import { AppState, safeSetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
 import { BADGES } from '../core/constants.js';
-import { calculateEarnedBadges } from '../core/utils.js';
+import { calculateEarnedBadges, vibrate } from '../core/utils.js';
 import { openCommunityModal } from './modals.js';
 
 import { NotificationService } from '../services/notifications.js';
+import { deleteUserAccount } from '../services/auth.js';
 
 let configProps = {};
 
@@ -139,11 +140,62 @@ export function initSettings(config) {
     if (configProps.logout) configProps.logout();
     else window.location.reload();
   });
+  
+  // Delete Account
+  elements.deleteAccountBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (confirm(t('prof_delete_account_confirm'))) {
+      try {
+        elements.deleteAccountBtn.disabled = true;
+        const success = await deleteUserAccount();
+        if (success) {
+          window.location.reload();
+        }
+      } catch (err) {
+        elements.deleteAccountBtn.disabled = false;
+        if (err.message === 'REAUTH_NEEDED') {
+          alert(AppState.lang === 'tr' ? 'Bu işlem için tekrar giriş yapmanız gerekiyor.' : 'You need to log in again to perform this action.');
+          if (configProps.logout) configProps.logout();
+        } else {
+          alert(AppState.lang === 'tr' ? 'Bir hata oluştu.' : 'An error occurred.');
+        }
+      }
+    }
+  });
 
   // Guest → Login
   elements.settingsLoginBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     if (configProps.navigateTo) configProps.navigateTo('view-auth');
+  });
+
+  // Interface Toggles
+  elements.showMeditationsToggle?.addEventListener('change', (e) => {
+    AppState.showMeditations = e.target.checked;
+    localStorage.setItem('aura_show_meditations', AppState.showMeditations);
+    syncNavVisibility();
+    vibrate('light');
+  });
+
+  elements.showNotebookToggle?.addEventListener('change', (e) => {
+    AppState.showNotebook = e.target.checked;
+    localStorage.setItem('aura_show_notebook', AppState.showNotebook);
+    syncNavVisibility();
+    vibrate('light');
+  });
+
+  elements.showFocusToggle?.addEventListener('change', (e) => {
+    AppState.showFocus = e.target.checked;
+    localStorage.setItem('aura_show_focus', AppState.showFocus);
+    syncNavVisibility();
+    vibrate('light');
+  });
+
+  elements.showAmbientToggle?.addEventListener('change', (e) => {
+    AppState.showAmbient = e.target.checked;
+    localStorage.setItem('aura_show_ambient', AppState.showAmbient);
+    syncNavVisibility();
+    vibrate('light');
   });
 
   if (elements.langToggleBtn) {
@@ -240,6 +292,17 @@ export function updateSettingsView() {
   // Show/hide logout vs login button based on guest status
   const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
   if (elements.logoutBtn) elements.logoutBtn.style.display = isGuest ? 'none' : '';
+  if (elements.deleteAccountBtn) {
+    elements.deleteAccountBtn.style.display = isGuest ? 'none' : 'block';
+    elements.deleteAccountBtn.classList.toggle('hidden', isGuest);
+  }
+  if (elements.showMeditationsToggle) elements.showMeditationsToggle.checked = AppState.showMeditations !== false;
+  if (elements.showNotebookToggle) elements.showNotebookToggle.checked = AppState.showNotebook !== false;
+  if (elements.showFocusToggle) elements.showFocusToggle.checked = AppState.showFocus === true;
+  if (elements.showAmbientToggle) elements.showAmbientToggle.checked = AppState.showAmbient === true;
+  
+  syncNavVisibility();
+
   if (elements.syncCtaText) elements.syncCtaText.classList.toggle('hidden', !isGuest);
   if (elements.settingsLoginBtn) {
     elements.settingsLoginBtn.style.display = isGuest ? 'flex' : 'none';
@@ -251,5 +314,36 @@ export function updateSettingsView() {
   if (volContainer) {
     if (AppState.droneEnabled) volContainer.classList.remove('hidden');
     else volContainer.classList.add('hidden');
+  }
+}
+
+export function syncNavVisibility() {
+  const showMed = AppState.showMeditations !== false;
+  const showNote = AppState.showNotebook !== false;
+  const showFocus = AppState.showFocus === true;
+  const showAmbient = AppState.showAmbient === true;
+
+  // Mobile
+  const navBreathe = document.getElementById('navBreathe');
+  const navNotebook = document.getElementById('navNotebook');
+  const navFocus = document.getElementById('navFocus');
+  const navAmbient = document.getElementById('navAmbient');
+
+  if (navBreathe) navBreathe.style.display = showMed ? '' : 'none';
+  if (navNotebook) navNotebook.style.display = showNote ? '' : 'none';
+  if (navFocus) navFocus.style.display = showFocus ? '' : 'none';
+  if (navAmbient) navAmbient.style.display = showAmbient ? '' : 'none';
+
+  // Desktop
+  const desktopNav = document.getElementById('desktop-nav-links');
+  if (desktopNav) {
+    const items = desktopNav.querySelectorAll('.nav-item');
+    items.forEach(item => {
+      const view = item.getAttribute('data-view');
+      if (view === 'meditations') item.style.display = showMed ? '' : 'none';
+      if (view === 'notebook') item.style.display = showNote ? '' : 'none';
+      if (view === 'focus') item.style.display = showFocus ? '' : 'none';
+      if (view === 'ambient') item.style.display = showAmbient ? '' : 'none';
+    });
   }
 }

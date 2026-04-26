@@ -1,0 +1,211 @@
+/* 
+   Aura | Ambient Space V7
+   "Liquid Glass" Visual Redesign
+*/
+
+/* Global Override: Break out of root .view and .standard-view-content padding */
+#view-ambient.view {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+#view-ambient .standard-view-content {
+    padding: 8.5rem 0.75rem 8rem 0.75rem !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ambient-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding: 0 0 8rem;
+    width: 100%;
+    max-width: 900px; /* More compact overall */
+    margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+    .ambient-grid-v2 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.2rem;
+    }
+}
+
+/* Compact Liquid Glass Card */
+.ambient-card-v2.liquid-glass {
+    position: relative;
+    min-height: 140px; /* Even smaller base */
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 1024px) {
+    .ambient-card-v2.liquid-glass {
+        min-height: 120px; /* Ultra compact on desktop */
+    }
+}
+
+/* Psychedelic Liquid Wave Effect */
+.ambient-liquid-wave {
+    position: absolute;
+    bottom: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, 
+        rgba(168, 230, 207, 0.4) 0%, 
+        rgba(255, 139, 148, 0.3) 25%, 
+        rgba(131, 103, 199, 0.3) 50%, 
+        rgba(168, 230, 207, 0.2) 75%,
+        transparent 100%);
+    opacity: 0;
+    transition: opacity 1s ease, transform 2s ease;
+    filter: blur(30px); /* Sharper but still liquid */
+    mix-blend-mode: screen; /* Vibrant glow */
+    pointer-events: none;
+    z-index: 1;
+    animation: psychedelicMove 6s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+@keyframes psychedelicMove {
+    0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) blur(40px); }
+    100% { transform: rotate(360deg) scale(1.5); filter: hue-rotate(360deg) blur(60px); }
+}
+
+.ambient-card-v2.active .ambient-liquid-wave {
+    opacity: 1;
+}
+
+.ambient-card-content {
+    position: relative;
+    z-index: 5;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem; /* Tight padding */
+}
+
+@media (min-width: 1024px) {
+    .ambient-card-content {
+        padding: 1.2rem; /* Tighter padding for smaller cards */
+    }
+}
+
+.ambient-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.ambient-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 1024px) {
+    .ambient-card-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+    }
+    .ambient-card-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.ambient-card-icon svg {
+    width: 22px;
+    height: 22px;
+    opacity: 0.8;
+}
+
+
+
+/* Top Right Play/Hold Button */
+.play-hold-btn {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0.6;
+    transition: all 0.4s var(--spring-easing);
+    z-index: 10;
+}
+
+.ambient-card-v2:hover .play-hold-btn {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.1);
+}
+
+.ambient-card-v2.active .play-hold-btn {
+    opacity: 1;
+    background: var(--vagal-accent, #a8e6cf);
+    color: #000;
+    border: none;
+    box-shadow: 0 0 20px rgba(168, 230, 207, 0.4);
+}
+
+.play-hold-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.play-hold-btn .pause-icon { display: none; }
+.ambient-card-v2.active .play-hold-btn .play-icon { display: none; }
+.ambient-card-v2.active .play-hold-btn .pause-icon { display: block; }
+
+.card-info-v2 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.card-tag-v2 {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.4;
+    font-weight: 600;
+}
+
+.card-title-v2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: -0.3px;
+    margin: 0;
+}
+
+@media (min-width: 1024px) {
+    .card-tag-v2 { font-size: 0.6rem; }
+    .card-title-v2 { font-size: 0.95rem; }
+}
+
+/* Corrected Desktop Optimizations */

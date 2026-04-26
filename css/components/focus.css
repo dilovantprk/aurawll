@@ -1,0 +1,551 @@
+/* LIQUID TIMER V3 */
+.focus-timer-circle-v3 {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  overflow: hidden; /* Important for liquid */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.2), 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.timer-liquid-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.timer-liquid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%; /* Dynamic */
+  background: var(--accent-primary);
+  opacity: 0.2;
+  transition: height 1s linear, background-color 0.5s ease;
+}
+
+.timer-liquid::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 0;
+  width: 200%;
+  height: 20px;
+  background: inherit;
+  opacity: 0.6;
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 28"><path d="M0 15Q30 5 60 15t60 0v13H0z"/></svg>');
+  mask-repeat: repeat-x;
+  animation: liquidWave 3s linear infinite;
+}
+
+@keyframes liquidWave {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.wave-svg {
+  position: absolute;
+  top: -25px;
+  left: 0;
+  width: 200%;
+  height: 30px;
+  fill: inherit;
+  animation: liquidWave 4s linear infinite;
+}
+
+.timer-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.focus-time-display-v2 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: white;
+  letter-spacing: -1px;
+}
+
+.focus-status-label-v2 {
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-top: -5px;
+}
+
+.focus-controls {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.focus-ctrl-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  transition: all 0.5s var(--spring-easing) !important;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.focus-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3), 0 0 15px rgba(133, 141, 255, 0.1);
+}
+
+.focus-ctrl-btn#focusToggleBtn.active {
+  background: var(--accent-primary) !important;
+  color: black !important;
+  border: none !important;
+}
+
+/* FOCUS SLIDER - Premium Feel */
+.focus-slider {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.focus-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  padding: 0; /* Removed padding to allow container to match island width precisely */
+}
+
+.focus-slide-content, .todo-view-wrapper {
+  margin: 0 auto;
+  padding-top: 100px; /* Safe clearance for header island */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group {
+  margin-bottom: 1.2rem; /* Reduced from 2rem */
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem; /* Reduced from 1rem */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.focus-slide-title {
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: lowercase;
+  opacity: 0.9;
+  background: linear-gradient(to right, #fff, rgba(255,255,255,0.4));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem; /* Reduced from 2rem */
+  text-align: center;
+}
+
+.focus-slide-desc {
+  font-size: 0.9rem;
+  opacity: 0.4;
+  margin-bottom: 2.5rem;
+  max-width: 260px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* SETUP PHASE - Organic */
+.focus-setup-container {
+  width: calc(100% - 1.5rem); /* Tighter margin to match header visibility */
+  max-width: none;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 1.5rem 1.8rem; /* Reduced from 3rem to save vertical space */
+  box-shadow: 0 40px 100px rgba(0,0,0,0.4),
+              inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.session-name-input {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  color: white !important;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  transition: all 0.4s var(--spring-easing);
+}
+
+.session-name-input:focus {
+  border-color: rgba(133, 141, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  transform: scale(1.02);
+}
+
+/* HUD START BUTTON */
+.hud-btn-v3 {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.6s var(--spring-easing);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2),
+              inset 0 0 20px rgba(255,255,255,0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-btn-v3::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--accent-primary), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.hud-btn-v3:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4),
+              0 0 20px rgba(133, 141, 255, 0.2);
+}
+
+.hud-btn-v3:hover::before {
+  opacity: 0.1;
+}
+
+.hud-btn-v3 svg {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.4s var(--spring-easing);
+}
+
+.hud-btn-v3:hover svg {
+  transform: scale(1.1);
+}
+
+.hud-btn-v3:active {
+  transform: scale(0.95);
+}
+
+/* TODO V2 - Organic & Premium */
+.todo-container-v2 {
+  width: calc(100% - 1.5rem); /* Tighter margin to match header visibility */
+  max-width: none;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 1.5rem 1.8rem; /* Reduced from 3rem */
+}
+
+.todo-badge {
+  position: absolute;
+  top: -10px;
+  right: 20%;
+  font-size: 0.65rem;
+  opacity: 0.4;
+  letter-spacing: 1px;
+}
+
+.todo-form-v2 {
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.todo-form-v2 input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 24px;
+  padding: 1.2rem 4rem 1.2rem 1.5rem;
+  font-size: 1rem;
+  color: white;
+  backdrop-filter: blur(20px);
+  transition: all 0.5s var(--spring-easing);
+}
+
+.todo-form-v2 input:focus {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(133, 141, 255, 0.3) !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+}
+
+.todo-form-v2 button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s var(--spring-easing);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.todo-form-v2 button:hover {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: black;
+  transform: translateY(-50%) scale(1.1) rotate(90deg);
+  box-shadow: 0 0 20px rgba(133, 141, 255, 0.4);
+}
+
+.todo-form-v2 button svg {
+  transition: transform 0.3s ease;
+}
+
+.todo-list-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-bottom: 4rem;
+}
+
+.todo-item {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  padding: 1.1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  transition: all 0.4s ease;
+  animation: slideInUp 0.6s var(--spring-easing) forwards;
+}
+
+.todo-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(5px);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.todo-item.completed {
+  opacity: 0.4;
+  transform: scale(0.98);
+  filter: grayscale(0.5);
+}
+
+.todo-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.todo-item.completed .todo-check {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 15px rgba(133, 141, 255, 0.4);
+}
+
+.todo-item.completed .todo-check::after {
+  content: "";
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 5px;
+  height: 9px;
+  border: solid black;
+  border-width: 0 2px 2px 0;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.todo-item.completed .todo-text {
+  opacity: 0.3;
+  text-decoration: line-through;
+}
+
+.todo-delete {
+  opacity: 0;
+  background: transparent;
+  border: none;
+  color: var(--error);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.todo-item:hover .todo-delete {
+  opacity: 0.5;
+}
+
+.todo-item:hover .todo-delete:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* PAGINATION REMOVED AS REQUESTED */
+.focus-pagination {
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.4s ease;
+  position: relative;
+  pointer-events: auto; /* Re-enable for dots */
+}
+
+.focus-pagination .dot.active {
+  background: var(--accent-primary);
+  transform: scale(2);
+}
+
+.focus-pagination .dot.active::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: rgba(133, 141, 255, 0.2);
+  animation: pulsePagination 2s infinite;
+}
+
+@keyframes pulsePagination {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Restoring setup styles */
+.focus-setup-container .input-group {
+  margin-bottom: 1.2rem;
+}
+
+.focus-setup-container .glass-range {
+  margin: 0;
+}
+
+/* TIMELINE */
+.focus-timeline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.timeline-dot.work { width: 14px; height: 14px; }
+.timeline-dot.break { width: 8px; height: 8px; }
+
+.timeline-dot.active {
+  transform: scale(1.4);
+  background: var(--accent-primary);
+  box-shadow: 0 0 15px var(--accent-primary);
+}
+
+.timeline-dot.break.active {
+  background: var(--accent-okay);
+  box-shadow: 0 0 15px var(--accent-okay);
+}
+
+.timeline-dot.done {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* === DESKTOP OPTIMIZATIONS === */
+@media (min-width: 1024px) {
+  .focus-slider {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr; /* Side-by-side Timer & To-Do */
+    gap: 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    overflow: visible;
+    scroll-snap-type: none;
+    padding: 0 2rem;
+  }
+
+  .focus-slide {
+    flex: none;
+    width: 100% !important;
+    height: auto;
+  }
+
+  .focus-slide-content, .todo-view-wrapper {
+    padding-top: 8.5rem; /* Standardized to clear the header island */
+    height: 100%;
+    justify-content: flex-start;
+  }
+
+  .focus-setup-container, .todo-container-v2 {
+    width: 100%;
+    min-height: 500px;
+  }
+
+  /* Hide mobile pagination on desktop side-by-side */
+  .focus-pagination {
+    display: none !important;
+  }
+}

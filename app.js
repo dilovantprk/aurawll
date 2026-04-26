@@ -19,11 +19,13 @@ import { initNotebook, loadNotebook } from './js/components/notebook.js';
 import { initMeditationFlow, startMeditationLoading } from './js/components/meditation-flow.js';
 import { initMeditations, renderMeditationsList, renderFilterChips, renderRecommendations } from './js/components/meditations.js';
 import { initExercise, stopExercise } from './js/components/exercise.js';
-import { initSettings, updateSettingsView } from './js/components/settings.js';
+import { initSettings, updateSettingsView, syncNavVisibility } from './js/components/settings.js';
 import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth } from './js/components/auth.js';
+import { initFocus } from './js/components/focus.js';
+import { initAmbient } from './js/components/ambient.js';
 import { NotificationService } from './js/services/notifications.js';
 
 // Services
@@ -63,33 +65,32 @@ export function navigateTo(viewId, skipHistory = false) {
   // Forward (right) = Slide Out Left, In from Right
   // Backward (left) = Slide Out Right, In from Left
   
-  // Update Header with Physical Glass Slide Effect
+  // Update Header Title with Subtle Fade
   const island = elements.activeTabName?.closest('.header-island');
+  const tabName = elements.activeTabName;
   const skipHeaderAnimation = isCurrentlyCheckin && isTargetingCheckin;
 
-  if (island && !skipHeaderAnimation) {
-    island.classList.remove('header-fade-out', 'header-fade-in');
-    island.classList.add('header-fade-out');
+  if (tabName && !skipHeaderAnimation) {
+    tabName.classList.remove('header-text-slide-out', 'header-text-slide-in');
+    tabName.classList.add('header-text-slide-out');
 
     setTimeout(() => {
       let slug = newSlug;
       if (checkinSteps.includes(slug)) slug = 'checkin';
       const tabLabel = t('nav_' + slug) || slug;
-      if (elements.activeTabName) elements.activeTabName.textContent = tabLabel;
+      tabName.textContent = tabLabel;
       
-      island.classList.remove('header-fade-out');
-      island.classList.add('header-fade-in');
+      tabName.classList.remove('header-text-slide-out');
+      tabName.classList.add('header-text-slide-in');
       
-      // Pulse effect on arrival (Removed as per user request for fade-only)
-      
-      setTimeout(() => island.classList.remove('header-fade-in'), 400);
-    }, 250);
-  } else if (island && skipHeaderAnimation) {
+      setTimeout(() => tabName.classList.remove('header-text-slide-in'), 400);
+    }, 200);
+  } else if (tabName && skipHeaderAnimation) {
     let slug = newSlug;
     if (checkinSteps.includes(slug)) slug = 'checkin';
     const tabLabel = t('nav_' + slug) || slug;
-    if (elements.activeTabName && elements.activeTabName.textContent !== tabLabel) {
-      elements.activeTabName.textContent = tabLabel;
+    if (tabName.textContent !== tabLabel) {
+      tabName.textContent = tabLabel;
     }
   }
 
@@ -229,6 +230,7 @@ async function migrateGuestData(uid) {
  * Application Lifecycle
  */
 function startAppFlow(user) {
+  syncNavVisibility();
   if (user && AppState.user && AppState.user.uid === user.uid) return;
   
   if (user) { 
@@ -332,6 +334,8 @@ async function initAppBootstrap() {
     navigateTo,
     onAuthenticated: (user) => startAppFlow(user)
   });
+  initFocus();
+  initAmbient();
   initSettings({ 
     navigateTo,
     setVolume: (v) => SensoryEngine.setVolume(v), 
@@ -389,16 +393,38 @@ async function initAppBootstrap() {
 }
 
 function initSwipeNavigation() {
-  const tabs = ['dashboard', 'meditations', 'notebook', 'settings'];
   let touchStartX = 0;
   let touchStartY = 0;
   let isSwiping = false;
   let startedOnScrollable = false;
   
+  // Get active tabs based on what's visible in the navbar
+  const getVisibleTabs = () => {
+    if (!elements.mobileNav) return ['dashboard', 'meditations', 'notebook', 'settings'];
+    const items = Array.from(elements.mobileNav.querySelectorAll('.nav-item'));
+    return items
+      .filter(item => getComputedStyle(item).display !== 'none')
+      .map(item => item.getAttribute('data-view'))
+      .filter(Boolean);
+  };
+
   document.addEventListener('touchstart', (e) => {
     if (isNavigating) return;
-    const scrollable = e.target.closest('.filter-chips, .filter-chips-container, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe], #savoringNote, textarea, .vagal-triangle-container, .identity-card-v2');
+    
+    // Check if we started on a scrollable element
+    const scrollable = e.target.closest('.filter-chips, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe], #savoringNote, textarea, .vagal-triangle-container');
+    const slider = e.target.closest('.focus-slider');
+    
     startedOnScrollable = !!scrollable;
+    
+    // Special handling for sliders: only block global swipe if we're not at the edge
+    if (slider) {
+      const atStart = slider.scrollLeft <= 5;
+      const atEnd = slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 5;
+      // We'll decide later in touchend if we should navigate
+      startedOnScrollable = false; 
+    }
+
     if (startedOnScrollable) return;
 
     touchStartX = e.changedTouches[0].screenX;
@@ -426,22 +452,38 @@ function initSwipeNavigation() {
 
     const touchEndX = e.changedTouches[0].screenX;
     const deltaX = touchEndX - touchStartX;
-    const threshold = 60; // Minimal swipe distance
+    const threshold = 70; 
 
     if (Math.abs(deltaX) < threshold) return;
+
+    // Check if we are on a slider and if we should allow global navigation
+    const slider = e.target.closest('.focus-slider');
+    if (slider) {
+      const atStart = slider.scrollLeft <= 10;
+      const atEnd = slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 10;
+      
+      // If swiping right at start or left at end, allow global nav
+      const swipingRight = deltaX > 0;
+      const swipingLeft = deltaX < 0;
+      
+      if (!((swipingRight && atStart) || (swipingLeft && atEnd))) {
+        return; // Stay within internal slider
+      }
+    }
 
     const currentView = Array.from(elements.views).find(v => v.classList.contains('active') && !v.classList.contains('hidden'));
     if (!currentView) return;
     
     const currentTab = currentView.id.replace('view-', '');
-    const currentIndex = tabs.indexOf(currentTab);
+    const visibleTabs = getVisibleTabs();
+    const currentIndex = visibleTabs.indexOf(currentTab);
     if (currentIndex === -1) return;
 
     const direction = deltaX < 0 ? 1 : -1; 
     const targetIndex = currentIndex + direction;
     
-    if (targetIndex >= 0 && targetIndex < tabs.length) {
-      navigateTo(`view-${tabs[targetIndex]}`);
+    if (targetIndex >= 0 && targetIndex < visibleTabs.length) {
+      navigateTo(`view-${visibleTabs[targetIndex]}`);
     }
   }, { passive: true });
 }

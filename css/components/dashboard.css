@@ -1,6 +1,11 @@
+/* 
+   Aura | Dashboard View V7
+   Restored Original Design with Ultra-Wide Layout
+*/
+
 /* History Section */
 .history-section h3 { font-size: 1.3rem; margin-bottom: 2rem; color: var(--text-muted); padding-left: 0.5rem; }
-.history-list { display: flex; flex-direction: column; gap: 1.2rem; }
+.history-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
 
 /* === COCKPIT CARDS === */
 .cockpit-card {
@@ -134,68 +139,7 @@
   color: var(--text-muted); 
 }
 
-/* History Item Legacy (keeping for safety) */
-.history-item {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border-radius: 20px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  transition: all 0.3s ease;
-  border-left: 4px solid var(--accent-primary);
-  border-top: 1px solid rgba(255, 255, 255, 0.03);
-  border-right: 1px solid rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.history-item.wired { border-left-color: var(--accent-wired); background: rgba(251, 160, 68, 0.05); }
-.history-item.foggy { border-left-color: var(--accent-foggy); background: rgba(98, 164, 255, 0.05); }
-.history-item.okay { border-left-color: var(--accent-okay); background: rgba(100, 228, 159, 0.05); }
-
-/* ... existing dashboard hero styles below ... */
-
-
-
-/* State Picker (Step 1) */
-.state-options { display: flex; flex-direction: column; gap: 1rem; }
-.state-card {
-  display: flex; flex-direction: row; align-items: center; gap: 1.2rem;
-  padding: 1.2rem 1.4rem; text-align: left; border-left: 5px solid transparent;
-  border-radius: 20px; transition: var(--transition-spring);
-}
-.state-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.06); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
-.state-card:active { transform: scale(0.97); }
-
-.state-icon { 
-  font-size: 1.8rem; 
-  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.05);
-  width: 52px; height: 52px; border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.state-card-info { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
-.state-card h3 { font-size: 1.2rem; color: var(--text-main); margin-bottom: 0; }
-.state-card p { font-size: 0.95rem; opacity: 0.8; }
-
-/* Sub-Emotion Picker (Step 2) */
-.sub-emotion-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.8rem;
-  width: 100%;
-}
-@media (max-width: 450px) {
-  .sub-emotion-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* =========================
-   DASHBOARD HERO BUTTON
-   ========================= */
-
-.welcome-box { margin-bottom: 2rem; }
-.welcome-box h2 { font-size: clamp(2rem, 10vw, 2.8rem); margin-bottom: 0.2rem; letter-spacing: -1px; }
-
+/* === HERO BTN (NESTED COCKPIT) === */
 .hero-btn {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -220,136 +164,160 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 .hero-btn .cockpit-label { color: var(--vagal-accent, #6ee7c7); font-weight: 700; }
 .hero-btn .cockpit-title { font-size: 1.4rem; margin-top: 2px; }
-.hero-btn h3 { font-size: 1.6rem; color: var(--text-main); margin-bottom: 0.6rem; }
-.hero-btn p { font-size: 1.05rem; opacity: 0.8; }
-.hero-btn::before {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle at center, rgba(133, 141, 255, 0.2) 0%, transparent 70%);
-  opacity: 0; transition: opacity 0.6s ease;
+.hero-btn h3 { font-size: 1.6rem; color: var(--text-main); margin-bottom: 0.6rem; text-align: left; }
+.hero-btn p { font-size: 1.05rem; opacity: 0.8; text-align: left; }
+
+/* === STATE PICKER & EMOTIONS === */
+.state-options { display: flex; flex-direction: column; gap: 1rem; }
+.state-card {
+  display: flex; flex-direction: row; align-items: center; gap: 1.2rem;
+  padding: 1.2rem 1.4rem; text-align: left; border-left: 5px solid transparent;
+  border-radius: 20px; transition: var(--transition-spring);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
 }
-.hero-btn:hover::before { opacity: 1; }
-.hero-icon { font-size: 3rem; margin-bottom: 1.2rem; }
-.pulse-hover:hover { transform: translateY(-4px) scale(1.01); border-color: rgba(133, 141, 255, 0.4); }
-.pulse-hover:active { transform: scale(0.98); }
+.state-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.06); }
+.state-icon { 
+  font-size: 1.8rem; background: rgba(255, 255, 255, 0.05); 
+  width: 52px; height: 52px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.state-card h3 { font-size: 1.2rem; color: var(--text-main); margin-bottom: 0; text-align: left; }
+.state-card p { font-size: 0.95rem; opacity: 0.8; text-align: left; }
 
-/* === COMPLETION BOX === */
-.completion-box { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 400px; width: 100%; margin: 0 auto; }
-.success-icon { font-size: 3rem; margin-bottom: 2rem; filter: drop-shadow(0 4px 15px rgba(255,255,255,0.4)); }
-.completion-box h2 { font-size: 2.2rem; font-weight: 500; margin-bottom: 1rem; color: #fff; text-align: center; }
-.completion-box p { font-size: 1.1rem; color: rgba(255,255,255,0.6); margin-bottom: 3rem; text-align: center; }
+.sub-emotion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; width: 100%; }
+@media (max-width: 450px) { .sub-emotion-grid { grid-template-columns: repeat(2, 1fr); } }
 
-/* === GUEST CTA BOX === */
-.guest-cta-box { transition: all 0.5s ease-in-out; margin: 0 auto 2rem auto; }
-.guest-cta-box .glass-panel { border-color: rgba(133,141,255,0.3); box-shadow: 0 0 20px rgba(133,141,255,0.1), inset 0 0 10px rgba(133,141,255,0.05); }
-
+/* === VAGAL HEATMAP CARD (RESTORED & SYNCED) === */
 .vagal-heatmap-card {
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 2.5rem 2rem;
+  border-radius: 28px;
+  padding: 1.8rem 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: none;
+  width: 100%;
+  box-sizing: border-box;
   position: relative;
-  overflow: hidden;
 }
 
-/* === VAGAL TRIANGLE & HEATMAP (RECONSTRUCTED) === */
 .vagal-triangle-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1.1;
-  margin: 2rem auto;
+  aspect-ratio: 1.2;
+  margin: 1rem auto;
   max-width: 280px;
-  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 75%);
 }
 
 .vagal-vertex {
   position: absolute;
   font-size: 0.7rem;
-  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--text-muted);
-  opacity: 0.6;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
 }
 
-.v-ventral { top: -20px; left: 50%; transform: translateX(-50%); color: var(--accent-okay); }
-.v-dorsal { bottom: -10px; left: -10px; color: var(--accent-foggy); }
-.v-sympathetic { bottom: -10px; right: -10px; color: var(--accent-wired); }
+.v-ventral { top: -10px; left: 50%; transform: translateX(-50%); color: var(--vagal-ventral, #A8E6CF); }
+.v-sympathetic { bottom: 0; right: -5px; color: var(--vagal-sympathetic, #FFD3B6); }
+.v-dorsal { bottom: 0; left: -5px; color: var(--vagal-dorsal, #62A4FF); }
 
 .vagal-metaball-container {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(255,255,255,0.05);
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  background: rgba(255,255,255,0.02);
+  pointer-events: none;
 }
 
 .vagal-blob {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   background: #fff;
   border-radius: 50%;
-  filter: blur(2px);
-  box-shadow: 0 0 20px #fff, 0 0 40px var(--accent-okay);
+  filter: blur(1px);
+  box-shadow: 0 0 15px #fff, 0 0 30px var(--vagal-accent, #64E49F);
   z-index: 10;
   transform: translate(-50%, -50%);
-  transition: all 1s var(--spring-easing);
-  opacity: 1 !important;
+  transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .vagal-router-footer {
   text-align: center;
   margin-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 1rem;
+}
+
+.vagal-router-footer span {
   font-size: 0.65rem;
-  letter-spacing: 2px;
-  color: var(--text-muted);
-  opacity: 0.4;
-}
-
-/* === TIMELINE HEADER V2 === */
-.timeline-header-v2 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 2rem 0;
-  padding: 1rem 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.day-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-  flex: 1;
-}
-
-.day-label {
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.3);
 }
 
-.day-circle {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  transition: all 0.4s ease;
+/* Timeline Header */
+.timeline-header-v2 {
+  display: flex; justify-content: space-between; align-items: center;
+  margin: 2rem 0; padding: 1rem 10px;
+  background: rgba(255, 255, 255, 0.05); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.day-circle { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+.day-circle.day-okay { background: var(--accent-okay); }
+.day-circle.day-wired { background: var(--accent-wired); }
+.day-circle.day-foggy { background: var(--accent-foggy); }
+
+/* === DESKTOP OPTIMIZATIONS === */
+@media (min-width: 1024px) {
+  .dash-grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 520px; /* Reduced by ~35% for a compact card feel */
+    margin: 0 auto;
+    padding: 2rem 0;
+    width: 100%;
+  }
+
+  .welcome-box {
+    text-align: center;
+    margin-bottom: 4rem;
+    width: 100%;
+  }
+
+  .dash-main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  /* Force all cards to respect the 520px compact width */
+  .dash-main > *, 
+  .cockpit-card-v2,
+  .insight-heatmap-card {
+    width: 100% !important;
+    max-width: 520px !important;
+  }
+
+  /* Remove side column on desktop */
+  .dash-side {
+    display: none;
+  }
+
+  .hero-btn {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
 }
 
-.day-circle.day-okay { background: var(--accent-okay); box-shadow: 0 0 10px var(--accent-okay); }
-.day-circle.day-wired { background: var(--accent-wired); box-shadow: 0 0 10px var(--accent-wired); }
-.day-circle.day-foggy { background: var(--accent-foggy); box-shadow: 0 0 10px var(--accent-foggy); }
+@media (min-width: 768px) and (max-width: 1023px) {
+  .history-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .hero-btn { max-width: 600px; margin: 0 auto; }
+}

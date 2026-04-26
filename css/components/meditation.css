@@ -1,6 +1,6 @@
 /* ===================================================
    MEDITATION VIEW & LOADING SCREEN
-   Extracted from base.css + layout.css for modular organization
+   Restored Original Design with Ultra-Wide Layout
    =================================================== */
 
 /* --- MEDITATION LOADING TRANSITION --- */
@@ -44,7 +44,7 @@
   stroke: #858DFF;
   stroke-width: 8;
   stroke-linecap: round;
-  stroke-dasharray: 283; /* 2 * PI * 45 */
+  stroke-dasharray: 283;
   stroke-dashoffset: 283;
   transition: stroke-dashoffset 5s linear;
   filter: drop-shadow(0 0 16px rgba(133, 141, 255, 0.4));
@@ -58,21 +58,7 @@
   transition: all 0.3s ease;
 }
 
-.loading-text-box h2 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-main);
-}
-
-.loading-text-box p {
-  font-size: 1rem;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
-
-/* --- MEDITATION CARDS --- */
-/* (Extracted from layout.css) */
-
+/* --- ORIGINAL MEDITATION CARDS --- */
 .meditation-card {
   display: flex;
   flex-direction: column;
@@ -93,7 +79,7 @@
   box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* Dynamic Touch-Spread Effect */
+/* Dynamic Touch-Spread Effect (Original Feature) */
 .meditation-card::after {
   content: "";
   position: absolute;
@@ -104,9 +90,9 @@
   background: radial-gradient(circle, var(--card-accent), transparent 70%);
   opacity: 0;
   transform: translate(-50%, -50%);
-  transition: width 0.6s cubic-bezier(0.1, 0.5, 0.5, 1), 
-              height 0.6s cubic-bezier(0.1, 0.5, 0.5, 1), 
-              opacity 0.6s ease;
+  transition: width 0.6s cubic-bezier(0.1, 0.5, 0.5, 1),
+    height 0.6s cubic-bezier(0.1, 0.5, 0.5, 1),
+    opacity 0.6s ease;
   pointer-events: none;
   z-index: 1;
 }
@@ -117,28 +103,6 @@
   opacity: 0.35;
 }
 
-.meditation-card.hidden-protocol {
-  display: none !important;
-}
-
-/* Data-attribute based filtering (Stable & Performance optimized) */
-.meditations-list[data-filter="calm"] .meditation-card:not([data-category="calm"]),
-.meditations-list[data-filter="focus"] .meditation-card:not([data-category="focus"]),
-.meditations-list[data-filter="energize"] .meditation-card:not([data-category="energize"]) {
-  display: none !important;
-}
-
-.meditation-card:hover {
-  transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-}
-
-.meditation-card:active {
-  transform: scale(0.97);
-}
-
 .meditation-card-icon {
   width: 48px;
   height: 48px;
@@ -147,13 +111,12 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  /* Premium Glassmorphic Style */
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: inset 0 0 12px -2px var(--card-accent),
-              inset 0 1px 1px rgba(255, 255, 255, 0.05),
-              0 8px 16px -8px rgba(0, 0, 0, 0.5);
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    0 8px 16px -8px rgba(0, 0, 0, 0.5);
   border: none;
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -165,6 +128,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  z-index: 2;
 }
 
 .meditation-card-title {
@@ -172,7 +136,6 @@
   font-weight: 500;
   line-height: 1.3;
   color: var(--text-main);
-  margin-bottom: 0.2rem;
 }
 
 .meditation-card-meta {
@@ -181,19 +144,7 @@
   font-weight: 300;
 }
 
-.meditation-card-arrow {
-  color: rgba(255, 255, 255, 0.5);
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.meditation-card:hover .meditation-card-arrow {
-  opacity: 1;
-  transform: translateX(3px);
-}
-
+/* Info Trigger */
 .meditation-card .info-trigger {
   position: absolute;
   right: 16px;
@@ -209,46 +160,24 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   color: rgba(255, 255, 255, 0.4);
-  transition: all 0.2s ease;
-  cursor: pointer;
 }
 
-.meditation-card .info-trigger:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+/* --- GRID & FILTER CHIPS --- */
+.meditations-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px; /* Ultra-Wide Match */
+  width: 100%;
 }
-
-/* --- DEEP JOURNEY CARDS --- */
-.deep-journey-card {
-  background: linear-gradient(145deg, rgba(133, 141, 255, 0.1) 0%, rgba(133, 141, 255, 0.02) 100%) !important;
-  border: 1px solid rgba(133, 141, 255, 0.2) !important;
-  box-shadow: 0 4px 15px rgba(133, 141, 255, 0.05);
-}
-
-.deep-journey-card:hover {
-  border-color: rgba(133, 141, 255, 0.4) !important;
-  background: linear-gradient(145deg, rgba(133, 141, 255, 0.15) 0%, rgba(133, 141, 255, 0.05) 100%) !important;
-  box-shadow: 0 8px 30px rgba(133, 141, 255, 0.15);
-}
-
-/* --- FILTER CHIPS --- */
-/* (Extracted from layout.css) */
 
 .filter-chips-container {
   display: flex;
   gap: 10px;
   margin-bottom: 1.5rem;
   overflow-x: auto;
-  padding: 4px 2px;
+  padding: 4px 0;
   scrollbar-width: none;
 }
-
-.filter-chips-container::-webkit-scrollbar {
-  display: none;
-}
-
 .filter-chip {
   padding: 0.6rem 1.2rem;
   border-radius: 100px;
@@ -256,184 +185,21 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
   white-space: nowrap;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.filter-chip:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
 .filter-chip.active {
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Category Specific Active States */
-.filter-chip.active[data-category="calm"] {
-  background: rgba(133, 141, 255, 0.2);
-  border-color: rgba(133, 141, 255, 0.4);
-  color: #fff;
-  box-shadow: 0 0 15px rgba(133, 141, 255, 0.2);
-}
-
-.filter-chip.active[data-category="focus"] {
-  background: rgba(200, 140, 255, 0.2);
-  border-color: rgba(200, 140, 255, 0.4);
-  color: #fff;
-  box-shadow: 0 0 15px rgba(200, 140, 255, 0.2);
-}
-
-/* --- MEDITATIONS LIST LAYOUT --- */
-/* (Extracted from layout.css) */
-
-.meditations-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  min-height: 400px;
-  width: 100%;
-  align-content: flex-start;
-}
-
-/* Recommended Section */
-.rec-section-container {
-  margin-bottom: 2rem;
-  width: 100%;
-}
-
-.rec-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 0.8rem;
-  display: block;
-}
-
-.rec-scroll-row {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.rec-scroll-row::-webkit-scrollbar {
-  display: none;
-}
-
-.rec-scroll-row .meditation-card {
-  flex: 0 0 280px;
-  max-width: 280px;
-}
-
-.rec-card-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 3px 8px;
-  border-radius: 100px;
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  z-index: 10;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* --- DESKTOP REFINEMENTS FOR MEDITATIONS (768px+) --- */
+/* --- DESKTOP --- */
 @media (min-width: 768px) {
-  #view-meditations .standard-view-content {
-    max-width: 800px; /* Revert to original width */
-    padding-top: 5.5rem;
-    padding-bottom: 4rem;
-  }
-
-  /* Desktop List: 2-Column Horizontal Bars (Original Style) */
-  .meditations-list {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-    width: 100%;
-    align-items: start;
-  }
-
   .meditation-card {
-    flex-direction: row; /* Horizontal bars on desktop */
+    flex-direction: row;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
+    gap: 1.5rem;
+    padding: 1.2rem 1.8rem;
     min-height: auto;
-    border-top: none;
-    border: none;
-    border-radius: 20px;
-    box-shadow: none; /* Reset mobile glow on desktop */
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
   }
-
-  .meditation-card .meditation-card-icon {
-    background: rgba(133, 141, 255, 0.1);
-    border: 1px solid rgba(133, 141, 255, 0.15);
-  }
-
-  .meditation-card .meditation-card-info {
-    gap: 0.3rem;
-  }
-}
-
-/* === DEEP JOURNEY CARDS === */
-.deep-journey-card {
-  background: linear-gradient(145deg, rgba(133, 141, 255, 0.1) 0%, rgba(133, 141, 255, 0.02) 100%) !important;
-  border: 1px solid rgba(133, 141, 255, 0.2) !important;
-  box-shadow: 0 4px 15px rgba(133, 141, 255, 0.05);
-}
-.deep-journey-card:hover {
-  border-color: rgba(133, 141, 255, 0.4) !important;
-  background: linear-gradient(145deg, rgba(133, 141, 255, 0.15) 0%, rgba(133, 141, 255, 0.05) 100%) !important;
-  box-shadow: 0 8px 30px rgba(133, 141, 255, 0.15);
-}
-
-/* === MEDITATION LOADING CIRCLE === */
-#view-meditation-loading .loading-prep-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  z-index: 10;
-}
-#view-meditation-loading .loading-circle-box {
-  position: relative;
-  width: 120px;
-  height: 120px;
-}
-.loading-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-.loading-circle-bg { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 4; }
-.loading-circle-fill {
-  fill: none;
-  stroke: var(--accent-primary);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-dasharray: 283;
-  stroke-dashoffset: 283;
-  transition: stroke-dashoffset 3s linear;
-}
-#view-meditation-loading.active .loading-circle-fill { stroke-dashoffset: 0; }
-.loading-text-box { text-align: center; }
-#meditationLoadingTitle {
-  font-size: 1.5rem;
-  font-weight: 400;
-  letter-spacing: -0.5px;
-  color: #fff;
-  margin-bottom: 0.5rem;
 }

@@ -18,6 +18,10 @@ export const AppState = {
   droneEnabled: safeGetItem('aura_drone') !== 'false', // Default true
   uiSoundsEnabled: safeGetItem('aura_ui_sounds') === 'true', // Default false
   appVolume: parseInt(safeGetItem('aura_volume')) || 50, // Default 50
+  showNotebook: safeGetItem('aura_show_notebook') !== 'false', // Default true
+  showMeditations: safeGetItem('aura_show_meditations') !== 'false', // Default true
+  showFocus: safeGetItem('aura_show_focus') === 'true', // Default false
+  showAmbient: safeGetItem('aura_show_ambient') === 'true', // Default false
   justFinishedCheckIn: false,
   lastCheckInState: null,
   currentCheckIn: {

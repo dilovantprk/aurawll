@@ -10,7 +10,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-  signOut
+  signOut,
+  deleteUser
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
 const MOCK_MODE = !isInitialized;
@@ -68,4 +69,71 @@ export async function upgradeGuestWithGoogle() {
 export function isGuestUser(user) {
   if (!user) return true;
   return user.isAnonymous === true || user.guest === true;
+}
+
+/**
+ * Delete specific checkin from Firestore
+ */
+export async function deleteSingleCheckin(timestamp) {
+  if (MOCK_MODE) return true;
+  const currentUser = auth.currentUser;
+  if (!currentUser) return false;
+
+  const fb = await import('../../firebase.js');
+  try {
+    const q = fb.query(
+      fb.collection(fb.db, "checkins"),
+      fb.where("uid", "==", currentUser.uid),
+      fb.where("timestamp", "==", timestamp)
+    );
+    const snapshot = await fb.getDocs(q);
+    const deletePromises = [];
+    snapshot.forEach(doc => {
+      deletePromises.push(fb.deleteDoc(doc.ref));
+    });
+    await Promise.all(deletePromises);
+    return true;
+  } catch (err) {
+    console.error("[Auth Service] Delete checkin failed:", err);
+    throw err;
+  }
+}
+
+/**
+ * Delete entire account and associated data
+ */
+export async function deleteUserAccount() {
+  if (MOCK_MODE) {
+    localStorage.clear();
+    return true;
+  }
+
+  const currentUser = auth.currentUser;
+  if (!currentUser) return false;
+
+  const fb = await import('../../firebase.js');
+
+  try {
+    // 1. Delete all checkins from Firestore
+    const q = fb.query(fb.collection(fb.db, "checkins"), fb.where("uid", "==", currentUser.uid));
+    const snapshot = await fb.getDocs(q);
+    const deletePromises = [];
+    snapshot.forEach(doc => {
+      deletePromises.push(fb.deleteDoc(doc.ref));
+    });
+    await Promise.all(deletePromises);
+
+    // 2. Delete the user account itself
+    await deleteUser(currentUser);
+    
+    // 3. Clear local storage
+    localStorage.clear();
+    return true;
+  } catch (err) {
+    console.error("[Auth Service] Account deletion failed:", err);
+    if (err.code === 'auth/requires-recent-login') {
+      throw new Error('REAUTH_NEEDED');
+    }
+    throw err;
+  }
 }
