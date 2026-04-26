@@ -124,7 +124,7 @@ export function renderNotebook(providedEntries) {
       }
 
       html += `
-        <div class="aura-card fade-in-pure">
+        <div class="aura-card glow-card fade-in-pure">
           <div class="card-header">
             <div class="aura-orb ${entry.polyvagal_state || 'ventral'}"></div>
             <div class="time-meta">${timeStr}</div>

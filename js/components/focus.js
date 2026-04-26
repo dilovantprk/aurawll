@@ -260,7 +260,7 @@ function renderTasks() {
   if (!elements.todoList) return;
   
   elements.todoList.innerHTML = tasks.map(task => `
-    <div class="todo-item ${task.completed ? 'completed' : ''}" data-id="${task.id}">
+    <div class="todo-item glow-card ${task.completed ? 'completed' : ''}" data-id="${task.id}">
        <div class="todo-check"></div>
        <span class="todo-text" style="font-size: 1rem;">${task.text}</span>
        <button class="todo-delete">✕</button>

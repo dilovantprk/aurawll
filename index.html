@@ -271,7 +271,7 @@
           <div class="dash-main">
 
             <!-- Big CTA for Check-In -->
-            <button id="startCheckinBtn" class="hero-btn cockpit-card liquid-border pulse-hover stagger-2">
+            <button id="startCheckinBtn" class="hero-btn cockpit-card liquid-border glow-card pulse-hover stagger-2">
               <div class="cockpit-icon">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.5" stroke-dasharray="2 2" />
@@ -290,7 +290,7 @@
             <div class="patterns-wrapper stagger-3">
               <h3 data-i18n="dash_weekly" class="section-title">Weekly Patterns</h3>
               <!-- Vagal Heatmap Card (Now at the TOP of patterns) -->
-              <div id="vagalHeatmapCard" class="vagal-heatmap-card liquid-border hidden mb-4">
+              <div id="vagalHeatmapCard" class="vagal-heatmap-card liquid-border glow-card hidden mb-4">
                 <button class="cockpit-info-btn" data-info="info_heatmap_desc">i</button>
                 <div class="vagal-triangle-container">
                   <div class="vagal-vertex v-ventral" data-i18n="vagal_ventral">Ventral</div>
@@ -314,7 +314,7 @@
 
               <div class="cockpit-grid">
                 <!-- Vagal Resilience Card (Small) -->
-                <div id="resilienceBar" class="cockpit-card-mini liquid-border hidden">
+                <div id="resilienceBar" class="cockpit-card-mini liquid-border glow-card hidden">
                   <button class="cockpit-info-btn" data-info="info_resilience_desc">i</button>
                   <div class="resilience-header">
                     <span class="resilience-label" data-i18n="dash_resilience_flow">ESNEKLİK AKIŞI</span>
@@ -330,7 +330,7 @@
 
 
                 <!-- AI Insight Card -->
-                <div id="weeklyInsight" class="cockpit-card liquid-border hidden">
+                <div id="weeklyInsight" class="cockpit-card liquid-border glow-card hidden">
                   <button class="cockpit-info-btn" data-info="info_insight_desc">i</button>
                   <div class="cockpit-icon">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -622,7 +622,7 @@
         </div>
 
         <!-- Vagal Heatmap Card -->
-        <div class="glass-panel liquid-border stagger-2"
+        <div class="glass-panel liquid-border glow-card stagger-2"
           style="padding: 2rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;">
           <div id="macro-heatmap" class="heatmap-container" style="position: relative; height: 320px;">
             <div class="vagal-triangle-container" style="margin: 0 auto;">
@@ -643,7 +643,7 @@
         </div>
 
         <!-- Resilience Flow Card -->
-        <div class="glass-panel liquid-border stagger-3" style="padding: 1.5rem 2rem; margin-bottom: 1.5rem;">
+        <div class="glass-panel liquid-border glow-card stagger-3" style="padding: 1.5rem 2rem; margin-bottom: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
             <h4 class="section-title" style="margin: 0;" data-i18n="insight_resilience_flow">Esneklik Akışı</h4>
             <span id="resilience-score-large"
@@ -655,7 +655,7 @@
         </div>
 
         <!-- Insight Summary Card -->
-        <div id="insight-summary-card" class="glass-panel liquid-border stagger-4"
+        <div id="insight-summary-card" class="glass-panel liquid-border glow-card stagger-4"
           style="padding: 1.5rem 2rem; margin-bottom: 2rem;">
           <h4 class="section-title" style="margin: 0 0 0.8rem 0;" data-i18n="insight_summary_title">Özet</h4>
           <p id="insight-summary-text" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.7;">—</p>
@@ -672,7 +672,7 @@
         </header>
 
         <!-- IDENTITY CARD (Neural Passport - Horizontal) -->
-        <div class="identity-card-v2 arc-horizontal stagger-1">
+        <div class="identity-card-v2 arc-horizontal glow-card stagger-1">
           <!-- Left Side: Visual Core -->
           <div class="arc-h-visual">
             <div class="aura-blob-wave">
@@ -924,7 +924,7 @@
               </header>
 
               <!-- SETUP PHASE -->
-              <div id="focusSetup" class="focus-setup-container stagger-2 glass-panel">
+              <div id="focusSetup" class="focus-setup-container glow-card stagger-2 glass-panel">
                 <div class="input-group">
                   <label data-i18n="focus_label_config">Session Configuration</label>
                   <div id="sessionNamesList" class="session-names-list">
@@ -979,14 +979,14 @@
 
                 <!-- NEW: CONTROLS AT TOP -->
                 <div class="focus-controls stagger-2" style="margin-bottom: 2rem;">
-                  <button id="focusToggleBtn" class="focus-ctrl-btn glass-btn"
+                  <button id="focusToggleBtn" class="focus-ctrl-btn glass-btn glow-card"
                     style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
                       stroke-linecap="round" stroke-linejoin="round">
                       <polygon points="5 3 19 12 5 21 5 3"></polygon>
                     </svg>
                   </button>
-                  <button id="focusStopBtn" class="focus-ctrl-btn glass-btn"
+                  <button id="focusStopBtn" class="focus-ctrl-btn glass-btn glow-card"
                     style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
                       stroke-linecap="round" stroke-linejoin="round">

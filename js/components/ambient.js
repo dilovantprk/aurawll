@@ -48,7 +48,7 @@ function renderAmbientGrid() {
   if (!elements.ambientList) return;
 
   elements.ambientList.innerHTML = AMBIENT_SOUNDS.map(sound => `
-    <div class="ambient-card-v2 liquid-glass ${activeSoundId === sound.id ? 'active' : ''}" data-id="${sound.id}" data-visual="${sound.visual || ''}">
+    <div class="ambient-card-v2 liquid-glass glow-card ${activeSoundId === sound.id ? 'active' : ''}" data-id="${sound.id}" data-visual="${sound.visual || ''}">
       <div class="card-visual"></div>
       
       <!-- Aesthetic Liquid Wave Visualizer -->

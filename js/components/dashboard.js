@@ -150,7 +150,7 @@ export function renderHistory(data) {
     }
 
     return `
-      <div class="aura-card stagger-${(index % 4) + 3}" onclick="window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}))">
+      <div class="aura-card glow-card stagger-${(index % 4) + 3}" onclick="window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}))">
         <div class="card-header">
           <div class="aura-orb ${item.polyvagal_state || 'ventral'}"></div>
           <div class="time-meta">${timeStr}</div>

@@ -26,6 +26,7 @@ import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth } from './js/components/auth.js';
 import { initFocus } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
+import { initGlobalCursorEffect } from './js/core/cursor-effect.js';
 import { NotificationService } from './js/services/notifications.js';
 
 // Services
@@ -387,6 +388,7 @@ async function initAppBootstrap() {
     };
   });
 
+  initGlobalCursorEffect();
   startAppFlow(null);
 
   initSwipeNavigation();
