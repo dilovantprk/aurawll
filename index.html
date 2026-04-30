@@ -250,6 +250,7 @@
           <button class="nav-item" data-view="meditations" data-i18n="nav_breathe">Breathe</button>
           <button class="nav-item" data-view="focus" data-i18n="nav_focus">Focus</button>
           <button class="nav-item" data-view="ambient" data-i18n="nav_ambient">Ambient</button>
+          <button class="nav-item" data-view="sleep" data-i18n="nav_sleep" id="desktopNavSleep">Sleep</button>
           <button class="nav-item" data-view="notebook" data-i18n="nav_notebook">Notes</button>
           <button class="nav-item" data-view="settings" data-i18n="nav_profile">Profile</button>
         </div>
@@ -286,11 +287,45 @@
               </div>
             </button>
 
+            <!-- Quick Interventions & Daily Bites -->
+            <div class="dash-quick-actions stagger-2">
+              <div class="quick-cards-grid">
+                <!-- SOS Breathing -->
+                <button id="sosBreathingBtn" class="glass-panel quick-action-card glow-card">
+                  <div class="quick-icon sos-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                  </div>
+                  <div class="quick-content">
+                    <span class="quick-title" data-i18n="dash_sos_title">Sadece 1 Dakika</span>
+                    <span class="quick-desc" data-i18n="dash_sos_desc">Hızlı rahatlama</span>
+                  </div>
+                </button>
+                <!-- Daily Intent -->
+                <div id="dailyIntentCard" class="glass-panel quick-action-card glow-card">
+                   <div class="quick-icon intent-icon">
+                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                   </div>
+                   <div class="quick-content">
+                     <span class="quick-title" data-i18n="dash_intent_title">Günün Niyeti</span>
+                     <span id="dailyIntentText" class="quick-desc">Bedenime şefkat göstereceğim.</span>
+                   </div>
+                </div>
+              </div>
+              
+              <!-- Daily Polyvagal Bite -->
+              <div class="glass-panel daily-bite-card glow-card">
+                <div class="bite-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
+                  <span class="bite-label" data-i18n="dash_bite_label">SİNİR SİSTEMİ NOTU</span>
+                </div>
+                <p id="dailyBiteText" class="bite-text">Ventral Vagal durum sadece sakinlik değil, aynı zamanda sosyal bağ kurma kapasitesidir.</p>
+              </div>
+            </div>
+
             <!-- Weekly Patterns Section -->
             <div class="patterns-wrapper stagger-3">
-              <h3 data-i18n="dash_weekly" class="section-title">Weekly Patterns</h3>
               <!-- Vagal Heatmap Card (Now at the TOP of patterns) -->
-              <div id="vagalHeatmapCard" class="vagal-heatmap-card liquid-border glow-card hidden mb-4">
+              <div id="vagalHeatmapCard" class="vagal-heatmap-card liquid-border glow-card hidden">
                 <button class="cockpit-info-btn" data-info="info_heatmap_desc">i</button>
                 <div class="vagal-triangle-container">
                   <div class="vagal-vertex v-ventral" data-i18n="vagal_ventral">Ventral</div>
@@ -383,6 +418,43 @@
           </div>
         </div>
 
+        <!-- NEW: Module Market Section -->
+        <div class="module-market-wrapper stagger-4">
+          <div class="module-market-header">
+            <h3 data-i18n-html="market_title">Aura<span class="plus-sign">+</span></h3>
+            <p data-i18n="market_desc">Genişletilmiş araçları keşfet ve sistemine ekle.</p>
+          </div>
+          <div id="moduleMarketGrid" class="module-market-grid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 0: MORNING CHECK-IN -->
+    <section id="view-morning-checkin" class="view hidden center-content">
+      <div class="step-header fade-in">
+        <h2 data-i18n="morning_title">Günaydın.</h2>
+      </div>
+      <div id="morningQuestions" class="morning-questions-container fade-in-pure delay-1" style="width: 100%; max-width: 400px; margin-top: 2rem; text-align: left;">
+        <div class="question-block" style="margin-bottom: 2rem;">
+          <p style="margin-bottom: 1rem; font-size: 1.1rem;" data-i18n="morning_q_dream">Dün gece rüya gördün mü?</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="morningDreamBtns">
+            <button class="ghost-btn morning-btn" data-val="yes" style="flex:1;">Evet</button>
+            <button class="ghost-btn morning-btn" data-val="no" style="flex:1;">Hayır</button>
+            <button class="ghost-btn morning-btn" data-val="vague" style="flex:1;">Hayal Meyal</button>
+          </div>
+        </div>
+        <div class="question-block">
+          <p style="margin-bottom: 1rem; font-size: 1.1rem;" data-i18n="morning_q_body">Uyanınca bedenin nasıl hissettirdi?</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="morningBodyBtns">
+            <button class="ghost-btn morning-btn" data-val="refreshed" style="flex:1;">Dinlenmiş</button>
+            <button class="ghost-btn morning-btn" data-val="heavy" style="flex:1;">Ağır</button>
+            <button class="ghost-btn morning-btn" data-val="neutral" style="flex:1;">Nötr</button>
+          </div>
+        </div>
+        <button id="morningNextBtn" class="primary-btn mt-8 hidden w-full">Devam</button>
       </div>
     </section>
 
@@ -623,7 +695,7 @@
 
         <!-- Vagal Heatmap Card -->
         <div class="glass-panel liquid-border glow-card stagger-2"
-          style="padding: 2rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;">
+          style="padding: 2rem; position: relative; overflow: hidden;">
           <div id="macro-heatmap" class="heatmap-container" style="position: relative; height: 320px;">
             <div class="vagal-triangle-container" style="margin: 0 auto;">
               <div class="vagal-vertex v-ventral" data-i18n="vagal_ventral">Ventral</div>
@@ -880,14 +952,33 @@
                 <span class="slider"></span>
               </label>
             </div>
+            <!-- Show Sleep -->
+            <div class="settings-row">
+              <div class="settings-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <span class="settings-text" data-i18n="prof_show_sleep">Show Sleep Space</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="showSleepToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
             <!-- Show Ambient -->
             <div class="settings-row">
               <div class="settings-label">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                   stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                  <path d="M2 17l10 5 10-5"></path>
-                  <path d="M2 12l10 5 10-5"></path>
+                  <path d="M12 2v2"></path>
+                  <path d="M12 20v2"></path>
+                  <path d="m4.93 4.93 1.41 1.41"></path>
+                  <path d="m17.66 17.66 1.41 1.41"></path>
+                  <path d="M2 12h2"></path>
+                  <path d="M20 12h2"></path>
+                  <path d="m6.34 17.66-1.41 1.41"></path>
+                  <path d="m19.07 4.93-1.41 1.41"></path>
                 </svg>
                 <span class="settings-text" data-i18n="prof_show_ambient">Show Ambient Space</span>
               </div>
@@ -901,7 +992,7 @@
 
         <!-- AUTH ACTIONS -->
         <div class="settings-group stagger-3" style="margin-top: 2rem;">
-          <button id="logoutBtn" class="primary-btn danger-glow" data-i18n="btn_logout">Log out</button>
+          <button id="logoutBtn" class="primary-btn danger-glass" data-i18n="btn_logout">Log out</button>
           <button id="settingsLoginBtn" class="primary-btn hidden"
             style="border-color: rgba(168, 230, 207, 0.3); margin-top: 0.5rem;" data-i18n="btn_login">Giriş Yap /
             Kaydol</button>
@@ -950,57 +1041,53 @@
                 <div class="input-group" style="margin-top: 1rem;">
                   <label style="font-size: 0.8rem; opacity: 0.5; margin-bottom: 0.5rem; display: block;"
                     data-i18n="focus_label_sets">Sets / Series</label>
-                  <div style="display: flex; align-items: center; gap: 1rem;">
-                    <input type="range" id="focusSetsInput" min="1" max="8" value="4" class="glass-range"
-                      style="flex: 1;">
-                    <span id="focusSetsVal" style="font-family: monospace; font-size: 1.2rem; width: 20px;">4</span>
+                  <input type="number" id="focusSetsInput" min="1" max="8" value="4" class="glass-input"
+                    style="padding: 12px; text-align: center;">
+                </div>
+
+                <!-- Ambient Sound Picker (Swiper Wheel) -->
+                <div class="input-group" style="margin-top: 1.5rem; text-align: center;">
+                  <label style="font-size: 0.7rem; opacity: 0.4; margin-bottom: 1rem; display: block; text-transform: uppercase; letter-spacing: 1.5px;"
+                    data-i18n="focus_label_ambient">Select Atmosphere</label>
+                  
+                  <div class="ambient-picker-container" style="position: relative; width: 100%; height: 70px; background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; display: flex; align-items: center;">
+                    <!-- Highlight Box -->
+                    <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100px; height: 44px; border: 1px solid rgba(133, 141, 255, 0.3); border-radius: 12px; background: rgba(133, 141, 255, 0.05); pointer-events: none; z-index: 1;"></div>
+                    
+                    <div id="ambientWheel" class="ambient-wheel" style="display: flex; gap: 0; overflow-x: scroll; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 100%; padding: 0 calc(50% - 50px);">
+                      <div class="wheel-item active" data-value="none" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">None</div>
+                      <div class="wheel-item" data-value="rain" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">Rain</div>
+                      <div class="wheel-item" data-value="night" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">Midnight</div>
+                      <div class="wheel-item" data-value="nature" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">Forest</div>
+                      <div class="wheel-item" data-value="space" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">Space</div>
+                      <div class="wheel-item" data-value="focus" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">Focus</div>
+                      <div class="wheel-item" data-value="relax" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">Relax</div>
+                    </div>
                   </div>
                 </div>
 
                 <div style="display: flex; justify-content: center; margin-top: 2rem;">
                   <button id="focusStartSessionBtn" class="hud-btn-v3" aria-label="Start Flow">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                       stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10" opacity="0.3"></circle>
-                      <polyline points="10 8 14 12 10 16"></polyline>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                   </button>
                 </div>
               </div>
 
               <!-- ACTIVE PHASE (Hidden initially) -->
-              <div id="focusActive" class="focus-active-container hidden" style="width: 100%; text-align: center;">
-                <!-- Session Name Header -->
+              <div id="focusActive" class="focus-active-container hidden" style="width: 100%; text-align: center; display: flex; flex-direction: column; height: 100%;">
+                
+                <!-- 1. HEADER (Session Info) -->
                 <div class="stagger-1" style="margin-bottom: 1.5rem;">
                   <h2 id="activeSessionName" style="font-size: 1.4rem; font-weight: 500;">Deep Work</h2>
-                  <div id="focusSetCounter" style="font-size: 0.8rem; opacity: 0.4; margin-top: 4px;">Session 1 / 4
-                  </div>
+                  <div id="focusSetCounter" style="font-size: 0.8rem; opacity: 0.4; margin-top: 4px;">Session 1 / 4</div>
                 </div>
 
-                <!-- NEW: CONTROLS AT TOP -->
-                <div class="focus-controls stagger-2" style="margin-bottom: 2rem;">
-                  <button id="focusToggleBtn" class="focus-ctrl-btn glass-btn glow-card"
-                    style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                  </button>
-                  <button id="focusStopBtn" class="focus-ctrl-btn glass-btn glow-card"
-                    style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Timeline / Stepper -->
-                <div id="focusTimeline" class="focus-timeline stagger-3" style="margin-bottom: 2.5rem;">
-                  <!-- Rendered by JS -->
-                </div>
-
-                <div class="pomodoro-container stagger-4">
+                <!-- 2. TIMER AT TOP (Reverted to Liquid Design) -->
+                <div class="pomodoro-container stagger-3" style="margin-bottom: 2rem;">
                   <div class="focus-timer-circle-v3">
                     <!-- Liquid Water Effect -->
                     <div class="timer-liquid-container">
@@ -1015,6 +1102,39 @@
                       <div id="focusTimeDisplay" class="focus-time-display-v2">25:00</div>
                       <div id="focusStatusLabel" class="focus-status-label-v2">FOCUS</div>
                     </div>
+                  </div>
+                </div>
+
+                <!-- 3. TIMELINE (Dots) -->
+                <div id="focusTimeline" class="focus-timeline stagger-2" style="margin-bottom: 2rem;">
+                  <!-- Dots -->
+                </div>
+
+                <!-- 4. CONTROLS AT BOTTOM (Tightened Island) -->
+                <div class="focus-controls stagger-4" style="margin-top: auto; padding-bottom: 4rem; display: flex; justify-content: center;">
+                  <div class="header-island" style="display: flex; gap: 0.4rem !important; padding: 0.5rem 0.8rem; border-radius: 50px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: fit-content;">
+                    <button id="focusAmbientToggleBtn" class="focus-ctrl-btn glass-btn"
+                      style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; background: transparent; border: none;">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                      </svg>
+                    </button>
+                    <button id="focusToggleBtn" class="focus-ctrl-btn glass-btn"
+                      style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: none;">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                      </svg>
+                    </button>
+                    <button id="focusStopBtn" class="focus-ctrl-btn glass-btn"
+                      style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; background: transparent; border: none;">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1083,10 +1203,30 @@
       </div>
     </section>
 
+    <!-- SLEEP VIEW -->
+    <section id="view-sleep" class="view hidden">
+      <div class="sleep-content standard-view-content fade-in-pure">
+        <header class="view-header stagger-1">
+          <h2 data-i18n="nav_sleep">Uyku</h2>
+          <p data-i18n="sleep_subtitle">sinir sisteminin kapanma ritüeli</p>
+        </header>
+
+        <div id="sleepDynamicArea" class="sleep-dynamic-area stagger-2">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
     <!-- Custom Notification Permission Modal -->
     <div id="notifModal" class="notif-modal-wrapper hidden fade-in">
       <div class="notif-modal-card glass-panel fade-in-pure">
-        <div class="notif-icon">🌬️</div>
+        <div class="notif-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path>
+            <path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path>
+            <path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path>
+          </svg>
+        </div>
         <h3 data-i18n="notif_modal_title">Want a daily nudge from Aura?</h3>
         <p data-i18n="notif_modal_desc">We'll gently reach out around the time you checked in today. No streaks, no
           guilt.</p>
@@ -1103,7 +1243,11 @@
 
       <div class="info-sheet-content">
         <!-- Icon & Header -->
-        <div id="infoIcon" class="info-sheet-icon">🧬</div>
+        <div id="infoIcon" class="info-sheet-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
+          </svg>
+        </div>
         <h3 id="infoTitle" class="info-sheet-title">Science</h3>
 
         <!-- Vagal Specific Container (Hidden by default) -->
@@ -1275,82 +1419,112 @@
 
     <!-- Mobile Bottom Navigation -->
     <nav id="mobile-nav" class="mobile-nav nav-hidden">
-      <div class="mobile-nav-container">
-        <div class="nav-indicator"></div>
-        <button id="navHome" class="nav-item active" data-view="dashboard" aria-label="Home">
-          <div class="nav-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
-            </svg>
-          </div>
-          <span class="nav-label" data-i18n="nav_home">Ana Sayfa</span>
-        </button>
+      <div id="mobile-nav-container" class="mobile-nav-container">
+        <!-- Main Row (Primary items) -->
+        <div class="nav-main-row">
+          <button id="navHome" class="nav-item active" data-view="dashboard" aria-label="Home">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_dashboard">Ana Sayfa</span>
+          </button>
 
-        <button id="navBreathe" class="nav-item" data-view="meditations" aria-label="Breathe">
-          <div class="nav-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" />
-              <path d="M9.6 4.6A2 2 0 1 1 11 8H2" />
-              <path d="M12.6 19.4A2 2 0 1 0 14 16H2" />
-            </svg>
-          </div>
-          <span class="nav-label" data-i18n="nav_breathe">Nefes</span>
-        </button>
+          <button id="navBreathe" class="nav-item" data-view="meditations" aria-label="Breathe">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" />
+                <path d="M9.6 4.6A2 2 0 1 1 11 8H2" />
+                <path d="M12.6 19.4A2 2 0 1 0 14 16H2" />
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_breathe">Nefes</span>
+          </button>
 
-        <button id="navFocus" class="nav-item" data-view="focus" aria-label="Focus">
-          <div class="nav-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-          </div>
-          <span class="nav-label" data-i18n="nav_focus">Odak</span>
-        </button>
+          <button id="navNotebook" class="nav-item" data-view="notebook" aria-label="Notes">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z" />
+                <path d="M16 8 2 22" />
+                <path d="M17.5 15H9" />
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_notebook">Notlar</span>
+          </button>
 
-        <button id="navAmbient" class="nav-item" data-view="ambient" aria-label="Ambient">
-          <div class="nav-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5"></path>
-              <path d="M2 12l10 5 10-5"></path>
-            </svg>
-          </div>
-          <span class="nav-label" data-i18n="nav_ambient">Ambiyans</span>
-        </button>
+          <button id="navMore" class="nav-item more-btn hidden" aria-label="More">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m18 15-6-6-6 6" />
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_more">Diğer</span>
+          </button>
 
-        <button id="navNotebook" class="nav-item" data-view="notebook" aria-label="Notes">
-          <div class="nav-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path
-                d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z" />
-              <path d="M16 8 2 22" />
-              <path d="M17.5 15H9" />
-            </svg>
-          </div>
-          <span class="nav-label" data-i18n="nav_notebook">Notlar</span>
-        </button>
+          <button id="navProfile" class="nav-item" data-view="settings" aria-label="Profile">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 11a2 2 0 1 1-2 2" />
+                <path d="M17 13a5 5 0 1 0-10 0" />
+                <path d="M22 13a10 10 0 1 0-20 0" />
+                <path d="M2 13c0 2.8 1.1 5.3 3 7.1" />
+                <path d="M19 20.1c1.9-1.8 3-4.3 3-7.1" />
+                <path d="M16 19.3c-1-1.3-1.6-2.9-1.6-4.6" />
+                <path d="M9.6 20.6c-.7-1.1-1.1-2.5-1.1-4" />
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_settings">Profil</span>
+          </button>
+        </div>
 
-        <button id="navProfile" class="nav-item" data-view="settings" aria-label="Profile">
-          <div class="nav-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 11a2 2 0 1 1-2 2" />
-              <path d="M17 13a5 5 0 1 0-10 0" />
-              <path d="M22 13a10 10 0 1 0-20 0" />
-              <path d="M2 13c0 2.8 1.1 5.3 3 7.1" />
-              <path d="M19 20.1c1.9-1.8 3-4.3 3-7.1" />
-              <path d="M16 19.3c-1-1.3-1.6-2.9-1.6-4.6" />
-              <path d="M9.6 20.6c-.7-1.1-1.1-2.5-1.1-4" />
-            </svg>
-          </div>
-          <span class="nav-label" data-i18n="nav_profile">Profil</span>
-        </button>
+        <!-- Extra Row (Hidden by default, expands upward) -->
+        <div id="navExtraRow" class="nav-extra-row">
+          <button id="navFocus" class="nav-item" data-view="focus" aria-label="Focus">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_focus">Odak</span>
+          </button>
+
+          <button id="navAmbient" class="nav-item" data-view="ambient" aria-label="Ambient">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v2"></path>
+                <path d="M12 20v2"></path>
+                <path d="m4.93 4.93 1.41 1.41"></path>
+                <path d="m17.66 17.66 1.41 1.41"></path>
+                <path d="M2 12h2"></path>
+                <path d="M20 12h2"></path>
+                <path d="m6.34 17.66-1.41 1.41"></path>
+                <path d="m19.07 4.93-1.41 1.41"></path>
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_ambient">Ambiyans</span>
+          </button>
+
+          <button id="navSleep" class="nav-item" data-view="sleep" aria-label="Sleep">
+            <div class="nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" data-i18n="nav_sleep">Uyku</span>
+          </button>
+        </div>
       </div>
     </nav>
 

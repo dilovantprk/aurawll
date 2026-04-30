@@ -18,10 +18,16 @@ export const AppState = {
   droneEnabled: safeGetItem('aura_drone') !== 'false', // Default true
   uiSoundsEnabled: safeGetItem('aura_ui_sounds') === 'true', // Default false
   appVolume: parseInt(safeGetItem('aura_volume')) || 50, // Default 50
-  showNotebook: safeGetItem('aura_show_notebook') !== 'false', // Default true
-  showMeditations: safeGetItem('aura_show_meditations') !== 'false', // Default true
+  showNotebook: safeGetItem('aura_show_notebook') === 'true', // Default false
+  showMeditations: safeGetItem('aura_show_meditations') === 'true', // Default false
   showFocus: safeGetItem('aura_show_focus') === 'true', // Default false
+  showSleep: safeGetItem('aura_show_sleep') === 'true', // Default false
   showAmbient: safeGetItem('aura_show_ambient') === 'true', // Default false
+  unlockedFocus: safeGetItem('aura_unlocked_focus') === 'true',
+  unlockedAmbient: safeGetItem('aura_unlocked_ambient') === 'true',
+  unlockedSleep: safeGetItem('aura_unlocked_sleep') === 'true',
+  lastActiveDynamicId: safeGetItem('aura_last_dynamic_nav') || 'navNotebook',
+  navStats: JSON.parse(safeGetItem('aura_nav_stats') || '{}'),
   justFinishedCheckIn: false,
   lastCheckInState: null,
   currentCheckIn: {

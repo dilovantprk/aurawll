@@ -191,6 +191,13 @@ export function initSettings(config) {
     vibrate('light');
   });
 
+  elements.showSleepToggle?.addEventListener('change', (e) => {
+    AppState.showSleep = e.target.checked;
+    localStorage.setItem('aura_show_sleep', AppState.showSleep);
+    syncNavVisibility();
+    vibrate('light');
+  });
+
   elements.showAmbientToggle?.addEventListener('change', (e) => {
     AppState.showAmbient = e.target.checked;
     localStorage.setItem('aura_show_ambient', AppState.showAmbient);
@@ -298,8 +305,33 @@ export function updateSettingsView() {
   }
   if (elements.showMeditationsToggle) elements.showMeditationsToggle.checked = AppState.showMeditations !== false;
   if (elements.showNotebookToggle) elements.showNotebookToggle.checked = AppState.showNotebook !== false;
-  if (elements.showFocusToggle) elements.showFocusToggle.checked = AppState.showFocus === true;
-  if (elements.showAmbientToggle) elements.showAmbientToggle.checked = AppState.showAmbient === true;
+  
+  if (elements.showFocusToggle) {
+    const row = elements.showFocusToggle.closest('.settings-row');
+    if (AppState.unlockedFocus) {
+      if (row) row.style.display = 'flex';
+      elements.showFocusToggle.checked = AppState.showFocus === true;
+    } else {
+      if (row) row.style.display = 'none';
+    }
+  }
+  
+  if (elements.showAmbientToggle) {
+    const row = elements.showAmbientToggle.closest('.settings-row');
+    if (AppState.unlockedAmbient) {
+      if (row) row.style.display = 'flex';
+      elements.showAmbientToggle.checked = AppState.showAmbient === true;
+    } else {
+      if (row) row.style.display = 'none';
+    }
+  }
+  
+  if (elements.showSleepToggle) {
+    const row = elements.showSleepToggle.closest('.settings-row');
+    // Sleep is default true or unlocked? Usually Sleep is internal, let's keep it visible or handle it
+    if (row) row.style.display = 'flex'; 
+    elements.showSleepToggle.checked = AppState.showSleep === true;
+  }
   
   syncNavVisibility();
 
@@ -321,20 +353,163 @@ export function syncNavVisibility() {
   const showMed = AppState.showMeditations !== false;
   const showNote = AppState.showNotebook !== false;
   const showFocus = AppState.showFocus === true;
+  const showSleep = AppState.showSleep === true;
   const showAmbient = AppState.showAmbient === true;
 
-  // Mobile
+  // Mobile elements
+  const navHome = document.getElementById('navHome');
   const navBreathe = document.getElementById('navBreathe');
-  const navNotebook = document.getElementById('navNotebook');
-  const navFocus = document.getElementById('navFocus');
-  const navAmbient = document.getElementById('navAmbient');
+  const navMore = document.getElementById('navMore');
+  const navExtraRow = document.getElementById('navExtraRow');
+  const navMainRow = document.querySelector('.nav-main-row');
+  const navContainer = document.getElementById('mobile-nav-container');
 
-  if (navBreathe) navBreathe.style.display = showMed ? '' : 'none';
-  if (navNotebook) navNotebook.style.display = showNote ? '' : 'none';
-  if (navFocus) navFocus.style.display = showFocus ? '' : 'none';
-  if (navAmbient) navAmbient.style.display = showAmbient ? '' : 'none';
+  if (!navHome || !navBreathe || !navMainRow || !navExtraRow) return;
 
-  // Desktop
+  // Dynamic items (anything except fixed ones)
+  const dynamicItems = ['navNotebook', 'navFocus', 'navSleep', 'navAmbient', 'navProfile'];
+  const visibilityMap = {
+    'navNotebook': showNote,
+    'navFocus': showFocus,
+    'navSleep': showSleep,
+    'navAmbient': showAmbient,
+    'navProfile': true
+  };
+
+  const visibleDynamicItems = dynamicItems.filter(id => visibilityMap[id]);
+  const totalVisibleCount = 1 + (showMed ? 1 : 0) + visibleDynamicItems.length; // Home + (Breathe?) + others
+
+  if (totalVisibleCount <= 4) {
+    // Standard Single Row Layout - Compact & Minimal
+    if (navMore) navMore.classList.add('hidden');
+    if (navContainer) navContainer.classList.remove('is-expanded');
+    
+    // Clear all dynamic first
+    dynamicItems.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    if (navBreathe) navBreathe.style.display = 'none';
+
+    navMainRow.appendChild(navHome);
+    if (showMed) {
+      navBreathe.style.display = '';
+      navMainRow.appendChild(navBreathe);
+    }
+    
+    visibleDynamicItems.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = '';
+        navMainRow.appendChild(el);
+      }
+    });
+
+    if (navMore) navMainRow.appendChild(navMore);
+  } else {
+    // Dynamic Slot Layout (> 4 Items)
+    if (navMore) navMore.classList.remove('hidden');
+
+    const activeView = AppState.currentView?.replace('view-', '');
+    let activeDynamicId = null;
+    dynamicItems.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getAttribute('data-view') === activeView) {
+        // Exclude Profile from dynamic slot persistence
+        if (id !== 'navProfile') {
+          activeDynamicId = id;
+          AppState.lastActiveDynamicId = id;
+          localStorage.setItem('aura_last_dynamic_nav', id);
+        }
+      }
+      if (el) el.style.display = 'none';
+    });
+    if (navBreathe) navBreathe.style.display = 'none';
+
+    // Slot Assignments
+    const slot1 = navHome;
+    let slot2 = null;
+    let slot3 = null;
+
+    // Determine the "Most Visited" dynamic item (Excluding Profile as requested)
+    const getMostVisited = () => {
+      let maxCount = -1;
+      let mostVisited = visibleDynamicItems.find(id => id !== 'navProfile') || visibleDynamicItems[0];
+      visibleDynamicItems.forEach(id => {
+        if (id === 'navProfile') return; // Profile should stay in 'More' or last slot
+        const count = AppState.navStats[id] || 0;
+        if (count > maxCount) {
+          maxCount = count;
+          mostVisited = id;
+        }
+      });
+      return mostVisited;
+    };
+
+    const mostVisitedId = getMostVisited();
+
+    if (showMed) {
+      slot2 = navBreathe;
+      slot3 = (activeDynamicId || AppState.lastActiveDynamicId || mostVisitedId);
+    } else {
+      // If Breathe is OFF, Slot 2 becomes the "Most Visited" (Excluding Profile)
+      slot2 = mostVisitedId;
+      // Slot 3 becomes the "Current Active" or "Last Active" item
+      slot3 = (activeDynamicId || AppState.lastActiveDynamicId);
+      // Fallback for slot 3 if it matches slot 2 or is null
+      if (!slot3 || (typeof slot3 === 'string' ? slot3 : slot3.id) === (typeof slot2 === 'string' ? slot2 : slot2.id)) {
+        slot3 = visibleDynamicItems.find(id => id !== slot2 && id !== 'navProfile') || 'navProfile';
+      }
+    }
+
+    // Reconstruct Main Row Safely
+    navMainRow.appendChild(slot1);
+    
+    if (slot2) {
+      const s2El = (typeof slot2 === 'string') ? document.getElementById(slot2) : slot2;
+      if (s2El) { s2El.style.display = ''; navMainRow.appendChild(s2El); }
+    }
+    
+    if (slot3) {
+      const s3Id = (typeof slot3 === 'string') ? slot3 : slot3.id;
+      // Ensure we don't show the same item twice if slot2 and slot3 accidentally match
+      const s2Id = (typeof slot2 === 'string') ? slot2 : slot2.id;
+      if (s3Id !== s2Id) {
+        const s3El = document.getElementById(s3Id);
+        if (s3El) { s3El.style.display = ''; navMainRow.appendChild(s3El); }
+      }
+    }
+    
+    navMainRow.appendChild(navMore);
+
+    // Reconstruct Extra Row
+    const s2Id = (typeof slot2 === 'string') ? slot2 : slot2?.id;
+    const s3Id = (typeof slot3 === 'string') ? slot3 : slot3?.id;
+
+    visibleDynamicItems.forEach(id => {
+      if (id === s2Id || id === s3Id) return;
+      const el = document.getElementById(id);
+      if (el) { el.style.display = ''; navExtraRow.appendChild(el); }
+    });
+    if (showMed && navBreathe !== slot2 && navBreathe !== slot3) {
+      navBreathe.style.display = '';
+      navExtraRow.appendChild(navBreathe);
+    }
+  }
+
+  // Toggle listener
+  if (navMore && !navMore.dataset.listenerSet) {
+    navMore.onclick = (e) => {
+      e.stopPropagation();
+      navContainer.classList.toggle('is-expanded');
+      const icon = navMore.querySelector('svg');
+      if (icon) icon.style.transform = navContainer.classList.contains('is-expanded') ? 'rotate(180deg)' : '';
+      if (typeof vibrate !== 'undefined') vibrate('light');
+    };
+    navMore.dataset.listenerSet = 'true';
+  }
+
+  // Desktop sync (remains standard list)
   const desktopNav = document.getElementById('desktop-nav-links');
   if (desktopNav) {
     const items = desktopNav.querySelectorAll('.nav-item');
@@ -343,6 +518,7 @@ export function syncNavVisibility() {
       if (view === 'meditations') item.style.display = showMed ? '' : 'none';
       if (view === 'notebook') item.style.display = showNote ? '' : 'none';
       if (view === 'focus') item.style.display = showFocus ? '' : 'none';
+      if (view === 'sleep') item.style.display = showSleep ? '' : 'none';
       if (view === 'ambient') item.style.display = showAmbient ? '' : 'none';
     });
   }

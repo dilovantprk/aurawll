@@ -42,9 +42,76 @@ export function initCheckin(config) {
         savoringText: '', 
         timestamp: null 
       };
-      renderSomaticEntry();
+      
+      if (isMorningCheckin()) {
+        renderMorningCheckin();
+      } else {
+        renderSomaticEntry();
+      }
     });
   }
+}
+
+function isMorningCheckin() {
+  const now = new Date();
+  const hour = now.getHours();
+  // Sabah saat 5 ile 12 arasi
+  if (hour < 5 || hour >= 12) return false;
+
+  const history = (AppState.userHistory && AppState.userHistory.length > 0) ? AppState.userHistory : (AppState.mockHistory || []);
+  if (history.length === 0) return true;
+  
+  const lastEntry = history[history.length - 1];
+  const lastDate = new Date(lastEntry.timestamp);
+  
+  const isSameDay = lastDate.getDate() === now.getDate() && 
+                    lastDate.getMonth() === now.getMonth() && 
+                    lastDate.getFullYear() === now.getFullYear();
+  
+  return !isSameDay;
+}
+
+function renderMorningCheckin() {
+  if (configProps.navigateTo) configProps.navigateTo('view-morning-checkin');
+  
+  const dreamBtns = document.querySelectorAll('#morningDreamBtns .morning-btn');
+  const bodyBtns = document.querySelectorAll('#morningBodyBtns .morning-btn');
+  const nextBtn = document.getElementById('morningNextBtn');
+  
+  let dreamVal = null;
+  let bodyVal = null;
+
+  AppState.currentCheckIn.sleep_data = {};
+
+  const checkNext = () => {
+    if (dreamVal && bodyVal) {
+      nextBtn.classList.remove('hidden');
+    }
+  };
+
+  dreamBtns.forEach(btn => {
+    btn.onclick = () => {
+      dreamBtns.forEach(b => b.classList.remove('active', 'selected'));
+      btn.classList.add('active', 'selected');
+      dreamVal = btn.getAttribute('data-val');
+      AppState.currentCheckIn.sleep_data.dream = dreamVal;
+      checkNext();
+    };
+  });
+
+  bodyBtns.forEach(btn => {
+    btn.onclick = () => {
+      bodyBtns.forEach(b => b.classList.remove('active', 'selected'));
+      btn.classList.add('active', 'selected');
+      bodyVal = btn.getAttribute('data-val');
+      AppState.currentCheckIn.sleep_data.body = bodyVal;
+      checkNext();
+    };
+  });
+
+  nextBtn.onclick = () => {
+    renderSomaticEntry();
+  };
 }
 
 export function renderSomaticEntry() {

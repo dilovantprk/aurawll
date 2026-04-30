@@ -68,7 +68,6 @@
 /* Data Sovereignty Card Specifics (Advanced Liquid Glass) */
 .identity-card-v2.arc-horizontal {
   width: 100%;
-  max-width: 440px;
   margin: 0 auto 3rem auto;
   aspect-ratio: 1.7 / 1;
   background: rgba(255, 255, 255, 0.03);

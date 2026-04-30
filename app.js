@@ -24,8 +24,9 @@ import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth } from './js/components/auth.js';
-import { initFocus } from './js/components/focus.js';
+import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
+import { initSleep } from './js/components/sleep.js';
 import { initGlobalCursorEffect } from './js/core/cursor-effect.js';
 import { NotificationService } from './js/services/notifications.js';
 
@@ -47,12 +48,24 @@ export function navigateTo(viewId, skipHistory = false) {
   const target = document.getElementById(viewId);
   if (!target) return;
 
+  // Restore UI from Focus Immersion
+  exitImmersion();
+
   isNavigating = true;
 
   const newSlug = viewId.replace('view-', '');
   
   // Global HUD Reset
   setHUD(null);
+
+  AppState.currentView = viewId;
+
+  // Track visit stats
+  const activeNavId = document.querySelector(`.nav-item[data-view="${viewId.replace('view-', '')}"]`)?.id;
+  if (activeNavId) {
+    AppState.navStats[activeNavId] = (AppState.navStats[activeNavId] || 0) + 1;
+    localStorage.setItem('aura_nav_stats', JSON.stringify(AppState.navStats));
+  }
 
   if (!skipHistory) {
     history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', ''));
@@ -177,30 +190,23 @@ export function navigateTo(viewId, skipHistory = false) {
     else btn.classList.remove('active');
   });
 
-  const updatePill = (containerId) => {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    const items = Array.from(container.querySelectorAll('.nav-item') || []);
-    const activeItem = items.find(item => item.classList.contains('active'));
-    const indicator = container.querySelector('.nav-indicator');
-    
-    if (activeItem && indicator) {
-      const oldLeft = parseFloat(container.style.getPropertyValue('--nav-left')) || 0;
-      const newLeft = activeItem.offsetLeft;
-      const distance = Math.abs(newLeft - oldLeft);
+  // Sync Nav Slot logic (Dynamic Slot Swapping)
+  const navContainer = document.getElementById('mobile-nav-container');
+  const isCurrentlyExpanded = navContainer && navContainer.classList.contains('is-expanded');
+  
+  if (isCurrentlyExpanded) {
+    // If expanded, delay the swap to happen while/after it shrinks
+    setTimeout(() => {
+      if (typeof syncNavVisibility !== 'undefined') syncNavVisibility();
+    }, 450);
+  } else {
+    if (typeof syncNavVisibility !== 'undefined') syncNavVisibility();
+  }
 
-      if (distance > 20) {
-        // Indicator stretch removed
-      }
 
-      container.style.setProperty('--nav-width', activeItem.offsetWidth + 'px');
-      container.style.setProperty('--nav-left', newLeft + 'px');
-    }
-  };
 
   requestAnimationFrame(() => {
-    updatePill('desktop-nav-links');
-    updatePill('mobile-nav');
+    // Nav pill updates removed for cleaner look
   });
 
   if (!skipHistory) {
@@ -337,6 +343,7 @@ async function initAppBootstrap() {
   });
   initFocus();
   initAmbient();
+  initSleep({ navigateTo });
   initSettings({ 
     navigateTo,
     setVolume: (v) => SensoryEngine.setVolume(v), 
@@ -353,6 +360,11 @@ async function initAppBootstrap() {
 
   window.addEventListener('aura-haptic', (e) => {
     if (SensoryEngine) SensoryEngine.triggerHaptic(e.detail || 'light');
+  });
+
+  window.addEventListener('aura-modules-updated', () => {
+    syncNavVisibility();
+    updateSettingsView();
   });
 
   let scrollTicking = false;
@@ -384,6 +396,14 @@ async function initAppBootstrap() {
         SensoryEngine.playTick();
         
         navigateTo('view-' + targetSlug);
+
+        // Auto-collapse expanded nav if on mobile
+        const navContainer = document.getElementById('mobile-nav-container');
+        if (navContainer && navContainer.classList.contains('is-expanded')) {
+          navContainer.classList.remove('is-expanded');
+          const moreBtnIcon = document.querySelector('#navMore svg');
+          if (moreBtnIcon) moreBtnIcon.style.transform = '';
+        }
       }
     };
   });
@@ -402,9 +422,11 @@ function initSwipeNavigation() {
   
   // Get active tabs based on what's visible in the navbar
   const getVisibleTabs = () => {
-    if (!elements.mobileNav) return ['dashboard', 'meditations', 'notebook', 'settings'];
-    const items = Array.from(elements.mobileNav.querySelectorAll('.nav-item'));
-    return items
+    const mainItems = Array.from(document.querySelectorAll('.nav-main-row .nav-item:not(.hidden)'));
+    const extraItems = Array.from(document.querySelectorAll('.nav-extra-row .nav-item:not(.hidden)'));
+    
+    const allItems = [...mainItems, ...extraItems];
+    return allItems
       .filter(item => getComputedStyle(item).display !== 'none')
       .map(item => item.getAttribute('data-view'))
       .filter(Boolean);
@@ -414,7 +436,7 @@ function initSwipeNavigation() {
     if (isNavigating) return;
     
     // Check if we started on a scrollable element
-    const scrollable = e.target.closest('.filter-chips, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe], #savoringNote, textarea, .vagal-triangle-container');
+    const scrollable = e.target.closest('.filter-chips, .rec-scroll-row, .meditation-grid-scroll, [data-no-swipe], #savoringNote, textarea, .vagal-triangle-container, .module-market-grid');
     const slider = e.target.closest('.focus-slider');
     
     startedOnScrollable = !!scrollable;

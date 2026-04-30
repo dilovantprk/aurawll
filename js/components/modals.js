@@ -527,7 +527,12 @@ function getAuraSVGIcon(type) {
     'step5': `<path d="M20 44L32 20L44 44H20Z" stroke="white" stroke-width="1.5" fill="none"/><circle cx="32" cy="34" r="2" fill="white"/>`,
     'step6': `<path d="M32 48C32 48 12 36 12 24C12 16 18 12 24 12C28 12 32 15 32 15C32 15 36 12 40 12C46 12 52 16 52 24C52 36 32 48 32 48Z" stroke="white" stroke-width="1.5" fill="none"/><path d="M22 24H42" stroke="white" stroke-width="0.5" opacity="0.4"/>`,
     'vagal_analysis': `<circle cx="32" cy="32" r="12" stroke="white" stroke-width="1.5"/><path d="M32 10V20M32 44V54M10 32H20M44 32H54" stroke="white" stroke-width="1.5" opacity="0.6"/><circle cx="32" cy="32" r="22" stroke="white" stroke-width="0.5" stroke-dasharray="2 4"/>`,
-    'breathing': `<circle cx="32" cy="32" r="14" stroke="white" stroke-width="1.5" fill="none"><animate attributeName="r" values="12;16;12" dur="4s" repeatCount="indefinite"/></circle><circle cx="32" cy="32" r="24" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>`
+    'breathing': `<circle cx="32" cy="32" r="14" stroke="white" stroke-width="1.5" fill="none"><animate attributeName="r" values="12;16;12" dur="4s" repeatCount="indefinite"/></circle><circle cx="32" cy="32" r="24" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>`,
+    'meditations': `<circle cx="32" cy="32" r="14" stroke="white" stroke-width="1.5" fill="none"><animate attributeName="r" values="12;16;12" dur="4s" repeatCount="indefinite"/></circle><circle cx="32" cy="32" r="24" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>`,
+    'notebook': `<path d="M18 12h28v40H18z" stroke="white" stroke-width="1.5"/><path d="M18 22h28M18 32h28M18 42h28" stroke="white" stroke-width="1" opacity="0.5"/><path d="M12 16v32" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.8"/>`,
+    'focus': `<circle cx="32" cy="32" r="20" stroke="white" stroke-width="1.5"/><path d="M32 18V32L42 38" stroke="white" stroke-width="1.5" stroke-linecap="round"/>`,
+    'ambient': `<path d="M32 6v4M32 54v4m-21.21-43.07 2.82 2.82m25.46 25.46 2.82 2.82M2 32h4m40 0h4m-38.66 17.66 2.82-2.82m25.46-25.46 2.82-2.82" stroke="white" stroke-width="1.5" stroke-linecap="round"/>`,
+    'sleep': `<path d="M52 35.58A18 18 0 1 1 32.42 12a14 14 0 0 0 19.58 23.58z" stroke="white" stroke-width="1.5" fill="none"/>`
   };
   
   if (iconMap[type]) {

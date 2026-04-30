@@ -3,20 +3,7 @@
    "Liquid Glass" Visual Redesign
 */
 
-/* Global Override: Break out of root .view and .standard-view-content padding */
-#view-ambient.view {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-}
-
-#view-ambient .standard-view-content {
-    padding: 8.5rem 0.75rem 8rem 0.75rem !important;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+/* Global spacing now handled by layout.css standard-view-content */
 
 .ambient-grid-v2 {
     display: grid;

@@ -1,0 +1,244 @@
+#view-sleep {
+  background: radial-gradient(circle at 50% -10%, rgba(100, 120, 255, 0.1) 0%, rgba(0, 0, 0, 0) 60%),
+              radial-gradient(circle at 80% 80%, rgba(80, 70, 220, 0.08) 0%, rgba(0, 0, 0, 0) 50%),
+              linear-gradient(180deg, #050610 0%, #020205 100%);
+  transition: all 2s ease;
+}
+
+.sleep-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 1.5rem;
+  padding-top: 100px; /* Aligned with focus safe area */
+  padding-bottom: 140px; /* Safe clearance for mobile bottom nav */
+  width: 100%;
+  margin: 0 auto;
+}
+
+#view-sleep .view-header {
+  margin-bottom: 4rem;
+  z-index: 10;
+}
+
+#view-sleep .view-header p {
+  font-size: 1.1rem !important;
+  letter-spacing: 2px !important;
+  opacity: 0.7 !important;
+  font-weight: 300 !important;
+}
+
+/* When active sleep mode starts, background darkens */
+body.sleep-mode-active {
+  background-color: #030303 !important;
+}
+body.sleep-mode-active #aura-background {
+  opacity: 0.1 !important;
+}
+
+.sleep-entry-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 3rem;
+}
+
+.sleep-choice-btn {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 1.2rem;
+  color: white;
+  font-family: inherit;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.5s var(--spring-easing);
+  width: 100%;
+}
+
+.sleep-choice-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.sleep-choice-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.sleep-btn-icon {
+  font-size: 1.5rem;
+  margin-right: 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sleep-btn-text {
+  flex: 1;
+  text-align: left;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+}
+
+.sleep-btn-arrow {
+  opacity: 0.3;
+  font-size: 1.2rem;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sleep-choice-btn:hover .sleep-btn-arrow {
+  opacity: 0.8;
+  transform: translateX(4px);
+}
+
+.sleep-mind-container {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.sleep-mind-header {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.sleep-mind-textarea {
+  width: 100%;
+  min-height: 150px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1.5rem;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  margin-bottom: 2rem;
+  transition: border-color 0.3s ease;
+}
+
+.sleep-mind-textarea:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sleep-ghost-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 30px;
+  padding: 0.8rem 1.5rem;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sleep-ghost-btn:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.sleep-protocol-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  width: 100%;
+}
+
+.sleep-orb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+  filter: blur(20px);
+  z-index: 0;
+  animation: sleepPulse 8s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes sleepPulse {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+  100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+.sleep-coach-text {
+  position: relative;
+  z-index: 1;
+  font-size: 2rem;
+  font-weight: 200;
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+  text-shadow: 0 0 30px rgba(255,255,255,0.1);
+  margin-bottom: 2rem;
+}
+
+.sleep-coach-text.visible {
+  opacity: 1;
+}
+
+.sleep-coach-text.fade-out {
+  opacity: 0;
+}
+
+.sleep-cbti-container {
+  text-align: center;
+  max-width: 400px;
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.sleep-cbti-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.sleep-cbti-title {
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.sleep-cbti-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.7;
+  margin-bottom: 2rem;
+}

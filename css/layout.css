@@ -58,20 +58,21 @@
 /* Mobile Specific Width Polish */
 @media (max-width: 600px) {
   .dashboard-view-content, .standard-view-content {
-    padding-left: 0.15rem;
-    padding-right: 0.15rem;
+    padding-top: 6.5rem !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
   .dash-grid-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.2rem;
   }
 
   /* Unified View Header System (Nefes Style) */
   .view-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2.2rem;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -108,7 +109,7 @@
       letter-spacing: 2px !important;
     }
     .view-header {
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.5rem;
     }
   }
 }
@@ -120,13 +121,13 @@
 .dash-main {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .dash-side {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 /* Settings Utility Classes */
@@ -149,6 +150,7 @@
   .view {
     padding: clamp(2rem, 5vw, 4rem) 2rem;
     max-width: 1400px;
+    will-change: transform, opacity;
   }
 
   .dash-grid-wrapper {
@@ -327,25 +329,64 @@ body.has-nav .dashboard-content {
 
 .mobile-nav-container {
   pointer-events: auto;
-  width: calc(100% - 2rem); /* Slightly narrower than cards (1rem each side) */
+  width: calc(100% - 2rem);
   height: calc(64px + env(safe-area-inset-bottom, 20px));
-  background: rgba(255, 255, 255, 0.12); /* Slightly more opaque */
-  backdrop-filter: blur(20px); /* Optimized */
-  -webkit-backdrop-filter: blur(20px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-bottom: none;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.45);
   border-radius: 32px 32px 0 0;
   display: flex;
-  align-items: stretch;
-  justify-content: space-around;
+  flex-direction: column;
   padding: 0 0.8rem env(safe-area-inset-bottom, 20px) 0.8rem;
-  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3), inset 0 -1px 2px rgba(255, 255, 255, 0.15);
   position: relative;
   overflow: hidden;
-  
-  /* Simplified Transition */
-  transition: transform 0.5s var(--spring-easing), opacity 0.4s ease;
-  will-change: transform;
+  transition: transform 0.5s var(--spring-easing), height 0.5s var(--spring-easing), opacity 0.4s ease, bottom 0.5s ease;
+  will-change: transform, height, opacity;
+}
+
+.mobile-nav-container.is-expanded {
+  height: calc(145px + env(safe-area-inset-bottom, 20px));
+  border-radius: 32px;
+  bottom: 1rem;
+  width: calc(100% - 1.5rem);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-main-row, .nav-extra-row {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  height: 64px;
+  min-height: 64px;
+}
+
+.nav-extra-row {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: all 0.4s ease;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 5px;
+}
+
+.mobile-nav-container.is-expanded .nav-extra-row {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+
+
+.more-btn .nav-icon {
+  transition: transform 0.5s var(--spring-easing);
+}
+
+.mobile-nav-container.is-expanded .more-btn .nav-icon {
+  transform: rotate(180deg);
 }
 
 .mobile-nav.nav-hidden .mobile-nav-container {
@@ -472,11 +513,10 @@ body.has-nav .dashboard-content {
   width: calc(100% - 2rem); /* Slightly narrower than cards (1rem each side) */
   height: 64px;
   /* Physical Crystal Gradient */
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  backdrop-filter: blur(25px) saturate(210%);
-  -webkit-backdrop-filter: blur(25px) saturate(210%);
-  /* Specular Top Highlight & Inner Glow */
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-top: 1.5px solid rgba(255, 255, 255, 0.45); 
   border-radius: 0 0 32px 32px;
   padding: calc(0.7rem + env(safe-area-inset-top, 20px)) 1.5rem 0.9rem 1.5rem;
@@ -489,7 +529,8 @@ body.has-nav .dashboard-content {
   justify-content: space-between;
   
   transition: transform 0.5s var(--spring-easing), opacity 0.4s ease;
-  will-change: transform;
+  will-change: transform, opacity;
+  contain: paint;
 }
 
 .header-island .logo {
