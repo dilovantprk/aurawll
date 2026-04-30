@@ -419,11 +419,10 @@ export function syncNavVisibility() {
     const persistedId = AppState.lastActiveDynamicId;
     const isPersistValid = persistedId && visibleDynamicItems.includes(persistedId);
 
-    // Slot 3: current active > persisted > first available
+    // Slot 3: current active > persisted > Profile (default)
     let slot3Id = activeDynamicId
       || (isPersistValid ? persistedId : null)
-      || visibleDynamicItems[0]
-      || null;
+      || 'navProfile';
 
     // Build main row
     navMainRow.appendChild(navHome);
