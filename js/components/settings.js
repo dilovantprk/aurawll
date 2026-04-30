@@ -169,13 +169,6 @@ export function initSettings(config) {
     if (configProps.navigateTo) configProps.navigateTo('view-auth');
   });
 
-  // Interface Toggles
-  elements.showMeditationsToggle?.addEventListener('change', (e) => {
-    AppState.showMeditations = e.target.checked;
-    localStorage.setItem('aura_show_meditations', AppState.showMeditations);
-    syncNavVisibility();
-    vibrate('light');
-  });
 
   elements.showNotebookToggle?.addEventListener('change', (e) => {
     AppState.showNotebook = e.target.checked;
@@ -303,7 +296,7 @@ export function updateSettingsView() {
     elements.deleteAccountBtn.style.display = isGuest ? 'none' : 'block';
     elements.deleteAccountBtn.classList.toggle('hidden', isGuest);
   }
-  if (elements.showMeditationsToggle) elements.showMeditationsToggle.checked = AppState.showMeditations !== false;
+
   if (elements.showNotebookToggle) elements.showNotebookToggle.checked = AppState.showNotebook !== false;
   
   if (elements.showFocusToggle) {
@@ -350,7 +343,6 @@ export function updateSettingsView() {
 }
 
 export function syncNavVisibility() {
-  const showMed = AppState.showMeditations !== false;
   const showNote = AppState.showNotebook !== false;
   const showFocus = AppState.showFocus === true;
   const showSleep = AppState.showSleep === true;
@@ -366,37 +358,54 @@ export function syncNavVisibility() {
 
   if (!navHome || !navBreathe || !navMainRow || !navExtraRow) return;
 
-  // Dynamic items (anything except fixed ones)
+  // Dynamic items (everything except fixed Home & Breathe)
   const dynamicItems = ['navNotebook', 'navFocus', 'navSleep', 'navAmbient', 'navProfile'];
   const visibilityMap = {
     'navNotebook': showNote,
     'navFocus': showFocus,
     'navSleep': showSleep,
     'navAmbient': showAmbient,
-    'navProfile': true
+    'navProfile': true // Profile always available
   };
-
   const visibleDynamicItems = dynamicItems.filter(id => visibilityMap[id]);
-  const totalVisibleCount = 1 + (showMed ? 1 : 0) + visibleDynamicItems.length; // Home + (Breathe?) + others
 
-  if (totalVisibleCount <= 4) {
-    // Standard Single Row Layout - Compact & Minimal
+  // Clear all dynamic items first
+  dynamicItems.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  // Clear rows for reconstruction
+  while (navMainRow.firstChild) navMainRow.removeChild(navMainRow.firstChild);
+  while (navExtraRow.firstChild) navExtraRow.removeChild(navExtraRow.firstChild);
+
+  // Detect current active dynamic tab
+  const activeView = AppState.currentView?.replace('view-', '');
+  let activeDynamicId = null;
+  dynamicItems.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.getAttribute('data-view') === activeView) {
+      activeDynamicId = id;
+      // Persist only non-Profile tabs for slot memory
+      if (id !== 'navProfile') {
+        AppState.lastActiveDynamicId = id;
+        localStorage.setItem('aura_last_dynamic_nav', id);
+      }
+    }
+  });
+
+  // Total visible count: Home + Breathe + dynamic items
+  const totalVisible = 2 + visibleDynamicItems.length;
+
+  if (totalVisible <= 4) {
+    // === FIXED ROW MODE (≤ 4 tabs) — No More button needed ===
     if (navMore) navMore.classList.add('hidden');
     if (navContainer) navContainer.classList.remove('is-expanded');
-    
-    // Clear all dynamic first
-    dynamicItems.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-    if (navBreathe) navBreathe.style.display = 'none';
 
     navMainRow.appendChild(navHome);
-    if (showMed) {
-      navBreathe.style.display = '';
-      navMainRow.appendChild(navBreathe);
-    }
-    
+    navBreathe.style.display = '';
+    navMainRow.appendChild(navBreathe);
+
     visibleDynamicItems.forEach(id => {
       const el = document.getElementById(id);
       if (el) {
@@ -405,99 +414,50 @@ export function syncNavVisibility() {
       }
     });
 
-    if (navMore) navMainRow.appendChild(navMore);
   } else {
-    // Dynamic Slot Layout (> 4 Items)
-    if (navMore) navMore.classList.remove('hidden');
+    // === DYNAMIC SLOT MODE (> 4 tabs) — Slot 3 + More ===
+    const persistedId = AppState.lastActiveDynamicId;
+    const isPersistValid = persistedId && visibleDynamicItems.includes(persistedId);
 
-    const activeView = AppState.currentView?.replace('view-', '');
-    let activeDynamicId = null;
-    dynamicItems.forEach(id => {
-      const el = document.getElementById(id);
-      if (el && el.getAttribute('data-view') === activeView) {
-        // Exclude Profile from dynamic slot persistence
-        if (id !== 'navProfile') {
-          activeDynamicId = id;
-          AppState.lastActiveDynamicId = id;
-          localStorage.setItem('aura_last_dynamic_nav', id);
-        }
-      }
-      if (el) el.style.display = 'none';
-    });
-    if (navBreathe) navBreathe.style.display = 'none';
+    // Slot 3: current active > persisted > first available
+    let slot3Id = activeDynamicId
+      || (isPersistValid ? persistedId : null)
+      || visibleDynamicItems[0]
+      || null;
 
-    // Slot Assignments
-    const slot1 = navHome;
-    let slot2 = null;
-    let slot3 = null;
+    // Build main row
+    navMainRow.appendChild(navHome);
+    navBreathe.style.display = '';
+    navMainRow.appendChild(navBreathe);
 
-    // Determine the "Most Visited" dynamic item (Excluding Profile as requested)
-    const getMostVisited = () => {
-      let maxCount = -1;
-      let mostVisited = visibleDynamicItems.find(id => id !== 'navProfile') || visibleDynamicItems[0];
-      visibleDynamicItems.forEach(id => {
-        if (id === 'navProfile') return; // Profile should stay in 'More' or last slot
-        const count = AppState.navStats[id] || 0;
-        if (count > maxCount) {
-          maxCount = count;
-          mostVisited = id;
-        }
-      });
-      return mostVisited;
-    };
-
-    const mostVisitedId = getMostVisited();
-
-    if (showMed) {
-      slot2 = navBreathe;
-      slot3 = (activeDynamicId || AppState.lastActiveDynamicId || mostVisitedId);
-    } else {
-      // If Breathe is OFF, Slot 2 becomes the "Most Visited" (Excluding Profile)
-      slot2 = mostVisitedId;
-      // Slot 3 becomes the "Current Active" or "Last Active" item
-      slot3 = (activeDynamicId || AppState.lastActiveDynamicId);
-      // Fallback for slot 3 if it matches slot 2 or is null
-      if (!slot3 || (typeof slot3 === 'string' ? slot3 : slot3.id) === (typeof slot2 === 'string' ? slot2 : slot2.id)) {
-        slot3 = visibleDynamicItems.find(id => id !== slot2 && id !== 'navProfile') || 'navProfile';
+    if (slot3Id) {
+      const s3El = document.getElementById(slot3Id);
+      if (s3El) {
+        s3El.style.display = '';
+        navMainRow.appendChild(s3El);
       }
     }
 
-    // Reconstruct Main Row Safely
-    navMainRow.appendChild(slot1);
-    
-    if (slot2) {
-      const s2El = (typeof slot2 === 'string') ? document.getElementById(slot2) : slot2;
-      if (s2El) { s2El.style.display = ''; navMainRow.appendChild(s2El); }
+    if (navMore) {
+      navMore.classList.remove('hidden');
+      navMainRow.appendChild(navMore);
     }
-    
-    if (slot3) {
-      const s3Id = (typeof slot3 === 'string') ? slot3 : slot3.id;
-      // Ensure we don't show the same item twice if slot2 and slot3 accidentally match
-      const s2Id = (typeof slot2 === 'string') ? slot2 : slot2.id;
-      if (s3Id !== s2Id) {
-        const s3El = document.getElementById(s3Id);
-        if (s3El) { s3El.style.display = ''; navMainRow.appendChild(s3El); }
-      }
-    }
-    
-    navMainRow.appendChild(navMore);
 
-    // Reconstruct Extra Row
-    const s2Id = (typeof slot2 === 'string') ? slot2 : slot2?.id;
-    const s3Id = (typeof slot3 === 'string') ? slot3 : slot3?.id;
-
+    // Build extra row (everything not in main)
     visibleDynamicItems.forEach(id => {
-      if (id === s2Id || id === s3Id) return;
+      if (id === slot3Id) return;
       const el = document.getElementById(id);
-      if (el) { el.style.display = ''; navExtraRow.appendChild(el); }
+      if (el) {
+        el.style.display = '';
+        navExtraRow.appendChild(el);
+      }
     });
-    if (showMed && navBreathe !== slot2 && navBreathe !== slot3) {
-      navBreathe.style.display = '';
-      navExtraRow.appendChild(navBreathe);
-    }
   }
 
-  // Toggle listener
+  // Collapse expanded state when navigating
+  if (navContainer) navContainer.classList.remove('is-expanded');
+
+  // Toggle listener for More button
   if (navMore && !navMore.dataset.listenerSet) {
     navMore.onclick = (e) => {
       e.stopPropagation();
@@ -509,13 +469,13 @@ export function syncNavVisibility() {
     navMore.dataset.listenerSet = 'true';
   }
 
-  // Desktop sync (remains standard list)
+  // Desktop sync
   const desktopNav = document.getElementById('desktop-nav-links');
   if (desktopNav) {
     const items = desktopNav.querySelectorAll('.nav-item');
     items.forEach(item => {
       const view = item.getAttribute('data-view');
-      if (view === 'meditations') item.style.display = showMed ? '' : 'none';
+      if (view === 'meditations') item.style.display = '';
       if (view === 'notebook') item.style.display = showNote ? '' : 'none';
       if (view === 'focus') item.style.display = showFocus ? '' : 'none';
       if (view === 'sleep') item.style.display = showSleep ? '' : 'none';
