@@ -358,19 +358,19 @@ export function syncNavVisibility() {
 
   if (!navHome || !navBreathe || !navMainRow || !navExtraRow) return;
 
-  // Dynamic items (everything except fixed Home & Breathe)
-  const dynamicItems = ['navNotebook', 'navFocus', 'navSleep', 'navAmbient', 'navProfile'];
-  const visibilityMap = {
+  // Separate modules from Profile — Profile is semi-fixed
+  const moduleItems = ['navNotebook', 'navFocus', 'navSleep', 'navAmbient'];
+  const moduleVisibility = {
     'navNotebook': showNote,
     'navFocus': showFocus,
     'navSleep': showSleep,
-    'navAmbient': showAmbient,
-    'navProfile': true // Profile always available
+    'navAmbient': showAmbient
   };
-  const visibleDynamicItems = dynamicItems.filter(id => visibilityMap[id]);
+  const visibleModules = moduleItems.filter(id => moduleVisibility[id]);
+  const navProfile = document.getElementById('navProfile');
 
-  // Clear all dynamic items first
-  dynamicItems.forEach(id => {
+  // Hide all dynamic elements first
+  [...moduleItems, 'navProfile'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -379,26 +379,22 @@ export function syncNavVisibility() {
   while (navMainRow.firstChild) navMainRow.removeChild(navMainRow.firstChild);
   while (navExtraRow.firstChild) navExtraRow.removeChild(navExtraRow.firstChild);
 
-  // Detect current active dynamic tab
+  // Detect current active module tab
   const activeView = AppState.currentView?.replace('view-', '');
   let activeDynamicId = null;
-  dynamicItems.forEach(id => {
+  moduleItems.forEach(id => {
     const el = document.getElementById(id);
     if (el && el.getAttribute('data-view') === activeView) {
       activeDynamicId = id;
-      // Persist only non-Profile tabs for slot memory
-      if (id !== 'navProfile') {
-        AppState.lastActiveDynamicId = id;
-        localStorage.setItem('aura_last_dynamic_nav', id);
-      }
+      AppState.lastActiveDynamicId = id;
+      localStorage.setItem('aura_last_dynamic_nav', id);
     }
   });
+  // Check if Profile page is active
+  const isProfileActive = navProfile && navProfile.getAttribute('data-view') === activeView;
 
-  // Total visible count: Home + Breathe + dynamic items
-  const totalVisible = 2 + visibleDynamicItems.length;
-
-  if (totalVisible <= 4) {
-    // === FIXED ROW MODE (≤ 4 tabs) — No More button needed ===
+  if (visibleModules.length <= 1) {
+    // === FIXED MODE (0-1 modules) → Home | Breathe | [module?] | Profile ===
     if (navMore) navMore.classList.add('hidden');
     if (navContainer) navContainer.classList.remove('is-expanded');
 
@@ -406,23 +402,31 @@ export function syncNavVisibility() {
     navBreathe.style.display = '';
     navMainRow.appendChild(navBreathe);
 
-    visibleDynamicItems.forEach(id => {
+    // Show the single module if any
+    visibleModules.forEach(id => {
       const el = document.getElementById(id);
-      if (el) {
-        el.style.display = '';
-        navMainRow.appendChild(el);
-      }
+      if (el) { el.style.display = ''; navMainRow.appendChild(el); }
     });
 
-  } else {
-    // === DYNAMIC SLOT MODE (> 4 tabs) — Slot 3 + More ===
-    const persistedId = AppState.lastActiveDynamicId;
-    const isPersistValid = persistedId && visibleDynamicItems.includes(persistedId);
+    // Profile always last in fixed mode
+    if (navProfile) { navProfile.style.display = ''; navMainRow.appendChild(navProfile); }
 
-    // Slot 3: current active > persisted > Profile (default)
-    let slot3Id = activeDynamicId
-      || (isPersistValid ? persistedId : null)
-      || 'navProfile';
+  } else {
+    // === DYNAMIC MODE (2+ modules) → Home | Breathe | [Slot3] | More ===
+    const persistedId = AppState.lastActiveDynamicId;
+    const isPersistValid = persistedId && visibleModules.includes(persistedId);
+
+    // Slot 3: active module > persisted module > active Profile > first module
+    let slot3Id;
+    if (activeDynamicId) {
+      slot3Id = activeDynamicId;
+    } else if (isProfileActive) {
+      slot3Id = 'navProfile';
+    } else if (isPersistValid) {
+      slot3Id = persistedId;
+    } else {
+      slot3Id = visibleModules[0];
+    }
 
     // Build main row
     navMainRow.appendChild(navHome);
@@ -431,10 +435,7 @@ export function syncNavVisibility() {
 
     if (slot3Id) {
       const s3El = document.getElementById(slot3Id);
-      if (s3El) {
-        s3El.style.display = '';
-        navMainRow.appendChild(s3El);
-      }
+      if (s3El) { s3El.style.display = ''; navMainRow.appendChild(s3El); }
     }
 
     if (navMore) {
@@ -442,15 +443,17 @@ export function syncNavVisibility() {
       navMainRow.appendChild(navMore);
     }
 
-    // Build extra row (everything not in main)
-    visibleDynamicItems.forEach(id => {
+    // Build extra row: all visible modules + Profile that aren't in slot 3
+    visibleModules.forEach(id => {
       if (id === slot3Id) return;
       const el = document.getElementById(id);
-      if (el) {
-        el.style.display = '';
-        navExtraRow.appendChild(el);
-      }
+      if (el) { el.style.display = ''; navExtraRow.appendChild(el); }
     });
+    // Add Profile to extra row if it's not in slot 3
+    if (slot3Id !== 'navProfile' && navProfile) {
+      navProfile.style.display = '';
+      navExtraRow.appendChild(navProfile);
+    }
   }
 
   // Collapse expanded state when navigating
