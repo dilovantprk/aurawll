@@ -7,7 +7,6 @@ export const elements = {
   syncCtaText: document.getElementById('syncCtaText'),
   logoutBtn: document.getElementById('logoutBtn'),
   deleteAccountBtn: document.getElementById('deleteAccountBtn'),
-  showMeditationsToggle: document.getElementById('showMeditationsToggle'),
   showNotebookToggle: document.getElementById('showNotebookToggle'),
   showFocusToggle: document.getElementById('showFocusToggle'),
   showSleepToggle: document.getElementById('showSleepToggle'),

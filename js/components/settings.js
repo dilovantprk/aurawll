@@ -169,7 +169,7 @@ export function initSettings(config) {
     if (configProps.navigateTo) configProps.navigateTo('view-auth');
   });
 
-
+  // Interface Toggles
   elements.showNotebookToggle?.addEventListener('change', (e) => {
     AppState.showNotebook = e.target.checked;
     localStorage.setItem('aura_show_notebook', AppState.showNotebook);
@@ -296,7 +296,6 @@ export function updateSettingsView() {
     elements.deleteAccountBtn.style.display = isGuest ? 'none' : 'block';
     elements.deleteAccountBtn.classList.toggle('hidden', isGuest);
   }
-
   if (elements.showNotebookToggle) elements.showNotebookToggle.checked = AppState.showNotebook !== false;
   
   if (elements.showFocusToggle) {
@@ -358,108 +357,122 @@ export function syncNavVisibility() {
 
   if (!navHome || !navBreathe || !navMainRow || !navExtraRow) return;
 
-  // Separate modules from Profile — Profile is semi-fixed
-  const moduleItems = ['navNotebook', 'navFocus', 'navSleep', 'navAmbient'];
-  const moduleVisibility = {
+  // Dynamic items (anything except fixed ones)
+  const dynamicItems = ['navNotebook', 'navFocus', 'navSleep', 'navAmbient', 'navProfile'];
+  const visibilityMap = {
     'navNotebook': showNote,
     'navFocus': showFocus,
     'navSleep': showSleep,
-    'navAmbient': showAmbient
+    'navAmbient': showAmbient,
+    'navProfile': true
   };
-  const visibleModules = moduleItems.filter(id => moduleVisibility[id]);
-  const navProfile = document.getElementById('navProfile');
 
-  // Hide all dynamic elements first
-  [...moduleItems, 'navProfile'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
+  const visibleDynamicItems = dynamicItems.filter(id => visibilityMap[id]);
+  const totalVisibleCount = 2 + visibleDynamicItems.length; // Home + Breathe + others
 
-  // Clear rows for reconstruction
-  while (navMainRow.firstChild) navMainRow.removeChild(navMainRow.firstChild);
-  while (navExtraRow.firstChild) navExtraRow.removeChild(navExtraRow.firstChild);
-
-  // Detect current active module tab
-  const activeView = AppState.currentView?.replace('view-', '');
-  let activeDynamicId = null;
-  moduleItems.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.getAttribute('data-view') === activeView) {
-      activeDynamicId = id;
-      AppState.lastActiveDynamicId = id;
-      localStorage.setItem('aura_last_dynamic_nav', id);
-    }
-  });
-  // Check if Profile page is active
-  const isProfileActive = navProfile && navProfile.getAttribute('data-view') === activeView;
-
-  if (visibleModules.length <= 1) {
-    // === FIXED MODE (0-1 modules) → Home | Breathe | [module?] | Profile ===
+  if (totalVisibleCount <= 4) {
+    // Standard Single Row Layout - Compact & Minimal
     if (navMore) navMore.classList.add('hidden');
     if (navContainer) navContainer.classList.remove('is-expanded');
+    
+    // Clear all dynamic first
+    dynamicItems.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    if (navBreathe) navBreathe.style.display = 'none';
 
     navMainRow.appendChild(navHome);
     navBreathe.style.display = '';
     navMainRow.appendChild(navBreathe);
-
-    // Show the single module if any
-    visibleModules.forEach(id => {
+    
+    visibleDynamicItems.forEach(id => {
       const el = document.getElementById(id);
-      if (el) { el.style.display = ''; navMainRow.appendChild(el); }
+      if (el) {
+        el.style.display = '';
+        navMainRow.appendChild(el);
+      }
     });
 
-    // Profile always last in fixed mode
-    if (navProfile) { navProfile.style.display = ''; navMainRow.appendChild(navProfile); }
-
+    if (navMore) navMainRow.appendChild(navMore);
   } else {
-    // === DYNAMIC MODE (2+ modules) → Home | Breathe | [Slot3] | More ===
-    const persistedId = AppState.lastActiveDynamicId;
-    const isPersistValid = persistedId && visibleModules.includes(persistedId);
+    // Dynamic Slot Layout (> 4 Items)
+    if (navMore) navMore.classList.remove('hidden');
 
-    // Slot 3: active module > persisted module > active Profile > first module
-    let slot3Id;
-    if (activeDynamicId) {
-      slot3Id = activeDynamicId;
-    } else if (isProfileActive) {
-      slot3Id = 'navProfile';
-    } else if (isPersistValid) {
-      slot3Id = persistedId;
-    } else {
-      slot3Id = visibleModules[0];
+    const activeView = AppState.currentView?.replace('view-', '');
+    let activeDynamicId = null;
+    dynamicItems.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getAttribute('data-view') === activeView) {
+        activeDynamicId = id;
+        AppState.lastActiveDynamicId = id;
+        localStorage.setItem('aura_last_dynamic_nav', id);
+      }
+      if (el) el.style.display = 'none';
+    });
+    if (navBreathe) navBreathe.style.display = 'none';
+
+    // Slot Assignments
+    const slot1 = navHome;
+    let slot2 = navBreathe;
+    let slot3 = null;
+
+    // Determine the "Most Visited" dynamic item
+    const getMostVisited = () => {
+      let maxCount = -1;
+      let mostVisited = visibleDynamicItems[0];
+      visibleDynamicItems.forEach(id => {
+        const count = AppState.navStats[id] || 0;
+        if (count > maxCount) {
+          maxCount = count;
+          mostVisited = id;
+        }
+      });
+      return mostVisited;
+    };
+
+    const mostVisitedId = getMostVisited();
+
+    // Resolve persistent slot 3: use stored lastActiveDynamicId if it's still visible
+    const persistedSlot3 = AppState.lastActiveDynamicId;
+    const isPersisted3Visible = persistedSlot3 && visibleDynamicItems.includes(persistedSlot3);
+    // The definitive slot 3 value: active dynamic > persisted > mostVisited fallback
+    const resolvedSlot3 = activeDynamicId || (isPersisted3Visible ? persistedSlot3 : null);
+
+    slot3 = resolvedSlot3 || mostVisitedId;
+
+    // Reconstruct Main Row Safely
+    navMainRow.appendChild(slot1);
+    
+    if (slot2) {
+      const s2El = (typeof slot2 === 'string') ? document.getElementById(slot2) : slot2;
+      if (s2El) { s2El.style.display = ''; navMainRow.appendChild(s2El); }
     }
-
-    // Build main row
-    navMainRow.appendChild(navHome);
-    navBreathe.style.display = '';
-    navMainRow.appendChild(navBreathe);
-
-    if (slot3Id) {
-      const s3El = document.getElementById(slot3Id);
-      if (s3El) { s3El.style.display = ''; navMainRow.appendChild(s3El); }
+    
+    if (slot3) {
+      const s3Id = (typeof slot3 === 'string') ? slot3 : slot3.id;
+      // Ensure we don't show the same item twice if slot2 and slot3 accidentally match
+      const s2Id = (typeof slot2 === 'string') ? slot2 : slot2.id;
+      if (s3Id !== s2Id) {
+        const s3El = document.getElementById(s3Id);
+        if (s3El) { s3El.style.display = ''; navMainRow.appendChild(s3El); }
+      }
     }
+    
+    navMainRow.appendChild(navMore);
 
-    if (navMore) {
-      navMore.classList.remove('hidden');
-      navMainRow.appendChild(navMore);
-    }
+    // Reconstruct Extra Row
+    const s2Id = (typeof slot2 === 'string') ? slot2 : slot2?.id;
+    const s3Id = (typeof slot3 === 'string') ? slot3 : slot3?.id;
 
-    // Build extra row: all visible modules + Profile that aren't in slot 3
-    visibleModules.forEach(id => {
-      if (id === slot3Id) return;
+    visibleDynamicItems.forEach(id => {
+      if (id === s2Id || id === s3Id) return;
       const el = document.getElementById(id);
       if (el) { el.style.display = ''; navExtraRow.appendChild(el); }
     });
-    // Add Profile to extra row if it's not in slot 3
-    if (slot3Id !== 'navProfile' && navProfile) {
-      navProfile.style.display = '';
-      navExtraRow.appendChild(navProfile);
-    }
   }
 
-  // Collapse expanded state when navigating
-  if (navContainer) navContainer.classList.remove('is-expanded');
-
-  // Toggle listener for More button
+  // Toggle listener
   if (navMore && !navMore.dataset.listenerSet) {
     navMore.onclick = (e) => {
       e.stopPropagation();
@@ -471,7 +484,7 @@ export function syncNavVisibility() {
     navMore.dataset.listenerSet = 'true';
   }
 
-  // Desktop sync
+  // Desktop sync (remains standard list)
   const desktopNav = document.getElementById('desktop-nav-links');
   if (desktopNav) {
     const items = desktopNav.querySelectorAll('.nav-item');

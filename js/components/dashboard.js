@@ -141,7 +141,17 @@ function renderDailyContent() {
     "Sempatik sistem bir düşman değil, seni tehlikelerden korumak için enerji sağlayan bir itici güçtür.",
     "Dorsal Vagal kapanma, bedenin aşırı yüklenme anında enerjiyi korumak için kullandığı son savunma hattıdır.",
     "Fizyolojik bir iç çekiş (çift nefes al, uzun ver), kalbini yavaşlatmanın en hızlı nörobiyolojik yoludur.",
-    "Sinir sisteminin esnekliği (plasticity), stresli durumlardan ne kadar hızlı toparlanabildiğinle ölçülür."
+    "Sinir sisteminin esnekliği (plasticity), stresli durumlardan ne kadar hızlı toparlanabildiğinle ölçülür.",
+    "Nefes verişini alışından uzun tutmak, vagus sinirini uyararak bedene 'güvendesin' mesajı gönderir.",
+    "Gözleri yavaşça sağa ve sola kaydırmak (oryantasyon), sinir sisteminin bulunduğu ortama güven duymasına yardımcı olur.",
+    "Esneme ve iç çekme, otonom sinir sisteminin kendi kendini regüle etme ve birikmiş gerilimi atma yollarından biridir.",
+    "Sempatik aktivasyon (savaş/kaç) sırasında sindirim ve bağışıklık yavaşlar; bu nedenle kronik stres bedeni tüketir.",
+    "Öz-şefkat, beyindeki tehdit merkezini (amigdala) yatıştırarak güvenli bağlanma devresini aktive eder.",
+    "Yüzünüzü soğuk suyla yıkamak, 'memeli dalış refleksi'ni tetikleyerek kalp atış hızını anında düşürür.",
+    "Dorsal vagal donma durumundan çıkışın en güvenli yolu küçük, nazik ve ritmik fiziksel hareketlerdir.",
+    "Aynı anda hem odaklanıp hem de güvende hissettiğimiz 'Oyun' hali, ventral vagal ve sempatik sistemin uyumlu dansıdır.",
+    "Bağırsaklar ve beyin arasındaki iletişimin %80'i aşağıdan yukarıyadır. Midendeki hisler beynine giden güçlü sinyallerdir.",
+    "Sinir sistemi kelimelerden çok ses tonuna, yüz ifadesine ve beden diline (nörosepsiyon) tepki verir."
   ];
 
   // Pick pseudo-random based on day of year
@@ -233,10 +243,7 @@ function renderModuleMarket() {
 function handleModuleAction(modId) {
   window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}));
   
-  if (modId === 'meditations') {
-    AppState.showMeditations = !AppState.showMeditations;
-    localStorage.setItem('aura_show_meditations', AppState.showMeditations);
-  } else if (modId === 'notebook') {
+  if (modId === 'notebook') {
     AppState.showNotebook = !AppState.showNotebook;
     localStorage.setItem('aura_show_notebook', AppState.showNotebook);
   } else if (modId === 'focus') {
