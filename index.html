@@ -1182,9 +1182,12 @@
         <canvas id="lsdCanvas"></canvas>
         <div id="dvdTimer" class="dvd-timer-bouncer">
           <div class="dvd-timer-circle">
+            <svg class="dvd-progress-svg" viewBox="0 0 100 100">
+              <circle class="dvd-progress-bg" cx="50" cy="50" r="46" />
+              <circle class="dvd-progress-ring" id="dvdProgressRing" cx="50" cy="50" r="46" />
+            </svg>
             <div class="dvd-timer-content">
-              <div id="dvdTimeDisplay" class="dvd-time-text">25:00</div>
-              <div id="dvdStatusLabel" class="dvd-status-text">FOCUS</div>
+              <div id="dvdStatusLabel" class="dvd-status-text" style="font-size: 1.5rem; letter-spacing: 4px; font-weight: 500;">FOCUS</div>
             </div>
           </div>
         </div>

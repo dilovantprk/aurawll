@@ -878,22 +878,43 @@
 .dvd-timer-content {
   text-align: center;
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  z-index: 2;
 }
 
-.dvd-time-text {
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: #fff;
-  letter-spacing: -1px;
-  font-variant-numeric: tabular-nums;
+.dvd-progress-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dvd-progress-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 3;
+}
+
+.dvd-progress-ring {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 4;
+  stroke-linecap: round;
+  /* 2 * pi * 46 = ~289.03 */
+  stroke-dasharray: 289.03;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
 }
 
 .dvd-status-text {
-  font-size: 0.75rem;
-  letter-spacing: 3px;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 2px;
   color: rgba(255, 255, 255, 0.7);
-  margin-top: -5px;
+  text-transform: uppercase;
 }
 
 /* LSD Exit Button */

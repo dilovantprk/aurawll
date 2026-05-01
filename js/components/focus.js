@@ -464,7 +464,7 @@ function completeSession() {
   pauseTimer();
   stopAmbient();
   exitLSD();
-  alert(t('focus_session_done') || 'Session Complete! Great work.');
+  showZenNotification(t('focus_session_done') || 'Session Complete! Great work.');
   elements.focusActive.classList.add('hidden');
   elements.focusSetup.classList.remove('hidden');
   resetFocusTheme();
@@ -620,6 +620,12 @@ function enterLSD() {
   lsdActive = true;
   overlay.classList.remove('hidden');
 
+  // Elevate the entire view-focus container to cover the header
+  const viewFocus = document.getElementById('view-focus');
+  if (viewFocus) {
+    viewFocus.style.zIndex = '999999';
+  }
+
   // Reset exit button animation
   const exitBtn = document.getElementById('lsdExitBtn');
   if (exitBtn) {
@@ -644,6 +650,12 @@ function exitLSD() {
   lsdActive = false;
   const overlay = document.getElementById('lsdOverlay');
   if (overlay) overlay.classList.add('hidden');
+
+  // Restore view-focus z-index
+  const viewFocus = document.getElementById('view-focus');
+  if (viewFocus) {
+    viewFocus.style.zIndex = '';
+  }
 
   if (lsdAnimFrame) {
     cancelAnimationFrame(lsdAnimFrame);
@@ -684,6 +696,7 @@ function setupWebGL(canvas) {
     uniform float u_time;
     uniform vec2 u_resolution;
     uniform float u_intensity; // Goes from 0.0 (start) to 1.0 (end)
+    uniform float u_mode;      // 0.0 for focus, 1.0 for break
 
     // Simplex-ish noise
     vec3 mod289(vec3 x) { return x - floor(x / 289.0) * 289.0; }
@@ -731,61 +744,71 @@ function setupWebGL(canvas) {
       vec2 p = uv * 2.0 - 1.0;
       p.x *= u_resolution.x / u_resolution.y;
 
+      float isBreak = u_mode;
+
       // Base time scaling
-      float t = u_time * (0.3 + u_intensity * 0.5);
+      float t_focus = u_time * (0.3 + u_intensity * 0.5);
+      float t_break = u_time * 0.1; // Very slow and gentle
+      float t = mix(t_focus, t_break, isBreak);
       
       // Dynamic zoom/warp based on intensity
-      float zoom = 1.0 - (u_intensity * 0.4);
+      // Focus: slow constant inward drift to pull attention to center
+      float zoom = mix(1.0 - (u_intensity * 0.2), 0.9 + 0.1 * sin(t), isBreak);
       p *= zoom;
 
-      // Kaleidoscope Effect (amplifies with intensity)
       float angle = atan(p.y, p.x);
       float radius = length(p);
       
-      // Fold space for kaleidascope
-      float segments = mix(2.0, 12.0, u_intensity);
-      angle = mod(angle, 6.28318 / segments);
-      angle = abs(angle - 3.14159 / segments);
-      
-      vec2 k_p = vec2(cos(angle), sin(angle)) * radius;
-      vec2 warped_p = mix(p, k_p, u_intensity * 0.8);
+      // Remove distracting kaleidoscope entirely
+      vec2 warped_p = p; 
 
-      // Multi-layer flowing noise
-      float n1 = snoise(warped_p * mix(2.0, 6.0, u_intensity) + vec2(t * 0.5, t * 0.3));
-      float n2 = snoise(warped_p * mix(4.0, 12.0, u_intensity) - vec2(t * 0.4, t * 0.6));
-      float n3 = snoise(warped_p * mix(8.0, 24.0, u_intensity) + vec2(sin(t), cos(t)));
+      // Slow, rhythmic flowing noise (Theta/Alpha wave visual sync)
+      // Speed and frequency are much lower to prevent distraction
+      float n1 = snoise(warped_p * mix(1.5, 3.0, u_intensity) + vec2(t * 0.2, t * 0.15));
+      float n2 = snoise(warped_p * mix(2.0, 4.0, u_intensity) - vec2(t * 0.1, t * 0.2));
+      float n3 = snoise(warped_p * mix(4.0, 8.0, u_intensity) + vec2(sin(t*0.5), cos(t*0.5)));
       
-      // Domain distortion (warping space with noise)
-      vec2 distort = vec2(n1, n2) * mix(0.1, 0.6, u_intensity);
-      float n_final = snoise(warped_p * 3.0 + distort + t);
+      // Gentle domain distortion for organic feel, not chaotic
+      vec2 distort = vec2(n1, n2) * mix(mix(0.1, 0.3, u_intensity), 0.1, isBreak);
+      float n_final = snoise(warped_p * mix(2.0, 1.5, isBreak) + distort + t * 0.5);
       
-      // Psychedelic Color Mapping (HSV)
-      // Hue shifts over time, but spatial frequency and chaos increase with intensity
-      float hue = fract(t * 0.1 + n1 * 0.2 + radius * mix(0.1, 1.5, u_intensity) + angle * mix(0.0, 1.0, u_intensity));
+      // Color Mapping
+      // Focus: Deep neural purples and dark blues (0.65 - 0.75) that don't strain the eyes
+      float hue_focus = 0.65 + 0.1 * sin(t * 0.1 + radius * 0.5 + n1 * 0.2); 
+      // Break: Cool, refreshing teals and light blues (0.5 - 0.6)
+      float hue_break = 0.55 + 0.15 * sin(t * 0.5 + n1 * 0.5 + radius * 0.2); 
+      float hue = mix(hue_focus, hue_break, isBreak);
       
-      // Saturation pulses
-      float sat = 0.6 + 0.4 * sin(t * 2.0 + n_final * 6.28);
-      sat = mix(sat, 1.0, u_intensity); // Max saturation at high intensity
+      // Saturation
+      // Focus: Rich but steady saturation
+      float sat_focus = 0.7 + 0.1 * sin(t * 0.5 + n_final); 
+      float sat_break = 0.4 + 0.3 * sin(t * 0.5); // Softer colors
+      float sat = mix(sat_focus, sat_break, isBreak);
       
-      // Value (Brightness) creates distinct fractal bands at high intensity
-      float val = 0.5 + 0.5 * sin(n_final * mix(3.14, 20.0, u_intensity) + t * 3.0);
-      val = smoothstep(0.1, 0.9, val); // Increase contrast
+      // Value (Brightness)
+      // Focus: Deep, dark, non-distracting glow (no sharp contrasting fractal bands)
+      float val_focus = 0.25 + 0.3 * n_final; 
+      float val_break = 0.5 + 0.3 * sin(n_final * 2.0 + t); // Smooth, low contrast
+      float val = mix(val_focus, val_break, isBreak);
       
       vec3 col = hsv2rgb(vec3(hue, sat, val));
 
-      // Add Chromatic Aberration near edges
-      float r_shift = snoise(warped_p * 2.0 + t) * 0.05 * u_intensity * radius;
-      float b_shift = snoise(warped_p * 2.0 - t) * 0.05 * u_intensity * radius;
+      // Chromatic Aberration
+      // Completely removed for focus mode (0.0) as it causes eye strain during deep work
+      float shift_amount = mix(0.0, 0.01, isBreak);
+      float r_shift = snoise(warped_p * 2.0 + t) * shift_amount * radius;
+      float b_shift = snoise(warped_p * 2.0 - t) * shift_amount * radius;
       
-      col.r += hsv2rgb(vec3(fract(hue + 0.05), sat, snoise(warped_p * 3.0 + r_shift))).r * 0.5 * u_intensity;
-      col.b += hsv2rgb(vec3(fract(hue - 0.05), sat, snoise(warped_p * 3.0 + b_shift))).b * 0.5 * u_intensity;
+      float intensity_multiplier = mix(u_intensity, 0.2, isBreak);
+      col.r += hsv2rgb(vec3(fract(hue + 0.05), sat, snoise(warped_p * 3.0 + r_shift))).r * 0.5 * intensity_multiplier * isBreak;
+      col.b += hsv2rgb(vec3(fract(hue - 0.05), sat, snoise(warped_p * 3.0 + b_shift))).b * 0.5 * intensity_multiplier * isBreak;
 
-      // Deep vignette to ground it
-      float vig = 1.0 - radius * mix(0.3, 0.6, u_intensity);
+      // Vignette (darken edges to tunnel vision into center)
+      float vig = 1.0 - radius * mix(mix(0.4, 0.7, u_intensity), 0.2, isBreak);
       col *= smoothstep(0.0, 1.0, vig);
       
-      // Pure brightness boost at peak
-      col += vec3(n3 * 0.1 * u_intensity);
+      // Subtle central brightness pulse
+      col += vec3(n3 * 0.05 * intensity_multiplier);
 
       gl_FragColor = vec4(col, 1.0);
     }
@@ -824,6 +847,81 @@ function setupCanvas2DFallback(canvas) {
   lsdGL = null;
 }
 
+function showZenNotification(message) {
+  const existing = document.getElementById('zen-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'zen-toast';
+  toast.className = 'glass-panel';
+  toast.style.position = 'fixed';
+  toast.style.top = '-100px';
+  toast.style.left = '50%';
+  toast.style.transform = 'translateX(-50%)';
+  toast.style.zIndex = '9999999';
+  toast.style.display = 'flex';
+  toast.style.alignItems = 'center';
+  toast.style.gap = '1rem';
+  toast.style.padding = '1rem 2.5rem';
+  toast.style.borderRadius = '50px';
+  toast.style.transition = 'top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.8s ease';
+  toast.style.opacity = '0';
+  toast.style.background = 'rgba(10, 12, 18, 0.85)';
+  toast.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+  toast.style.boxShadow = '0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1)';
+
+  // Bell icon SVG with animation
+  const bellSvg = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-okay); animation: bellRing 3s ease-in-out infinite; transform-origin: top center;">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    </svg>
+  `;
+
+  const textDiv = document.createElement('div');
+  textDiv.style.fontWeight = '500';
+  textDiv.style.fontSize = '1.1rem';
+  textDiv.style.color = '#fff';
+  textDiv.style.letterSpacing = '0.5px';
+  textDiv.textContent = message;
+
+  toast.innerHTML = bellSvg;
+  toast.appendChild(textDiv);
+  document.body.appendChild(toast);
+
+  // Add keyframes if not exists
+  if (!document.getElementById('zen-toast-styles')) {
+    const style = document.createElement('style');
+    style.id = 'zen-toast-styles';
+    style.textContent = `
+      @keyframes bellRing {
+        0%, 100% { transform: rotate(0); }
+        10% { transform: rotate(15deg); }
+        20% { transform: rotate(-10deg); }
+        30% { transform: rotate(5deg); }
+        40% { transform: rotate(-5deg); }
+        50% { transform: rotate(0); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Trigger drop animation
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      toast.style.top = '40px';
+      toast.style.opacity = '1';
+    }, 50);
+  });
+
+  // Remove after 6 seconds
+  setTimeout(() => {
+    toast.style.top = '-100px';
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 800);
+  }, 6000);
+}
+
 function animateLSD() {
   if (!lsdActive) return;
 
@@ -832,15 +930,20 @@ function animateLSD() {
 
   const canvas = document.getElementById('lsdCanvas');
   const dvdEl = document.getElementById('dvdTimer');
-  const dvdTimeEl = document.getElementById('dvdTimeDisplay');
   const dvdStatusEl = document.getElementById('dvdStatusLabel');
+  const progressRing = document.getElementById('dvdProgressRing');
 
-  // Sync timer text with actual focus timer
-  if (dvdTimeEl && elements.focusTimeDisplay) {
-    dvdTimeEl.textContent = elements.focusTimeDisplay.textContent;
-  }
+  // Sync status text with actual focus status
   if (dvdStatusEl && elements.focusStatusLabel) {
     dvdStatusEl.textContent = elements.focusStatusLabel.textContent;
+  }
+  
+  // Update visual progress ring instead of text counter
+  if (progressRing) {
+    // Circumference = 289.03. Offset decreases from 289.03 (empty) to 0 (full).
+    // Or we want it to decrease as time runs out: offset goes from 0 (full) to 289.03 (empty)
+    const offset = 289.03 * (1 - progress);
+    progressRing.style.strokeDashoffset = offset;
   }
 
   // Render WebGL psychedelics
@@ -857,11 +960,12 @@ function animateLSD() {
     const timeUniform = gl.getUniformLocation(lsdProgram, 'u_time');
     const resUniform = gl.getUniformLocation(lsdProgram, 'u_resolution');
     const intensityUniform = gl.getUniformLocation(lsdProgram, 'u_intensity');
+    const modeUniform = gl.getUniformLocation(lsdProgram, 'u_mode');
 
     gl.uniform1f(timeUniform, performance.now() / 1000);
     gl.uniform2f(resUniform, canvas.width, canvas.height);
-    // Intensity goes from 0.0 (start of timer) to 1.0 (end of timer)
     gl.uniform1f(intensityUniform, 1.0 - progress);
+    gl.uniform1f(modeUniform, mode === 'break' ? 1.0 : 0.0);
     
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
@@ -881,8 +985,9 @@ function animateLSD() {
     const maxX = window.innerWidth - DVD_SIZE + offset;
     const maxY = window.innerHeight - DVD_SIZE + offset;
 
-    dvdX += dvdVX;
-    dvdY += dvdVY;
+    const speedMult = mode === 'break' ? 0.2 : 1.0;
+    dvdX += dvdVX * speedMult;
+    dvdY += dvdVY * speedMult;
     let bounced = false;
 
     if (dvdX <= minX) { dvdX = minX; dvdVX = Math.abs(dvdVX); bounced = true; }
