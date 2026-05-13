@@ -67,6 +67,8 @@ export const elements = {
   skipAuthBtn: document.getElementById('skipAuthBtn'),
   authLegalGroup: document.getElementById('authLegalGroup'),
   legalCheckbox: document.getElementById('legalCheckbox'),
+  googleLoginBtn: document.getElementById('googleLoginBtn'),
+  xLoginBtn: document.getElementById('xLoginBtn'),
 
   // Somatic & Grid
   viewSomaticEntry: document.getElementById('view-somatic-entry'),

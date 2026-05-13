@@ -10,7 +10,8 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     viewAuth, tabLogin, tabRegister, tabsPill, 
     authForm, authSubmitBtn, authError, 
     emailInput, passwordInput, nameInput, 
-    skipAuthBtn, authLegalGroup, legalCheckbox 
+    skipAuthBtn, authLegalGroup, legalCheckbox,
+    googleLoginBtn, xLoginBtn
   } = elements;
 
   if (!viewAuth) return;
@@ -120,10 +121,10 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     }
   });
 
-  const googleLoginBtn = document.getElementById('googleLoginBtn');
   googleLoginBtn?.addEventListener('click', async () => {
     if (authError) authError.textContent = '';
     googleLoginBtn.disabled = true;
+    googleLoginBtn.classList.add('loading');
     try {
       const user = await loginWithGoogle();
       if (onAuthenticated) onAuthenticated(user);
@@ -135,13 +136,14 @@ export function initAuth({ onAuthenticated, navigateTo }) {
       }
     } finally {
       googleLoginBtn.disabled = false;
+      googleLoginBtn.classList.remove('loading');
     }
   });
 
-  const xLoginBtn = document.getElementById('xLoginBtn');
   xLoginBtn?.addEventListener('click', async () => {
     if (authError) authError.textContent = '';
     xLoginBtn.disabled = true;
+    xLoginBtn.classList.add('loading');
     try {
       const user = await loginWithX();
       if (onAuthenticated) onAuthenticated(user);
@@ -153,6 +155,7 @@ export function initAuth({ onAuthenticated, navigateTo }) {
       }
     } finally {
       xLoginBtn.disabled = false;
+      xLoginBtn.classList.remove('loading');
     }
   });
 
