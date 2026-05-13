@@ -198,13 +198,13 @@ function renderSessionInputs() {
     const isActive = i === 1 ? 'active' : '';
     const val = savedValues[i-1] !== undefined ? savedValues[i-1] : `Session ${i}`;
     html += `
-      <div class="session-name-item ${isActive}" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
+      <div class="session-name-item ${isActive}" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
         <input type="text" class="session-name-input" 
                placeholder="Session ${i}" 
-               value="${val}" style="width: calc(100% - 50px);">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 0.7rem; opacity: 0.4;">(#${i})</span>
-          ${i > 1 ? `<button type="button" class="remove-session-btn" data-index="${i}" style="background:none;border:none;color:rgba(255,100,100,0.6);cursor:pointer;padding:0;font-size:1.2rem;line-height:1;">&times;</button>` : '<span style="width:12px;"></span>'}
+               value="${val}" style="flex: 1; min-width: 0;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding-right: 8px;">
+          <span style="font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; opacity: 0.4;">(#${i})</span>
+          ${i > 1 ? `<button type="button" class="remove-session-btn" data-index="${i}" style="background:none;border:none;color:rgba(255,100,100,0.6);cursor:pointer;padding:0;font-size:1.4rem;line-height:1;transition:color 0.3s;" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color='rgba(255,100,100,0.6)'">&times;</button>` : '<span style="width:16px;"></span>'}
         </div>
       </div>
     `;

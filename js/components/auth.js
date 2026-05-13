@@ -1,5 +1,5 @@
 import { elements } from '../core/dom.js';
-import { loginWithEmail, registerWithEmail, signInAsGuest } from '../services/auth.js';
+import { loginWithEmail, registerWithEmail, signInAsGuest, loginWithGoogle, loginWithX } from '../services/auth.js';
 import { t } from '../core/i18n.js';
 
 /**
@@ -92,6 +92,22 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     }
   });
 
+  const mainAuthOptions = document.getElementById('mainAuthOptions');
+  const emailAuthView = document.getElementById('emailAuthView');
+  const showEmailAuthBtn = document.getElementById('showEmailAuthBtn');
+  const backToMainAuthBtn = document.getElementById('backToMainAuthBtn');
+
+  showEmailAuthBtn?.addEventListener('click', () => {
+    mainAuthOptions?.classList.add('hidden');
+    emailAuthView?.classList.remove('hidden');
+  });
+
+  backToMainAuthBtn?.addEventListener('click', () => {
+    emailAuthView?.classList.add('hidden');
+    mainAuthOptions?.classList.remove('hidden');
+    if (authError) authError.classList.add('hidden');
+  });
+
   skipAuthBtn?.addEventListener('click', async () => {
     try {
       const user = await signInAsGuest();
@@ -101,6 +117,42 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     } catch (err) {
       console.error('[Aura] Guest login failed', err);
       navigateTo('view-welcome'); 
+    }
+  });
+
+  const googleLoginBtn = document.getElementById('googleLoginBtn');
+  googleLoginBtn?.addEventListener('click', async () => {
+    if (authError) authError.textContent = '';
+    googleLoginBtn.disabled = true;
+    try {
+      const user = await loginWithGoogle();
+      if (onAuthenticated) onAuthenticated(user);
+    } catch (err) {
+      console.error('[Aura] Google Auth Error:', err);
+      if (authError) {
+        authError.textContent = translateFirebaseError(err.code);
+        authError.classList.remove('hidden');
+      }
+    } finally {
+      googleLoginBtn.disabled = false;
+    }
+  });
+
+  const xLoginBtn = document.getElementById('xLoginBtn');
+  xLoginBtn?.addEventListener('click', async () => {
+    if (authError) authError.textContent = '';
+    xLoginBtn.disabled = true;
+    try {
+      const user = await loginWithX();
+      if (onAuthenticated) onAuthenticated(user);
+    } catch (err) {
+      console.error('[Aura] X Auth Error:', err);
+      if (authError) {
+        authError.textContent = translateFirebaseError(err.code);
+        authError.classList.remove('hidden');
+      }
+    } finally {
+      xLoginBtn.disabled = false;
     }
   });
 

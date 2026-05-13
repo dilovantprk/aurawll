@@ -48,6 +48,11 @@ export function navigateTo(viewId, skipHistory = false) {
   const target = document.getElementById(viewId);
   if (!target) return;
 
+  if (!skipHistory) {
+    SensoryEngine.triggerHaptic('medium');
+    SensoryEngine.playSwipe();
+  }
+
   // Restore UI from Focus Immersion
   exitImmersion();
 
@@ -208,11 +213,6 @@ export function navigateTo(viewId, skipHistory = false) {
   requestAnimationFrame(() => {
     // Nav pill updates removed for cleaner look
   });
-
-  if (!skipHistory) {
-    SensoryEngine.triggerHaptic('medium');
-    SensoryEngine.playSwipe();
-  }
 }
 
 /**

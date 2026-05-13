@@ -128,40 +128,17 @@ function renderDashboardComponents(data) {
 }
 
 function renderDailyContent() {
-  const intents = [
-    "Bedenime şefkat göstereceğim.",
-    "Bugün sadece durmaya izin vereceğim.",
-    "Zorlandığımda nefesime döneceğim.",
-    "Kendimi olduğum gibi kabul ediyorum.",
-    "Bugün sistemime yüklenmeyeceğim."
-  ];
-  
-  const bites = [
-    "Ventral Vagal durum sadece sakinlik değil, aynı zamanda güvenle sosyal bağ kurma kapasitesidir.",
-    "Sempatik sistem bir düşman değil, seni tehlikelerden korumak için enerji sağlayan bir itici güçtür.",
-    "Dorsal Vagal kapanma, bedenin aşırı yüklenme anında enerjiyi korumak için kullandığı son savunma hattıdır.",
-    "Fizyolojik bir iç çekiş (çift nefes al, uzun ver), kalbini yavaşlatmanın en hızlı nörobiyolojik yoludur.",
-    "Sinir sisteminin esnekliği (plasticity), stresli durumlardan ne kadar hızlı toparlanabildiğinle ölçülür.",
-    "Nefes verişini alışından uzun tutmak, vagus sinirini uyararak bedene 'güvendesin' mesajı gönderir.",
-    "Gözleri yavaşça sağa ve sola kaydırmak (oryantasyon), sinir sisteminin bulunduğu ortama güven duymasına yardımcı olur.",
-    "Esneme ve iç çekme, otonom sinir sisteminin kendi kendini regüle etme ve birikmiş gerilimi atma yollarından biridir.",
-    "Sempatik aktivasyon (savaş/kaç) sırasında sindirim ve bağışıklık yavaşlar; bu nedenle kronik stres bedeni tüketir.",
-    "Öz-şefkat, beyindeki tehdit merkezini (amigdala) yatıştırarak güvenli bağlanma devresini aktive eder.",
-    "Yüzünüzü soğuk suyla yıkamak, 'memeli dalış refleksi'ni tetikleyerek kalp atış hızını anında düşürür.",
-    "Dorsal vagal donma durumundan çıkışın en güvenli yolu küçük, nazik ve ritmik fiziksel hareketlerdir.",
-    "Aynı anda hem odaklanıp hem de güvende hissettiğimiz 'Oyun' hali, ventral vagal ve sempatik sistemin uyumlu dansıdır.",
-    "Bağırsaklar ve beyin arasındaki iletişimin %80'i aşağıdan yukarıyadır. Midendeki hisler beynine giden güçlü sinyallerdir.",
-    "Sinir sistemi kelimelerden çok ses tonuna, yüz ifadesine ve beden diline (nörosepsiyon) tepki verir."
-  ];
+  const intentsCount = 5;
+  const bitesCount = 15;
 
   // Pick pseudo-random based on day of year
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
   
   const intentEl = document.getElementById('dailyIntentText');
-  if (intentEl) intentEl.textContent = intents[dayOfYear % intents.length];
+  if (intentEl) intentEl.textContent = t('intent_' + (dayOfYear % intentsCount));
   
   const biteEl = document.getElementById('dailyBiteText');
-  if (biteEl) biteEl.textContent = bites[dayOfYear % bites.length];
+  if (biteEl) biteEl.textContent = t('bite_' + (dayOfYear % bitesCount));
 }
 
 function renderModuleMarket() {
@@ -172,7 +149,7 @@ function renderModuleMarket() {
     {
       id: 'notebook',
       title: 'Notebook',
-      desc: 'Düşüncelerinizi ve somatik farkındalık notlarınızı kaydedin.',
+      desc: t('market_notebook_desc'),
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z" /><path d="M16 8 2 22" /><path d="M17.5 15H9" /></svg>',
       isInstalled: true,
       isActive: AppState.showNotebook,
@@ -181,7 +158,7 @@ function renderModuleMarket() {
     {
       id: 'focus',
       title: 'Focus Series',
-      desc: 'Pomodoro tarzı odaklanma ve çalışma aralıkları için polyvagal zamanlayıcı.',
+      desc: t('market_focus_desc'),
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
       isInstalled: AppState.unlockedFocus,
       isActive: AppState.showFocus,
@@ -190,7 +167,7 @@ function renderModuleMarket() {
     {
       id: 'ambient',
       title: 'Ambient Space',
-      desc: 'Çalışırken veya dinlenirken sinir sistemini yatıştıran algoritmik ses manzaraları.',
+      desc: t('market_ambient_desc'),
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>',
       isInstalled: AppState.unlockedAmbient,
       isActive: AppState.showAmbient,
@@ -199,7 +176,7 @@ function renderModuleMarket() {
     {
       id: 'sleep',
       title: 'Deep Sleep',
-      desc: 'NSDR ve otonom kapanma ritüelleri ile derin toparlanma sağlayan uyku rehberi.',
+      desc: t('market_sleep_desc'),
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
       isInstalled: AppState.unlockedSleep,
       isActive: AppState.showSleep,
@@ -214,7 +191,7 @@ function renderModuleMarket() {
         <div class="market-info">
           <div class="market-title">${mod.title}</div>
           <div class="market-status ${mod.isInstalled ? 'installed' : ''}">
-            ${mod.isInstalled ? (mod.isActive ? 'Sistemde Aktif' : 'Pasif') : 'Kilitli'}
+            ${mod.isInstalled ? (mod.isActive ? t('market_status_active') : t('market_status_inactive')) : t('market_status_locked')}
           </div>
         </div>
       </div>
@@ -227,7 +204,7 @@ function renderModuleMarket() {
       <p class="market-desc">${mod.desc}</p>
       <button class="market-btn ${mod.isInstalled ? (mod.isActive ? 'market-btn-active' : 'market-btn-inactive') : 'market-btn-install'}" 
               data-mod="${mod.id}" onclick="event.stopPropagation()">
-        ${mod.isInstalled ? (mod.isActive ? 'Devre Dışı Bırak' : 'Aktive Et') : 'Sisteme Ekle'}
+        ${mod.isInstalled ? (mod.isActive ? t('market_btn_disable') : t('market_btn_enable')) : t('market_btn_install')}
       </button>
     </div>
   `).join('');

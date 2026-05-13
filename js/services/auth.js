@@ -7,11 +7,13 @@ import {
   signInAnonymously, 
   linkWithCredential, 
   GoogleAuthProvider,
+  TwitterAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
   signOut,
-  deleteUser
+  deleteUser,
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
 const MOCK_MODE = !isInitialized;
@@ -33,6 +35,24 @@ export async function loginWithEmail(email, password) {
   if (MOCK_MODE) return { uid: 'mock-user', email, displayName: 'Mock User' };
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (err) { throw err; }
+}
+
+export async function loginWithGoogle() {
+  if (MOCK_MODE) return { uid: 'mock-google-user', email: 'mock@google.com', displayName: 'Google User' };
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (err) { throw err; }
+}
+
+export async function loginWithX() {
+  if (MOCK_MODE) return { uid: 'mock-x-user', email: 'mock@x.com', displayName: 'X User' };
+  try {
+    const provider = new TwitterAuthProvider();
+    const result = await signInWithPopup(auth, provider);
     return result.user;
   } catch (err) { throw err; }
 }

@@ -170,6 +170,13 @@
   width: 100%;
 }
 
+/* Filter Logic */
+.meditations-list[data-filter="calm"] .meditation-card:not([data-category="calm"]),
+.meditations-list[data-filter="focus"] .meditation-card:not([data-category="focus"]),
+.meditations-list[data-filter="energize"] .meditation-card:not([data-category="energize"]) {
+  display: none;
+}
+
 .filter-chips-container {
   display: flex;
   gap: 10px;

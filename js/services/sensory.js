@@ -223,6 +223,7 @@ export const SensoryEngine = {
   },
 
   playTick() {
+    if (!this.audioCtx) this.initAudio();
     if (!this.audioCtx || this.isMuted || !this.uiSoundsEnabled) return;
     this.resumeAudio();
     const now = this.audioCtx.currentTime;
@@ -239,6 +240,7 @@ export const SensoryEngine = {
   },
 
   playSwipe() {
+    if (!this.audioCtx) this.initAudio();
     if (!this.audioCtx || this.isMuted || !this.uiSoundsEnabled) return;
     this.resumeAudio();
     const now = this.audioCtx.currentTime;
