@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gizlilik Politikası | Aura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #050508;
+            color: #E0E4EC;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: block;
+            overflow-y: auto;
+        }
+        .legal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: rgba(10, 12, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 36px;
+            backdrop-filter: blur(45px) saturate(160%);
+            -webkit-backdrop-filter: blur(45px) saturate(160%);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #fff, #8E96A4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: var(--accent-primary, #858DFF);
+            margin: 2rem 0 1rem;
+        }
+        p {
+            margin-bottom: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+        .last-updated {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 3rem;
+        }
+        .highlight {
+            color: var(--accent-okay, #64E49F);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div id="aura-background"></div>
+    
+    <div class="legal-container">
+        <a href="index.html" class="back-link">← Geri Dön</a>
+        <h1>Gizlilik Politikası</h1>
+        
+        <p>Gizliliğiniz bizim için kutsaldır. Aura içerisinde kaydettiğiniz tüm duyusal veriler, duygusal check-in kayıtları ve meditasyon geçmişi sadece size özel bir esenlik yolculuğu oluşturmak için kullanılır.</p>
+
+        <h2>1. Veri Egemenliği</h2>
+        <p>Verileriniz, siz bir hesap oluşturup senkronizasyon özelliklerini kullanmadığınız sürece, öncelikle <span class="highlight">yerel cihazınızda saklanır</span>. Hesabınız yoksa, verileriniz hiçbir sunucuya aktarılmaz.</p>
+
+        <h2>2. Hangi Verileri Topluyoruz?</h2>
+        <p>Uygulama deneyimini iyileştirmek için duygusal durumlar, seçilen nefes protokolleri ve biyometrik duyumlar (kalp atışı hızı algısı vb.) kaydedilir. Bu veriler kimliğinizi ortaya çıkaracak şekilde üçüncü taraflarla paylaşılmaz veya reklam ağlarına satılmaz.</p>
+
+        <h2>3. KVKK / GDPR Uyumu</h2>
+        <p>Aura üzerinden paylaştığınız veriler hassas kişisel veri niteliğinde olabilir. Bu veriler sadece sizin rızanızla, sinir sistemi paternlerinizi analiz etmek amacıyla işlenir. İstediğiniz zaman verilerinizin işlenmesini durdurabilir, verilerinizin silinmesini talep edebilir veya verilerinizi dışa aktararak taşınabilirlik hakkınızı kullanabilirsiniz.</p>
+
+        <h2>4. Üçüncü Taraf Servisler</h2>
+        <p>Uygulama, kimlik doğrulama için Firebase (Google) servislerini kullanır. Bu servislerin kendi gizlilik politikaları geçerlidir.</p>
+
+        <div class="last-updated">Son Güncelleme: 14 Mayıs 2026</div>
+    </div>
+
+    <script>
+        const bg = document.getElementById('aura-background');
+        if (bg) {
+            bg.style.position = 'fixed';
+            bg.style.inset = '0';
+            bg.style.zIndex = '-1';
+            bg.style.backgroundImage = 'radial-gradient(circle at 50% 40%, rgba(133, 141, 255, 0.15) 0%, transparent 70%)';
+        }
+    </script>
+</body>
+</html>

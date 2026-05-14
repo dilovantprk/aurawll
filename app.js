@@ -24,6 +24,7 @@ import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth } from './js/components/auth.js';
+import { handleRedirectResult } from './js/services/auth.js';
 import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
 import { initSleep } from './js/components/sleep.js';
@@ -307,6 +308,13 @@ async function initAppBootstrap() {
       if (fb.isInitialized && fb.auth) {
         fb.onAuthStateChanged(fb.auth, (user) => {
           if (user) startAppFlow(user);
+        });
+
+        // Also check for redirect result explicitly
+        handleRedirectResult().then(user => {
+          if (user) startAppFlow(user);
+        }).catch(err => {
+          console.error("[Aura] Bootstrap Redirect Error:", err);
         });
       }
     }

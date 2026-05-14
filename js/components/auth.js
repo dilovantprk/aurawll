@@ -23,19 +23,6 @@ export function initAuth({ onAuthenticated, navigateTo }) {
 
   if (!viewAuth) return;
 
-  // Handle incoming redirect result if any
-  handleRedirectResult().then(user => {
-    if (user && onAuthenticated) {
-      onAuthenticated(user);
-    }
-  }).catch(err => {
-    console.error('[Aura] Redirect Auth Error:', err);
-    if (authError) {
-      authError.textContent = translateFirebaseError(err.code);
-      authError.classList.remove('hidden');
-    }
-  });
-
   let activeTab = 'login'; // 'login' or 'register'
 
   // --- Tab Switching ---

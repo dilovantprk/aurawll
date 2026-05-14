@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kullanım Koşulları | Aura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #050508;
+            color: #E0E4EC;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: block;
+            overflow-y: auto;
+        }
+        .legal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: rgba(10, 12, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 36px;
+            backdrop-filter: blur(45px) saturate(160%);
+            -webkit-backdrop-filter: blur(45px) saturate(160%);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #fff, #8E96A4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: var(--accent-primary, #858DFF);
+            margin: 2rem 0 1rem;
+        }
+        p {
+            margin-bottom: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+        .last-updated {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="aura-background"></div>
+    
+    <div class="legal-container">
+        <a href="index.html" class="back-link">← Geri Dön</a>
+        <h1>Kullanım Koşulları</h1>
+        
+        <p>Aura'ya hoş geldiniz. Bu uygulama, Polivagal Teori prensiplerine dayalı bir öz-düzenleme ve esenlik aracıdır. Uygulamayı kullanarak aşağıdaki koşulları kabul etmiş sayılırsınız.</p>
+
+        <h2>1. Tıbbi Uyarı</h2>
+        <p>Aura tıbbi bir teşhis, tedavi veya profesyonel psikolojik danışmanlık hizmeti sunmaz. Sunulan pratikler ve bilgiler sadece genel eğitim amaçlıdır. Ciddi bir sağlık sorununuz veya klinik bir durumunuz varsa, lütfen lisanslı bir sağlık profesyoneline danışın. Aura'yı kullanarak, uygulamayı kendi sorumluluğunuzda kullandığınızı ve sunulan araçların kişisel gelişim amaçlı olduğunu kabul edersiniz.</p>
+
+        <h2>2. Kullanım Amacı</h2>
+        <p>Uygulama, sinir sistemi farkındalığını artırmak ve nefes teknikleri yoluyla regülasyon sağlamak amacıyla tasarlanmıştır. Bu tekniklerin etkisi kişiden kişiye farklılık gösterebilir.</p>
+
+        <h2>3. Fikri Mülkiyet</h2>
+        <p>Aura içerisindeki tüm tasarımlar, algoritmalar ve içerikler Aura projesine aittir. İzinsiz kopyalanması veya ticari amaçla kullanılması yasaktır.</p>
+
+        <h2>4. Sorumluluk Sınırı</h2>
+        <p>Aura, uygulamanın kullanımından doğabilecek doğrudan veya dolaylı hiçbir zarardan sorumlu tutulamaz. Uygulama "olduğu gibi" sunulmaktadır.</p>
+
+        <div class="last-updated">Son Güncelleme: 14 Mayıs 2026</div>
+    </div>
+
+    <script>
+        // Aura Background Glow Effect Integration
+        const bg = document.getElementById('aura-background');
+        if (bg) {
+            bg.style.position = 'fixed';
+            bg.style.inset = '0';
+            bg.style.zIndex = '-1';
+            bg.style.backgroundImage = 'radial-gradient(circle at 50% 40%, rgba(133, 141, 255, 0.15) 0%, transparent 70%)';
+        }
+    </script>
+</body>
+</html>
