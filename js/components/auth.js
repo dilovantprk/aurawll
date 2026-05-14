@@ -1,5 +1,12 @@
 import { elements } from '../core/dom.js';
-import { loginWithEmail, registerWithEmail, signInAsGuest, loginWithGoogle, loginWithX } from '../services/auth.js';
+import { 
+  loginWithEmail, 
+  registerWithEmail, 
+  signInAsGuest, 
+  loginWithGoogle, 
+  loginWithX,
+  handleRedirectResult 
+} from '../services/auth.js';
 import { t } from '../core/i18n.js';
 
 /**
@@ -15,6 +22,19 @@ export function initAuth({ onAuthenticated, navigateTo }) {
   } = elements;
 
   if (!viewAuth) return;
+
+  // Handle incoming redirect result if any
+  handleRedirectResult().then(user => {
+    if (user && onAuthenticated) {
+      onAuthenticated(user);
+    }
+  }).catch(err => {
+    console.error('[Aura] Redirect Auth Error:', err);
+    if (authError) {
+      authError.textContent = translateFirebaseError(err.code);
+      authError.classList.remove('hidden');
+    }
+  });
 
   let activeTab = 'login'; // 'login' or 'register'
 
@@ -126,8 +146,8 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     googleLoginBtn.disabled = true;
     googleLoginBtn.classList.add('loading');
     try {
-      const user = await loginWithGoogle();
-      if (onAuthenticated) onAuthenticated(user);
+      await loginWithGoogle();
+      // Page will redirect, so we don't need to do anything else here
     } catch (err) {
       console.error('[Aura] Google Auth Error:', err);
       if (authError) {
@@ -145,8 +165,8 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     xLoginBtn.disabled = true;
     xLoginBtn.classList.add('loading');
     try {
-      const user = await loginWithX();
-      if (onAuthenticated) onAuthenticated(user);
+      await loginWithX();
+      // Page will redirect
     } catch (err) {
       console.error('[Aura] X Auth Error:', err);
       if (authError) {
@@ -171,6 +191,9 @@ function translateFirebaseError(code) {
     case 'auth/wrong-password': return 'Hatalı şifre.';
     case 'auth/email-already-in-use': return 'Bu e-posta adresi zaten kullanımda.';
     case 'auth/weak-password': return 'Şifre çok zayıf (en az 6 karakter).';
+    case 'auth/popup-blocked': return 'Açılır pencere engellendi. Lütfen izin verin veya tekrar deneyin.';
+    case 'auth/unauthorized-domain': return 'Bu alan adı yetkilendirilmemiş. Lütfen Firebase Console üzerinden ekleyin.';
+    case 'auth/admin-restricted-operation': return 'Misafir girişi devre dışı. Lütfen Firebase Console üzerinden Anonymous auth\'u etkinleştirin.';
     default: return 'Bir hata oluştu. Lütfen tekrar deneyin.';
   }
 }

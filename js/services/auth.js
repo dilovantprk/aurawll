@@ -13,7 +13,9 @@ import {
   updateProfile,
   signOut,
   deleteUser,
-  signInWithPopup
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
 const MOCK_MODE = !isInitialized;
@@ -43,18 +45,44 @@ export async function loginWithGoogle() {
   if (MOCK_MODE) return { uid: 'mock-google-user', email: 'mock@google.com', displayName: 'Google User' };
   try {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    return result.user;
-  } catch (err) { throw err; }
+    await signInWithRedirect(auth, provider);
+    // Note: The page will redirect, so no need to return user here
+  } catch (error) {
+    console.error("Google login error:", error);
+    throw error;
+  }
 }
 
 export async function loginWithX() {
   if (MOCK_MODE) return { uid: 'mock-x-user', email: 'mock@x.com', displayName: 'X User' };
   try {
     const provider = new TwitterAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    return result.user;
-  } catch (err) { throw err; }
+    await signInWithRedirect(auth, provider);
+  } catch (error) {
+    console.error("X login error:", error);
+    throw error;
+  }
+}
+
+/**
+ * Processes the result of a redirect sign-in flow.
+ * Should be called on app startup.
+ */
+export async function handleRedirectResult() {
+  if (MOCK_MODE) return null;
+  try {
+    const result = await getRedirectResult(auth);
+    if (result) {
+      // User is signed in
+      const user = result.user;
+      console.log("[Aura] Redirect Auth Success:", user.displayName);
+      return user;
+    }
+    return null;
+  } catch (error) {
+    console.error("[Aura] Redirect Result Error:", error);
+    throw error;
+  }
 }
 
 export async function registerWithEmail(email, password, displayName) {
