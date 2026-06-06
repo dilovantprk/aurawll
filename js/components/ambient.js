@@ -49,29 +49,35 @@ function renderAmbientGrid() {
 
   elements.ambientList.innerHTML = AMBIENT_SOUNDS.map(sound => `
     <div class="ambient-card-v2 liquid-glass glow-card ${activeSoundId === sound.id ? 'active' : ''}" data-id="${sound.id}" data-visual="${sound.visual || ''}">
-      <div class="card-visual"></div>
       
-      <!-- Aesthetic Liquid Wave Visualizer -->
-      <div class="ambient-liquid-wave">
-        <div class="wave-layer"></div>
-        <div class="wave-layer"></div>
-        <div class="wave-layer"></div>
+      <!-- Psychedelic glow layer (active state) -->
+      <div class="ambient-liquid-wave"></div>
+
+      <!-- SVG wave visualizer (shows when active) -->
+      <div class="ambient-wave-vis" aria-hidden="true">
+        <svg viewBox="0 0 200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="wave-path wave-path-1"
+            d="M0 40 C20 20, 40 55, 60 38 C80 20, 100 50, 120 35 C140 18, 160 48, 180 32 C190 24, 196 38, 200 35 L200 60 L0 60 Z"/>
+          <path class="wave-path wave-path-2"
+            d="M0 48 C25 30, 45 58, 70 44 C95 28, 115 54, 140 42 C160 30, 175 50, 200 40 L200 60 L0 60 Z"/>
+        </svg>
       </div>
 
       <div class="ambient-card-content">
+        <!-- TOP: category tag + title -->
         <div class="ambient-card-top">
+          <span class="card-tag-v2">${sound.category}</span>
+          <h3 class="card-title-v2">${t(sound.titleKey)}</h3>
+        </div>
+
+        <!-- BOTTOM: icon left + play/pause right -->
+        <div class="ambient-card-bottom">
           <div class="ambient-card-icon">${ICONS[sound.icon] || ICONS.noise}</div>
-          
-          <!-- Top Right Play/Hold Button -->
+
           <div class="play-hold-btn">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </div>
-        </div>
-
-        <div class="card-info-v2">
-          <span class="card-tag-v2">${sound.category}</span>
-          <h3 class="card-title-v2">${t(sound.titleKey)}</h3>
         </div>
       </div>
     </div>
