@@ -130,10 +130,15 @@ export function initAuth({ onAuthenticated, navigateTo }) {
 
   googleLoginBtn?.addEventListener('click', async () => {
     if (authError) authError.textContent = '';
-    googleLoginBtn.disabled = true;
-    googleLoginBtn.classList.add('loading');
+    
+    // Call loginWithGoogle synchronously to trigger popup without browser block
     try {
-      const user = await loginWithGoogle();
+      const userPromise = loginWithGoogle();
+      
+      googleLoginBtn.disabled = true;
+      googleLoginBtn.classList.add('loading');
+      
+      const user = await userPromise;
       if (onAuthenticated) onAuthenticated(user);
     } catch (err) {
       console.error('[Aura] Google Auth Error:', err);
@@ -149,10 +154,15 @@ export function initAuth({ onAuthenticated, navigateTo }) {
 
   xLoginBtn?.addEventListener('click', async () => {
     if (authError) authError.textContent = '';
-    xLoginBtn.disabled = true;
-    xLoginBtn.classList.add('loading');
+    
+    // Call loginWithX synchronously to trigger popup without browser block
     try {
-      const user = await loginWithX();
+      const userPromise = loginWithX();
+      
+      xLoginBtn.disabled = true;
+      xLoginBtn.classList.add('loading');
+      
+      const user = await userPromise;
       if (onAuthenticated) onAuthenticated(user);
     } catch (err) {
       console.error('[Aura] X Auth Error:', err);

@@ -18,7 +18,7 @@ import {
   getRedirectResult
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
-const MOCK_MODE = !isInitialized;
+const MOCK_MODE = !isInitialized || window.location.protocol === 'file:';
 
 export async function signInAsGuest() {
   if (MOCK_MODE) {
