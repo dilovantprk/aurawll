@@ -94,42 +94,49 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1rem;
+    padding: 1.2rem;
     box-sizing: border-box;
 }
 
-/* ── TOP: icon left + play button right ── */
+/* ── TOP: tag + title ── */
 .ambient-card-top {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
+    flex-direction: column;
+    text-align: left;
 }
 
 .card-tag-v2 {
-    font-size: 0.6rem;
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 1.8px;
-    opacity: 0.4;
+    letter-spacing: 2px;
+    opacity: 0.5;
     font-weight: 700;
     color: #fff;
+    text-align: right;
 }
 
 .card-title-v2 {
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.15rem;
+    font-weight: 600;
     color: #fff;
     letter-spacing: -0.2px;
     margin: 0;
     line-height: 1.3;
+    padding-top: 1.5rem;
+    padding-right: 2rem;
+    text-align: left;
 }
 
-/* ── BOTTOM: category tag + title ── */
+/* ── BOTTOM: icon left + play button right ── */
 .ambient-card-bottom {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    margin-top: auto;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 1.2rem;
 }
 
 .ambient-card-icon {
@@ -199,8 +206,8 @@
 
 /* ── Desktop tweaks ── */
 @media (min-width: 1024px) {
-    .card-tag-v2   { font-size: 0.58rem; }
-    .card-title-v2 { font-size: 0.92rem; }
+    .card-tag-v2   { font-size: 0.6rem; }
+    .card-title-v2 { font-size: 1.1rem; }
     .ambient-card-icon {
         width: 36px;
         height: 36px;
