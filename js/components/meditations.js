@@ -56,8 +56,7 @@ export function renderMeditationsList() {
   const breatheProtocols = protocols || {};
 
   const renderCard = (id, p) => {
-    const metaData = PROTOCOL_META[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)', benefitKey: '' };
-    const benefit = metaData.benefitKey ? t(metaData.benefitKey) : '';
+    const metaData = PROTOCOL_META[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)' };
     const mins = Math.ceil(p.totalDuration / 60);
     const sciTitle = t(`sci_${id}_title`);
 
@@ -77,7 +76,6 @@ export function renderMeditationsList() {
             <span class="meditation-card-mins">${mins} min</span>
             <div class="meditation-card-details">
               <span class="meditation-card-original-title">${t(p.titleKey)}</span>
-              <span class="meditation-card-benefit">${benefit}</span>
             </div>
           </div>
         </div>

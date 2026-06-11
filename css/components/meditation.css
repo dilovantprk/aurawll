@@ -170,12 +170,6 @@
   line-height: 1.2;
 }
 
-.meditation-card-benefit {
-  font-size: 0.65rem;
-  opacity: 0.5;
-  line-height: 1.1;
-}
-
 /* Info Trigger */
 .meditation-card .info-trigger {
   position: absolute;

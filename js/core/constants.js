@@ -167,21 +167,26 @@ export const PROTOCOL_ICONS = {
   leaf: `<path d="M32 52 C 32 52 12 42 12 22 C 12 12 22 12 32 22 C 42 12 52 12 52 22 C 52 42 32 52 32 52 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
   fire: `<path d="M32 52 C 32 52 42 42 42 32 C 42 22 32 12 32 12 C 32 12 22 22 22 32 C 22 42 32 52 32 52 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/><path d="M32 42 C 32 42 36 38 36 32 C 36 28 32 24 32 24 C 32 24 28 28 28 32 C 28 38 32 42 32 42 Z" stroke="white" stroke-width="1" fill="none" opacity="0.4"/>`,
   balance: `<circle cx="24" cy="32" r="10" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/><circle cx="40" cy="32" r="10" stroke="white" stroke-width="1.5" fill="none" opacity="0.4"/>`,
-  box: `<rect x="18" y="18" width="28" height="28" rx="4" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`
+  box: `<rect x="18" y="18" width="28" height="28" rx="4" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  sigh: `<path d="M15 45 Q 32 15 49 45 M 25 35 Q 32 25 39 35" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.8"/>`,
+  infinity: `<path d="M20 32 C 20 25 30 25 32 32 C 34 39 44 39 44 32 C 44 25 34 25 32 32 C 30 39 20 39 20 32 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  heart: `<path d="M32 50 C 15 35 15 20 32 20 C 49 20 49 35 32 50" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
+  expand: `<path d="M32 32 m -10 0 a 10 10 0 1 0 20 0 a 10 10 0 1 0 -20 0 M 32 10 V 15 M 32 54 V 49 M 10 32 H 15 M 54 32 H 49" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.8"/>`,
+  bellows: `<path d="M20 20 L 44 20 L 40 44 L 24 44 Z M 20 20 L 24 44 M 44 20 L 40 44" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.8"/>`
 };
 
 export const PROTOCOL_META = {
   p_478: { icon: PROTOCOL_ICONS.moon, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_478' },
-  p_sigh: { icon: PROTOCOL_ICONS.wind, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_sigh' },
-  p_bellows: { icon: PROTOCOL_ICONS.fire, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_bellows' },
-  p_resonance: { icon: PROTOCOL_ICONS.wave, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_resonance' },
+  p_sigh: { icon: PROTOCOL_ICONS.sigh, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_sigh' },
+  p_bellows: { icon: PROTOCOL_ICONS.bellows, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_bellows' },
+  p_resonance: { icon: PROTOCOL_ICONS.infinity, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_resonance' },
   p_grounding: { icon: PROTOCOL_ICONS.leaf, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_grounding' },
   p_box: { icon: PROTOCOL_ICONS.box, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_box' },
-  p_phys_sigh: { icon: PROTOCOL_ICONS.wind, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_phys_sigh' },
-  p_coherent: { icon: PROTOCOL_ICONS.wave, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_coherent' },
+  p_phys_sigh: { icon: PROTOCOL_ICONS.expand, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_phys_sigh' },
+  p_coherent: { icon: PROTOCOL_ICONS.heart, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_coherent' },
   p_ext_exhale: { icon: PROTOCOL_ICONS.calm, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_ext_exhale' },
-  p_cyclic_sigh: { icon: PROTOCOL_ICONS.wind, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_cyclic_sigh' },
-  p_fire: { icon: PROTOCOL_ICONS.energize, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_fire' },
+  p_cyclic_sigh: { icon: PROTOCOL_ICONS.wave, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_cyclic_sigh' },
+  p_fire: { icon: PROTOCOL_ICONS.fire, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_fire' },
   p_nadi: { icon: PROTOCOL_ICONS.balance, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_nadi' }
 };
 
