@@ -45,8 +45,8 @@ export async function loginWithGoogle() {
   if (MOCK_MODE) return { uid: 'mock-google-user', email: 'mock@google.com', displayName: 'Google User' };
   try {
     const provider = new GoogleAuthProvider();
-    await signInWithRedirect(auth, provider);
-    // Note: The page will redirect, so no need to return user here
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
   } catch (error) {
     console.error("Google login error:", error);
     throw error;
@@ -57,7 +57,8 @@ export async function loginWithX() {
   if (MOCK_MODE) return { uid: 'mock-x-user', email: 'mock@x.com', displayName: 'X User' };
   try {
     const provider = new TwitterAuthProvider();
-    await signInWithRedirect(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
   } catch (error) {
     console.error("X login error:", error);
     throw error;

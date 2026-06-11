@@ -133,8 +133,8 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     googleLoginBtn.disabled = true;
     googleLoginBtn.classList.add('loading');
     try {
-      await loginWithGoogle();
-      // Page will redirect, so we don't need to do anything else here
+      const user = await loginWithGoogle();
+      if (onAuthenticated) onAuthenticated(user);
     } catch (err) {
       console.error('[Aura] Google Auth Error:', err);
       if (authError) {
@@ -152,8 +152,8 @@ export function initAuth({ onAuthenticated, navigateTo }) {
     xLoginBtn.disabled = true;
     xLoginBtn.classList.add('loading');
     try {
-      await loginWithX();
-      // Page will redirect
+      const user = await loginWithX();
+      if (onAuthenticated) onAuthenticated(user);
     } catch (err) {
       console.error('[Aura] X Auth Error:', err);
       if (authError) {
