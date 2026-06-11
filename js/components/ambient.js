@@ -9,14 +9,14 @@ import { vibrate } from '../core/utils.js';
 import { SensoryEngine } from '../services/sensory.js';
 
 const ICONS = {
-  rain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4M12 18v4M16 16v4"/></svg>',
-  waves: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 17c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>',
-  birds: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 7c-1.5 0-3-1-4.5-1S8.5 7 7 7c-1.5 0-3-.5-4-1 .5 2 1.5 4 3 5 1.5 1 3 1 4.5 1s3 0 4.5-1c1.5-1 2.5-3 3-5-1 .5-2.5 1-4 1z"/><path d="M12 12v5m-4-3v3m8-3v3"/></svg>',
-  jungle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8M9 11l3 3 3-3"/></svg>',
-  whale: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 16c5 0 7-4 10-4s5 4 10 4M2 12c5 0 7-4 10-4s5 4 10 4"/></svg>',
-  focus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 7v2M12 15v2M17 12h-2M9 12H7"/></svg>',
-  peace: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3a9 9 0 1 0 9 9 9.75 9.75 0 0 0-6.74-9.31 3 3 0 0 1-5.07 1.31 1 1 0 1 1-2.02-1A1 1 0 0 1 12 3z"/></svg>',
-  noise: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12h2l2-9 4 18 4-18 4 18 2-9h2"/></svg>'
+  rain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4M12 18v4M16 16v4"/></svg>',
+  waves: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 17c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>',
+  birds: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M16 7c-1.5 0-3-1-4.5-1S8.5 7 7 7c-1.5 0-3-.5-4-1 .5 2 1.5 4 3 5 1.5 1 3 1 4.5 1s3 0 4.5-1c1.5-1 2.5-3 3-5-1 .5-2.5 1-4 1z"/><path d="M12 12v5m-4-3v3m8-3v3"/></svg>',
+  jungle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8M9 11l3 3 3-3"/></svg>',
+  whale: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M2 16c5 0 7-4 10-4s5 4 10 4M2 12c5 0 7-4 10-4s5 4 10 4"/></svg>',
+  focus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 7v2M12 15v2M17 12h-2M9 12H7"/></svg>',
+  peace: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  noise: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M2 12h2l2-9 4 18 4-18 4 18 2-9h2"/></svg>'
 };
 
 const AMBIENT_SOUNDS = [
