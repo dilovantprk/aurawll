@@ -40,7 +40,7 @@ export function initDashboard(config) {
   if (journalBtn) {
     journalBtn.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
-      if (configProps.navigateTo) configProps.navigateTo('notebook');
+      if (configProps.navigateTo) configProps.navigateTo('view-notebook');
     });
   }
 
@@ -48,7 +48,8 @@ export function initDashboard(config) {
   if (intentCard) {
     intentCard.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}));
-      // Can expand to let user choose intent later
+      // Fallback intent for now
+      alert("Günün Niyeti: Kendimi olduğum gibi kabul ediyorum. (Bu özellik çok yakında eklenecek!)");
     });
   }
 }

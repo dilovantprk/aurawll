@@ -1,14 +1,21 @@
 /* Swipe Deck CSS */
 .deck-modal {
-  align-items: center;
-  justify-content: center;
+  align-items: center !important;
+  justify-content: center !important;
   padding: 0;
-  z-index: 1000002;
-  /* Rely on .modal's visibility: hidden and pointer-events: none */
+  z-index: 1000002 !important;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease;
 }
 
 .deck-modal.active {
-  /* Rely on .modal.active's visibility: visible and pointer-events: auto */
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .deck-container {
