@@ -121,7 +121,7 @@ export const SensoryEngine = {
 
   _initDrones() {
     this.droneGain = this.audioCtx.createGain();
-    this.droneGain.gain.value = this.droneEnabled ? 1 : 0;
+    this.droneGain.gain.value = this.droneEnabled ? 0.08 : 0;
     this.droneGain.connect(this.masterGain);
 
     this.ventralOsc = this.audioCtx.createOscillator();
@@ -321,7 +321,7 @@ export const SensoryEngine = {
   setDroneEnabled(state) { 
     this.droneEnabled = state; 
     if (this.droneGain) {
-      const target = state ? 1 : 0;
+      const target = state ? 0.08 : 0;
       this.droneGain.gain.setTargetAtTime(target, this.audioCtx.currentTime, 0.5);
     }
   },
