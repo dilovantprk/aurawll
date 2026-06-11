@@ -220,12 +220,11 @@ function playAmbientPreview(cardData) {
   activeAmbientId = cardData.id;
   // If it's a file, we should play it using SensoryEngine
   if (cardData.url) {
-    SensoryEngine.playAmbientFile(cardData.url);
+    SensoryEngine.playAtmosphere(cardData.id, cardData.url);
   } else if (cardData.type === 'noise') {
-    // SensoryEngine has noise generators, we can invoke them
-    SensoryEngine.setNoise(cardData.id); // hypothetical method
+    SensoryEngine.playNoise(cardData.id); // e.g. pink, brown
   } else if (cardData.type === 'binaural') {
-    SensoryEngine.setBinaural(cardData.subtype); // hypothetical method
+    // optional binaural handler
   }
 }
 
@@ -250,9 +249,13 @@ export function closeDeck() {
   
   if (deckType === 'ambient') {
     // Stop preview
-    SensoryEngine.stopAmbientFile?.();
-    SensoryEngine.stopNoise?.();
-    SensoryEngine.stopBinaural?.();
+    if (SensoryEngine.atmospheres) {
+      Object.values(SensoryEngine.atmospheres).forEach(h => {
+        h.fade(h.volume(), 0, 1000);
+        setTimeout(() => h.stop(), 1100);
+      });
+    }
+    if (SensoryEngine.playNoise) SensoryEngine.playNoise('none');
   }
   
   setTimeout(() => {
