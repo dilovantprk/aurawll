@@ -64,20 +64,19 @@ function renderAmbientGrid() {
       </div>
 
       <div class="ambient-card-content">
-        <!-- TOP: category tag + title -->
+        <!-- TOP: icon left + play/pause right -->
         <div class="ambient-card-top">
-          <span class="card-tag-v2">${sound.category}</span>
-          <h3 class="card-title-v2">${t(sound.titleKey)}</h3>
-        </div>
-
-        <!-- BOTTOM: icon left + play/pause right -->
-        <div class="ambient-card-bottom">
           <div class="ambient-card-icon">${ICONS[sound.icon] || ICONS.noise}</div>
-
           <div class="play-hold-btn">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </div>
+        </div>
+
+        <!-- BOTTOM: category tag + title -->
+        <div class="ambient-card-bottom">
+          <span class="card-tag-v2">${sound.category}</span>
+          <h3 class="card-title-v2">${t(sound.titleKey)}</h3>
         </div>
       </div>
     </div>
