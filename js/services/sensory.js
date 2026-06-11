@@ -484,12 +484,12 @@ export const SensoryEngine = {
 
     if (!type || type === 'none') return;
 
-    let baseFreq = 200;
+    let baseFreq = 400;
     let offset = 10; // Alpha default
 
-    if (type === 'focus') { baseFreq = 160; offset = 20; } // Beta
-    if (type === 'relax') { baseFreq = 200; offset = 10; } // Alpha
-    if (type === 'sleep') { baseFreq = 100; offset = 2.5; } // Delta
+    if (type === 'focus') { baseFreq = 380; offset = 20; } // Beta
+    if (type === 'relax') { baseFreq = 400; offset = 10; } // Alpha
+    if (type === 'sleep') { baseFreq = 390; offset = 2.5; } // Delta
 
     this.binauralOscL = this.audioCtx.createOscillator();
     this.binauralOscR = this.audioCtx.createOscillator();

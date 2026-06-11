@@ -468,6 +468,53 @@
       </div>
     </section>
 
+    <!-- STEP 0.5: CAMERA PPG MEASUREMENT -->
+    <section id="view-ppg" class="view hidden center-content">
+      <div class="step-header fade-in" style="position: relative;">
+        <span class="step-indicator" data-i18n="step_ppg_indicator">FİZYOLOJİK ANALİZ</span>
+        <h2 data-i18n="ppg_title">Kardiyovasküler Rezonans</h2>
+        <p class="subtitle" id="ppgInstructions" data-i18n="ppg_instructions">Parmağınızı arka kameranın üzerine yerleştirin.</p>
+      </div>
+
+      <div class="ppg-container fade-in-pure delay-1">
+        <!-- Pulse Circle / Camera Preview -->
+        <div class="ppg-circle-wrapper">
+          <video id="ppgVideo" autoplay playsinline muted class="hidden"></video>
+          <canvas id="ppgCanvas" width="100" height="100" class="hidden"></canvas>
+          <div id="ppgCircle" class="ppg-circle">
+            <span id="ppgStatus" data-i18n="ppg_status_start">Başlamak için Dokunun</span>
+          </div>
+        </div>
+
+        <!-- Realtime Graph (Heartbeat Waveform) -->
+        <div class="ppg-graph-container">
+          <canvas id="ppgGraph" width="300" height="100"></canvas>
+        </div>
+
+        <!-- Progress Info -->
+        <div class="ppg-progress-bar">
+          <div id="ppgProgressFill"></div>
+        </div>
+
+        <div id="ppgResults" class="ppg-results hidden">
+          <div class="result-item">
+            <span class="result-label" data-i18n="ppg_lbl_bpm">NABIZ</span>
+            <div class="result-value-group">
+              <span id="ppgBPM" class="result-value">--</span>
+              <span class="result-unit">BPM</span>
+            </div>
+          </div>
+          <div class="result-item">
+            <span class="result-label" data-i18n="ppg_lbl_hrv">HRV (RMSSD)</span>
+            <div class="result-value-group">
+              <span id="ppgHRV" class="result-value">--</span>
+              <span class="result-unit">ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- STEP 1: SOMATIC ENTRY -->
     <section id="view-somatic-entry" class="view hidden center-content">
       <div class="step-header fade-in" style="position: relative;">
@@ -582,8 +629,12 @@
           complete the loop.</p>
       </div>
 
-      <!-- Phase 1: Body Scan Prompt (5s) -->
+      <!-- Phase 1: Body Scan Prompt (20s) -->
       <div id="marPhase1" class="marination-phase fade-in-pure">
+        <div class="marination-orb-container">
+          <div class="marination-orb"></div>
+        </div>
+        <p class="marination-caption" data-i18n="mar_enrich_caption"></p>
       </div>
 
       <!-- Phase 2: Sensation Selection -->

@@ -273,12 +273,12 @@ export function renderHistory(data) {
 
     const stateKey = item.polyvagal_state || item.state;
     const stateNameMap = {
-      'ventral': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
-      'okay': AppState.lang === 'tr' ? 'Ventral' : 'Ventral',
-      'sympathetic': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
-      'wired': AppState.lang === 'tr' ? 'Sempatik' : 'Sympathetic',
-      'dorsal': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal',
-      'foggy': AppState.lang === 'tr' ? 'Dorsal' : 'Dorsal'
+      'ventral': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
+      'okay': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
+      'sympathetic': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
+      'wired': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
+      'dorsal': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal',
+      'foggy': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal'
     };
     const stateName = stateNameMap[stateKey] || '...';
 

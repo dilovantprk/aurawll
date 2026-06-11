@@ -159,13 +159,13 @@ function finishGuidedScan() {
   const stepInd = document.getElementById('savoringStepIndicator');
   if (stepInd) { stepInd.textContent = t('step_5'); stepInd.setAttribute('data-i18n', 'step_5'); }
 
-  // Phase 2: Show Options after 4 seconds
+  // Phase 2: Show Options after 20 seconds
   setTimeout(() => {
     elements.marPhase1.classList.add('hidden');
     elements.marPhase2.classList.remove('hidden');
     elements.marPhase2.classList.add('fade-in-pure');
     renderMarinationSensations();
-  }, 4000);
+  }, 20000);
 }
 
 function renderMarinationSensations() {

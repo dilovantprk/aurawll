@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.aura.wellness.app-debug-51:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.aura.wellness.app-main-53:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.aura.wellness.app-debug-51:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.aura.wellness.app-main-53:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.aura.wellness.app-debug-51:/font_outfit.ttf.flat",
+        "source": "com.aura.wellness.app-main-53:/font/outfit.ttf"
+    }
+]

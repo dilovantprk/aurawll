@@ -13,9 +13,9 @@ export function calculateVagalPoint(v, s, d) {
   const pS = s / total;
   const pD = d / total;
   
-  // Barycentric to Cartesian (Triangle map)
-  const x = (0.5 * pV + 1.0 * pS + 0.0 * pD) * 100;
-  const y = (0.0 * pV + 0.866 * pS + 0.866 * pD) * 100;
+  // Vertical Ladder Map: Top=Ventral (15%), Middle=Sympathetic (50%), Bottom=Dorsal (85%)
+  const x = 50; // Centered
+  const y = (0.15 * pV + 0.50 * pS + 0.85 * pD) * 100;
   
   return { x: `${x}%`, y: `${y}%` };
 }

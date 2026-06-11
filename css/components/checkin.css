@@ -1023,3 +1023,198 @@
   pointer-events: none; text-transform: uppercase;
   transition: all 0.5s ease; z-index: 5;
 }
+
+/* --- HEAL Model / Marination Phase 1 Visuals --- */
+.marination-orb-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 3rem auto 2rem auto;
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.marination-orb {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--vagal-accent, rgba(168, 230, 207, 0.4)) 0%, transparent 70%);
+  filter: blur(8px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.marination-caption {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: var(--text-main);
+  opacity: 0.85;
+  line-height: 1.6;
+  max-width: 440px;
+  margin: 1.5rem auto 0 auto;
+  text-align: center;
+  letter-spacing: 0.3px;
+  transition: opacity 0.8s ease;
+}
+
+/* --- PPG Sensor Interface --- */
+.ppg-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 400px;
+  margin: 1.5rem auto;
+}
+
+.ppg-circle-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 180px;
+  height: 180px;
+}
+
+.ppg-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: inset 0 0 30px rgba(255,255,255,0.02);
+  transition: all 0.5s var(--spring-easing);
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.ppg-circle.detecting {
+  border-style: solid;
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow: 0 0 30px rgba(251, 191, 36, 0.15), inset 0 0 20px rgba(251, 191, 36, 0.05);
+  color: #fbbf24;
+}
+
+.ppg-circle.measuring {
+  border-style: solid;
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.2), inset 0 0 20px rgba(239, 68, 68, 0.05);
+  color: #ef4444;
+}
+
+.ppg-circle.success {
+  border-style: solid;
+  border-color: rgba(34, 197, 94, 0.5);
+  background: rgba(34, 197, 94, 0.05);
+  box-shadow: 0 0 50px rgba(34, 197, 94, 0.4), inset 0 0 25px rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+}
+
+.ppg-circle.failed {
+  border-style: solid;
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.05);
+  box-shadow: 0 0 45px rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.ppg-circle.pulse {
+  transform: scale(1.08);
+  box-shadow: 0 0 60px rgba(239, 68, 68, 0.45);
+}
+
+.ppg-graph-container {
+  width: 100%;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#ppgGraph {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ppg-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#ppgProgressFill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.ppg-results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.ppg-results .result-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ppg-results .result-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.result-value-group {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.ppg-results .result-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.ppg-results .result-unit {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+

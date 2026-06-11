@@ -59,6 +59,7 @@ export function renderMeditationsList() {
     const metaData = PROTOCOL_META[id] || { icon: '🫁', accent: 'rgba(255,255,255,0.1)', benefitKey: '' };
     const benefit = metaData.benefitKey ? t(metaData.benefitKey) : '';
     const mins = Math.ceil(p.totalDuration / 60);
+    const sciTitle = t(`sci_${id}_title`);
 
     return `
       <div class="meditation-card" 
@@ -71,8 +72,14 @@ export function renderMeditationsList() {
           </svg>
         </div>
         <div class="meditation-card-info">
-          <span class="meditation-card-title">${t(p.titleKey)}</span>
-          <span class="meditation-card-meta">${mins} min · ${benefit}</span>
+          <span class="meditation-card-title">${sciTitle}</span>
+          <div class="meditation-card-meta">
+            <span class="meditation-card-mins">${mins} min</span>
+            <div class="meditation-card-details">
+              <span class="meditation-card-original-title">${t(p.titleKey)}</span>
+              <span class="meditation-card-benefit">${benefit}</span>
+            </div>
+          </div>
         </div>
         <button class="cockpit-info-btn info-trigger" data-type="${id}">i</button>
       </div>`;

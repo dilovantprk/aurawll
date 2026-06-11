@@ -139,9 +139,41 @@
 }
 
 .meditation-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.5);
   font-weight: 300;
+  margin-top: 0.2rem;
+}
+
+.meditation-card-mins {
+  flex-shrink: 0;
+  opacity: 0.9;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+.meditation-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.meditation-card-original-title {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.meditation-card-benefit {
+  font-size: 0.65rem;
+  opacity: 0.5;
+  line-height: 1.1;
 }
 
 /* Info Trigger */

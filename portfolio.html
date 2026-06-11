@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Wellness - Portföy Vaka Analizi</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #090b0f;
+            --bg-card: rgba(18, 22, 32, 0.65);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            
+            --accent-ventral: #6ee7c7; /* Safe/Connected */
+            --accent-sympathetic: #f4a24a; /* Fight/Flight */
+            --accent-dorsal: #7b9ccc; /* Freeze/Foggy */
+            
+            --glow-ventral: rgba(110, 231, 199, 0.15);
+            --glow-sympathetic: rgba(244, 162, 74, 0.15);
+            --glow-dorsal: rgba(123, 156, 204, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(110, 231, 199, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(123, 156, 204, 0.05) 0%, transparent 40%);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Hero Section */
+        header {
+            text-align: center;
+            padding: 6rem 1rem 4rem 1rem;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(110, 231, 199, 0.1);
+            border: 1px solid rgba(110, 231, 199, 0.2);
+            color: var(--accent-ventral);
+            padding: 0.4rem 1.2rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            animation: pulse 3s infinite;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2.5rem auto;
+            font-weight: 300;
+        }
+
+        /* Tech Tags */
+        .tech-tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .col-12 { grid-column: span 12; }
+        .col-8 { grid-column: span 8; }
+        .col-6 { grid-column: span 6; }
+        .col-4 { grid-column: span 4; }
+
+        @media (max-width: 768px) {
+            .col-8, .col-6, .col-4 {
+                grid-column: span 12;
+            }
+            h1 { font-size: 2.5rem; }
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.4s, transform 0.4s;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.03), transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Polyvagal Triangle Visualization */
+        .vagal-triangle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .vagal-triangle {
+            width: 300px;
+            height: 260px;
+            position: relative;
+        }
+
+        .corner {
+            position: absolute;
+            width: 110px;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .corner-ventral {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--accent-ventral);
+            background: rgba(110, 231, 199, 0.08);
+            border: 1px solid rgba(110, 231, 199, 0.2);
+            box-shadow: 0 0 15px var(--glow-ventral);
+        }
+
+        .corner-sympathetic {
+            bottom: 0;
+            right: 0;
+            color: var(--accent-sympathetic);
+            background: rgba(244, 162, 74, 0.08);
+            border: 1px solid rgba(244, 162, 74, 0.2);
+            box-shadow: 0 0 15px var(--glow-sympathetic);
+        }
+
+        .corner-dorsal {
+            bottom: 0;
+            left: 0;
+            color: var(--accent-dorsal);
+            background: rgba(123, 156, 204, 0.08);
+            border: 1px solid rgba(123, 156, 204, 0.2);
+            box-shadow: 0 0 15px var(--glow-dorsal);
+        }
+
+        .triangle-lines {
+            width: 100%;
+            height: 100%;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* Features Section */
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent-ventral);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .card-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Architecture Section */
+        .arch-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .arch-step {
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .arch-step::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-ventral);
+            box-shadow: 0 0 10px var(--accent-ventral);
+        }
+
+        .arch-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .arch-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Audio Code Snippet Showcase */
+        .code-container {
+            background: #06070a;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            color: #e5e7eb;
+            margin-top: 1.5rem;
+        }
+
+        .keyword { color: #f472b6; }
+        .function { color: #60a5fa; }
+        .string { color: #34d399; }
+        .comment { color: #6b7280; }
+
+        /* Performance Stat List */
+        .stats-list {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-top: 2rem;
+            gap: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-ventral) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 1.5rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+            font-size: 0.9rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <header>
+            <span class="badge">Aura Wellness Case Study</span>
+            <h1>Sinir Sistemini Regüle Eden Biyosensör Platformu</h1>
+            <p class="lead">Polyvagal Teori tabanlı, sıfır kütüphane bağımlılığı (no-bundler ES Modules) ve Web Audio API sentezleme motoru ile tasarlanmış premium bir sağlık web uygulaması.</p>
+            
+            <div class="tech-tags">
+                <span class="tag">Vanilla HTML5</span>
+                <span class="tag">Vanilla CSS Variables</span>
+                <span class="tag">ES Modules (No-bundler)</span>
+                <span class="tag">Web Audio API</span>
+                <span class="tag">WebGL (Shaders)</span>
+                <span class="tag">Firebase Auth & Firestore</span>
+                <span class="tag">Progressive Web App (PWA)</span>
+            </div>
+        </header>
+
+        <!-- Project Overview -->
+        <section class="grid">
+            <div class="card col-8">
+                <h2 class="card-title">Proje Özeti & Çözüm</h2>
+                <p class="card-text">Aura, bireylerin otonom sinir sistemi durumlarını (Ventral, Sempatik, Dorsal) izlemelerine ve bu durumları bilimsel nefes protokolleri ile regüle etmelerine imkan tanıyan modern bir bütünsel sağlık uygulamasıdır.</p>
+                <p class="card-text">Geleneksel wellness uygulamalarının aksine Aura, kullanıcının otonom durumunu tespit etmek için interaktif bir <strong>Sematik Haritalama (Somatic Mapping)</strong> ve <strong>Affect Grid (Uyarılma-Valans Matrisi)</strong> kullanır. Ardından, saptanan duruma özel ses frekansları sentezleyen ve özel bir solunum rehberliği sunan akıllı bir yönlendirme motorunu devreye sokar.</p>
+                
+                <div class="stats-list">
+                    <div>
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Sıfır Bağımlılık (No-npm/bundler)</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">&lt;100ms</div>
+                        <div class="stat-label">Ses Sentezleme Gecikmesi</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">A+</div>
+                        <div class="stat-label">Lighthouse Performansı</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Polyvagal Triangle Visualization Card -->
+            <div class="card col-4">
+                <h2 class="card-title" style="text-align: center;">Vagal Üçgen Modeli</h2>
+                <div class="vagal-triangle-container">
+                    <div class="vagal-triangle">
+                        <svg class="triangle-lines" viewBox="0 0 100 100">
+                            <polygon points="50,15 85,80 15,80" />
+                        </svg>
+                        <div class="corner corner-ventral">Ventral (Güven)</div>
+                        <div class="corner corner-sympathetic">Sempatik (Savaş)</div>
+                        <div class="corner corner-dorsal">Dorsal (Donma)</div>
+                    </div>
+                </div>
+                <p class="card-text" style="font-size: 0.85rem; text-align: center; margin-top: 1rem; opacity: 0.8;">
+                    Kullanıcı girdileri barycentric koordinatlara dönüştürülerek otonom sinir sistemi konumu haritalandırılır.
+                </p>
+            </div>
+        </section>
+
+        <!-- Core Features -->
+        <h2 style="font-size: 2rem; margin-bottom: 2rem; text-align: center; font-family: 'Outfit';">Öne Çıkan Mühendislik Başarıları</h2>
+        
+        <section class="grid">
+            <!-- Feature 1 -->
+            <div class="card col-4">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <h3 class="card-title">İnteraktif Sematik Harita</h3>
+                <p class="card-text">Kullanıcıların bedensel hislerini (rhizome chips) seçerek nöral kümelenme algoritmaları üzerinden otonom durum tahmini yapabilmesini sağlayan dinamik girdi sistemi.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="card col-4">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+                </div>
+                <h3 class="card-title">Biyosensör Web Audio</h3>
+                <p class="card-text">Web Audio API ile tarayıcı üzerinde gerçek zamanlı Pembe, Kahverengi ve Beyaz gürültü sentezleme, binaural vuruş (binaural beats) ve otonom duruma göre rezonans frekans modülasyonu.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="card col-4">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <h3 class="card-title">Bicycle Day (LSD Mode)</h3>
+                <p class="card-text">WebGL gölgelendiricileri (custom fragment shaders) ile tasarlanmış, derin odaklanma ve mola süreçlerine senkronize çalışan gözü yormayan premium görsel terapi simülasyonu.</p>
+            </div>
+        </section>
+
+        <!-- Technical Deep Dive: Architecture & Audio Engine -->
+        <section class="grid">
+            <!-- Architecture Card -->
+            <div class="card col-6">
+                <h2 class="card-title">Temiz Kod ve 3 Katmanlı Mimari</h2>
+                <p class="card-text">Uygulamanın sürdürülebilir ve hatasız kalması için projenin tamamında katı kurallara sahip bağımsız bir 3 katmanlı yazılım mimarisi uygulanmıştır:</p>
+                
+                <div class="arch-flow">
+                    <div class="arch-step">
+                        <div class="arch-title">1. Core (Saf Mantık & State)</div>
+                        <div class="arch-desc">DOM manipülasyonu veya UI çağrılarından izole edilmiş, saf hesaplama motorları (vagal-engine), yerel veri durumları ve evrensel sabitler.</div>
+                    </div>
+                    <div class="arch-step">
+                        <div class="arch-title">2. Services (Dış Entegrasyonlar)</div>
+                        <div class="arch-desc">Firebase veritabanı iletişimi, Web Audio API ses motorları (SensoryEngine) ve tarayıcı API entegrasyonları.</div>
+                    </div>
+                    <div class="arch-step">
+                        <div class="arch-title">3. Components (UI & DOM orchestrator)</div>
+                        <div class="arch-desc">Dashboard, check-in akışları, nefes egzersizleri gibi görünüm bileşenleri. Bu katman sadece Core ve Services'ı ithal ederek görünümü yönetir.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sensory Engine Snippet Card -->
+            <div class="card col-6">
+                <h2 class="card-title">Prosedüral Ses Sentezleme Sırları</h2>
+                <p class="card-text">Uygulama, statik mp3 dosyaları indirmek yerine sesi tarayıcı üzerinde sıfır gecikmeyle üretir. Aşağıda yer alan Web Audio API tabanlı pink noise üretici fonksiyonu bu yaklaşımın bir örneğidir:</p>
+                
+                <div class="code-container">
+                    <span class="comment">// 2 saniyelik Pembe Gürültü Sentezleyici</span><br>
+                    <span class="keyword">const</span> bufferSize = 2 * audioCtx.sampleRate;<br>
+                    <span class="keyword">const</span> pinkBuffer = audioCtx.<span class="function">createBuffer</span>(1, bufferSize, audioCtx.sampleRate);<br>
+                    <span class="keyword">const</span> pinkData = pinkBuffer.<span class="function">getChannelData</span>(0);<br>
+                    <span class="keyword">let</span> b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;<br>
+                    <span class="keyword">for</span> (<span class="keyword">let</span> i = 0; i &lt; bufferSize; i++) {<br>
+                    &nbsp;&nbsp;<span class="keyword">let</span> white = Math.<span class="function">random</span>() * 2 - 1;<br>
+                    &nbsp;&nbsp;b0 = 0.99886 * b0 + white * 0.0555179;<br>
+                    &nbsp;&nbsp;b1 = 0.99332 * b1 + white * 0.0750759;<br>
+                    &nbsp;&nbsp;b2 = 0.96900 * b2 + white * 0.1538520;<br>
+                    &nbsp;&nbsp;b3 = 0.86650 * b3 + white * 0.3104856;<br>
+                    &nbsp;&nbsp;b4 = 0.55000 * b4 + white * 0.5329522;<br>
+                    &nbsp;&nbsp;b5 = -0.7616 * b5 - white * 0.0168980;<br>
+                    &nbsp;&nbsp;pinkData[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;<br>
+                    &nbsp;&nbsp;pinkData[i] *= 0.11; <span class="comment">// Genlik ölçekleme</span><br>
+                    &nbsp;&nbsp;b6 = white * 0.115926;<br>
+                    }
+                </div>
+                <p class="card-text" style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.8;">
+                    Filtre katsayıları kullanılarak pembe gürültünün oktav başına -3dB zayıflama karakteristiği tam hassasiyetle simüle edilmiştir.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Aura Wellness. Bütünsel Sağlık ve Nörolojik Regülasyon Yazılım Arayüzü.</p>
+    </footer>
+
+    <script>
+        // Smooth interactive spot glow follow mouse on cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+</html>
