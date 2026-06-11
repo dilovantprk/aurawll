@@ -28,6 +28,7 @@ import { handleRedirectResult } from './js/services/auth.js';
 import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
 import { initSleep } from './js/components/sleep.js';
+import { initSwipeDeck } from './js/components/deck.js';
 import { initGlobalCursorEffect } from './js/core/cursor-effect.js';
 import { NotificationService } from './js/services/notifications.js';
 
@@ -351,6 +352,7 @@ async function initAppBootstrap() {
   });
   initFocus();
   initAmbient();
+  initSwipeDeck();
   initSleep({ navigateTo });
   initSettings({ 
     navigateTo,

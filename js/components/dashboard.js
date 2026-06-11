@@ -7,6 +7,8 @@ import { calculateVagalPoint, calculatePlasticity } from '../core/vagal-engine.j
 import { getWeeklyInsight } from '../services/insight-engine.js';
 import { SensoryEngine } from '../services/sensory.js';
 import { prepareExercise } from './checkin.js';
+import { openBreathDeck, openAmbientDeck } from './deck.js';
+import { AMBIENT_SOUNDS, ICONS } from './ambient.js';
 
 let configProps = {
   fb: null,
@@ -22,7 +24,23 @@ export function initDashboard(config) {
     sosBtn.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
       AppState.isCheckIn = false;
-      prepareExercise('p_478');
+      openBreathDeck(); // Tinder-style swipe deck
+    });
+  }
+
+  const ambientDeckBtn = document.getElementById('ambientDeckBtn');
+  if (ambientDeckBtn) {
+    ambientDeckBtn.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
+      openAmbientDeck(AMBIENT_SOUNDS, ICONS);
+    });
+  }
+
+  const journalBtn = document.getElementById('journalBtn');
+  if (journalBtn) {
+    journalBtn.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
+      if (configProps.navigateTo) configProps.navigateTo('notebook');
     });
   }
 

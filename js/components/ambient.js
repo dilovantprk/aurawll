@@ -8,7 +8,7 @@ import { t } from '../core/i18n.js';
 import { vibrate } from '../core/utils.js';
 import { SensoryEngine } from '../services/sensory.js';
 
-const ICONS = {
+export const ICONS = {
   rain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4M12 18v4M16 16v4"/></svg>',
   waves: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 17c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>',
   birds: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M16 7c-1.5 0-3-1-4.5-1S8.5 7 7 7c-1.5 0-3-.5-4-1 .5 2 1.5 4 3 5 1.5 1 3 1 4.5 1s3 0 4.5-1c1.5-1 2.5-3 3-5-1 .5-2.5 1-4 1z"/><path d="M12 12v5m-4-3v3m8-3v3"/></svg>',
@@ -19,7 +19,7 @@ const ICONS = {
   noise: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"><path d="M2 12h2l2-9 4 18 4-18 4 18 2-9h2"/></svg>'
 };
 
-const AMBIENT_SOUNDS = [
+export const AMBIENT_SOUNDS = [
   { id: 'rain', titleKey: 'amb_rain', category: 'nature', icon: 'rain', visual: 'rain', url: 'assets/audio/ambient/rain.mp3' },
   { id: 'waves', titleKey: 'amb_waves', category: 'nature', icon: 'waves', visual: 'ocean', url: 'assets/audio/ambient/waves.mp3' },
   { id: 'forest_birds', titleKey: 'amb_forest_birds', category: 'nature', icon: 'birds', visual: 'rain', url: 'assets/audio/ambient/kalsstockmedia-ambient-forest-bird-sounds-280152.mp3' },
@@ -64,19 +64,20 @@ function renderAmbientGrid() {
       </div>
 
       <div class="ambient-card-content">
-        <!-- TOP: icon left + play/pause right -->
+        <!-- TOP: category tag + title -->
         <div class="ambient-card-top">
+          <span class="card-tag-v2">${sound.category}</span>
+          <h3 class="card-title-v2">${t(sound.titleKey)}</h3>
+        </div>
+
+        <!-- BOTTOM: icon left + play/pause right -->
+        <div class="ambient-card-bottom">
           <div class="ambient-card-icon">${ICONS[sound.icon] || ICONS.noise}</div>
+
           <div class="play-hold-btn">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </div>
-        </div>
-
-        <!-- BOTTOM: category tag + title -->
-        <div class="ambient-card-bottom">
-          <span class="card-tag-v2">${sound.category}</span>
-          <h3 class="card-title-v2">${t(sound.titleKey)}</h3>
         </div>
       </div>
     </div>
