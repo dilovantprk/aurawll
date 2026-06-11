@@ -187,21 +187,6 @@ export const PROTOCOL_META = {
   p_nadi: { icon: PROTOCOL_ICONS.p_nadi, accent: "rgba(200, 140, 255, 0.4)", benefitKey: "benefit_nadi" }
 };
 
-export const PROTOCOL_META = {
-  p_478: { icon: PROTOCOL_ICONS.moon, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_478' },
-  p_sigh: { icon: PROTOCOL_ICONS.sigh, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_sigh' },
-  p_bellows: { icon: PROTOCOL_ICONS.bellows, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_bellows' },
-  p_resonance: { icon: PROTOCOL_ICONS.infinity, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_resonance' },
-  p_grounding: { icon: PROTOCOL_ICONS.leaf, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_grounding' },
-  p_box: { icon: PROTOCOL_ICONS.box, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_box' },
-  p_phys_sigh: { icon: PROTOCOL_ICONS.expand, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_phys_sigh' },
-  p_coherent: { icon: PROTOCOL_ICONS.heart, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_coherent' },
-  p_ext_exhale: { icon: PROTOCOL_ICONS.calm, accent: 'rgba(133, 141, 255, 0.4)', benefitKey: 'benefit_ext_exhale' },
-  p_cyclic_sigh: { icon: PROTOCOL_ICONS.wave, accent: 'rgba(168, 230, 207, 0.4)', benefitKey: 'benefit_cyclic_sigh' },
-  p_fire: { icon: PROTOCOL_ICONS.fire, accent: 'rgba(255, 160, 100, 0.4)', benefitKey: 'benefit_fire' },
-  p_nadi: { icon: PROTOCOL_ICONS.balance, accent: 'rgba(200, 140, 255, 0.4)', benefitKey: 'benefit_nadi' }
-};
-
 export const subEmotionMap = {
   // Wired
   se_anxious: { list: 'wired', protocol: 'p_478' },
