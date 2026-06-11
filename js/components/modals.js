@@ -538,7 +538,7 @@ function getAuraSVGIcon(type) {
   if (iconMap[type]) {
     const innerContent = iconMap[type];
     return `
-      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter id="auraGlow" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -555,7 +555,7 @@ function getAuraSVGIcon(type) {
     const meta = PROTOCOL_META[type] || { icon: '' };
     return `
       <div class="stylized-protocol-icon" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; box-shadow: 0 0 30px rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
-        <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           ${meta.icon}
         </svg>
       </div>

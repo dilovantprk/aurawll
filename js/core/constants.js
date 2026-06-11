@@ -158,21 +158,21 @@ export const protocols = {
 };
 
 export const PROTOCOL_ICONS = {
-  calm: `<path d="M12 32 C 18 12, 26 52, 32 32 C 38 12, 46 52, 52 32" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  energize: `<path d="M32 10 L 42 35 L 32 30 L 22 35 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  focus: `<rect x="22" y="22" width="20" height="20" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  wave: `<path d="M10 32 Q 21 12 32 32 T 54 32" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  moon: `<path d="M42 48 A 20 20 0 1 1 42 16 A 15 15 0 0 0 42 48" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  wind: `<path d="M10 25 H 40 C 45 25 45 15 40 15 S 35 25 40 25 M 10 40 H 35 C 40 40 40 30 35 30 S 30 40 35 40" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  leaf: `<path d="M32 52 C 32 52 12 42 12 22 C 12 12 22 12 32 22 C 42 12 52 12 52 22 C 52 42 32 52 32 52 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  fire: `<path d="M32 52 C 32 52 42 42 42 32 C 42 22 32 12 32 12 C 32 12 22 22 22 32 C 22 42 32 52 32 52 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/><path d="M32 42 C 32 42 36 38 36 32 C 36 28 32 24 32 24 C 32 24 28 28 28 32 C 28 38 32 42 32 42 Z" stroke="white" stroke-width="1" fill="none" opacity="0.4"/>`,
-  balance: `<circle cx="24" cy="32" r="10" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/><circle cx="40" cy="32" r="10" stroke="white" stroke-width="1.5" fill="none" opacity="0.4"/>`,
-  box: `<rect x="18" y="18" width="28" height="28" rx="4" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  sigh: `<path d="M15 45 Q 32 15 49 45 M 25 35 Q 32 25 39 35" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.8"/>`,
-  infinity: `<path d="M20 32 C 20 25 30 25 32 32 C 34 39 44 39 44 32 C 44 25 34 25 32 32 C 30 39 20 39 20 32 Z" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  heart: `<path d="M32 50 C 15 35 15 20 32 20 C 49 20 49 35 32 50" stroke="white" stroke-width="1.5" fill="none" opacity="0.8"/>`,
-  expand: `<path d="M32 32 m -10 0 a 10 10 0 1 0 20 0 a 10 10 0 1 0 -20 0 M 32 10 V 15 M 32 54 V 49 M 10 32 H 15 M 54 32 H 49" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.8"/>`,
-  bellows: `<path d="M20 20 L 44 20 L 40 44 L 24 44 Z M 20 20 L 24 44 M 44 20 L 40 44" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.8"/>`
+  calm: `<path d="M22 12c-2.66 0-4.33-1.67-6-3.33C14.33 7 12.66 5.33 10 5.33S5.67 7 4 8.67C2.33 10.33.67 12 0 12" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>`,
+  energize: `<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  focus: `<circle cx="12" cy="12" r="10" stroke="white" stroke-width="2" fill="none" opacity="0.8"/><circle cx="12" cy="12" r="6" stroke="white" stroke-width="2" fill="none" opacity="0.5"/><circle cx="12" cy="12" r="2" stroke="white" stroke-width="2" fill="none" opacity="0.8"/>`,
+  wave: `<path d="M2 12h4l2-9 5 18 5-18 2 9h4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  moon: `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  wind: `<path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>`,
+  leaf: `<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/><path d="M2 22 12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  fire: `<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  balance: `<path d="M12 3v18" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/><circle cx="8" cy="12" r="3" stroke="white" stroke-width="2" fill="none" opacity="0.8"/><circle cx="16" cy="12" r="3" stroke="white" stroke-width="2" fill="none" opacity="0.8"/>`,
+  box: `<rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  sigh: `<path d="M4 12v-3a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v3" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/><path d="M12 15v5" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/><path d="M9 18l3 3 3-3" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>`,
+  infinity: `<path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  heart: `<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  expand: `<path d="M15 3h6v6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/><path d="M9 21H3v-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/><path d="M21 3l-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/><path d="M3 21l7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`,
+  bellows: `<path d="M4 14a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/><path d="M4 14l3 6h10l3-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>`
 };
 
 export const PROTOCOL_META = {

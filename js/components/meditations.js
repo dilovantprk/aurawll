@@ -66,7 +66,7 @@ export function renderMeditationsList() {
            data-category="${p.category || 'all'}" 
            style="--card-accent: ${metaData.accent};">
         <div class="meditation-card-icon">
-          <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             ${metaData.icon}
           </svg>
         </div>
