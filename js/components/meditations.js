@@ -155,3 +155,72 @@ export function renderRecommendations() {
   if (!elements.recommendationsContainer) return;
   // Recommendations logic here...
 }
+
+let canvas = null;
+let ctx = null;
+let orbs = [];
+let animationFrameId = null;
+
+function initCanvasVisualizer() {
+  canvas = document.getElementById('meditationBgCanvas');
+  if (!canvas) return;
+  ctx = canvas.getContext('2d');
+
+  function resize() {
+    if (canvas) {
+      canvas.width = window.innerWidth / 2;
+      canvas.height = window.innerHeight / 2;
+    }
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const activeAccent = getComputedStyle(document.documentElement).getPropertyValue('--vagal-accent').trim() || '#64e49f';
+  orbs = [
+    { x: Math.random() * (window.innerWidth / 2), y: Math.random() * (window.innerHeight / 2), r: 100, vx: 0.15, vy: 0.12, color: activeAccent }, 
+    { x: Math.random() * (window.innerWidth / 2), y: Math.random() * (window.innerHeight / 2), r: 130, vx: -0.12, vy: 0.15, color: '#A8E6CF' }, 
+    { x: Math.random() * (window.innerWidth / 2), y: Math.random() * (window.innerHeight / 2), r: 110, vx: 0.1, vy: -0.18, color: '#A2D1FF' }
+  ];
+}
+
+function animateOrbs() {
+  if (!ctx || !canvas) return;
+
+  ctx.fillStyle = '#050508';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  orbs.forEach(orb => {
+    orb.x += orb.vx;
+    orb.y += orb.vy;
+
+    if (orb.x < 0 || orb.x > canvas.width) orb.vx *= -1;
+    if (orb.y < 0 || orb.y > canvas.height) orb.vy *= -1;
+
+    let gradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
+    gradient.addColorStop(0, orb.color);
+    gradient.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  animationFrameId = requestAnimationFrame(animateOrbs);
+}
+
+export function startMeditationBgAnimation() {
+  if (!canvas) {
+    initCanvasVisualizer();
+  }
+  if (!animationFrameId) {
+    animateOrbs();
+  }
+}
+
+export function stopMeditationBgAnimation() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+}

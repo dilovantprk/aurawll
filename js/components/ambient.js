@@ -107,15 +107,18 @@ function renderAmbientGrid() {
     }
 
     card.onclick = () => {
-      // Play if not already active
-      if (activeSoundId !== id) {
-        toggleSound(id, card);
-      }
-      // Open the fullscreen player overlay
       vibrate('medium');
       const player = document.getElementById('ambientFullscreenPlayer');
       if (player) {
         player.classList.remove('hidden');
+      }
+
+      // Play if not already active
+      if (activeSoundId !== id) {
+        toggleSound(id, card);
+      } else {
+        // Already active, manually trigger event to sync UI and start canvas
+        window.dispatchEvent(new CustomEvent('aura-ambient-sync', { detail: { id, isPlaying: true } }));
       }
     };
   });

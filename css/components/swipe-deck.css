@@ -149,3 +149,16 @@
     margin: 1rem auto 3rem auto;
   }
 }
+
+@media (max-width: 600px) {
+  .swipe-view-title {
+    display: none !important;
+  }
+  #view-swipe-breathing .standard-view-content,
+  #view-swipe-ambient .standard-view-content {
+    padding-top: 3.8rem !important;
+  }
+  .embedded-swipe-section {
+    margin-bottom: 1rem !important;
+  }
+}

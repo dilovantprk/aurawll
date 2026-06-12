@@ -17,7 +17,7 @@ import { initCheckin, renderSomaticEntry, setHUD, prepareExercise, advanceFromEx
 import { initDashboard, loadDashboard } from './js/components/dashboard.js';
 import { initNotebook, loadNotebook } from './js/components/notebook.js';
 import { initMeditationFlow, startMeditationLoading } from './js/components/meditation-flow.js';
-import { initMeditations, renderMeditationsList, renderFilterChips, renderRecommendations } from './js/components/meditations.js';
+import { initMeditations, renderMeditationsList, renderFilterChips, renderRecommendations, startMeditationBgAnimation, stopMeditationBgAnimation } from './js/components/meditations.js';
 import { initExercise, stopExercise } from './js/components/exercise.js';
 import { initSettings, updateSettingsView, syncNavVisibility } from './js/components/settings.js';
 import { startOnboardingFlow } from './js/components/onboarding.js';
@@ -29,7 +29,7 @@ import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
 import { initSleep } from './js/components/sleep.js';
 import { initSwipeBreathing, startSwipeBreathingFlow } from './js/components/swipe-breathing.js';
-import { initSwipeAmbient, startSwipeAmbientFlow, stopSwipePreviewIfAny } from './js/components/swipe-ambient.js';
+import { initSwipeAmbient, startSwipeAmbientFlow, stopSwipePreviewIfAny, syncMiniPlayerState } from './js/components/swipe-ambient.js';
 import { initGlobalCursorEffect } from './js/core/cursor-effect.js';
 import { NotificationService } from './js/services/notifications.js';
 
@@ -89,6 +89,9 @@ export function navigateTo(viewId, skipHistory = false) {
   // Stop swipe audio preview if navigating away from Swipe Ambient view
   if (currentView && currentView.id === 'view-swipe-ambient') {
     stopSwipePreviewIfAny();
+  }
+  if (currentView && currentView.id === 'view-meditations') {
+    stopMeditationBgAnimation();
   }
 
   const target = document.getElementById(viewId);
@@ -170,11 +173,14 @@ export function navigateTo(viewId, skipHistory = false) {
     target.classList.add('active', 'view-human-in');
     target.scrollTop = 0;
     
+    syncMiniPlayerState();
+    
     setTimeout(() => {
       currentView.classList.add('hidden');
       currentView.classList.remove('active', 'view-human-out');
       target.classList.remove('view-human-in');
       isNavigating = false;
+      syncMiniPlayerState();
     }, 600);
   } else {
     if (elements.views) {
@@ -183,6 +189,7 @@ export function navigateTo(viewId, skipHistory = false) {
     target.classList.remove('hidden');
     target.classList.add('active');
     isNavigating = false;
+    syncMiniPlayerState();
   }
 
   // Feature Triggers
@@ -191,6 +198,7 @@ export function navigateTo(viewId, skipHistory = false) {
     renderMeditationsList(); 
     renderFilterChips(); 
     renderRecommendations(); 
+    startMeditationBgAnimation();
   }
   if (viewId === 'view-notebook') loadNotebook();
   if (viewId === 'view-insight') updateInsightView(AppState.userHistory || AppState.mockHistory);

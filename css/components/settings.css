@@ -56,13 +56,13 @@
 }
 
 .settings-panel {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(35px) saturate(160%);
-  -webkit-backdrop-filter: blur(35px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 40px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
 }
 
 /* Data Sovereignty Card Specifics (Advanced Liquid Glass) */
@@ -341,12 +341,12 @@
 }
 
 .settings-row {
-  padding: 1.5rem 1.8rem;
+  padding: 1.4rem 0.8rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.4s var(--spring-easing);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
 }
 
 /* Compact Time Picker for Settings */
@@ -381,7 +381,8 @@
 }
 
 .settings-row:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
 }
 
 .settings-label {
@@ -626,4 +627,78 @@
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
+}
+/* Premium Glass Settings Login Button */
+#settingsLoginBtn {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+  padding: 1.1rem 0 !important;
+  border-radius: 99px !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  backdrop-filter: blur(20px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.1) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin-top: 1rem !important;
+}
+
+#settingsLoginBtn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 25%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  transition: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#settingsLoginBtn:hover::after {
+  animation: settings-shimmer 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  opacity: 1;
+}
+
+#settingsLoginBtn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(255, 255, 255, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+#settingsLoginBtn:active {
+  transform: translateY(1px) scale(0.98) !important;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+  transition: transform 0.1s ease !important;
+}
+
+@keyframes settings-shimmer {
+  0% { left: -60%; }
+  100% { left: 140%; }
 }

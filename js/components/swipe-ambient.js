@@ -17,8 +17,348 @@ let deckInstance = null;
 let currentActiveSound = null;
 let isAudioPlaying = false;
 
+// Canvas Visualizer & Breathing Guide Globals
+let canvas = null;
+let ctx = null;
+let orbs = [];
+let animationFrameId = null;
+let globalSpeedMultiplier = 1.0;
+let breathIntervalId = null;
+
+// Center Canvas Visualizer Globals
+let centerCanvas = null;
+let centerCtx = null;
+let centerAnimationId = null;
+let centerRotation = 0;
+let centerMorph = 0;
+let targetRotationSpeed = 0.003;
+let currentRotationSpeed = 0.003;
+let targetMorphSpeed = 0.008;
+let currentMorphSpeed = 0.008;
+
+function initCanvasVisualizer() {
+  canvas = document.getElementById('ambientFullscreenCanvas');
+  if (!canvas) return;
+  ctx = canvas.getContext('2d');
+
+  function resize() {
+    if (canvas) {
+      canvas.width = window.innerWidth / 2;
+      canvas.height = window.innerHeight / 2;
+    }
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Initialize 3 orbs with random position/velocity
+  orbs = [
+    { x: Math.random() * (window.innerWidth / 2), y: Math.random() * (window.innerHeight / 2), r: 100, vx: 0.25, vy: 0.2, color: '#8a2be2' },
+    { x: Math.random() * (window.innerWidth / 2), y: Math.random() * (window.innerHeight / 2), r: 130, vx: -0.2, vy: 0.25, color: '#ff007f' },
+    { x: Math.random() * (window.innerWidth / 2), y: Math.random() * (window.innerHeight / 2), r: 110, vx: 0.15, vy: -0.3, color: '#ffb703' }
+  ];
+}
+
+function animateOrbs() {
+  if (!ctx || !canvas) return;
+
+  ctx.fillStyle = '#06060a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  orbs.forEach(orb => {
+    orb.x += orb.vx * globalSpeedMultiplier;
+    orb.y += orb.vy * globalSpeedMultiplier;
+
+    if (orb.x < 0 || orb.x > canvas.width) orb.vx *= -1;
+    if (orb.y < 0 || orb.y > canvas.height) orb.vy *= -1;
+
+    let gradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
+    gradient.addColorStop(0, orb.color);
+    gradient.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  animationFrameId = requestAnimationFrame(animateOrbs);
+}
+
+function initCenterVisualizer() {
+  centerCanvas = document.getElementById('visualizerCanvas');
+  if (!centerCanvas) return;
+  centerCtx = centerCanvas.getContext('2d');
+
+  function resizeCenter() {
+    if (centerCanvas) {
+      const container = document.getElementById('fullscreenVisualizer');
+      const rect = container ? container.getBoundingClientRect() : { width: 280, height: 280 };
+      const dpr = window.devicePixelRatio || 1;
+      
+      let wVal = rect.width || 280;
+      let hVal = rect.height || 280;
+      
+      centerCanvas.width = wVal * dpr;
+      centerCanvas.height = hVal * dpr;
+      
+      centerCtx.setTransform(1, 0, 0, 1, 0, 0);
+      centerCtx.scale(dpr, dpr);
+    }
+  }
+
+  window.addEventListener('resize', resizeCenter);
+  resizeCenter();
+}
+
+function animateCenterVisualizer() {
+  if (!centerCtx || !centerCanvas) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const container = document.getElementById('fullscreenVisualizer');
+  const rect = container ? container.getBoundingClientRect() : { width: 280, height: 280 };
+  
+  let wVal = rect.width || 280;
+  let hVal = rect.height || 280;
+  
+  const targetW = Math.round(wVal * dpr);
+  const targetH = Math.round(hVal * dpr);
+  
+  if (centerCanvas.width !== targetW || centerCanvas.height !== targetH) {
+    if (targetW > 0 && targetH > 0) {
+      centerCanvas.width = targetW;
+      centerCanvas.height = targetH;
+      centerCtx.setTransform(1, 0, 0, 1, 0, 0);
+      centerCtx.scale(dpr, dpr);
+    }
+  }
+
+  const w = centerCanvas.width / dpr;
+  const h = centerCanvas.height / dpr;
+
+  centerCtx.clearRect(0, 0, w, h);
+
+  // Smoothly adjust speeds based on whether audio is playing
+  if (isAudioPlaying) {
+    targetRotationSpeed = 0.005;
+    targetMorphSpeed = 0.008;
+  } else {
+    targetRotationSpeed = 0.001; // slow resting drift
+    targetMorphSpeed = 0.002;
+  }
+
+  currentRotationSpeed += (targetRotationSpeed - currentRotationSpeed) * 0.05;
+  currentMorphSpeed += (targetMorphSpeed - currentMorphSpeed) * 0.05;
+
+  centerRotation += currentRotationSpeed;
+  centerMorph += currentMorphSpeed;
+
+  const visualTheme = currentActiveSound ? currentActiveSound.visual : 'focus';
+  
+  // Center coordinates and radius
+  const cx = w / 2;
+  const cy = h / 2;
+  const maxRadius = Math.min(w, h) * 0.44;
+
+  if (visualTheme === 'rain') {
+    // Morphing Rose Curve (sacred geometry flower)
+    centerCtx.save();
+    centerCtx.translate(cx, cy);
+    centerCtx.rotate(centerRotation);
+    
+    const layers = 3;
+    for (let l = 0; l < layers; l++) {
+      const k = 6 + Math.sin(centerMorph * 0.8 + l * 0.5) * 1.5;
+      const amp = maxRadius * (0.75 - l * 0.12 + Math.sin(centerMorph * 0.4 + l) * 0.05);
+      
+      centerCtx.beginPath();
+      centerCtx.strokeStyle = l === 0 ? '#00f5d4' : l === 1 ? '#00bbf9' : 'rgba(0, 245, 212, 0.4)';
+      centerCtx.lineWidth = l === 0 ? 2 : 1.2;
+      
+      if (l === 0) {
+        centerCtx.shadowBlur = 12;
+        centerCtx.shadowColor = '#00f5d4';
+      } else {
+        centerCtx.shadowBlur = 0;
+      }
+
+      for (let theta = 0; theta < Math.PI * 2; theta += 0.02) {
+        const r = amp * Math.cos(k * theta);
+        const x = r * Math.cos(theta);
+        const y = r * Math.sin(theta);
+        if (theta === 0) centerCtx.moveTo(x, y);
+        else centerCtx.lineTo(x, y);
+      }
+      centerCtx.closePath();
+      centerCtx.stroke();
+    }
+    centerCtx.restore();
+  } else if (visualTheme === 'ocean') {
+    // Concentric Wavy Ripple Rings
+    centerCtx.save();
+    centerCtx.translate(cx, cy);
+    centerCtx.rotate(centerRotation * 0.4);
+
+    const ringCount = 4;
+    for (let rIdx = 0; rIdx < ringCount; rIdx++) {
+      const baseRadius = maxRadius * (0.28 + (rIdx / ringCount) * 0.68);
+      const amp = 7 + Math.sin(centerMorph * 0.8 + rIdx) * 4;
+      const waveCount = 5 + rIdx;
+      const phase = centerMorph * 1.8 + rIdx * (Math.PI / 2);
+
+      centerCtx.beginPath();
+      centerCtx.strokeStyle = `rgba(0, 180, 216, ${0.95 - rIdx * 0.18})`;
+      centerCtx.lineWidth = 1.8;
+      
+      if (rIdx === 0) {
+        centerCtx.shadowBlur = 10;
+        centerCtx.shadowColor = '#00b4d8';
+      } else {
+        centerCtx.shadowBlur = 0;
+      }
+
+      for (let theta = 0; theta <= Math.PI * 2 + 0.05; theta += 0.04) {
+        const r = baseRadius + Math.sin(waveCount * theta - phase) * amp;
+        const x = r * Math.cos(theta);
+        const y = r * Math.sin(theta);
+        if (theta === 0) centerCtx.moveTo(x, y);
+        else centerCtx.lineTo(x, y);
+      }
+      centerCtx.stroke();
+    }
+    centerCtx.restore();
+  } else if (visualTheme === 'focus') {
+    // Rotating Hypotrochoid (crystalline star spirograph)
+    centerCtx.save();
+    centerCtx.translate(cx, cy);
+    centerCtx.rotate(centerRotation * 1.1);
+
+    const R = maxRadius * 0.72;
+    const r = R * (0.58 + Math.sin(centerMorph * 0.35) * 0.08);
+    const d = maxRadius * (0.38 + Math.cos(centerMorph * 0.55) * 0.12);
+
+    centerCtx.beginPath();
+    centerCtx.strokeStyle = '#ffb703';
+    centerCtx.lineWidth = 1.6;
+    centerCtx.shadowBlur = 12;
+    centerCtx.shadowColor = '#fb8500';
+
+    const loops = 10;
+    let first = true;
+    for (let theta = 0; theta < Math.PI * 2 * loops; theta += 0.04) {
+      const factor = (R - r) / r;
+      const x = (R - r) * Math.cos(theta) + d * Math.cos(factor * theta);
+      const y = (R - r) * Math.sin(theta) - d * Math.sin(factor * theta);
+      
+      if (first) {
+        centerCtx.moveTo(x, y);
+        first = false;
+      } else {
+        centerCtx.lineTo(x, y);
+      }
+    }
+    centerCtx.stroke();
+    centerCtx.restore();
+  } else {
+    // Night: Logarithmic galaxy spiral wireframe
+    centerCtx.save();
+    centerCtx.translate(cx, cy);
+    centerCtx.rotate(centerRotation * 0.6);
+
+    const arms = 3;
+    const pointsPerArm = 70;
+    const armCoords = Array.from({ length: arms }, () => []);
+
+    // Compute coordinates
+    for (let a = 0; a < arms; a++) {
+      const startAngle = (a / arms) * Math.PI * 2;
+      for (let i = 0; i < pointsPerArm; i++) {
+        const tVal = i / pointsPerArm;
+        const angle = startAngle + tVal * Math.PI * 2.8 + centerMorph * 0.4;
+        const radius = maxRadius * Math.pow(tVal, 1.45) * (0.96 + Math.sin(centerMorph * 0.9 + i * 0.08) * 0.04);
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+        armCoords[a].push({ x, y });
+      }
+    }
+
+    // Draw main arms
+    for (let a = 0; a < arms; a++) {
+      centerCtx.beginPath();
+      centerCtx.strokeStyle = '#b5179e';
+      centerCtx.lineWidth = 2.0;
+      centerCtx.shadowBlur = 10;
+      centerCtx.shadowColor = '#7209b7';
+      
+      for (let i = 0; i < pointsPerArm; i++) {
+        const pt = armCoords[a][i];
+        if (i === 0) centerCtx.moveTo(pt.x, pt.y);
+        else centerCtx.lineTo(pt.x, pt.y);
+      }
+      centerCtx.stroke();
+
+      // Draw wireframe connecting links between arms
+      centerCtx.beginPath();
+      centerCtx.strokeStyle = 'rgba(114, 9, 183, 0.16)';
+      centerCtx.lineWidth = 0.9;
+      centerCtx.shadowBlur = 0;
+      
+      const nextArm = (a + 1) % arms;
+      for (let i = 8; i < pointsPerArm; i += 4) {
+        const pt1 = armCoords[a][i];
+        const pt2 = armCoords[nextArm][i - 6];
+        if (pt1 && pt2) {
+          centerCtx.moveTo(pt1.x, pt1.y);
+          centerCtx.lineTo(pt2.x, pt2.y);
+        }
+      }
+      centerCtx.stroke();
+    }
+
+    centerCtx.restore();
+  }
+
+  centerAnimationId = requestAnimationFrame(animateCenterVisualizer);
+}
+
+function startBreathingGuide() {
+  const textEl = document.getElementById('breathGuidanceText');
+  if (!textEl) return;
+
+  let cycleTime = 0;
+  if (breathIntervalId) clearInterval(breathIntervalId);
+
+  const isTR = t('lang') === 'tr';
+  const txtIn = isTR ? 'Nefes Al' : 'Breathe In';
+  const txtOut = isTR ? 'Nefes Ver' : 'Breathe Out';
+  const txtHold = isTR ? 'Tut' : 'Hold';
+
+  textEl.textContent = txtIn;
+
+  breathIntervalId = setInterval(() => {
+    cycleTime = (cycleTime + 1) % 10;
+    if (cycleTime === 1) {
+      textEl.textContent = txtIn;
+    } else if (cycleTime === 5) {
+      textEl.textContent = txtOut;
+    } else if (cycleTime === 9 || cycleTime === 0) {
+      textEl.textContent = txtHold;
+    }
+  }, 1000);
+}
+
+function stopBreathingGuide() {
+  if (breathIntervalId) {
+    clearInterval(breathIntervalId);
+    breathIntervalId = null;
+  }
+}
+
 export function initSwipeAmbient(config) {
   Object.assign(configProps, config);
+
+  // Initialize canvas visualizers
+  initCanvasVisualizer();
+  initCenterVisualizer();
 
   // Exit Fullscreen buttons (both capsuleCloseBtn and closeFsBtn)
   const closeFsBtn = document.getElementById('closeAmbientFullscreenBtn');
@@ -27,6 +367,17 @@ export function initSwipeAmbient(config) {
     vibrate('light');
     const player = document.getElementById('ambientFullscreenPlayer');
     if (player) player.classList.add('hidden');
+    // Stop canvas animations and breathing guide to save resources
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    if (centerAnimationId) {
+      cancelAnimationFrame(centerAnimationId);
+      centerAnimationId = null;
+    }
+    stopBreathingGuide();
+    syncMiniPlayerState();
   };
   if (closeFsBtn) closeFsBtn.addEventListener('click', closeAction);
   if (capsuleCloseBtn) capsuleCloseBtn.addEventListener('click', closeAction);
@@ -44,10 +395,11 @@ export function initSwipeAmbient(config) {
     });
   }
 
-  // Toggle Play/Pause by tapping the central visualizer blob itself
+  // Toggle Play/Pause by tapping the central visualizer canvas itself
   const visualizerEl = document.getElementById('fullscreenVisualizer');
   if (visualizerEl) {
     visualizerEl.style.cursor = 'pointer';
+    visualizerEl.style.pointerEvents = 'auto'; // ensure click events trigger
     visualizerEl.addEventListener('click', () => {
       if (isAudioPlaying) {
         pauseActiveAmbientSound();
@@ -108,6 +460,50 @@ export function initSwipeAmbient(config) {
         }
       }
     }, { passive: true });
+  }
+
+  // Mini Player Event Handlers: Tap to restore Fullscreen
+  const miniOpenBtn = document.getElementById('miniPlayerOpenBtn');
+  if (miniOpenBtn) {
+    miniOpenBtn.addEventListener('click', () => {
+      vibrate('medium');
+      const player = document.getElementById('ambientFullscreenPlayer');
+      if (player) {
+        player.classList.remove('hidden');
+      }
+      // Start canvas animations and breathing guide
+      if (!animationFrameId) {
+        animateOrbs();
+      }
+      if (!centerAnimationId) {
+        animateCenterVisualizer();
+      }
+      startBreathingGuide();
+      syncMiniPlayerState(); // hides mini player since isPlayerOpen will be true
+    });
+  }
+
+  // Mini Player: Play/Pause Button click
+  const miniPlayPauseBtn = document.getElementById('miniPlayerPlayPauseBtn');
+  if (miniPlayPauseBtn) {
+    miniPlayPauseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (isAudioPlaying) {
+        pauseActiveAmbientSound();
+      } else {
+        resumeActiveAmbientSound();
+      }
+    });
+  }
+
+  // Mini Player: Stop/Close Button click
+  const miniCloseBtn = document.getElementById('miniPlayerCloseBtn');
+  if (miniCloseBtn) {
+    miniCloseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      vibrate('light');
+      stopActiveAmbientSound();
+    });
   }
 }
 
@@ -205,6 +601,13 @@ export function startSwipeAmbientFlow() {
       if (player) {
         player.classList.remove('hidden');
       }
+      if (!animationFrameId) {
+        animateOrbs();
+      }
+      if (!centerAnimationId) {
+        animateCenterVisualizer();
+      }
+      startBreathingGuide();
     }
   });
 
@@ -267,6 +670,8 @@ function stopActiveAmbientSound() {
   if (currentActiveSound) {
     window.dispatchEvent(new CustomEvent('aura-ambient-sync', { detail: { id: currentActiveSound.id, isPlaying: false } }));
   }
+  currentActiveSound = null;
+  syncMiniPlayerState();
 }
 
 function pauseActiveAmbientSound() {
@@ -327,7 +732,6 @@ function updateFullscreenUI(sound) {
 
   const titleEl = document.getElementById('fullscreenTrackTitle');
   const visualizerEl = document.getElementById('fullscreenVisualizer');
-  const centerIconEl = document.getElementById('visualizerCenterIcon');
   const bgBlurEl = document.getElementById('fullscreenBgBlur');
   const particlesEl = document.getElementById('visualizerParticles');
 
@@ -338,15 +742,6 @@ function updateFullscreenUI(sound) {
   if (visualizerEl) {
     const isPaused = visualizerEl.classList.contains('paused');
     visualizerEl.className = `fullscreen-visualizer-container theme-${themeClass}${isPaused ? ' paused' : ''}`;
-  }
-
-  // Update center icon based on play state
-  if (centerIconEl) {
-    if (isAudioPlaying) {
-      centerIconEl.innerHTML = ICONS[sound.icon] || ICONS.noise;
-    } else {
-      centerIconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 30px; height: 30px; margin-left: 3px;"><path d="M8 5v14l11-7z"/></svg>`;
-    }
   }
 
   // Update blurred background artwork
@@ -398,6 +793,18 @@ function updateFullscreenUI(sound) {
     }
   }
 
+  // Ensure loops are running if the player is open
+  const player = document.getElementById('ambientFullscreenPlayer');
+  if (player && !player.classList.contains('hidden')) {
+    if (!animationFrameId) {
+      animateOrbs();
+    }
+    if (!centerAnimationId) {
+      animateCenterVisualizer();
+    }
+    startBreathingGuide();
+  }
+
   // Update volume slider in Fullscreen to match SensoryEngine current volume
   const volumeRange = document.getElementById('fullscreenVolumeRange');
   if (volumeRange) {
@@ -437,14 +844,16 @@ window.addEventListener('aura-ambient-sync', (e) => {
     }
   }
 
-  // Update center icon
-  const centerIconEl = document.getElementById('visualizerCenterIcon');
-  if (centerIconEl && sound) {
-    if (isPlaying) {
-      centerIconEl.innerHTML = ICONS[sound.icon] || ICONS.noise;
-    } else {
-      centerIconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 30px; height: 30px; margin-left: 3px;"><path d="M8 5v14l11-7z"/></svg>`;
+  // Ensure loops are running if the player is open
+  const player = document.getElementById('ambientFullscreenPlayer');
+  if (player && !player.classList.contains('hidden')) {
+    if (!animationFrameId) {
+      animateOrbs();
     }
+    if (!centerAnimationId) {
+      animateCenterVisualizer();
+    }
+    startBreathingGuide();
   }
 
   // Update play/pause button state in fullscreen overlay
@@ -462,5 +871,57 @@ window.addEventListener('aura-ambient-sync', (e) => {
       if (pauseIcon) pauseIcon.style.display = 'none';
     }
   }
+
+  // Sync mini player visibility and states
+  syncMiniPlayerState();
 });
+
+export function syncMiniPlayerState() {
+  const miniPlayer = document.getElementById('ambientMiniPlayer');
+  const player = document.getElementById('ambientFullscreenPlayer');
+  const navContainer = document.getElementById('mobile-nav-container');
+  const mobileNav = document.getElementById('mobile-nav');
+  if (!miniPlayer) return;
+
+  const isPlayerOpen = player && !player.classList.contains('hidden');
+
+  // Do not show mini player if currently in Ambient view or Swipe Ambient view
+  const ambientView = document.getElementById('view-ambient');
+  const swipeAmbientView = document.getElementById('view-swipe-ambient');
+  const isAmbientActive = (ambientView && !ambientView.classList.contains('hidden')) || 
+                          (swipeAmbientView && !swipeAmbientView.classList.contains('hidden'));
+
+  if (currentActiveSound && !isPlayerOpen && !isAmbientActive) {
+    // Show mini player
+    miniPlayer.classList.remove('hidden');
+    if (navContainer) navContainer.classList.add('has-mini-player');
+    if (mobileNav) mobileNav.classList.add('has-mini-player-active');
+    
+    // Update labels and artwork
+    const titleEl = document.getElementById('miniPlayerTitle');
+    const artEl = document.getElementById('miniPlayerArtwork');
+    if (titleEl) titleEl.textContent = t(currentActiveSound.titleKey) || currentActiveSound.id;
+    
+    const themeClass = currentActiveSound.visual || 'focus';
+    if (artEl) artEl.src = `assets/images/ambient/${themeClass}.png`;
+
+    // Update play/pause state
+    const playIcon = miniPlayer.querySelector('.play-icon');
+    const pauseIcon = miniPlayer.querySelector('.pause-icon');
+    if (isAudioPlaying) {
+      miniPlayer.classList.remove('paused');
+      if (playIcon) playIcon.style.display = 'none';
+      if (pauseIcon) pauseIcon.style.display = 'block';
+    } else {
+      miniPlayer.classList.add('paused');
+      if (playIcon) playIcon.style.display = 'block';
+      if (pauseIcon) pauseIcon.style.display = 'none';
+    }
+  } else {
+    // Hide mini player
+    miniPlayer.classList.add('hidden');
+    if (navContainer) navContainer.classList.remove('has-mini-player');
+    if (mobileNav) mobileNav.classList.remove('has-mini-player-active');
+  }
+}
 

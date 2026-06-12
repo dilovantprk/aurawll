@@ -736,7 +736,14 @@
 
     <!-- MEDITATIONS VIEW -->
     <section id="view-meditations" class="view hidden">
-      <div class="meditations-content standard-view-content fade-in-pure">
+      <!-- Background Ambient Animation Layer -->
+      <div class="meditation-bg-animation">
+        <canvas id="meditationBgCanvas" class="fullscreen-canvas"></canvas>
+        <div class="grain-overlay"></div>
+        <div class="meditation-glowing-blob"></div>
+      </div>
+
+      <div class="meditations-content standard-view-content fade-in-pure" style="position: relative; z-index: 5;">
         <div class="view-header">
           <h2 data-i18n="nav_breathe">Breathe</h2>
           <p data-i18n="med_desc">Select a protocol for your current state.</p>
@@ -1077,9 +1084,9 @@
         <!-- AUTH ACTIONS -->
         <div class="settings-group stagger-3" style="margin-top: 2rem;">
           <button id="logoutBtn" class="primary-btn danger-glass" data-i18n="btn_logout">Log out</button>
-          <button id="settingsLoginBtn" class="primary-btn hidden"
-            style="border-color: rgba(168, 230, 207, 0.3); margin-top: 0.5rem;" data-i18n="btn_login">Giriş Yap /
-            Kaydol</button>
+          <button id="settingsLoginBtn" class="primary-btn hidden" data-i18n="btn_login">Giriş Yap / Kaydol</button>
+        </div>
+      </div>
     </section>
 
     <!-- FOCUS VIEW -->
@@ -1346,7 +1353,7 @@
     <section id="view-swipe-breathing" class="view hidden">
       <div class="standard-view-content fade-in-pure" style="padding-top: 6.5rem;">
         <div class="embedded-swipe-section" style="width: 100%; margin: 0 auto; text-align: center;">
-          <h3 data-i18n="dash_sos_title" style="font-size: 1.4rem; font-weight: 500; letter-spacing: 2px; color: #fff; margin-bottom: 0.5rem;">Sadece 1 Dakika</h3>
+          <h3 class="swipe-view-title" data-i18n="dash_sos_title" style="font-size: 1.4rem; font-weight: 500; letter-spacing: 2px; color: #fff; margin-bottom: 0.5rem;">Sadece 1 Dakika</h3>
           <p style="opacity: 0.6; font-size: 0.85rem; margin: 0 auto 1.5rem; max-width: 320px; line-height: 1.4;" data-i18n="swipe_breathing_sub">Kaydırarak egzersiz seç: sola kaydır yeni öneri, sağa kaydır başla</p>
           <div id="swipeBreathingDeck" class="swipe-deck-container">
             <!-- Cards injected by JS -->
@@ -1359,18 +1366,19 @@
     <section id="view-swipe-ambient" class="view hidden">
       <div class="standard-view-content fade-in-pure" style="padding-top: 6.5rem;">
         <div class="embedded-swipe-section" style="width: 100%; margin: 0 auto; text-align: center;">
-          <h3 data-i18n="dash_ambient_title" style="font-size: 1.4rem; font-weight: 500; letter-spacing: 2px; color: #fff; margin-bottom: 0.5rem;">Ambiyans Keşfi</h3>
+          <h3 class="swipe-view-title" data-i18n="dash_ambient_title" style="font-size: 1.4rem; font-weight: 500; letter-spacing: 2px; color: #fff; margin-bottom: 0.5rem;">Ambiyans Keşfi</h3>
           <p style="opacity: 0.6; font-size: 0.85rem; margin: 0 auto 1.5rem; max-width: 320px; line-height: 1.4;" data-i18n="swipe_ambient_sub">Sesi dinlemek için kaydır: sola kaydır yeni ses, sağa kaydır tam ekran yap</p>
           <div id="swipeAmbientDeck" class="swipe-deck-container">
             <!-- Cards injected by JS -->
           </div>
         </div>
       </div>
-
     </section>
 
     <!-- Immersive Fullscreen Player -->
     <div id="ambientFullscreenPlayer" class="ambient-fullscreen-overlay hidden">
+      <canvas id="ambientFullscreenCanvas" class="fullscreen-canvas"></canvas>
+      <div class="grain-overlay"></div>
       <div class="fullscreen-bg-blur-layer" id="fullscreenBgBlur"></div>
       <div class="fullscreen-particles"></div>
       <div class="fullscreen-glowing-blob"></div>
@@ -1382,15 +1390,10 @@
         <!-- Middle Track Info -->
         <div class="fullscreen-track-info">
           <div class="fullscreen-visualizer-container" id="fullscreenVisualizer">
-            <div class="visualizer-blob-wrapper">
-              <div class="visualizer-blob blob-1"></div>
-              <div class="visualizer-blob blob-2"></div>
-              <div class="visualizer-blob blob-3"></div>
-              <div class="visualizer-pattern-overlay" id="visualizerPattern"></div>
-              <div class="visualizer-center-icon" id="visualizerCenterIcon"></div>
-            </div>
+            <canvas id="visualizerCanvas"></canvas>
             <div class="visualizer-floating-particles" id="visualizerParticles"></div>
           </div>
+
           <h2 id="fullscreenTrackTitle" class="fullscreen-title">Rainforest Birds</h2>
         </div>
 
@@ -1407,7 +1410,7 @@
           </button>
 
           <button id="fullscreenCloseBtn" class="capsule-circle-btn" aria-label="Exit Fullscreen">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
         </div>
       </div>
@@ -1732,6 +1735,36 @@
             </div>
             <span class="nav-label" data-i18n="nav_sleep">Uyku</span>
           </button>
+        </div>
+
+        <!-- Ambient Mini Player Bar -->
+        <div id="ambientMiniPlayer" class="ambient-mini-player hidden">
+          <div class="mini-player-content">
+            <!-- Left Side: Cover Art & Text Info (Clickable to restore Fullscreen) -->
+            <div class="mini-player-info" id="miniPlayerOpenBtn">
+              <div class="mini-player-artwork-wrapper">
+                <img id="miniPlayerArtwork" src="assets/images/ambient/rain.png" alt="Artwork" class="mini-player-img">
+                <div class="mini-player-wave-vis">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="mini-player-text">
+                <span id="miniPlayerTitle" class="mini-title">Rainforest Birds</span>
+                <span class="mini-subtitle" data-i18n="mini_playing_subtitle">Çalıyor...</span>
+              </div>
+            </div>
+
+            <!-- Right Side: Play/Pause and Stop/Close Controls -->
+            <div class="mini-player-controls">
+              <button id="miniPlayerPlayPauseBtn" class="mini-control-btn" aria-label="Play/Pause">
+                <svg class="play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+                <svg class="pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:block;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              </button>
+              <button id="miniPlayerCloseBtn" class="mini-control-btn close-btn" aria-label="Stop">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
