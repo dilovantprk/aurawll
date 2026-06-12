@@ -65,6 +65,13 @@ export function initDashboard(config) {
 
     closeJournalBtn?.addEventListener('click', closeOverlay);
     cancelJournalBtn?.addEventListener('click', closeOverlay);
+    
+    // Click outside to close
+    journalModal.addEventListener('click', (e) => {
+      if (e.target === journalModal) {
+        closeOverlay();
+      }
+    });
 
     saveJournalBtn?.addEventListener('click', () => {
       const text = journalInput.value.trim();

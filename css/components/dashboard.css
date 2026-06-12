@@ -375,7 +375,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   /* Force all cards to respect the 520px compact width */
@@ -407,7 +407,7 @@
 .dash-quick-actions {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   width: 100%;
 }
 
@@ -415,7 +415,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: 1fr;
-  gap: 1.5rem;
+  gap: 10px;
   width: 100%;
 }
 
@@ -429,7 +429,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 1.25rem;
+  padding: 1.15rem;
   border-radius: 24px;
   background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -442,7 +442,7 @@
   text-align: left;
   position: relative;
   overflow: hidden;
-  min-height: 120px;
+  min-height: 110px;
   height: 100%;
   box-sizing: border-box;
 }
