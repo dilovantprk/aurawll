@@ -1369,6 +1369,7 @@
 
       <!-- Immersive Fullscreen Player inside view-swipe-ambient -->
       <div id="ambientFullscreenPlayer" class="ambient-fullscreen-overlay hidden">
+        <div class="fullscreen-bg-blur-layer" id="fullscreenBgBlur"></div>
         <div class="fullscreen-particles"></div>
         <div class="fullscreen-glowing-blob"></div>
 
@@ -1381,8 +1382,15 @@
 
           <!-- Middle Track Info -->
           <div class="fullscreen-track-info">
-            <div class="fullscreen-icon-wrapper">
-              <!-- Dynamically injected SVG icon -->
+            <div class="fullscreen-visualizer-container" id="fullscreenVisualizer">
+              <div class="visualizer-blob-wrapper">
+                <div class="visualizer-blob blob-1"></div>
+                <div class="visualizer-blob blob-2"></div>
+                <div class="visualizer-blob blob-3"></div>
+                <div class="visualizer-pattern-overlay" id="visualizerPattern"></div>
+                <div class="visualizer-center-icon" id="visualizerCenterIcon"></div>
+              </div>
+              <div class="visualizer-floating-particles" id="visualizerParticles"></div>
             </div>
             <h2 id="fullscreenTrackTitle" class="fullscreen-title">Rainforest Birds</h2>
             <p id="fullscreenTrackCategory" class="fullscreen-subtitle">Nature Atmosphere</p>

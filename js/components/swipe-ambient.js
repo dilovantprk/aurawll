@@ -283,20 +283,79 @@ function resumeActiveAmbientSound() {
 }
 
 /**
- * Updates Fullscreen Player labels and elements
+ * Updates Fullscreen Player labels, visualizer themes, backgrounds, and particles
  */
 function updateFullscreenUI(sound) {
   if (!sound) return;
 
   const titleEl = document.getElementById('fullscreenTrackTitle');
   const catEl = document.getElementById('fullscreenTrackCategory');
-  const iconWrapper = document.querySelector('.fullscreen-icon-wrapper');
+  const visualizerEl = document.getElementById('fullscreenVisualizer');
+  const centerIconEl = document.getElementById('visualizerCenterIcon');
+  const bgBlurEl = document.getElementById('fullscreenBgBlur');
+  const particlesEl = document.getElementById('visualizerParticles');
 
   if (titleEl) titleEl.textContent = t(sound.titleKey) || sound.id;
   if (catEl) catEl.textContent = `${sound.category || 'Atmosphere'} space`;
 
-  if (iconWrapper) {
-    iconWrapper.innerHTML = ICONS[sound.icon] || ICONS.noise;
+  // Update visualizer theme class
+  const themeClass = sound.visual || 'focus';
+  if (visualizerEl) {
+    visualizerEl.className = `fullscreen-visualizer-container theme-${themeClass}`;
+  }
+
+  // Update center icon
+  if (centerIconEl) {
+    centerIconEl.innerHTML = ICONS[sound.icon] || ICONS.noise;
+  }
+
+  // Update blurred background artwork
+  if (bgBlurEl) {
+    const coverPath = `assets/images/ambient/${themeClass}.png`;
+    bgBlurEl.style.backgroundImage = `url(${coverPath})`;
+    bgBlurEl.classList.add('active');
+  }
+
+  // Generate dynamic, theme-specific particles
+  if (particlesEl) {
+    particlesEl.innerHTML = '';
+    const particleCount = 8;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const p = document.createElement('div');
+      p.className = 'vis-particle';
+      
+      // Random delay to offset starting times
+      const delay = (Math.random() * 6).toFixed(2);
+      p.style.animationDelay = `${delay}s`;
+      
+      // Set random custom properties for positioning
+      if (themeClass === 'rain') {
+        const x = Math.floor(Math.random() * 240) - 20; // -20px to 220px
+        p.style.setProperty('--p-x', `${x}px`);
+        p.style.animationDuration = `${(4 + Math.random() * 3).toFixed(1)}s`;
+      } else if (themeClass === 'ocean') {
+        const x = Math.floor(Math.random() * 220) - 10;
+        const y = Math.floor(Math.random() * 220) - 10;
+        p.style.setProperty('--p-x', `${x}px`);
+        p.style.setProperty('--p-y', `${y}px`);
+        p.style.animationDuration = `${(6 + Math.random() * 4).toFixed(1)}s`;
+      } else if (themeClass === 'focus') {
+        const angle = Math.floor(Math.random() * 360);
+        const radius = Math.floor(Math.random() * 30) + 110; // 110px to 140px orbit
+        p.style.setProperty('--p-angle', `${angle}deg`);
+        p.style.setProperty('--p-radius', `${radius}px`);
+        p.style.animationDuration = `${(8 + Math.random() * 6).toFixed(1)}s`;
+      } else if (themeClass === 'night') {
+        const x = Math.floor(Math.random() * 230) - 15;
+        const y = Math.floor(Math.random() * 230) - 15;
+        p.style.setProperty('--p-x', `${x}px`);
+        p.style.setProperty('--p-y', `${y}px`);
+        p.style.animationDuration = `${(5 + Math.random() * 4).toFixed(1)}s`;
+      }
+      
+      particlesEl.appendChild(p);
+    }
   }
 
   // Update volume slider in Fullscreen to match SensoryEngine current volume
