@@ -1367,50 +1367,51 @@
         </div>
       </div>
 
-      <!-- Immersive Fullscreen Player inside view-swipe-ambient -->
-      <div id="ambientFullscreenPlayer" class="ambient-fullscreen-overlay hidden">
-        <div class="fullscreen-bg-blur-layer" id="fullscreenBgBlur"></div>
-        <div class="fullscreen-particles"></div>
-        <div class="fullscreen-glowing-blob"></div>
+    </section>
 
-        <div class="fullscreen-player-content" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between; width: 100%;">
-          <!-- Header (Minimal Spacer) -->
-          <div class="fullscreen-header" style="opacity: 0; pointer-events: none; height: 20px;"></div>
+    <!-- Immersive Fullscreen Player -->
+    <div id="ambientFullscreenPlayer" class="ambient-fullscreen-overlay hidden">
+      <div class="fullscreen-bg-blur-layer" id="fullscreenBgBlur"></div>
+      <div class="fullscreen-particles"></div>
+      <div class="fullscreen-glowing-blob"></div>
 
-          <!-- Middle Track Info -->
-          <div class="fullscreen-track-info">
-            <div class="fullscreen-visualizer-container" id="fullscreenVisualizer">
-              <div class="visualizer-blob-wrapper">
-                <div class="visualizer-blob blob-1"></div>
-                <div class="visualizer-blob blob-2"></div>
-                <div class="visualizer-blob blob-3"></div>
-                <div class="visualizer-pattern-overlay" id="visualizerPattern"></div>
-                <div class="visualizer-center-icon" id="visualizerCenterIcon"></div>
-              </div>
-              <div class="visualizer-floating-particles" id="visualizerParticles"></div>
+      <div class="fullscreen-player-content" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between; width: 100%;">
+        <!-- Header (Minimal Spacer) -->
+        <div class="fullscreen-header" style="opacity: 0; pointer-events: none; height: 20px;"></div>
+
+        <!-- Middle Track Info -->
+        <div class="fullscreen-track-info">
+          <div class="fullscreen-visualizer-container" id="fullscreenVisualizer">
+            <div class="visualizer-blob-wrapper">
+              <div class="visualizer-blob blob-1"></div>
+              <div class="visualizer-blob blob-2"></div>
+              <div class="visualizer-blob blob-3"></div>
+              <div class="visualizer-pattern-overlay" id="visualizerPattern"></div>
+              <div class="visualizer-center-icon" id="visualizerCenterIcon"></div>
             </div>
-            <h2 id="fullscreenTrackTitle" class="fullscreen-title">Rainforest Birds</h2>
+            <div class="visualizer-floating-particles" id="visualizerParticles"></div>
           </div>
+          <h2 id="fullscreenTrackTitle" class="fullscreen-title">Rainforest Birds</h2>
+        </div>
 
-          <!-- Capsule Player Controls -->
-          <div class="fullscreen-capsule-controls">
-            <button id="fullscreenMuteBtn" class="capsule-circle-btn" aria-label="Mute/Unmute">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="volume-on-icon" style="display:block;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="volume-off-icon" style="display:none;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-            </button>
+        <!-- Capsule Player Controls -->
+        <div class="fullscreen-capsule-controls">
+          <button id="fullscreenMuteBtn" class="capsule-circle-btn" aria-label="Mute/Unmute">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="volume-on-icon" style="display:block;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="volume-off-icon" style="display:none;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+          </button>
 
-            <button id="fullscreenPlayPauseBtn" class="capsule-circle-btn" aria-label="Play/Pause">
-              <svg class="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
-              <svg class="pause-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-            </button>
+          <button id="fullscreenPlayPauseBtn" class="capsule-circle-btn" aria-label="Play/Pause">
+            <svg class="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="pause-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          </button>
 
-            <button id="fullscreenCloseBtn" class="capsule-circle-btn" aria-label="Exit Fullscreen">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/></svg>
-            </button>
-          </div>
+          <button id="fullscreenCloseBtn" class="capsule-circle-btn" aria-label="Exit Fullscreen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/></svg>
+          </button>
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- QUICK JOURNAL MODAL POPUP -->
     <div id="quickJournalModal" class="quick-journal-overlay">
