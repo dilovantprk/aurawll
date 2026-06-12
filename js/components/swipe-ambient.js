@@ -20,20 +20,22 @@ let isAudioPlaying = false;
 export function initSwipeAmbient(config) {
   Object.assign(configProps, config);
 
-  // Fullscreen Close Button
+  // Exit Fullscreen buttons (both capsuleCloseBtn and closeFsBtn)
   const closeFsBtn = document.getElementById('closeAmbientFullscreenBtn');
-  if (closeFsBtn) {
-    closeFsBtn.addEventListener('click', () => {
-      vibrate('light');
-      const player = document.getElementById('ambientFullscreenPlayer');
-      if (player) player.classList.add('hidden');
-    });
-  }
+  const capsuleCloseBtn = document.getElementById('fullscreenCloseBtn');
+  const closeAction = () => {
+    vibrate('light');
+    const player = document.getElementById('ambientFullscreenPlayer');
+    if (player) player.classList.add('hidden');
+  };
+  if (closeFsBtn) closeFsBtn.addEventListener('click', closeAction);
+  if (capsuleCloseBtn) capsuleCloseBtn.addEventListener('click', closeAction);
 
-  // Fullscreen Media Controls: Play/Pause
+  // Fullscreen Capsule Play/Pause Button
   const playPauseBtn = document.getElementById('fullscreenPlayPauseBtn');
   if (playPauseBtn) {
-    playPauseBtn.addEventListener('click', () => {
+    playPauseBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent trigger visualizer click
       if (isAudioPlaying) {
         pauseActiveAmbientSound();
       } else {
@@ -42,35 +44,70 @@ export function initSwipeAmbient(config) {
     });
   }
 
-  // Fullscreen Media Controls: Skip Next (Simulates swiping left on the deck)
-  const nextBtn = document.getElementById('fullscreenNextBtn');
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      vibrate('medium');
-      if (deckInstance) {
-        deckInstance.swipe('left');
+  // Toggle Play/Pause by tapping the central visualizer blob itself
+  const visualizerEl = document.getElementById('fullscreenVisualizer');
+  if (visualizerEl) {
+    visualizerEl.style.cursor = 'pointer';
+    visualizerEl.addEventListener('click', () => {
+      if (isAudioPlaying) {
+        pauseActiveAmbientSound();
+      } else {
+        resumeActiveAmbientSound();
       }
     });
   }
 
-  // Fullscreen Media Controls: Skip Prev
-  const prevBtn = document.getElementById('fullscreenPrevBtn');
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      vibrate('medium');
-      if (deckInstance) {
-        deckInstance.swipe('left'); // Shuffles again
+  // Mute/Unmute Toggle Button
+  let isMuted = false;
+  let preMuteVolume = 80;
+  const muteBtn = document.getElementById('fullscreenMuteBtn');
+  if (muteBtn) {
+    muteBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent trigger visualizer click
+      vibrate('light');
+      isMuted = !isMuted;
+      if (isMuted) {
+        preMuteVolume = SensoryEngine.appVolume;
+        SensoryEngine.setVolume(0);
+        const onIcon = muteBtn.querySelector('.volume-on-icon');
+        const offIcon = muteBtn.querySelector('.volume-off-icon');
+        if (onIcon) onIcon.style.display = 'none';
+        if (offIcon) offIcon.style.display = 'block';
+        muteBtn.classList.add('muted');
+      } else {
+        SensoryEngine.setVolume(preMuteVolume || 80);
+        const onIcon = muteBtn.querySelector('.volume-on-icon');
+        const offIcon = muteBtn.querySelector('.volume-off-icon');
+        if (onIcon) onIcon.style.display = 'block';
+        if (offIcon) offIcon.style.display = 'none';
+        muteBtn.classList.remove('muted');
       }
     });
   }
 
-  // Fullscreen Volume range slider
-  const volumeRange = document.getElementById('fullscreenVolumeRange');
-  if (volumeRange) {
-    volumeRange.addEventListener('input', (e) => {
-      const vol = parseInt(e.target.value);
-      SensoryEngine.setVolume(vol);
-    });
+  // Swipe gesture support to change tracks (swipe left/right to skip next/prev)
+  const player = document.getElementById('ambientFullscreenPlayer');
+  if (player) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    player.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    player.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      
+      const swipeDistance = touchEndX - touchStartX;
+      const threshold = 60; // minimum px to trigger
+      
+      if (Math.abs(swipeDistance) > threshold) {
+        vibrate('medium');
+        if (deckInstance) {
+          deckInstance.swipe('left'); // skip next
+        }
+      }
+    }, { passive: true });
   }
 }
 
@@ -210,7 +247,7 @@ function playAmbientSound(sound) {
 
   SensoryEngine.update(sound.id === 'storm' ? 'wired' : sound.id === 'night' ? 'foggy' : 'okay');
 
-  // Update Play/Pause button state in UI
+  // Update Play/Pause button state in UI (handled by event sync, but sync'd here as well)
   const playPauseBtn = document.getElementById('fullscreenPlayPauseBtn');
   if (playPauseBtn) {
     playPauseBtn.classList.remove('paused');
@@ -289,24 +326,27 @@ function updateFullscreenUI(sound) {
   if (!sound) return;
 
   const titleEl = document.getElementById('fullscreenTrackTitle');
-  const catEl = document.getElementById('fullscreenTrackCategory');
   const visualizerEl = document.getElementById('fullscreenVisualizer');
   const centerIconEl = document.getElementById('visualizerCenterIcon');
   const bgBlurEl = document.getElementById('fullscreenBgBlur');
   const particlesEl = document.getElementById('visualizerParticles');
 
   if (titleEl) titleEl.textContent = t(sound.titleKey) || sound.id;
-  if (catEl) catEl.textContent = `${sound.category || 'Atmosphere'} space`;
 
   // Update visualizer theme class
   const themeClass = sound.visual || 'focus';
   if (visualizerEl) {
-    visualizerEl.className = `fullscreen-visualizer-container theme-${themeClass}`;
+    const isPaused = visualizerEl.classList.contains('paused');
+    visualizerEl.className = `fullscreen-visualizer-container theme-${themeClass}${isPaused ? ' paused' : ''}`;
   }
 
-  // Update center icon
+  // Update center icon based on play state
   if (centerIconEl) {
-    centerIconEl.innerHTML = ICONS[sound.icon] || ICONS.noise;
+    if (isAudioPlaying) {
+      centerIconEl.innerHTML = ICONS[sound.icon] || ICONS.noise;
+    } else {
+      centerIconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 30px; height: 30px; margin-left: 3px;"><path d="M8 5v14l11-7z"/></svg>`;
+    }
   }
 
   // Update blurred background artwork
@@ -385,6 +425,26 @@ window.addEventListener('aura-ambient-sync', (e) => {
 
   if (sound) {
     updateFullscreenUI(sound);
+  }
+
+  // Toggle visualizer paused states
+  const visualizerEl = document.getElementById('fullscreenVisualizer');
+  if (visualizerEl) {
+    if (isPlaying) {
+      visualizerEl.classList.remove('paused');
+    } else {
+      visualizerEl.classList.add('paused');
+    }
+  }
+
+  // Update center icon
+  const centerIconEl = document.getElementById('visualizerCenterIcon');
+  if (centerIconEl && sound) {
+    if (isPlaying) {
+      centerIconEl.innerHTML = ICONS[sound.icon] || ICONS.noise;
+    } else {
+      centerIconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 30px; height: 30px; margin-left: 3px;"><path d="M8 5v14l11-7z"/></svg>`;
+    }
   }
 
   // Update play/pause button state in fullscreen overlay

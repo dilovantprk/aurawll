@@ -767,137 +767,54 @@
     margin-top: -0.5rem;
 }
 
-/* Control Panel */
-.fullscreen-controls-panel {
-    width: 100%;
-    max-width: 380px;
-    margin: 0 auto;
-    padding: 1.8rem;
-    border-radius: 28px;
-    background: rgba(20, 20, 25, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+/* Capsule Player Controls */
+.fullscreen-capsule-controls {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 1.5rem;
+    padding: 0.6rem 1.6rem;
+    border-radius: 50px;
+    background: rgba(15, 15, 20, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    width: fit-content;
+    margin: 0 auto 2.5rem auto;
     z-index: 10;
 }
 
-/* Waveform Visualizer Placeholder */
-.fullscreen-waveform {
+.capsule-circle-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    gap: 6px;
-    height: 32px;
-}
-
-.fullscreen-waveform .bar {
-    width: 3px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 2px;
-    transition: background 0.3s, height 0.3s;
-}
-
-.fullscreen-waveform .bar.active {
-    background: var(--wave-glow, #858dff);
-    animation: waveBounce 1.2s infinite alternate ease-in-out;
-}
-
-/* Wave animation bounces with different delays */
-.fullscreen-waveform .bar:nth-child(2) { animation-delay: 0.1s; }
-.fullscreen-waveform .bar:nth-child(3) { animation-delay: 0.3s; }
-.fullscreen-waveform .bar:nth-child(4) { animation-delay: 0.2s; }
-.fullscreen-waveform .bar:nth-child(5) { animation-delay: 0.4s; }
-.fullscreen-waveform .bar:nth-child(6) { animation-delay: 0.15s; }
-.fullscreen-waveform .bar:nth-child(7) { animation-delay: 0.35s; }
-
-@keyframes waveBounce {
-    0% { height: 6px; }
-    100% { height: 26px; }
-}
-
-.fullscreen-media-buttons {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-.media-btn {
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.65);
     cursor: pointer;
-    padding: 10px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 0;
 }
 
-.media-btn:hover {
+.capsule-circle-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
     color: #fff;
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
-.media-btn:active {
+.capsule-circle-btn:active {
     transform: scale(0.95);
 }
 
-.media-btn.play-pause-main {
-    width: 68px;
-    height: 68px;
-    background: #fff;
-    color: #09090e;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
-}
-
-.media-btn.play-pause-main:hover {
-    transform: scale(1.06);
-    box-shadow: 0 12px 30px rgba(255, 255, 255, 0.3);
-    color: #000;
-}
-
-.media-btn.play-pause-main svg {
-    margin-left: 2px; /* Center play button slightly */
-}
-
-.media-btn.play-pause-main.paused svg {
-    margin-left: 0;
-}
-
-.fullscreen-volume-control {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: rgba(255, 255, 255, 0.4);
-    padding: 0 8px;
-}
-
-.volume-slider {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 4px;
-    border-radius: 2px;
-    background: rgba(255, 255, 255, 0.1);
-    outline: none;
-}
-
-.volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #fff;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s;
-}
-
-.volume-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
+.capsule-circle-btn.muted {
+    color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.01);
 }
 
 /* Background floating particles canvas/overlay */

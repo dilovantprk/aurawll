@@ -96,7 +96,28 @@ function renderAmbientGrid() {
   `).join('');
 
   elements.ambientList.querySelectorAll('.ambient-card-v2').forEach(card => {
-    card.onclick = () => toggleSound(card.getAttribute('data-id'), card);
+    const playBtn = card.querySelector('.play-hold-btn');
+    const id = card.getAttribute('data-id');
+
+    if (playBtn) {
+      playBtn.onclick = (e) => {
+        e.stopPropagation(); // Prevent opening fullscreen
+        toggleSound(id, card);
+      };
+    }
+
+    card.onclick = () => {
+      // Play if not already active
+      if (activeSoundId !== id) {
+        toggleSound(id, card);
+      }
+      // Open the fullscreen player overlay
+      vibrate('medium');
+      const player = document.getElementById('ambientFullscreenPlayer');
+      if (player) {
+        player.classList.remove('hidden');
+      }
+    };
   });
 }
 
