@@ -7,8 +7,6 @@ import { calculateVagalPoint, calculatePlasticity } from '../core/vagal-engine.j
 import { getWeeklyInsight } from '../services/insight-engine.js';
 import { SensoryEngine } from '../services/sensory.js';
 import { prepareExercise } from './checkin.js';
-import { openBreathDeck, openAmbientDeck } from './deck.js';
-import { AMBIENT_SOUNDS, ICONS } from './ambient.js';
 
 let configProps = {
   fb: null,
@@ -18,29 +16,99 @@ let configProps = {
 export function initDashboard(config) {
   Object.assign(configProps, config);
 
-  // Quick Interventions Listeners
+  // Quick Interventions: Sadece 1 Dakika (SOS Breathing)
   const sosBtn = document.getElementById('sosBreathingBtn');
   if (sosBtn) {
     sosBtn.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
-      AppState.isCheckIn = false;
-      openBreathDeck(); // Tinder-style swipe deck
+      if (configProps.navigateTo) {
+        configProps.navigateTo('view-swipe-breathing');
+      }
     });
   }
 
-  const ambientDeckBtn = document.getElementById('ambientDeckBtn');
-  if (ambientDeckBtn) {
-    ambientDeckBtn.addEventListener('click', () => {
+  // Quick Interventions: Ambiyans Keşfi (Custom Action 1)
+  const custom1Btn = document.getElementById('customAction1Btn');
+  if (custom1Btn) {
+    custom1Btn.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
-      openAmbientDeck(AMBIENT_SOUNDS, ICONS);
+      if (configProps.navigateTo) {
+        configProps.navigateTo('view-swipe-ambient');
+      }
     });
   }
 
-  const journalBtn = document.getElementById('journalBtn');
-  if (journalBtn) {
-    journalBtn.addEventListener('click', () => {
+  // Quick Interventions: Hızlı Günlük (Custom Action 2)
+  const custom2Btn = document.getElementById('customAction2Btn');
+  const journalModal = document.getElementById('quickJournalModal');
+  const journalInput = document.getElementById('quickJournalInput');
+  
+  if (custom2Btn && journalModal && journalInput) {
+    custom2Btn.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
-      if (configProps.navigateTo) configProps.navigateTo('view-notebook');
+      journalInput.value = '';
+      journalModal.classList.add('active');
+      setTimeout(() => journalInput.focus(), 150);
+    });
+  }
+
+  // Quick Journal Modals Buttons
+  const closeJournalBtn = document.getElementById('closeQuickJournalBtn');
+  const cancelJournalBtn = document.getElementById('cancelQuickJournalBtn');
+  const saveJournalBtn = document.getElementById('saveQuickJournalBtn');
+
+  if (journalModal) {
+    const closeOverlay = () => {
+      window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}));
+      journalModal.classList.remove('active');
+    };
+
+    closeJournalBtn?.addEventListener('click', closeOverlay);
+    cancelJournalBtn?.addEventListener('click', closeOverlay);
+
+    saveJournalBtn?.addEventListener('click', () => {
+      const text = journalInput.value.trim();
+      if (text) {
+        const entry = {
+          state: 'okay', 
+          polyvagal_state: 'ventral',
+          pre_arousal: 5,
+          pre_valence: 5,
+          somatic_selections: [],
+          selected_emotions: [],
+          subEmotion: 'se_neutral', 
+          customEmotion: AppState.lang === 'tr' ? 'Hızlı Günlük' : 'Quick Journal', 
+          sensations: [],
+          savoringText: text,
+          timestamp: Date.now()
+        };
+        
+        // Save locally
+        if (!AppState.mockHistory) AppState.mockHistory = [];
+        AppState.mockHistory.unshift(entry);
+        localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+
+        // Save to cloud in background if authenticated
+        const fb = configProps.fb;
+        if (fb && fb.isInitialized && AppState.user && !AppState.user.guest) {
+          (async () => {
+            try {
+              await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...entry });
+            } catch(e) {
+              console.warn("Quick journal cloud save failed", e);
+            }
+          })();
+        }
+        
+        journalInput.value = '';
+        journalModal.classList.remove('active');
+        window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
+        
+        // Reload dashboard history instantly
+        loadDashboard();
+      } else {
+        journalModal.classList.remove('active');
+      }
     });
   }
 
@@ -48,8 +116,7 @@ export function initDashboard(config) {
   if (intentCard) {
     intentCard.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}));
-      // Fallback intent for now
-      alert("Günün Niyeti: Kendimi olduğum gibi kabul ediyorum. (Bu özellik çok yakında eklenecek!)");
+      // Can expand to let user choose intent later
     });
   }
 }

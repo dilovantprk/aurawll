@@ -316,8 +316,320 @@
 }
 
 /* Active glow also uses visual color */
+/* Active glow also uses visual color */
 .ambient-card-v2.active .ambient-liquid-wave {
     background: radial-gradient(circle at center,
         var(--wave-glow, rgba(100, 160, 240, 0.35)) 0%,
         transparent 70%);
+}
+
+/* ──────────────────────────────────────────
+   IMMERSIVE FULLSCREEN PLAYER
+   ────────────────────────────────────────── */
+
+.ambient-fullscreen-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000005;
+    background: #09090e;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem calc(2rem + var(--safe-right, 0px)) calc(2rem + var(--safe-bottom, 0px)) calc(2rem + var(--safe-left, 0px));
+    box-sizing: border-box;
+    overflow: hidden;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ambient-fullscreen-overlay.hidden {
+    opacity: 0;
+    transform: translateY(100%);
+    pointer-events: none;
+}
+
+/* Glowing Background Blob */
+.fullscreen-glowing-blob {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, var(--wave-glow, rgba(133, 141, 255, 0.25)) 0%, transparent 70%);
+    filter: blur(50px);
+    pointer-events: none;
+    z-index: 1;
+    animation: blobBreathe 8s infinite alternate ease-in-out;
+}
+
+@keyframes blobBreathe {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 0.9;
+    }
+}
+
+/* Header */
+.fullscreen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    width: 100%;
+}
+
+.circle-btn {
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #fff;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.circle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+.fullscreen-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Track Info */
+.fullscreen-track-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    z-index: 5;
+    text-align: center;
+    gap: 1.5rem;
+}
+
+.fullscreen-icon-wrapper {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    animation: floatIcon 6s infinite ease-in-out;
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.fullscreen-icon-wrapper svg {
+    width: 50px;
+    height: 50px;
+    opacity: 0.9;
+}
+
+.fullscreen-title {
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.5px;
+    background: linear-gradient(185deg, #ffffff, rgba(255, 255, 255, 0.75));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.fullscreen-subtitle {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--wave-glow, #858dff);
+    margin: 0;
+    margin-top: -0.5rem;
+}
+
+/* Control Panel */
+.fullscreen-controls-panel {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 1.8rem;
+    border-radius: 28px;
+    background: rgba(20, 20, 25, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    z-index: 10;
+}
+
+/* Waveform Visualizer Placeholder */
+.fullscreen-waveform {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+}
+
+.fullscreen-waveform .bar {
+    width: 3px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    transition: background 0.3s, height 0.3s;
+}
+
+.fullscreen-waveform .bar.active {
+    background: var(--wave-glow, #858dff);
+    animation: waveBounce 1.2s infinite alternate ease-in-out;
+}
+
+/* Wave animation bounces with different delays */
+.fullscreen-waveform .bar:nth-child(2) { animation-delay: 0.1s; }
+.fullscreen-waveform .bar:nth-child(3) { animation-delay: 0.3s; }
+.fullscreen-waveform .bar:nth-child(4) { animation-delay: 0.2s; }
+.fullscreen-waveform .bar:nth-child(5) { animation-delay: 0.4s; }
+.fullscreen-waveform .bar:nth-child(6) { animation-delay: 0.15s; }
+.fullscreen-waveform .bar:nth-child(7) { animation-delay: 0.35s; }
+
+@keyframes waveBounce {
+    0% { height: 6px; }
+    100% { height: 26px; }
+}
+
+.fullscreen-media-buttons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.media-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.65);
+    cursor: pointer;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.media-btn:hover {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.media-btn:active {
+    transform: scale(0.95);
+}
+
+.media-btn.play-pause-main {
+    width: 68px;
+    height: 68px;
+    background: #fff;
+    color: #09090e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+}
+
+.media-btn.play-pause-main:hover {
+    transform: scale(1.06);
+    box-shadow: 0 12px 30px rgba(255, 255, 255, 0.3);
+    color: #000;
+}
+
+.media-btn.play-pause-main svg {
+    margin-left: 2px; /* Center play button slightly */
+}
+
+.media-btn.play-pause-main.paused svg {
+    margin-left: 0;
+}
+
+.fullscreen-volume-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 0 8px;
+}
+
+.volume-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Background floating particles canvas/overlay */
+.fullscreen-particles {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-image: 
+        radial-gradient(1px 1px at 20px 30px, #eee, transparent),
+        radial-gradient(1px 1px at 40px 70px, #fff, transparent),
+        radial-gradient(2px 2px at 50px 160px, #ddd, transparent),
+        radial-gradient(2px 2px at 80px 120px, #fff, transparent),
+        radial-gradient(1px 1px at 110px 220px, #eee, transparent),
+        radial-gradient(2px 2px at 150px 180px, #ddd, transparent),
+        radial-gradient(1px 1px at 200px 50px, #fff, transparent),
+        radial-gradient(2px 2px at 250px 130px, #eee, transparent),
+        radial-gradient(1px 1px at 300px 90px, #ddd, transparent),
+        radial-gradient(2px 2px at 320px 240px, #fff, transparent);
+    background-size: 350px 350px;
+    opacity: 0.15;
+    animation: particlesFloat 30s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes particlesFloat {
+    0% { background-position: 0 0; }
+    100% { background-position: 350px 700px; }
 }

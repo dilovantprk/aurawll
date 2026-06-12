@@ -36,11 +36,23 @@ export const AMBIENT_SOUNDS = [
 ];
 
 let activeSoundId = null;
+let configProps = {};
 
-export function initAmbient() {
+export function initAmbient(config = {}) {
+  Object.assign(configProps, config);
   renderAmbientGrid();
   if (elements.ambientMasterVolume) {
     elements.ambientMasterVolume.oninput = (e) => SensoryEngine.setVolume(parseInt(e.target.value));
+  }
+
+  const openSwipeBtn = document.getElementById('openSwipeAmbientBtn');
+  if (openSwipeBtn) {
+    openSwipeBtn.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
+      if (configProps.navigateTo) {
+        configProps.navigateTo('view-swipe-ambient');
+      }
+    });
   }
 }
 
@@ -94,6 +106,8 @@ function toggleSound(id, card) {
     SensoryEngine.stopAllSensory();
     card.classList.remove('active');
     vibrate('light');
+    
+    window.dispatchEvent(new CustomEvent('aura-ambient-sync', { detail: { id, isPlaying: false } }));
   } else {
     const prevCard = elements.ambientList.querySelector('.ambient-card-v2.active');
     if (prevCard) prevCard.classList.remove('active');
@@ -115,5 +129,27 @@ function toggleSound(id, card) {
     }
 
     SensoryEngine.update(id === 'storm' ? 'wired' : id === 'night' ? 'foggy' : 'okay');
+
+    window.dispatchEvent(new CustomEvent('aura-ambient-sync', { detail: { id, isPlaying: true } }));
   }
 }
+
+// Listen for sync events from the Swipe Ambient fullscreen player or other modules
+window.addEventListener('aura-ambient-sync', (e) => {
+  const { id, isPlaying } = e.detail;
+  activeSoundId = isPlaying ? id : null;
+
+  if (elements.ambientList) {
+    const cards = elements.ambientList.querySelectorAll('.ambient-card-v2');
+    cards.forEach(card => {
+      const cardId = card.getAttribute('data-id');
+      if (isPlaying && cardId === id) {
+        card.classList.add('active');
+      } else {
+        card.classList.remove('active');
+        card.classList.remove('loading');
+      }
+    });
+  }
+});
+

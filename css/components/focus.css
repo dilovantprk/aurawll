@@ -376,16 +376,15 @@
 
 /* SETUP PHASE - Organic */
 .focus-setup-container {
-  width: calc(100% - 1.5rem); /* Tighter margin to match header visibility */
-  max-width: none;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 1.5rem 1.8rem; /* Reduced from 3rem to save vertical space */
-  box-shadow: 0 40px 100px rgba(0,0,0,0.4),
-              inset 0 1px 0 rgba(255,255,255,0.1);
+  width: calc(100% - 2rem);
+  max-width: 480px;
+  margin: 0 auto;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .session-name-input {
@@ -480,18 +479,18 @@
 
 /* TODO V2 - Organic & Premium */
 .todo-container-v2 {
-  width: calc(100% - 1.5rem); /* Tighter margin to match header visibility */
-  max-width: none;
+  width: calc(100% - 2rem);
+  max-width: 480px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 1.5rem 1.8rem; /* Reduced from 3rem */
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .todo-badge {

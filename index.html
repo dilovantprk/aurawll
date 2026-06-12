@@ -320,27 +320,27 @@
                      <span id="dailyIntentText" class="quick-desc">Bedenime şefkat göstereceğim.</span>
                    </div>
                 </div>
-                <!-- Custom Card 1: Ambient Deck -->
-                <button id="ambientDeckBtn" class="glass-panel quick-action-card glow-card">
-                  <div class="quick-icon sos-icon" style="color: #62A4FF; background: rgba(98, 164, 255, 0.1);">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                  </div>
-                  <div class="quick-content">
-                    <span class="quick-title">Atmosfer Keşfi</span>
-                    <span class="quick-desc">Sesleri dinle ve seç</span>
-                  </div>
-                </button>
-                <!-- Custom Card 2: Journaling -->
-                <button id="journalBtn" class="glass-panel quick-action-card glow-card">
-                   <div class="quick-icon intent-icon" style="color: #FBA044; background: rgba(251, 160, 68, 0.1);">
-                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg>
+                 <!-- Custom Card 1 -> Ambiyans Keşfi -->
+                 <button id="customAction1Btn" class="glass-panel quick-action-card glow-card">
+                   <div class="quick-icon ambient-icon" style="color: #a8e6cf;">
+                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                    </div>
                    <div class="quick-content">
-                     <span class="quick-title">Günlük (Journal)</span>
-                     <span class="quick-desc">Notebook'a yaz</span>
+                     <span class="quick-title" data-i18n="dash_ambient_title">Ambiyans Keşfi</span>
+                     <span class="quick-desc" data-i18n="dash_ambient_desc">Atmosferik sesler</span>
                    </div>
-                </button>
-              </div>
+                 </button>
+                 <!-- Custom Card 2 -> Hızlı Günlük -->
+                 <button id="customAction2Btn" class="glass-panel quick-action-card glow-card">
+                    <div class="quick-icon journal-icon" style="color: #858dff;">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </div>
+                    <div class="quick-content">
+                      <span class="quick-title" data-i18n="dash_journal_title">Hızlı Günlük</span>
+                      <span class="quick-desc" data-i18n="dash_journal_desc">Düşüncelerini yaz</span>
+                    </div>
+                 </button>
+               </div>
               
               <!-- Daily Polyvagal Bite -->
               <div class="glass-panel daily-bite-card glow-card">
@@ -741,6 +741,23 @@
           <h2 data-i18n="nav_breathe">Breathe</h2>
           <p data-i18n="med_desc">Select a protocol for your current state.</p>
         </div>
+
+        <!-- Entry Card for Swipe Sub-page -->
+        <div class="quick-action-card-premium theme-green stagger-2" id="openSwipeBreathingBtn">
+          <div style="display: flex; align-items: center; gap: 1rem; position: relative; z-index: 2;">
+            <div class="quick-icon-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <div style="text-align: left;">
+              <h3 data-i18n="dash_sos_title" style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #fff;">Sadece 1 Dakika</h3>
+              <p style="margin: 3px 0 0 0; font-size: 0.8rem; opacity: 0.6;" data-i18n="swipe_breathing_sub_short">Kartları kaydırarak hızlı egzersiz seç</p>
+            </div>
+          </div>
+          <div class="quick-arrow-wrapper" style="position: relative; z-index: 2; display: flex; align-items: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
         <div id="recommendationsContainer" class="rec-section-container hidden">
           <!-- Rendered by JS -->
         </div>
@@ -1082,7 +1099,7 @@
               </header>
 
               <!-- SETUP PHASE -->
-              <div id="focusSetup" class="focus-setup-container glow-card stagger-2 glass-panel" style="max-width: 600px; margin: 0 auto; padding: 2.5rem; border-radius: 24px;">
+              <div id="focusSetup" class="focus-setup-container stagger-2" style="max-width: 480px; margin: 0 auto; padding: 0;">
                 <!-- Sessions List -->
                 <div class="input-group" style="margin-bottom: 2rem;">
                   <label data-i18n="focus_label_config" style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 0.8rem; display: block; text-transform: uppercase; letter-spacing: 1px;">OTURUM YAPILANDIRMASI</label>
@@ -1288,27 +1305,26 @@
           <h2 data-i18n="nav_ambient">ambiance</h2>
           <p data-i18n="amb_subtitle">find your sensory balance</p>
         </header>
-          <div id="ambientList" class="ambient-grid-v2 stagger-3">
-            <!-- Rendered by JS as large visual cards -->
-          </div>
 
-          <!-- NEW: Full Screen Active Atmosphere Overlay -->
-          <div id="ambientActiveOverlay" class="ambient-active-overlay hidden">
-            <div class="atmos-visual-bg" id="atmosVisualBg"></div>
-            <div class="atmos-layer-overlay"></div>
-            <div class="atmos-gradient-glow"></div>
-            <div id="atmosParticles" class="atmos-particles"></div>
-
-            <div class="atmos-content">
-              <div class="atmos-info">
-                <h2 id="atmosTitle" class="atmos-title">Rain</h2>
-                <p id="atmosStatus" class="atmos-status">Neural Entrainment Active</p>
-              </div>
+        <!-- Entry Card for Swipe Sub-page -->
+        <div class="quick-action-card-premium theme-purple stagger-2" id="openSwipeAmbientBtn">
+          <div style="display: flex; align-items: center; gap: 1rem; position: relative; z-index: 2;">
+            <div class="quick-icon-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
             </div>
+            <div style="text-align: left;">
+              <h3 data-i18n="dash_ambient_title" style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #fff;">Ambiyans Keşfi</h3>
+              <p style="margin: 3px 0 0 0; font-size: 0.8rem; opacity: 0.6;" data-i18n="swipe_ambient_sub_short">Kartları kaydırarak dinlendirici sesler bul</p>
+            </div>
+          </div>
+          <div class="quick-arrow-wrapper" style="position: relative; z-index: 2; display: flex; align-items: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
 
-            <!-- Premium Cockpit HUD -->
-            <div class="atmos-hud">
-        </header>
+        <div id="ambientList" class="ambient-grid-v2 stagger-3">
+          <!-- Rendered by JS as large visual cards -->
+        </div>
       </div>
     </section>
 
@@ -1325,6 +1341,104 @@
         </div>
       </div>
     </section>
+
+    <!-- SWIPE BREATHING VIEW -->
+    <section id="view-swipe-breathing" class="view hidden">
+      <div class="standard-view-content fade-in-pure" style="padding-top: 6.5rem;">
+        <div class="embedded-swipe-section" style="width: 100%; margin: 0 auto; text-align: center;">
+          <h3 data-i18n="dash_sos_title" style="font-size: 1.4rem; font-weight: 500; letter-spacing: 2px; color: #fff; margin-bottom: 0.5rem;">Sadece 1 Dakika</h3>
+          <p style="opacity: 0.6; font-size: 0.85rem; margin: 0 auto 1.5rem; max-width: 320px; line-height: 1.4;" data-i18n="swipe_breathing_sub">Kaydırarak egzersiz seç: sola kaydır yeni öneri, sağa kaydır başla</p>
+          <div id="swipeBreathingDeck" class="swipe-deck-container">
+            <!-- Cards injected by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SWIPE AMBIENT VIEW -->
+    <section id="view-swipe-ambient" class="view hidden">
+      <div class="standard-view-content fade-in-pure" style="padding-top: 6.5rem;">
+        <div class="embedded-swipe-section" style="width: 100%; margin: 0 auto; text-align: center;">
+          <h3 data-i18n="dash_ambient_title" style="font-size: 1.4rem; font-weight: 500; letter-spacing: 2px; color: #fff; margin-bottom: 0.5rem;">Ambiyans Keşfi</h3>
+          <p style="opacity: 0.6; font-size: 0.85rem; margin: 0 auto 1.5rem; max-width: 320px; line-height: 1.4;" data-i18n="swipe_ambient_sub">Sesi dinlemek için kaydır: sola kaydır yeni ses, sağa kaydır tam ekran yap</p>
+          <div id="swipeAmbientDeck" class="swipe-deck-container">
+            <!-- Cards injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Immersive Fullscreen Player inside view-swipe-ambient -->
+      <div id="ambientFullscreenPlayer" class="ambient-fullscreen-overlay hidden">
+        <div class="fullscreen-particles"></div>
+        <div class="fullscreen-glowing-blob"></div>
+
+        <div class="fullscreen-player-content" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between; width: 100%;">
+          <!-- Header -->
+          <div class="fullscreen-header">
+            <button id="closeAmbientFullscreenBtn" class="circle-btn">✕</button>
+            <span class="fullscreen-status">Neural Space Active</span>
+          </div>
+
+          <!-- Middle Track Info -->
+          <div class="fullscreen-track-info">
+            <div class="fullscreen-icon-wrapper">
+              <!-- Dynamically injected SVG icon -->
+            </div>
+            <h2 id="fullscreenTrackTitle" class="fullscreen-title">Rainforest Birds</h2>
+            <p id="fullscreenTrackCategory" class="fullscreen-subtitle">Nature Atmosphere</p>
+          </div>
+
+          <!-- Bottom Media Controls -->
+          <div class="fullscreen-controls-panel glass-panel">
+            <div class="fullscreen-waveform">
+              <span class="bar"></span>
+              <span class="bar active"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar active"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </div>
+
+            <div class="fullscreen-media-buttons">
+              <button id="fullscreenPrevBtn" class="media-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+              </button>
+
+              <button id="fullscreenPlayPauseBtn" class="media-btn play-pause-main">
+                <svg class="play-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <svg class="pause-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              </button>
+
+              <button id="fullscreenNextBtn" class="media-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+              </button>
+            </div>
+
+            <div class="fullscreen-volume-control">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <input type="range" id="fullscreenVolumeRange" min="0" max="100" value="80" class="volume-slider">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUICK JOURNAL MODAL POPUP -->
+    <div id="quickJournalModal" class="quick-journal-overlay">
+      <div class="quick-journal-card glass-panel">
+        <div class="quick-journal-header">
+          <h3 class="quick-journal-title" data-i18n="dash_journal_title">Hızlı Günlük</h3>
+          <button id="closeQuickJournalBtn">✕</button>
+        </div>
+        <textarea id="quickJournalInput" class="quick-journal-textarea" data-i18n-placeholder="journal_placeholder" placeholder="Şu an nasıl hissettiğini yaz..."></textarea>
+        <div class="quick-journal-buttons">
+          <button id="cancelQuickJournalBtn" class="quick-journal-btn cancel" data-i18n="journal_cancel_btn">İptal</button>
+          <button id="saveQuickJournalBtn" class="quick-journal-btn save" data-i18n="journal_save_btn">Kaydet</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Custom Notification Permission Modal -->
     <div id="notifModal" class="notif-modal-wrapper hidden fade-in">
@@ -1521,25 +1635,7 @@
               </svg>
               <span data-i18n="prof_delete_account">Hesabı Sil</span>
             </button>
-      </div>
-    </div>
-
-    <!-- Swipe Deck Modal (Tinder-Style Exercises & Ambient) -->
-    <div id="swipeDeckModal" class="modal deck-modal">
-      <div class="modal-backdrop deck-backdrop"></div>
-      <div class="deck-container">
-        <!-- Close Button -->
-        <button id="closeSwipeDeckBtn" class="deck-close-btn info-close-btn" aria-label="Close Deck">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-        <!-- Stack Area -->
-        <div id="deckStack" class="deck-stack">
-          <!-- Cards injected dynamically by deck.js -->
-        </div>
-        <!-- Hints -->
-        <div class="deck-hints">
-          <span class="hint-left"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Geç</span>
-          <span class="hint-right">Başla <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
         </div>
       </div>
     </div>
@@ -1659,6 +1755,9 @@
 
   <div id="vagalModalAnalysisStatic" class="modal-body-section" style="display: none;"></div>
   <div id="vagalModalRecStatic" class="modal-body-section" style="display: none;"></div>
+
+  <!-- Portal Transition Overlay -->
+  <div id="portal-overlay" class="portal-overlay"></div>
 
   <!-- SCRIPTS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>

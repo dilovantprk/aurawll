@@ -11,6 +11,16 @@ let configProps = {};
 export function initMeditations(config) {
   Object.assign(configProps, config);
 
+  const openSwipeBtn = document.getElementById('openSwipeBreathingBtn');
+  if (openSwipeBtn) {
+    openSwipeBtn.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
+      if (configProps.navigateTo) {
+        configProps.navigateTo('view-swipe-breathing');
+      }
+    });
+  }
+
   // Bind Card Clicks & Touch Tracking
   if (elements.meditationsList) {
     // Track touch position for dynamic glow effect

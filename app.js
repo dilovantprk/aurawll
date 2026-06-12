@@ -28,7 +28,8 @@ import { handleRedirectResult } from './js/services/auth.js';
 import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
 import { initSleep } from './js/components/sleep.js';
-import { initSwipeDeck } from './js/components/deck.js';
+import { initSwipeBreathing, startSwipeBreathingFlow } from './js/components/swipe-breathing.js';
+import { initSwipeAmbient, startSwipeAmbientFlow, stopSwipePreviewIfAny } from './js/components/swipe-ambient.js';
 import { initGlobalCursorEffect } from './js/core/cursor-effect.js';
 import { NotificationService } from './js/services/notifications.js';
 
@@ -39,6 +40,44 @@ let fb;
 let isNavigating = false;
 
 /**
+ * Triggers a beautiful GPU-accelerated portal transition overlay.
+ * Expands a radial-gradient circle from the right edge, changes view under the cover,
+ * and then smoothly fades out.
+ */
+export function triggerPortalTransition(targetViewId, colorRGB = '16, 185, 129', callback = null) {
+  const portal = document.getElementById('portal-overlay');
+  if (!portal) {
+    if (callback) callback();
+    else navigateTo(targetViewId);
+    return;
+  }
+
+  // Update background with specific RGB
+  portal.style.background = `radial-gradient(circle at 100% 50%, rgba(${colorRGB}, 0.75) 0%, rgba(5, 5, 8, 0.98) 100%)`;
+  portal.style.opacity = '1';
+  portal.classList.add('active');
+
+  // Navigate midway through transition (450ms)
+  setTimeout(() => {
+    if (callback) callback();
+    else navigateTo(targetViewId);
+  }, 450);
+
+  // Fade out smoothly
+  setTimeout(() => {
+    portal.style.transition = 'opacity 0.5s ease-out, clip-path 0s';
+    portal.style.opacity = '0';
+    portal.classList.remove('active');
+    
+    // Restore transition parameters
+    setTimeout(() => {
+      portal.style.transition = '';
+      portal.style.opacity = '';
+    }, 500);
+  }, 900);
+}
+
+/**
  * Global Routing System
  */
 export function navigateTo(viewId, skipHistory = false) {
@@ -46,6 +85,11 @@ export function navigateTo(viewId, skipHistory = false) {
   
   const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
   if (currentView && currentView.id === viewId) return;
+
+  // Stop swipe audio preview if navigating away from Swipe Ambient view
+  if (currentView && currentView.id === 'view-swipe-ambient') {
+    stopSwipePreviewIfAny();
+  }
 
   const target = document.getElementById(viewId);
   if (!target) return;
@@ -98,6 +142,8 @@ export function navigateTo(viewId, skipHistory = false) {
     setTimeout(() => {
       let slug = newSlug;
       if (checkinSteps.includes(slug)) slug = 'checkin';
+      if (slug === 'swipe-breathing') slug = 'breathe';
+      if (slug === 'swipe-ambient') slug = 'ambient';
       const tabLabel = t('nav_' + slug) || slug;
       tabName.textContent = tabLabel;
       
@@ -109,6 +155,8 @@ export function navigateTo(viewId, skipHistory = false) {
   } else if (tabName && skipHeaderAnimation) {
     let slug = newSlug;
     if (checkinSteps.includes(slug)) slug = 'checkin';
+    if (slug === 'swipe-breathing') slug = 'breathe';
+    if (slug === 'swipe-ambient') slug = 'ambient';
     const tabLabel = t('nav_' + slug) || slug;
     if (tabName.textContent !== tabLabel) {
       tabName.textContent = tabLabel;
@@ -139,10 +187,16 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Feature Triggers
   if (viewId === 'view-dashboard') loadDashboard();
-  if (viewId === 'view-meditations') { renderMeditationsList(); renderFilterChips(); renderRecommendations(); }
+  if (viewId === 'view-meditations') { 
+    renderMeditationsList(); 
+    renderFilterChips(); 
+    renderRecommendations(); 
+  }
   if (viewId === 'view-notebook') loadNotebook();
   if (viewId === 'view-insight') updateInsightView(AppState.userHistory || AppState.mockHistory);
   if (viewId === 'view-settings') updateSettingsView();
+  if (viewId === 'view-swipe-breathing') startSwipeBreathingFlow();
+  if (viewId === 'view-swipe-ambient') startSwipeAmbientFlow();
   
   renderLocalization();
 
@@ -169,7 +223,10 @@ export function navigateTo(viewId, skipHistory = false) {
   if (desktopActiveName) {
     desktopActiveName.classList.remove('visible');
     setTimeout(() => {
-      const tabLabel = t('nav_' + newSlug) || newSlug;
+      let slug = newSlug;
+      if (slug === 'swipe-breathing') slug = 'breathe';
+      if (slug === 'swipe-ambient') slug = 'ambient';
+      const tabLabel = t('nav_' + slug) || slug;
       if (tabLabel) desktopActiveName.textContent = tabLabel;
       desktopActiveName.classList.add('visible');
     }, 50);
@@ -187,13 +244,17 @@ export function navigateTo(viewId, skipHistory = false) {
   }
 
   const slug = viewId.replace('view-', '');
+  let activeSlug = slug;
+  if (slug === 'swipe-breathing') activeSlug = 'meditations';
+  if (slug === 'swipe-ambient') activeSlug = 'ambient';
+
   const navItems = elements.navItems ? Array.from(elements.navItems) : [];
   const navLinks = elements.navLinks ? Array.from(elements.navLinks) : [];
   const allNavs = [...navItems, ...navLinks];
 
   allNavs.forEach(btn => {
     if (!btn) return;
-    if (btn.getAttribute('data-view') === slug) btn.classList.add('active');
+    if (btn.getAttribute('data-view') === activeSlug) btn.classList.add('active');
     else btn.classList.remove('active');
   });
 
@@ -335,6 +396,7 @@ async function initAppBootstrap() {
   initNotebook({ fb, navigateTo });
   initMeditationFlow({ fb, navigateTo, resetBioFeedback: () => SensoryEngine.stopHaptics(), AudioEngine: MeditationAudio, setHUD, loadDashboard });
   initMeditations({ 
+    navigateTo,
     prepareExercise: (id) => {
       AppState.isCheckIn = false; 
       prepareExercise(id); 
@@ -351,8 +413,9 @@ async function initAppBootstrap() {
     onAuthenticated: (user) => startAppFlow(user)
   });
   initFocus();
-  initAmbient();
-  initSwipeDeck();
+  initAmbient({ navigateTo });
+  initSwipeBreathing({ navigateTo, triggerPortalTransition });
+  initSwipeAmbient({ navigateTo });
   initSleep({ navigateTo });
   initSettings({ 
     navigateTo,
