@@ -1053,4 +1053,17 @@
   box-shadow: 0 12px 30px rgba(108, 92, 231, 0.4);
 }
 
+.modal-glow-orb {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(133, 141, 255, 0.18) 0%, transparent 70%);
+  filter: blur(25px);
+  pointer-events: none;
+  z-index: 0;
+}
+
 

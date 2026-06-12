@@ -202,6 +202,16 @@ function renderDashboardComponents(data) {
   renderDailyContent();
   renderModuleMarket();
 
+  // Show/Hide Quick Action cards based on active modules
+  const custom1Btn = document.getElementById('customAction1Btn');
+  const custom2Btn = document.getElementById('customAction2Btn');
+  if (custom1Btn) {
+    custom1Btn.style.display = AppState.showAmbient ? 'flex' : 'none';
+  }
+  if (custom2Btn) {
+    custom2Btn.style.display = AppState.showNotebook ? 'flex' : 'none';
+  }
+
   // ALWAYS SHOW: Ensure these are visible even if history is empty
   elements.vagalHeatmapCard?.classList.remove('hidden');
   elements.resilienceBar?.classList.remove('hidden');
