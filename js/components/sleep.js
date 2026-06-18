@@ -6,34 +6,29 @@ import { t } from '../core/i18n.js';
 let navigateToGlobal = null;
 let protocolTimeout = null;
 
-const SCRIPT_SILENT_COACH = [
-  // Giriş
-  { text: "Hoş geldin.", dur: 4000 },
-  { text: "Bugün yeterliydi.", dur: 4000 },
-  { text: "Şimdi bırakma zamanı.", dur: 5000 },
-  // Nefes (4-7-8)
-  { text: "Burnundan yavaşça nefes al.", dur: 3000 },
-  { text: "Dört... üç... iki... bir.", dur: 4000 },
-  { text: "Tut.", dur: 2000 },
-  { text: "Yedi... altı... beş... dört... üç... iki... bir.", dur: 7000 },
-  { text: "Ağzından bırak.", dur: 2000 },
-  { text: "Sekiz... yedi... altı... beş... dört... üç... iki... bir.", dur: 8000 },
-  { text: "Tekrar.", dur: 4000 },
-  // Beden Taraması
-  { text: "Çeneni bırak.", dur: 4000 },
-  { text: "Dilin damağından düşsün.", dur: 4000 },
-  { text: "Omuzlarını aşağı bırak.", dur: 4000 },
-  { text: "Ellerini aç, avuçların yukarı baksın.", dur: 4000 },
-  { text: "Bacaklarının ağırlığını hisset.", dur: 4000 },
-  { text: "Yatağa gömül.", dur: 5000 },
-  // Zihin
-  { text: "Bugün ne olduysa oldu.", dur: 4000 },
-  { text: "Yarın ne olacaksa olacak.", dur: 4000 },
-  { text: "Şu an sadece bu nefes var.", dur: 5000 },
-  // Kapanış
-  { text: "Sistemin dinleniyor.", dur: 4000 },
-  { text: "Kendine iyi bak.", dur: 4000 },
-  { text: "İyi geceler.", dur: 6000 }
+const getLocalizedScript = () => [
+  { text: t('sleep_coach_0'), dur: 4000 },
+  { text: t('sleep_coach_1'), dur: 4000 },
+  { text: t('sleep_coach_2'), dur: 5000 },
+  { text: t('sleep_coach_3'), dur: 3000 },
+  { text: t('sleep_coach_4'), dur: 4000 },
+  { text: t('sleep_coach_5'), dur: 2000 },
+  { text: t('sleep_coach_6'), dur: 7000 },
+  { text: t('sleep_coach_7'), dur: 2000 },
+  { text: t('sleep_coach_8'), dur: 8000 },
+  { text: t('sleep_coach_9'), dur: 4000 },
+  { text: t('sleep_coach_10'), dur: 4000 },
+  { text: t('sleep_coach_11'), dur: 4000 },
+  { text: t('sleep_coach_12'), dur: 4000 },
+  { text: t('sleep_coach_13'), dur: 4000 },
+  { text: t('sleep_coach_14'), dur: 4000 },
+  { text: t('sleep_coach_15'), dur: 5000 },
+  { text: t('sleep_coach_16'), dur: 4000 },
+  { text: t('sleep_coach_17'), dur: 4000 },
+  { text: t('sleep_coach_18'), dur: 5000 },
+  { text: t('sleep_coach_19'), dur: 4000 },
+  { text: t('sleep_coach_20'), dur: 4000 },
+  { text: t('sleep_coach_21'), dur: 6000 }
 ];
 
 export function initSleep({ navigateTo }) {
@@ -155,7 +150,7 @@ function startSilentProtocol(type) {
   SensoryEngine.setDroneEnabled(true);
 
   // Play script
-  playScript(SCRIPT_SILENT_COACH, 0, () => {
+  playScript(getLocalizedScript(), 0, () => {
     // End of script
     cantSleepBtn.classList.remove('hidden');
     cantSleepBtn.classList.add('fade-in');

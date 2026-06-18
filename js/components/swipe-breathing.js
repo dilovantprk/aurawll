@@ -40,8 +40,8 @@ export function startSwipeBreathingFlow() {
 
   // Initialize swipe deck
   deckInstance = new SwipeDeck(container, {
-    badgeLeftText: t('lang') === 'tr' ? 'GEÇ' : 'SKIP',
-    badgeRightText: t('lang') === 'tr' ? 'BAŞLA' : 'START',
+    badgeLeftText: t('btn_skip_badge'),
+    badgeRightText: t('btn_start_badge'),
     renderCardContent: (item) => {
       const mins = Math.ceil(item.totalDuration / 60);
       const sciTitle = t(`sci_${item.id}_title`) || item.id;
@@ -63,7 +63,7 @@ export function startSwipeBreathingFlow() {
             ${item.category}
           </span>
           <span style="font-size: 0.75rem; opacity: 0.55; font-weight: 500; letter-spacing: 0.5px;">
-            ${mins} dk
+            ${mins} ${t('meditations_duration')}
           </span>
         </div>
         

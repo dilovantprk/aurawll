@@ -83,12 +83,7 @@
 }
 
 .view-header h2 {
-  font-size: clamp(2.2rem, 5vw, 3.2rem) !important;
-  font-weight: 500 !important;
-  margin-bottom: 0.8rem !important;
-  letter-spacing: -1px !important;
-  color: #fff !important;
-  text-transform: none !important;
+  display: none !important;
 }
 
 .view-header p {

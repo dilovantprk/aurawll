@@ -214,6 +214,71 @@ export function initSettings(config) {
       openCommunityModal(history);
     });
   }
+
+  // Nested Settings Subpages Navigation
+  const menuRows = document.querySelectorAll('.settings-menu-row');
+  const subpages = document.querySelectorAll('.settings-subpage');
+  const mainMenu = document.getElementById('settings-main-menu');
+  const idCard = document.querySelector('.identity-card-v2');
+
+  menuRows.forEach(row => {
+    row.addEventListener('click', () => {
+      const targetId = `settings-subpage-${row.getAttribute('data-target')}`;
+      const targetPage = document.getElementById(targetId);
+      if (targetPage) {
+        vibrate('light');
+
+        // Hide main menu & ID Card with animation classes
+        mainMenu?.classList.add('hidden');
+        idCard?.classList.add('hidden');
+
+        // Show target page
+        targetPage.classList.remove('hidden');
+        setTimeout(() => {
+          targetPage.classList.add('active');
+        }, 50);
+      }
+    });
+  });
+
+  const backButtons = document.querySelectorAll('.settings-back-btn');
+  backButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      vibrate('light');
+      
+      const activeSubpage = btn.closest('.settings-subpage');
+      if (activeSubpage) {
+        activeSubpage.classList.remove('active');
+        setTimeout(() => {
+          activeSubpage.classList.add('hidden');
+          mainMenu?.classList.remove('hidden');
+          idCard?.classList.remove('hidden');
+        }, 350); // Match transition duration (0.35s)
+      }
+    });
+  });
+
+  // MutationObserver to reset settings view when navigating back to it
+  const settingsResetObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.id === 'view-settings') {
+        if (!mutation.target.classList.contains('hidden')) {
+          // View became active - reset subpages
+          subpages.forEach(page => {
+            page.classList.remove('active');
+            page.classList.add('hidden');
+          });
+          mainMenu?.classList.remove('hidden');
+          idCard?.classList.remove('hidden');
+        }
+      }
+    });
+  });
+
+  const settingsView = document.getElementById('view-settings');
+  if (settingsView) {
+    settingsResetObserver.observe(settingsView, { attributes: true, attributeFilter: ['class'] });
+  }
 }
 
 export function updateSettingsView() {

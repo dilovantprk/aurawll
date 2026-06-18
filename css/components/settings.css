@@ -702,3 +702,127 @@
   0% { left: -60%; }
   100% { left: 140%; }
 }
+
+/* --- NESTED SUB-SETTINGS ARCHITECTURE --- */
+.settings-menu-row {
+  padding: 1.4rem 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.settings-menu-row:last-child {
+  border-bottom: none;
+}
+
+.settings-menu-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+}
+
+.settings-nav-arrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  font-family: monospace;
+}
+
+.settings-menu-row:hover .settings-nav-arrow {
+  color: var(--accent-primary);
+  transform: translateX(3px);
+}
+
+/* Subpage styling and transitions */
+.settings-subpage {
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+  width: 100%;
+}
+
+.settings-subpage.hidden {
+  display: none !important;
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.settings-subpage.active {
+  display: block !important;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+#settings-main-menu {
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+#settings-main-menu.hidden {
+  display: none !important;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.identity-card-v2 {
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.identity-card-v2.hidden {
+  display: none !important;
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Subpage Header */
+.subpage-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding-left: 0.8rem;
+  text-align: left;
+}
+
+.settings-back-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-family: inherit;
+}
+
+.settings-back-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.settings-back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.settings-back-btn:hover svg {
+  transform: translateX(-2px);
+}
+
+.subpage-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: -0.2px;
+}

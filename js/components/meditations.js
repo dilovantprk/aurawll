@@ -83,7 +83,7 @@ export function renderMeditationsList() {
         <div class="meditation-card-info">
           <span class="meditation-card-title">${sciTitle}</span>
           <div class="meditation-card-meta">
-            <span class="meditation-card-mins">${mins} min</span>
+            <span class="meditation-card-mins">${mins} ${t('meditations_duration')}</span>
             <div class="meditation-card-details">
               <span class="meditation-card-original-title">${t(p.titleKey)}</span>
             </div>

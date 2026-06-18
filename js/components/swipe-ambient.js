@@ -528,8 +528,8 @@ export function startSwipeAmbientFlow() {
   }
 
   deckInstance = new SwipeDeck(container, {
-    badgeLeftText: t('lang') === 'tr' ? 'GEÇ' : 'SKIP',
-    badgeRightText: t('lang') === 'tr' ? 'DİNLE' : 'LISTEN',
+    badgeLeftText: t('btn_skip_badge'),
+    badgeRightText: t('btn_listen_badge'),
     dismissOnSwipeRight: false,
     renderCardContent: (item) => {
       const categoryLabel = item.category || 'peace';
@@ -553,7 +553,7 @@ export function startSwipeAmbientFlow() {
             ${categoryLabel}
           </span>
           <span style="font-size: 0.75rem; opacity: 0.55; font-weight: 500; letter-spacing: 0.5px;">
-            Ambiyans
+            ${t('nav_ambient')}
           </span>
         </div>
         
@@ -563,10 +563,10 @@ export function startSwipeAmbientFlow() {
             ${title}
           </h3>
           <span style="font-size: 0.8rem; opacity: 0.5; font-weight: 500; margin-bottom: 16px; display: block; letter-spacing: 0.5px;">
-            Atmospheric Sounds
+            ${t('dash_ambient_desc')}
           </span>
           <p style="font-size: 0.85rem; opacity: 0.7; line-height: 1.5; margin: 0; max-height: 110px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; font-weight: 300;">
-            ${t('lang') === 'tr' ? 'Zihninizi dinlendirmek, odaklanmak veya derin bir uykuya geçiş yapmak için tasarlanmış frekans ve doğal ses bütünlüğü.' : 'A fusion of natural acoustics and neural frequencies designed to soothe, focus, or guide you into sleep.'}
+            ${t('swipe_ambient_card_desc')}
           </p>
         </div>
         
