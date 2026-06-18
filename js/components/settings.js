@@ -199,13 +199,41 @@ export function initSettings(config) {
   });
 
   if (elements.langToggleBtn) {
-    elements.langToggleBtn.addEventListener('click', () => {
-      const nextLang = AppState.lang === 'tr' ? 'en' : 'tr';
-      safeSetItem('aura_lang', nextLang);
-      window.location.reload();
+    const langDropdownMenu = document.getElementById('langDropdownMenu');
+    
+    elements.langToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      vibrate('light');
+      if (langDropdownMenu) langDropdownMenu.classList.toggle('show');
     });
+
     const indicator = elements.langToggleBtn.querySelector('span');
     if (indicator) indicator.textContent = AppState.lang.toUpperCase();
+
+    if (langDropdownMenu) {
+      const activeItem = langDropdownMenu.querySelector(`.lang-dropdown-item[data-lang="${AppState.lang}"]`);
+      if (activeItem) activeItem.classList.add('active');
+
+      const dropdownItems = langDropdownMenu.querySelectorAll('.lang-dropdown-item');
+      dropdownItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          vibrate('light');
+          const selectedLang = item.getAttribute('data-lang');
+          if (selectedLang && selectedLang !== AppState.lang) {
+            safeSetItem('aura_lang', selectedLang);
+            window.location.reload();
+          } else {
+            langDropdownMenu.classList.remove('show');
+          }
+        });
+      });
+    }
+
+    // Close on click outside
+    document.addEventListener('click', () => {
+      if (langDropdownMenu) langDropdownMenu.classList.remove('show');
+    });
   }
 
   if (elements.auraCoreSphere) {
@@ -223,7 +251,8 @@ export function initSettings(config) {
 
   menuRows.forEach(row => {
     row.addEventListener('click', () => {
-      const targetId = `settings-subpage-${row.getAttribute('data-target')}`;
+      const target = row.getAttribute('data-target');
+      const targetId = `settings-subpage-${target}`;
       const targetPage = document.getElementById(targetId);
       if (targetPage) {
         vibrate('light');
@@ -231,6 +260,15 @@ export function initSettings(config) {
         // Hide main menu & ID Card with animation classes
         mainMenu?.classList.add('hidden');
         idCard?.classList.add('hidden');
+
+        // Update view header description text dynamically
+        const key = 'settings_sub_' + target;
+        const viewHeaderDesc = document.querySelector('#view-settings .view-header p');
+        if (viewHeaderDesc) {
+          viewHeaderDesc.setAttribute('data-i18n', key);
+          const trans = t(key);
+          viewHeaderDesc.textContent = trans ? trans.toLocaleLowerCase(AppState.lang) + '.' : '';
+        }
 
         // Show target page
         targetPage.classList.remove('hidden');
@@ -249,6 +287,14 @@ export function initSettings(config) {
       const activeSubpage = btn.closest('.settings-subpage');
       if (activeSubpage) {
         activeSubpage.classList.remove('active');
+        
+        // Restore view header description to original state
+        const viewHeaderDesc = document.querySelector('#view-settings .view-header p');
+        if (viewHeaderDesc) {
+          viewHeaderDesc.setAttribute('data-i18n', 'settings_desc');
+          viewHeaderDesc.textContent = t('settings_desc');
+        }
+
         setTimeout(() => {
           activeSubpage.classList.add('hidden');
           mainMenu?.classList.remove('hidden');
@@ -270,6 +316,13 @@ export function initSettings(config) {
           });
           mainMenu?.classList.remove('hidden');
           idCard?.classList.remove('hidden');
+
+          // Restore view header description to original state
+          const viewHeaderDesc = document.querySelector('#view-settings .view-header p');
+          if (viewHeaderDesc) {
+            viewHeaderDesc.setAttribute('data-i18n', 'settings_desc');
+            viewHeaderDesc.textContent = t('settings_desc');
+          }
         }
       }
     });
