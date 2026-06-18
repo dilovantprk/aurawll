@@ -377,7 +377,7 @@
 /* SETUP PHASE - Organic */
 .focus-setup-container {
   width: calc(100% - 2rem);
-  max-width: 480px;
+  max-width: 390px;
   margin: 0 auto;
   background: transparent;
   backdrop-filter: none;
@@ -480,7 +480,7 @@
 /* TODO V2 - Organic & Premium */
 .todo-container-v2 {
   width: calc(100% - 2rem);
-  max-width: 480px;
+  max-width: 390px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
