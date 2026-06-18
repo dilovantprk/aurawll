@@ -47,6 +47,7 @@ export class SwipeDeck {
     this.handleEnd = this.handleEnd.bind(this);
 
     this.eventsBound = false;
+    this.isSwiping = false;
   }
 
   /**
@@ -57,6 +58,7 @@ export class SwipeDeck {
     this.currentIndex = 0;
     this.container.innerHTML = '';
     this.cards = [];
+    this.isSwiping = false;
 
     if (this.items.length === 0) return;
 
@@ -170,7 +172,7 @@ export class SwipeDeck {
   }
 
   handleStart(e) {
-    if (this.isDragging || !this.topCard) return;
+    if (this.isDragging || !this.topCard || this.isSwiping) return;
 
     // Check if clicked/touched element is a button or interactive
     if (e.target.closest('button, a, input, select, textarea, .cockpit-info-btn, [data-no-swipe], .swipe-action-btn')) {
@@ -329,9 +331,12 @@ export class SwipeDeck {
       return;
     }
 
+    this.isSwiping = true; // Lock further interactions
+
     SensoryEngine.triggerHaptic('medium');
 
     const cardToDismiss = this.topCard;
+    cardToDismiss.style.pointerEvents = 'none'; // Prevent clicks during flight
     const exitX = isRight ? window.innerWidth + 100 : -window.innerWidth - 100;
     const rotate = isRight ? 25 : -25;
 
@@ -384,6 +389,8 @@ export class SwipeDeck {
       if (this.options.onCardChange && this.items.length > 0) {
         this.options.onCardChange(this.items[this.currentIndex]);
       }
+
+      this.isSwiping = false; // Unlock interactions
     }, 350);
   }
 }

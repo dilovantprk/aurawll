@@ -28,8 +28,8 @@ import { handleRedirectResult } from './js/services/auth.js';
 import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
 import { initSleep } from './js/components/sleep.js';
-import { initSwipeBreathing, startSwipeBreathingFlow } from './js/components/swipe-breathing.js';
-import { initSwipeAmbient, startSwipeAmbientFlow, stopSwipePreviewIfAny, syncMiniPlayerState } from './js/components/swipe-ambient.js';
+import { initSwipeBreathing, startSwipeBreathingFlow, destroySwipeBreathingFlow } from './js/components/swipe-breathing.js';
+import { initSwipeAmbient, startSwipeAmbientFlow, stopSwipePreviewIfAny, syncMiniPlayerState, destroySwipeAmbientFlow } from './js/components/swipe-ambient.js';
 import { initGlobalCursorEffect } from './js/core/cursor-effect.js';
 import { NotificationService } from './js/services/notifications.js';
 
@@ -89,6 +89,10 @@ export function navigateTo(viewId, skipHistory = false) {
   // Stop swipe audio preview if navigating away from Swipe Ambient view
   if (currentView && currentView.id === 'view-swipe-ambient') {
     stopSwipePreviewIfAny();
+    destroySwipeAmbientFlow();
+  }
+  if (currentView && currentView.id === 'view-swipe-breathing') {
+    destroySwipeBreathingFlow();
   }
   if (currentView && currentView.id === 'view-meditations') {
     stopMeditationBgAnimation();

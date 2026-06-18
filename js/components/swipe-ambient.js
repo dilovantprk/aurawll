@@ -508,6 +508,11 @@ export function initSwipeAmbient(config) {
 }
 
 export function startSwipeAmbientFlow() {
+  if (deckInstance) {
+    deckInstance.destroy();
+    deckInstance = null;
+  }
+
   const container = document.getElementById('swipeAmbientDeck');
   if (!container) return;
 
@@ -922,6 +927,13 @@ export function syncMiniPlayerState() {
     miniPlayer.classList.add('hidden');
     if (navContainer) navContainer.classList.remove('has-mini-player');
     if (mobileNav) mobileNav.classList.remove('has-mini-player-active');
+  }
+}
+
+export function destroySwipeAmbientFlow() {
+  if (deckInstance) {
+    deckInstance.destroy();
+    deckInstance = null;
   }
 }
 

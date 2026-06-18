@@ -150,15 +150,33 @@
   }
 }
 
+/* Center the swipe views vertically in the viewport */
+#view-swipe-breathing .standard-view-content,
+#view-swipe-ambient .standard-view-content {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  box-sizing: border-box !important;
+  padding: 6.5rem 1.5rem !important;
+}
+
+#view-swipe-breathing .embedded-swipe-section,
+#view-swipe-ambient .embedded-swipe-section {
+  margin: 0 auto !important;
+}
+
 @media (max-width: 600px) {
   .swipe-view-title {
     display: none !important;
   }
   #view-swipe-breathing .standard-view-content,
   #view-swipe-ambient .standard-view-content {
-    padding-top: 3.8rem !important;
+    padding: 5.5rem 1rem !important;
   }
   .embedded-swipe-section {
-    margin-bottom: 1rem !important;
+    margin-bottom: 0 !important;
   }
 }

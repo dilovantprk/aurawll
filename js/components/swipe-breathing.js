@@ -21,6 +21,11 @@ export function initSwipeBreathing(config) {
 }
 
 export function startSwipeBreathingFlow() {
+  if (deckInstance) {
+    deckInstance.destroy();
+    deckInstance = null;
+  }
+
   const container = document.getElementById('swipeBreathingDeck');
   if (!container) return;
 
@@ -121,4 +126,11 @@ export function startSwipeBreathingFlow() {
   });
 
   deckInstance.init(shuffledItems);
+}
+
+export function destroySwipeBreathingFlow() {
+  if (deckInstance) {
+    deckInstance.destroy();
+    deckInstance = null;
+  }
 }
