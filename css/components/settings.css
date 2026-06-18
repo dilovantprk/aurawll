@@ -883,3 +883,8 @@
   background: rgba(133, 141, 255, 0.08);
   font-weight: 600;
 }
+
+#view-settings .view-header p {
+  padding-left: 4rem !important;
+  padding-right: 4rem !important;
+}
