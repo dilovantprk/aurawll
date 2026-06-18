@@ -2,6 +2,8 @@
 .dashboard-content { width: 100%; }
 .notebook-content {
   width: 100%;
+  max-width: 390px !important;
+  margin: 0 auto !important;
 }
 
 .notebook-entries {
@@ -477,6 +479,8 @@
     flex-direction: column;
     align-items: center; /* Force horizontal centering for children */
     width: 100%;
+    max-width: 850px !important;
+    margin: 0 auto !important;
     padding: 0 2rem;
   }
 
