@@ -791,7 +791,7 @@
 .settings-back-btn {
   position: absolute;
   top: -3.8rem;
-  left: 0.5rem;
+  left: 1.2rem;
   z-index: 100;
   width: 36px;
   height: 36px;
@@ -811,7 +811,7 @@
 @media (max-width: 600px) {
   .settings-back-btn {
     top: -3.5rem;
-    left: 0.2rem;
+    left: 0.8rem;
   }
 }
 
