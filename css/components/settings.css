@@ -601,7 +601,7 @@
 /* --- DESKTOP REFINEMENTS FOR SETTINGS (768px+) --- */
 @media (min-width: 768px) {
   #view-settings .standard-view-content {
-    max-width: 620px;
+    max-width: 520px;
     margin: 0 auto !important;
     display: flex;
     flex-direction: column;

@@ -353,8 +353,8 @@
   .module-market-grid {
     flex-direction: row;
     overflow-x: auto;
-    margin: 0 -1rem;
-    padding: 0 1rem 2rem;
+    margin: 0 !important; /* negatif margin'i sıfırla */
+    padding: 0 0 2rem;
     gap: 1.2rem;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
@@ -365,9 +365,9 @@
   }
 
   .market-card {
-    min-width: 320px; /* Sized to fit nicely in the 520px column with a peek of the next card */
-    max-width: 320px;
-    scroll-snap-align: center;
+    min-width: 240px; /* 520px wrapper'da peek efekti için */
+    max-width: 240px;
+    scroll-snap-align: start;
   }
 
   .market-preview-box {
@@ -552,9 +552,11 @@
 /* === MODULE MARKET === */
 .module-market-wrapper {
   width: 100%;
-  margin-top: 4rem;
+  max-width: 520px;
+  margin: 4rem auto 0;
   padding-top: 2rem;
   position: relative;
+  overflow: hidden;
 }
 
 .module-market-header {
@@ -602,12 +604,12 @@
   display: flex;
   overflow-x: auto;
   gap: 1.2rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 0;
   padding-bottom: 2rem;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  margin: 0 -1.5rem; /* Offset padding for full width feel */
+  scrollbar-width: none;
+  margin: 0;
 }
 
 .module-market-grid::-webkit-scrollbar {

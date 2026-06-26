@@ -844,8 +844,8 @@ export const locales = {
 
   tr: {
     // Navigation Bar
-    "nav_home": "Ana Sayfa",
-    "nav_dashboard": "Ana Sayfa",
+    "nav_home": "Anasayfa",
+    "nav_dashboard": "Anasayfa",
     "nav_breathe": "Nefes",
     "nav_meditations": "Meditasyon",
     "nav_notebook": "Notlar",

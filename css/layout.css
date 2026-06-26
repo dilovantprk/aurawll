@@ -115,6 +115,28 @@
   max-width: 520px; 
 }
 
+@media (min-width: 768px) {
+  #view-meditations .standard-view-content,
+  #view-ambient .standard-view-content,
+  #view-notebook .standard-view-content,
+  #view-settings .standard-view-content {
+    max-width: 520px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #view-meditations .standard-view-content,
+  #view-ambient .standard-view-content,
+  #view-notebook .standard-view-content,
+  #view-settings .standard-view-content {
+    max-width: 520px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
 .dash-main {
   display: flex;
   flex-direction: column;
@@ -220,6 +242,7 @@
   display: flex;
   align-items: center;
   gap: 1.5rem; /* Slightly tighter gap */
+  min-width: 520px;
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3), 
               inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
@@ -239,6 +262,8 @@
   position: relative;
   gap: 0.5rem; /* Increased gap */
   align-items: center;
+  flex: 1;
+  justify-content: center;
 }
 
 .desktop-links .nav-item {
@@ -249,13 +274,14 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.5rem 1.2rem; /* Thinner touch/click area */
+  padding: 0.5rem 1.2rem;
   color: rgba(255, 255, 255, 0.45);
-  font-size: 0.95rem; /* Slightly smaller font */
+  font-size: 0.95rem;
   font-weight: 400;
   cursor: pointer;
   transition: all 0.4s var(--spring-easing);
   border-radius: 100px;
+  white-space: nowrap;
 }
 
 .desktop-links .nav-item:hover {

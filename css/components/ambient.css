@@ -11,15 +11,8 @@
     gap: 0.75rem;
     padding: 0 0 8rem;
     width: 100%;
-    max-width: 900px;
+    max-width: 100%;
     margin: 0 auto;
-}
-
-@media (min-width: 1024px) {
-    .ambient-grid-v2 {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.2rem;
-    }
 }
 
 /* ── Card Base ── */
@@ -47,12 +40,6 @@
     border-color: rgba(168, 230, 207, 0.3);
     box-shadow: 0 0 0 1px rgba(168, 230, 207, 0.15),
                 0 8px 32px rgba(0, 0, 0, 0.35);
-}
-
-@media (min-width: 1024px) {
-    .ambient-card-v2.liquid-glass {
-        min-height: 130px;
-    }
 }
 
 /* ── Psychedelic Liquid Wave (active glow) ── */
@@ -203,21 +190,6 @@
 .play-hold-btn .pause-icon { display: none; }
 .ambient-card-v2.active .play-hold-btn .play-icon  { display: none; }
 .ambient-card-v2.active .play-hold-btn .pause-icon { display: block; }
-
-/* ── Desktop tweaks ── */
-@media (min-width: 1024px) {
-    .card-tag-v2   { font-size: 0.6rem; }
-    .card-title-v2 { font-size: 1.1rem; }
-    .ambient-card-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 12px;
-    }
-    .ambient-card-icon svg {
-        width: 18px;
-        height: 18px;
-    }
-}
 
 /* ── SVG Wave Visualizer ── */
 .ambient-wave-vis {

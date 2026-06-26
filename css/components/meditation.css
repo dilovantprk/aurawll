@@ -226,17 +226,6 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* --- DESKTOP --- */
-@media (min-width: 768px) {
-  .meditation-card {
-    flex-direction: row;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.2rem 1.8rem;
-    min-height: auto;
-  }
-}
-
 /* --- QUICK ACTION CARD (SADECE 1 DAKIKA & AMBIYANS KESFI) --- */
 .quick-action-card-premium {
   width: 100%;
