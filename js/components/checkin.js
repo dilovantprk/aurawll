@@ -3,7 +3,7 @@ import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { SOMATIC_MAP, EMOTION_OPTIONS, protocols, subEmotionMap, stateLegacyMap, PROTOCOL_META, EMOTION_PROTOCOL_MAP } from '../core/constants.js';
 import { vibrate } from '../core/utils.js';
-import { PPGEngine } from '../services/ppg-engine.js';
+
 
 let configProps = {
   navigateTo: null,
@@ -44,165 +44,16 @@ export function initCheckin(config) {
         timestamp: null 
       };
       
-      renderPPG();
+      if (isMorningCheckin()) {
+        renderMorningCheckin();
+      } else {
+        renderSomaticEntry();
+      }
     });
   }
 }
 
-export function renderPPG() {
-  if (configProps.navigateTo) configProps.navigateTo('view-ppg');
-  setHUD('skip', () => {
-    cleanupPPG();
-    proceedFromPPG();
-  });
 
-  const ppgCircle = document.getElementById('ppgCircle');
-  const ppgStatus = document.getElementById('ppgStatus');
-  const ppgProgressFill = document.getElementById('ppgProgressFill');
-  const ppgResults = document.getElementById('ppgResults');
-  const ppgBPM = document.getElementById('ppgBPM');
-  const ppgHRV = document.getElementById('ppgHRV');
-  const ppgVideo = document.getElementById('ppgVideo');
-  const ppgCanvas = document.getElementById('ppgCanvas');
-  const ppgGraph = document.getElementById('ppgGraph');
-
-  // Reset UI
-  if (ppgProgressFill) ppgProgressFill.style.width = '0%';
-  if (ppgResults) ppgResults.classList.add('hidden');
-  if (ppgBPM) ppgBPM.textContent = '--';
-  if (ppgHRV) ppgHRV.textContent = '--';
-  if (ppgStatus) {
-    ppgStatus.textContent = t('ppg_status_start');
-    ppgStatus.setAttribute('data-i18n', 'ppg_status_start');
-  }
-  if (ppgCircle) {
-    ppgCircle.className = 'ppg-circle';
-  }
-
-  // Waveform graph setup
-  const graphCtx = ppgGraph ? ppgGraph.getContext('2d') : null;
-  const points = [];
-
-  const drawGraph = (val) => {
-    if (!graphCtx || !ppgGraph) return;
-    points.push(val);
-    if (points.length > 80) points.shift();
-
-    graphCtx.clearRect(0, 0, ppgGraph.width, ppgGraph.height);
-    graphCtx.beginPath();
-    
-    const stateColor = AppState.lastCheckInState === 'okay' ? '#22c55e' : 
-                       AppState.lastCheckInState === 'wired' ? '#fbbf24' : '#3b82f6';
-    graphCtx.strokeStyle = stateColor;
-    graphCtx.lineWidth = 3;
-    graphCtx.lineCap = 'round';
-    graphCtx.lineJoin = 'round';
-
-    for (let i = 0; i < points.length; i++) {
-      const x = (i / 80) * ppgGraph.width;
-      const y = (ppgGraph.height / 2) - (points[i] * 2);
-      if (i === 0) graphCtx.moveTo(x, y);
-      else graphCtx.lineTo(x, y);
-    }
-    graphCtx.stroke();
-  };
-
-  const startEngine = async () => {
-    try {
-      await PPGEngine.start(ppgVideo, ppgCanvas);
-    } catch (err) {
-      console.warn("PPG Engine start failed", err);
-      if (ppgStatus) {
-        ppgStatus.textContent = t('ppg_status_failed');
-        ppgStatus.setAttribute('data-i18n', 'ppg_status_failed');
-      }
-    }
-  };
-
-  if (ppgCircle) {
-    ppgCircle.onclick = () => {
-      vibrate('light');
-      startEngine();
-    };
-  }
-
-  // Set up callbacks
-  PPGEngine.onFingerStatusChange = (status) => {
-    if (ppgStatus) {
-      if (status === 'detecting') {
-        ppgStatus.textContent = t('ppg_status_detecting');
-        ppgStatus.setAttribute('data-i18n', 'ppg_status_detecting');
-        ppgCircle.className = 'ppg-circle detecting';
-      } else if (status === 'measuring') {
-        ppgStatus.textContent = t('ppg_status_measuring').replace('{progress}', '0');
-        ppgCircle.className = 'ppg-circle measuring';
-      } else if (status === 'success') {
-        vibrate('success');
-        ppgStatus.textContent = t('ppg_status_success');
-        ppgStatus.setAttribute('data-i18n', 'ppg_status_success');
-        ppgCircle.className = 'ppg-circle success';
-        setTimeout(() => {
-          proceedFromPPG();
-        }, 2500);
-      } else if (status === 'no_finger') {
-        ppgStatus.textContent = t('ppg_status_no_finger');
-        ppgStatus.setAttribute('data-i18n', 'ppg_status_no_finger');
-        ppgCircle.className = 'ppg-circle';
-        if (ppgProgressFill) ppgProgressFill.style.width = '0%';
-      } else if (status === 'failed') {
-        vibrate('error');
-        ppgStatus.textContent = t('ppg_status_failed');
-        ppgStatus.setAttribute('data-i18n', 'ppg_status_failed');
-        ppgCircle.className = 'ppg-circle failed';
-      }
-    }
-  };
-
-  PPGEngine.onProgress = (pct) => {
-    if (ppgProgressFill) ppgProgressFill.style.width = `${pct}%`;
-    if (ppgStatus && PPGEngine.isMeasuring) {
-      ppgStatus.textContent = t('ppg_status_measuring').replace('{progress}', pct);
-    }
-  };
-
-  PPGEngine.onPulse = (val) => {
-    drawGraph(val);
-    if (ppgCircle && Math.abs(val) > 3) {
-      ppgCircle.classList.add('pulse');
-      setTimeout(() => ppgCircle.classList.remove('pulse'), 150);
-    }
-  };
-
-  PPGEngine.onComplete = ({ bpm, rmssd }) => {
-    AppState.currentCheckIn.hr = bpm;
-    AppState.currentCheckIn.hrv = rmssd;
-
-    if (ppgBPM) ppgBPM.textContent = bpm;
-    if (ppgHRV) ppgHRV.textContent = rmssd;
-    if (ppgResults) ppgResults.classList.remove('hidden');
-  };
-
-  setTimeout(() => {
-    startEngine();
-  }, 800);
-}
-
-function cleanupPPG() {
-  PPGEngine.stop();
-  PPGEngine.onFingerStatusChange = null;
-  PPGEngine.onProgress = null;
-  PPGEngine.onPulse = null;
-  PPGEngine.onComplete = null;
-}
-
-function proceedFromPPG() {
-  cleanupPPG();
-  if (isMorningCheckin()) {
-    renderMorningCheckin();
-  } else {
-    renderSomaticEntry();
-  }
-}
 
 function isMorningCheckin() {
   const now = new Date();

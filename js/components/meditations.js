@@ -210,12 +210,7 @@ function animateOrbs() {
 }
 
 export function startMeditationBgAnimation() {
-  if (!canvas) {
-    initCanvasVisualizer();
-  }
-  if (!animationFrameId) {
-    animateOrbs();
-  }
+  // Disabled: Nefes page background has been matched with homepage (using global #aura-background)
 }
 
 export function stopMeditationBgAnimation() {

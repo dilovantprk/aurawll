@@ -150,22 +150,16 @@ function finishGuidedScan() {
   const savoringHeader = document.querySelector('#view-savoring .step-header');
   if (savoringHeader) savoringHeader.classList.remove('hidden');
 
-  // Phase 1: Meditative Intro
-  [elements.marPhaseScan, elements.marPhaseOffer, elements.marPhase2, elements.marPhase3].forEach(p => p?.classList.add('hidden'));
-  elements.marPhase1.classList.remove('hidden');
-  elements.marPhase1.classList.add('fade-in');
+  // Immediately show Sensation Selection (Phase 2)
+  [elements.marPhase1, elements.marPhaseScan, elements.marPhaseOffer, elements.marPhase3].forEach(p => p?.classList.add('hidden'));
+  elements.marPhase2.classList.remove('hidden');
+  elements.marPhase2.classList.add('fade-in-pure');
 
   // Step 5 Indicator
   const stepInd = document.getElementById('savoringStepIndicator');
   if (stepInd) { stepInd.textContent = t('step_5'); stepInd.setAttribute('data-i18n', 'step_5'); }
 
-  // Phase 2: Show Options after 20 seconds
-  setTimeout(() => {
-    elements.marPhase1.classList.add('hidden');
-    elements.marPhase2.classList.remove('hidden');
-    elements.marPhase2.classList.add('fade-in-pure');
-    renderMarinationSensations();
-  }, 20000);
+  renderMarinationSensations();
 }
 
 function renderMarinationSensations() {
@@ -180,17 +174,10 @@ function renderMarinationSensations() {
   
   const state = AppState.currentCheckIn.polyvagal_state || 'ventral';
   
-  container.innerHTML = sensations.map(s => {
-    // Organic Randomization
-    const speed = 6 + Math.random() * 4;
-    const delay = -(Math.random() * 5);
-    const mx = 5 + Math.random() * 10;
-    const my = -(5 + Math.random() * 10);
-    
+  container.innerHTML = sensations.map((s, index) => {
+    const delay = index * 100; // 100ms stagger delay
     return `
-      <button class="rhizome-chip ${state}" data-id="${s.id}" 
-              style="--speed: ${speed}s; --delay: ${delay}s; --mx: ${mx}px; --my: ${my}px; --mx2: -${mx}px; --my2: ${-my}px;">
-        <div class="liquid-wave" style="--speed: ${speed * 0.8}s"></div>
+      <button class="rhizome-chip ${state} chip-fade-in" data-id="${s.id}" style="animation-delay: ${delay}ms;">
         <span>${t(s.id)}</span>
       </button>
     `;

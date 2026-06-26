@@ -22,6 +22,8 @@ export const locales = {
     "cat_calm": "Calm",
     "cat_focus": "Focus",
     "cat_energize": "Energize",
+    "cat_nature": "Nature",
+    "cat_peace": "Peace",
 
     // Protocol Benefits
     "benefit_478": "Reduces anxiety",
@@ -57,6 +59,12 @@ export const locales = {
     "notebook_empty": "No entries yet. Complete a check-in to start your journal.",
     "notebook_today": "Today",
     "notebook_yesterday": "Yesterday",
+    "notebook_read_more": "Read More",
+    "article_view_title": "Journal Entry",
+    "journal_quick_note": "Quick Note",
+    "journal_quick_note_desc": "Write down what's on your mind",
+    "journal_article": "Somatic Journaling",
+    "journal_article_desc": "The science behind writing",
     "time_now": "Just now",
     "time_just_now": "Just now",
     "time_mins_ago": "mins ago",
@@ -857,6 +865,8 @@ export const locales = {
     "cat_calm": "Sakinleş",
     "cat_focus": "Odaklan",
     "cat_energize": "Canlan",
+    "cat_nature": "Doğa",
+    "cat_peace": "Huzur",
 
     // Protocol Benefits
     "benefit_478": "Kaygıyı azaltır",
@@ -892,6 +902,12 @@ export const locales = {
     "notebook_empty": "Henüz kayıt yok. Günlüğünü başlatmak için bir durum kontrolü tamamla.",
     "notebook_today": "Bugün",
     "notebook_yesterday": "Dün",
+    "notebook_read_more": "Devamını Oku",
+    "article_view_title": "Günlük Notu",
+    "journal_quick_note": "Hızlı Not",
+    "journal_quick_note_desc": "Aklındakileri kaydet",
+    "journal_article": "Beden Günlüğü",
+    "journal_article_desc": "Yazmanın bilimsel temeli",
     "time_now": "Şimdi",
     "time_just_now": "Az önce",
     "time_mins_ago": "dk önce",

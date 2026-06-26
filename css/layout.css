@@ -553,31 +553,56 @@ body.has-nav .dashboard-content {
 
 .header-island {
   pointer-events: auto;
-  width: calc(100% - 2rem); /* Slightly narrower than cards (1rem each side) */
+  width: calc(100% - 2rem);
   height: calc(64px + env(safe-area-inset-top, 20px));
-  /* Physical Crystal Gradient */
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
-  backdrop-filter: blur(15px) saturate(180%);
-  -webkit-backdrop-filter: blur(15px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top: 1.5px solid rgba(255, 255, 255, 0.45); 
+
+  /* Glass base — subtle tint so it's never blank during WebGL load */
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.10) 0%,
+    rgba(180,190,255,0.06) 40%,
+    rgba(255,255,255,0.05) 100%
+  );
+
+  /* backdrop-filter: acts as CSS fallback AND layered on top of WebGL canvas */
+  backdrop-filter: blur(28px) saturate(220%) brightness(1.12);
+  -webkit-backdrop-filter: blur(28px) saturate(220%) brightness(1.12);
+
+  /* Crystal chrome edges */
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.65);
   border-radius: 0 0 32px 32px;
+
   padding: calc(0.7rem + env(safe-area-inset-top, 20px)) 1.5rem 0.9rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.3),
-    inset 0 1px 2px rgba(255, 255, 255, 0.15);
   justify-content: space-between;
-  
+
+  /* Deep shadow + top inner glow */
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    inset 1px 0 0 rgba(255, 255, 255, 0.10),
+    inset -1px 0 0 rgba(255, 255, 255, 0.10);
+
   transition: transform 0.5s var(--spring-easing), opacity 0.4s ease;
   will-change: transform, opacity;
-  contain: paint;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Ensure all direct children of header-island sit above the WebGL canvas (z-index 0) */
+.header-island > *:not(canvas) {
+  position: relative;
+  z-index: 1;
 }
 
 .header-island .logo {
-  font-weight: 600; /* Reverted to more balanced branding */
+  font-weight: 600;
   font-size: 1.35rem;
   letter-spacing: -0.6px;
   display: flex;
@@ -585,7 +610,7 @@ body.has-nav .dashboard-content {
 }
 
 #active-tab-name {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-family);
   font-size: 1.1rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
@@ -639,3 +664,139 @@ body.nav-hidden .desktop-header-nav {
   pointer-events: none !important;
   visibility: hidden !important;
 }
+
+/* === GLOBAL HEADER BACK BUTTON — Liquid Glass Droplet === */
+/* Teardrop hangs from header-island bottom edge — no stem, seamless merge */
+.header-back-btn {
+  position: absolute;
+  bottom: -1px;
+  left: 1.5rem;
+  z-index: 10;
+
+  /* Teardrop: flat top merges with header, round bottom */
+  width: 40px;
+  height: 44px;
+  padding: 0;
+  padding-top: 4px;
+  margin: 0;
+
+  /* === LIQUID GLASS MODE ===
+     WebGL canvas fills the background; CSS provides chrome. */
+  /* Glass base tint */
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.12) 0%,
+    rgba(200,210,255,0.06) 50%,
+    rgba(255,255,255,0.05) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-top: none;
+  border-radius: 10px 10px 50% 50% / 8px 8px 50% 50%;
+  backdrop-filter: blur(24px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(1.10);
+  overflow: hidden;
+  isolation: isolate;
+
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  /* Hidden by default */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(15%) scaleY(0);
+  transform-origin: top center;
+  pointer-events: none;
+
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.3s ease,
+    visibility 0s 0.3s;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.04);
+}
+
+/* Ensure SVG sits above WebGL canvas */
+.header-back-btn > *:not(canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Crystal highlight — light catch on glass surface */
+.header-back-btn::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45%;
+  height: 30%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Visible — droplet drips down from header */
+.header-back-btn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(65%) scaleY(1);
+  pointer-events: auto;
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.3s ease,
+    visibility 0s 0s;
+}
+
+/* Hover */
+.header-back-btn.show:hover {
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.15),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.04),
+    0 0 12px rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.header-back-btn.show:active {
+  transform: translateY(65%) scale(0.93);
+  transition-duration: 0.1s;
+}
+
+.header-back-btn svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.header-back-btn:hover svg {
+  transform: translateX(-1.5px);
+}
+
+/* Hide ALL inline subpage back buttons on mobile — global droplet handles it */
+@media (max-width: 1023px) {
+  .settings-subpage .settings-back-btn,
+  .notebook-subpage .back-circle-btn {
+    display: none !important;
+  }
+}
+
+/* Hide global droplet back button on desktop — inline subpage back buttons handle it */
+@media (min-width: 1024px) {
+  .header-back-btn {
+    display: none !important;
+  }
+}
+

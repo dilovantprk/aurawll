@@ -60,7 +60,7 @@ export function startSwipeBreathingFlow() {
         <!-- TOP: Category tag & Duration -->
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px;">
           <span class="card-tag-v2" style="background: rgba(255, 255, 255, 0.05); padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; text-transform: uppercase; border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.65); font-weight: 600; letter-spacing: 1px;">
-            ${item.category}
+            ${t('cat_' + item.category.toLowerCase())}
           </span>
           <span style="font-size: 0.75rem; opacity: 0.55; font-weight: 500; letter-spacing: 0.5px;">
             ${mins} ${t('meditations_duration')}
@@ -91,7 +91,7 @@ export function startSwipeBreathingFlow() {
           
           <!-- Elegant action pill button -->
           <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; padding: 6px 16px; font-size: 0.75rem; font-weight: 600; color: #fff; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); cursor: pointer;">
-            <span>${t('lang') === 'tr' ? 'BAŞLA' : 'START'}</span>
+            <span>${t('btn_start_badge').toUpperCase()}</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </div>
         </div>

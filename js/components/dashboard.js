@@ -16,6 +16,8 @@ let configProps = {
 export function initDashboard(config) {
   Object.assign(configProps, config);
 
+  window.addEventListener('aura-history-updated', loadDashboard);
+
   // Quick Interventions: Sadece 1 Dakika (SOS Breathing)
   const sosBtn = document.getElementById('sosBreathingBtn');
   if (sosBtn) {
@@ -40,81 +42,15 @@ export function initDashboard(config) {
 
   // Quick Interventions: Hızlı Günlük (Custom Action 2)
   const custom2Btn = document.getElementById('customAction2Btn');
-  const journalModal = document.getElementById('quickJournalModal');
-  const journalInput = document.getElementById('quickJournalInput');
-  
-  if (custom2Btn && journalModal && journalInput) {
+  if (custom2Btn) {
     custom2Btn.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
-      journalInput.value = '';
-      journalModal.classList.add('active');
-      setTimeout(() => journalInput.focus(), 150);
-    });
-  }
-
-  // Quick Journal Modals Buttons
-  const closeJournalBtn = document.getElementById('closeQuickJournalBtn');
-  const cancelJournalBtn = document.getElementById('cancelQuickJournalBtn');
-  const saveJournalBtn = document.getElementById('saveQuickJournalBtn');
-
-  if (journalModal) {
-    const closeOverlay = () => {
-      window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}));
-      journalModal.classList.remove('active');
-    };
-
-    closeJournalBtn?.addEventListener('click', closeOverlay);
-    cancelJournalBtn?.addEventListener('click', closeOverlay);
-    
-    // Click outside to close
-    journalModal.addEventListener('click', (e) => {
-      if (e.target === journalModal) {
-        closeOverlay();
-      }
-    });
-
-    saveJournalBtn?.addEventListener('click', () => {
-      const text = journalInput.value.trim();
-      if (text) {
-        const entry = {
-          state: 'okay', 
-          polyvagal_state: 'ventral',
-          pre_arousal: 5,
-          pre_valence: 5,
-          somatic_selections: [],
-          selected_emotions: [],
-          subEmotion: 'se_neutral', 
-          customEmotion: AppState.lang === 'tr' ? 'Hızlı Günlük' : 'Quick Journal', 
-          sensations: [],
-          savoringText: text,
-          timestamp: Date.now()
-        };
-        
-        // Save locally
-        if (!AppState.mockHistory) AppState.mockHistory = [];
-        AppState.mockHistory.unshift(entry);
-        localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
-
-        // Save to cloud in background if authenticated
-        const fb = configProps.fb;
-        if (fb && fb.isInitialized && AppState.user && !AppState.user.guest) {
-          (async () => {
-            try {
-              await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...entry });
-            } catch(e) {
-              console.warn("Quick journal cloud save failed", e);
-            }
-          })();
-        }
-        
-        journalInput.value = '';
-        journalModal.classList.remove('active');
-        window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'medium'}));
-        
-        // Reload dashboard history instantly
-        loadDashboard();
-      } else {
-        journalModal.classList.remove('active');
+      if (configProps.navigateTo) {
+        configProps.navigateTo('view-notebook');
+        // Let notebook open the write subpage
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('aura-open-write-notebook'));
+        }, 100);
       }
     });
   }
@@ -163,7 +99,7 @@ export async function loadDashboard() {
     renderDashboardComponents(AppState.userHistory);
     // If cache is fresh (< 2 mins), skip the fetch
     if (Date.now() - AppState.lastHistoryFetch < 120000) return;
-  } else if (!elements.historyList.querySelector('.stat-card, .history-item')) {
+  } else if (elements.historyList && !elements.historyList.querySelector('.stat-card, .history-item')) {
     // Only show skeleton if NO data is present to avoid flickering on re-visit
     elements.historyList.innerHTML = `
       <div class="skeleton-card skeleton" style="margin-bottom: 1rem;"></div>
@@ -363,6 +299,7 @@ function handleModuleAction(modId) {
 }
 
 export function renderHistory(data) {
+  if (!elements.historyList) return;
   const historySection = elements.historyList.closest('.history-section');
   if (data.length === 0) {
     historySection?.classList.add('hidden');

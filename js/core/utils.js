@@ -123,12 +123,12 @@ export function syncGlobalTheme() {
   
   // High-fidelity color mapping
   const colors = {
-    okay: { rgb: '100, 228, 159', hex: '#64E49F' },
-    ventral: { rgb: '100, 228, 159', hex: '#64E49F' },
-    wired: { rgb: '251, 160, 68', hex: '#FBA044' },
-    sympathetic: { rgb: '251, 160, 68', hex: '#FBA044' },
-    foggy: { rgb: '98, 164, 255', hex: '#62A4FF' },
-    dorsal: { rgb: '98, 164, 255', hex: '#62A4FF' }
+    okay: { rgb: '125, 145, 123', hex: '#7d917b' },
+    ventral: { rgb: '125, 145, 123', hex: '#7d917b' },
+    wired: { rgb: '196, 139, 113', hex: '#c48b71' },
+    sympathetic: { rgb: '196, 139, 113', hex: '#c48b71' },
+    foggy: { rgb: '109, 127, 148', hex: '#6d7f94' },
+    dorsal: { rgb: '109, 127, 148', hex: '#6d7f94' }
   };
   
   const theme = colors[state] || { rgb: '133, 141, 255', hex: '#858DFF' };

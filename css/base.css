@@ -8,35 +8,35 @@
 
 :root {
   /* High-Fidelity Neural Cockpit v5.0 Palette */
-  --bg-primary: #050508;
-  --bg-secondary: #0a0a0f;
-  --bg-tertiary: #111116;
+  --bg-primary: #090a0d;
+  --bg-secondary: #0e1013;
+  --bg-tertiary: #14171c;
 
-  --text-main: #E0E4EC;
-  --text-muted: #8E96A4;
+  --text-main: #E2E8F0;
+  --text-muted: #707A8A;
 
-  --accent-wired: #FBA044;
-  --accent-foggy: #62A4FF;
-  --accent-okay: #64E49F;
-  --accent-primary: #858DFF;
-  --accent-primary-hover: #98A0FF;
+  --accent-wired: #c48b71;
+  --accent-foggy: #6d7f94;
+  --accent-okay: #7d917b;
+  --accent-primary: #86899c;
+  --accent-primary-hover: #9ca0b5;
 
   --error: #FF6B6B;
 
-  --glass-bg: rgba(10, 12, 18, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(13, 15, 22, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.07);
 
-  --vagal-ventral-rgb: 16, 185, 129;
-  --vagal-symp-rgb: 245, 158, 11;
-  --vagal-dorsal-rgb: 59, 130, 246;
-  --vagal-accent-rgb: 133, 141, 255;
+  --vagal-ventral-rgb: 125, 145, 123;
+  --vagal-symp-rgb: 196, 139, 113;
+  --vagal-dorsal-rgb: 109, 127, 148;
+  --vagal-accent-rgb: 134, 137, 156;
 
   --spring-easing: cubic-bezier(0.16, 1, 0.3, 1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
   --glass-blur: blur(45px) saturate(160%);
 
   /* Typography - Fluid */
-  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --typography-h1: clamp(1.8rem, 6vw, 2.5rem);
   --typography-h2: clamp(1.2rem, 4.5vw, 1.6rem);
   --typography-body: clamp(0.9rem, 3.5vw, 1.05rem);
@@ -99,16 +99,16 @@ body {
   /* Neural Cockpit v6.0 Triple-Layer Dynamic Bio-Gradient */
   background-image:
     radial-gradient(circle at var(--vagal-x, 50%) var(--vagal-y, 40%),
-      rgba(var(--vagal-color-rgb, var(--vagal-accent-rgb)), calc(var(--bg-brightness, 1) * 0.65)) 0%,
-      transparent 70%),
+      rgba(var(--vagal-color-rgb, var(--vagal-accent-rgb)), calc(var(--bg-brightness, 1) * 0.22)) 0%,
+      transparent 90%),
     radial-gradient(circle at 85% 15%,
-      rgba(var(--vagal-ventral-rgb), 0.18) 0%,
-      transparent 50%),
+      rgba(var(--vagal-ventral-rgb), 0.08) 0%,
+      transparent 60%),
     radial-gradient(circle at 15% 85%,
-      rgba(var(--vagal-dorsal-rgb), 0.18) 0%,
-      transparent 50%);
+      rgba(var(--vagal-dorsal-rgb), 0.08) 0%,
+      transparent 60%);
   background-attachment: fixed;
-  transition: background 2.5s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: background 3.5s cubic-bezier(0.16, 1, 0.3, 1),
     --bg-brightness var(--breath-duration, 2.5s) ease-in-out,
     transform var(--breath-duration, 2.5s) cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(var(--breath-scale, 1.02));
@@ -240,7 +240,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1.2px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.15));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.05));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -456,18 +456,41 @@ button {
 }
 
 .glass-btn {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  /* Subtle tint base — visible even before WebGL loads */
+  background: linear-gradient(
+    150deg,
+    rgba(255,255,255,0.12) 0%,
+    rgba(200,210,255,0.06) 50%,
+    rgba(255,255,255,0.06) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: var(--text-main);
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: blur(24px) saturate(200%) brightness(1.10);
+  -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(1.10);
   transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.40),
+    inset 0 -1px 0 rgba(255,255,255,0.06);
+}
+
+/* Ensure SVG icons sit above WebGL canvas */
+.glass-btn > *:not(canvas) {
+  position: relative;
+  z-index: 1;
 }
 
 .glass-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.40);
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.40),
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -1px 0 rgba(255,255,255,0.08);
 }
 
 .glass-btn:active {

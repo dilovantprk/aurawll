@@ -378,17 +378,17 @@ function renderPersonalStats(history = []) {
   elements.personalStatsGrid.innerHTML = `
     <div class="stat-card">
       <div class="stat-label">${t('vagal_ventral')}</div>
-      <div class="stat-value" style="color: #64E49F;">${stats.okay}</div>
+      <div class="stat-value" style="color: #7d917b;">${stats.okay}</div>
       <div class="stat-sub">${t('stat_ventral_desc')}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">${t('vagal_symp')}</div>
-      <div class="stat-value" style="color: #FBA044;">${stats.wired}</div>
+      <div class="stat-value" style="color: #c48b71;">${stats.wired}</div>
       <div class="stat-sub">${t('stat_symp_desc')}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">${t('vagal_dorsal')}</div>
-      <div class="stat-value" style="color: #62A4FF;">${stats.foggy}</div>
+      <div class="stat-value" style="color: #6d7f94;">${stats.foggy}</div>
       <div class="stat-sub">${t('stat_dorsal_desc')}</div>
     </div>
     <div class="stat-card">

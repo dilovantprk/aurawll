@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
-  <link rel="stylesheet" href="style.css?v=64">
+  <link rel="stylesheet" href="style.css?v=65">
 </head>
 
 <body>
@@ -47,7 +47,7 @@
     <!-- Top Header Navigation (Glass Island Design) -->
     <header id="mobile-header" class="fade-in-pure hidden">
       <div class="header-island">
-        <div class="logo">Aura. <span id="active-tab-name"></span></div>
+        <div class="logo">Aura. <span id="active-tab-name" style="display:none"></span></div>
         <div id="headerActions" class="header-actions">
           <button id="globalMuteBtn" class="glass-btn small-btn hidden" aria-label="Mute" style="margin-right: 0.5rem;"
             title="Toggle Sounds">
@@ -72,6 +72,10 @@
             </svg>
           </button>
         </div>
+        <!-- Liquid Drop Back Button — hangs from bottom of header-island -->
+        <button id="globalHeaderBackBtn" class="header-back-btn" aria-label="Back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
       </div>
     </header>
 
@@ -436,16 +440,6 @@
             </div>
           </div>
 
-          <!-- Right Column: Recent Moments -->
-          <div class="dash-side">
-            <div class="history-section fade-in-pure delay-2">
-              <h3 data-i18n="dash_recent" class="section-title">Recent Moments</h3>
-              <div id="historyList" class="history-list">
-                <!-- Populated by JS -->
-                <div class="empty-state" data-i18n="dash_empty">No check-ins yet. Begin your journey above.</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- NEW: Module Market Section -->
@@ -485,53 +479,6 @@
           </div>
         </div>
         <button id="morningNextBtn" class="primary-btn mt-8 hidden w-full">Devam</button>
-      </div>
-    </section>
-
-    <!-- STEP 0.5: CAMERA PPG MEASUREMENT -->
-    <section id="view-ppg" class="view hidden center-content">
-      <div class="step-header fade-in" style="position: relative;">
-        <span class="step-indicator" data-i18n="step_ppg_indicator">FİZYOLOJİK ANALİZ</span>
-        <h2 data-i18n="ppg_title">Kardiyovasküler Rezonans</h2>
-        <p class="subtitle" id="ppgInstructions" data-i18n="ppg_instructions">Parmağınızı arka kameranın üzerine yerleştirin.</p>
-      </div>
-
-      <div class="ppg-container fade-in-pure delay-1">
-        <!-- Pulse Circle / Camera Preview -->
-        <div class="ppg-circle-wrapper">
-          <video id="ppgVideo" autoplay playsinline muted class="hidden"></video>
-          <canvas id="ppgCanvas" width="100" height="100" class="hidden"></canvas>
-          <div id="ppgCircle" class="ppg-circle">
-            <span id="ppgStatus" data-i18n="ppg_status_start">Başlamak için Dokunun</span>
-          </div>
-        </div>
-
-        <!-- Realtime Graph (Heartbeat Waveform) -->
-        <div class="ppg-graph-container">
-          <canvas id="ppgGraph" width="300" height="100"></canvas>
-        </div>
-
-        <!-- Progress Info -->
-        <div class="ppg-progress-bar">
-          <div id="ppgProgressFill"></div>
-        </div>
-
-        <div id="ppgResults" class="ppg-results hidden">
-          <div class="result-item">
-            <span class="result-label" data-i18n="ppg_lbl_bpm">NABIZ</span>
-            <div class="result-value-group">
-              <span id="ppgBPM" class="result-value">--</span>
-              <span class="result-unit">BPM</span>
-            </div>
-          </div>
-          <div class="result-item">
-            <span class="result-label" data-i18n="ppg_lbl_hrv">HRV (RMSSD)</span>
-            <div class="result-value-group">
-              <span id="ppgHRV" class="result-value">--</span>
-              <span class="result-unit">ms</span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -780,13 +727,95 @@
     <!-- NOTEBOOK VIEW -->
     <section id="view-notebook" class="view hidden">
       <div class="notebook-content standard-view-content fade-in-pure">
-        <div class="view-header">
-          <h2 data-i18n="nav_notebook">Notes</h2>
-          <p data-i18n="notebook_desc">Your wellness journey history.</p>
+        
+        <!-- Main menu / entries list -->
+        <div id="notebook-main-menu">
+          <div class="view-header">
+            <h2 data-i18n="nav_notebook">Notes</h2>
+            <p data-i18n="notebook_desc">Your wellness journey history.</p>
+          </div>
+          
+          <!-- Quick action cards -->
+          <div class="notebook-quick-actions">
+            <div class="quick-action-card-premium theme-purple" id="notebookQuickNoteBtn">
+              <div class="quick-card-left">
+                <div class="quick-icon-wrapper">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div class="quick-card-info">
+                  <h3 class="quick-card-title" data-i18n="journal_quick_note">Hızlı Not</h3>
+                  <p class="quick-card-subtitle" data-i18n="journal_quick_note_desc">Aklındakileri kaydet</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="quick-action-card-premium theme-green" id="notebookArticleBtn">
+              <div class="quick-card-left">
+                <div class="quick-icon-wrapper">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <div class="quick-card-info">
+                  <h3 class="quick-card-title" data-i18n="journal_article">Beden Günlüğü</h3>
+                  <p class="quick-card-subtitle" data-i18n="journal_article_desc">Yazmanın bilimsel temeli</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="notebookEntries" class="notebook-entries">
+            <!-- Rendered by JS -->
+          </div>
         </div>
-        <div id="notebookEntries" class="notebook-entries">
-          <!-- Rendered by JS -->
+
+        <!-- SUBPAGE: NOTE DETAIL -->
+        <div id="notebook-subpage-detail" class="notebook-subpage hidden">
+          <!-- Back button and title aligned inline -->
+          <div class="notebook-subpage-header">
+            <button id="notebookBackBtn" class="back-circle-btn" aria-label="Back">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h3 id="articleTitle" class="notebook-subpage-title" data-i18n="article_view_title">Günlük Notu</h3>
+          </div>
+          
+          <div class="article-view-content">
+            <!-- Metadata Bar -->
+            <div class="article-metadata-bar">
+              <div id="articleOrb" class="aura-orb"></div>
+              <div id="articleState" class="article-state-label"></div>
+              <div id="articleTime" class="article-time-meta"></div>
+            </div>
+
+            <!-- Somatic Tags -->
+            <div id="articleSomaticTags" class="article-somatic-tags"></div>
+
+            <!-- Reading Body Card -->
+            <div class="article-body-container">
+              <p id="articleBody" class="article-sheet-body"></p>
+            </div>
+          </div>
         </div>
+
+        <!-- SUBPAGE: WRITE QUICK NOTE -->
+        <div id="notebook-subpage-write" class="notebook-subpage hidden">
+          <!-- Back button and title aligned inline -->
+          <div class="notebook-subpage-header">
+            <button id="notebookWriteBackBtn" class="back-circle-btn" aria-label="Back">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h3 class="notebook-subpage-title" data-i18n="journal_quick_note">Hızlı Not</h3>
+          </div>
+          
+          <div class="article-view-content">
+            <!-- Glass Writing Container -->
+            <div class="article-body-container" style="padding: 1.5rem; width: 100%;">
+              <textarea id="notebookWriteInput" class="notebook-write-textarea" placeholder="Şu an nasıl hissettiğini yaz..." data-i18n-placeholder="journal_placeholder"></textarea>
+              <div style="text-align: right; font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); margin-top: 0.5rem;" id="notebookWriteCharCount">0 / 1000</div>
+            </div>
+            
+            <button id="notebookSaveNoteBtn" class="primary-btn mt-8 w-full" data-i18n="btn_complete">Kaydet</button>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -1561,17 +1590,6 @@
       </div>
     </div>
 
-    <!-- QUICK JOURNAL MODAL POPUP -->
-    <div id="quickJournalModal" class="quick-journal-overlay">
-      <div class="quick-journal-container">
-        <div class="quick-journal-card-v2">
-          <textarea id="quickJournalInput" class="quick-journal-textarea-v2" data-i18n-placeholder="journal_placeholder" placeholder="Şu an nasıl hissettiğini yaz..."></textarea>
-        </div>
-        <button id="saveQuickJournalBtn" class="quick-journal-save-btn" aria-label="Save">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 26px; height: 26px;"><polyline points="20 6 9 17 4 12"/></svg>
-        </button>
-      </div>
-    </div>
 
     <!-- Custom Notification Permission Modal -->
     <div id="notifModal" class="notif-modal-wrapper hidden fade-in">
@@ -1868,7 +1886,7 @@
 
   <!-- SCRIPTS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
-  <script type="module" src="app.js?v=202"></script>
+  <script type="module" src="app.js?v=204"></script>
 </body>
 
 </html>

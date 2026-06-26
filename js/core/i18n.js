@@ -1,4 +1,4 @@
-import { locales } from '../../translations.js?v=202';
+import { locales } from '../../translations.js?v=204';
 import { AppState } from './state.js';
 
 export function t(key) {

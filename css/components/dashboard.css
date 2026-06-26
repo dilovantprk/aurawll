@@ -365,9 +365,13 @@
   }
 
   .market-card {
-    min-width: 440px; /* Sized to fit nicely in the 520px column with a peek of the next card */
-    max-width: 440px;
+    min-width: 320px; /* Sized to fit nicely in the 520px column with a peek of the next card */
+    max-width: 320px;
     scroll-snap-align: center;
+  }
+
+  .market-preview-box {
+    height: 120px;
   }
 
   .dash-main {
@@ -572,7 +576,7 @@
 }
 
 .module-market-header h3 span.plus-sign {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-family);
   font-weight: 300;
   background: linear-gradient(135deg, #64E49F 0%, #62A4FF 100%);
   -webkit-background-clip: text;
@@ -611,12 +615,12 @@
 }
 
 .market-card {
-  min-width: 280px;
-  max-width: 280px;
+  min-width: 250px;
+  max-width: 250px;
   background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 28px;
-  padding: 1.8rem;
+  border-radius: 24px;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   transition: all 0.5s var(--spring-easing);
@@ -631,11 +635,11 @@
 
 .market-preview-box {
   width: 100%;
-  height: 160px; /* Increased height for text */
+  height: 95px; /* Compact height */
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 18px;
-  margin: 1.2rem 0;
+  border-radius: 14px;
+  margin: 0.8rem 0;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -651,8 +655,8 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1.5rem;
-  gap: 0.8rem;
+  padding: 0.8rem;
+  gap: 0.5rem;
   z-index: 2;
 }
 
@@ -661,14 +665,14 @@
   font-weight: 700;
   letter-spacing: 2px;
   color: rgba(255, 255, 255, 0.9);
-  margin-top: 0.5rem;
+  margin-top: 0.2rem;
 }
 
 .preview-text {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.4);
-  line-height: 1.4;
-  max-width: 200px;
+  line-height: 1.3;
+  max-width: 180px;
 }
 
 .preview-overlay {
@@ -811,7 +815,7 @@
 }
 
 .locked-message h4 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-family);
   font-weight: 600;
   color: #fff;
   text-transform: uppercase;
@@ -864,9 +868,9 @@
 }
 
 .market-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
@@ -878,14 +882,14 @@
 .market-info { flex: 1; }
 
 .market-title {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 500;
   color: var(--text-main);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
 }
 
 .market-status {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--text-muted);
@@ -894,18 +898,18 @@
 .market-status.installed { color: var(--vagal-accent, #6ee7c7); }
 
 .market-desc {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: rgba(255,255,255,0.5);
-  line-height: 1.6;
-  margin-bottom: 1.8rem;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
   flex: 1;
 }
 
 .market-btn {
   width: 100%;
-  padding: 1rem;
-  border-radius: 16px;
-  font-size: 0.95rem;
+  padding: 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.5px;
   text-align: center;

@@ -153,6 +153,7 @@ export const elements = {
   returnHomeBtn: document.getElementById('returnHomeBtn'),
   globalHUD: document.getElementById('globalHUD'),
   globalHUDBtn: document.getElementById('globalHUDBtn'),
+  globalHeaderBackBtn: document.getElementById('globalHeaderBackBtn'),
 
   // Notifications
   notifToggleCheckbox: document.getElementById('notifToggleCheckbox'),
@@ -230,5 +231,22 @@ export const elements = {
   recommendationsContainer: document.getElementById('recommendationsContainer'),
 
   // Notebook View
-  notebookEntries: document.getElementById('notebookEntries')
+  notebookEntries: document.getElementById('notebookEntries'),
+  notebookMainMenu: document.getElementById('notebook-main-menu'),
+  notebookSubpageDetail: document.getElementById('notebook-subpage-detail'),
+  notebookBackBtn: document.getElementById('notebookBackBtn'),
+
+  // Article View Elements (inside Subpage)
+  articleOrb: document.getElementById('articleOrb'),
+  articleTime: document.getElementById('articleTime'),
+  articleState: document.getElementById('articleState'),
+  articleSomaticTags: document.getElementById('articleSomaticTags'),
+  articleBody: document.getElementById('articleBody'),
+
+  // Notebook Write Subpage Elements
+  notebookSubpageWrite: document.getElementById('notebook-subpage-write'),
+  notebookWriteBackBtn: document.getElementById('notebookWriteBackBtn'),
+  notebookWriteInput: document.getElementById('notebookWriteInput'),
+  notebookSaveNoteBtn: document.getElementById('notebookSaveNoteBtn'),
+  notebookWriteCharCount: document.getElementById('notebookWriteCharCount')
 };

@@ -78,7 +78,7 @@ function renderAmbientGrid() {
       <div class="ambient-card-content">
         <!-- TOP: category tag + title -->
         <div class="ambient-card-top">
-          <span class="card-tag-v2">${sound.category}</span>
+          <span class="card-tag-v2">${t('cat_' + sound.category.toLowerCase())}</span>
           <h3 class="card-title-v2">${t(sound.titleKey)}</h3>
         </div>
 

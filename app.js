@@ -32,6 +32,7 @@ import { initSwipeBreathing, startSwipeBreathingFlow, destroySwipeBreathingFlow 
 import { initSwipeAmbient, startSwipeAmbientFlow, stopSwipePreviewIfAny, syncMiniPlayerState, destroySwipeAmbientFlow } from './js/components/swipe-ambient.js';
 import { initGlobalCursorEffect } from './js/core/cursor-effect.js';
 import { NotificationService } from './js/services/notifications.js';
+import { initLiquidGlass } from './js/services/liquid-glass-webgl.js';
 
 // Services
 import { signInAsGuest, logoutUser } from './js/services/auth.js';
@@ -85,6 +86,11 @@ export function navigateTo(viewId, skipHistory = false) {
   
   const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
   if (currentView && currentView.id === viewId) return;
+
+  // Track previous view for smart back navigation
+  if (currentView) {
+    AppState.previousView = currentView.id;
+  }
 
   // Stop swipe audio preview if navigating away from Swipe Ambient view
   if (currentView && currentView.id === 'view-swipe-ambient') {
@@ -151,8 +157,16 @@ export function navigateTo(viewId, skipHistory = false) {
       if (checkinSteps.includes(slug)) slug = 'checkin';
       if (slug === 'swipe-breathing') slug = 'breathe';
       if (slug === 'swipe-ambient') slug = 'ambient';
-      const tabLabel = t('nav_' + slug) || slug;
-      tabName.textContent = tabLabel;
+      
+      // Dashboard: show only "Aura." — hide tab name entirely
+      if (slug === 'dashboard') {
+        tabName.textContent = '';
+        tabName.style.display = 'none';
+      } else {
+        const tabLabel = t('nav_' + slug) || slug;
+        tabName.textContent = tabLabel;
+        tabName.style.display = '';
+      }
       
       tabName.classList.remove('header-text-slide-out');
       tabName.classList.add('header-text-slide-in');
@@ -164,9 +178,15 @@ export function navigateTo(viewId, skipHistory = false) {
     if (checkinSteps.includes(slug)) slug = 'checkin';
     if (slug === 'swipe-breathing') slug = 'breathe';
     if (slug === 'swipe-ambient') slug = 'ambient';
-    const tabLabel = t('nav_' + slug) || slug;
-    if (tabName.textContent !== tabLabel) {
-      tabName.textContent = tabLabel;
+    if (slug === 'dashboard') {
+      tabName.textContent = '';
+      tabName.style.display = 'none';
+    } else {
+      const tabLabel = t('nav_' + slug) || slug;
+      if (tabName.textContent !== tabLabel) {
+        tabName.textContent = tabLabel;
+      }
+      tabName.style.display = '';
     }
   }
 
@@ -213,7 +233,7 @@ export function navigateTo(viewId, skipHistory = false) {
   renderLocalization();
 
   const hideMobileHeaderViews = ['view-welcome', 'view-auth', 'view-onboarding'];
-  const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-onboarding', 'view-ppg', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
+  const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-onboarding', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
   
   const shouldHideMobileHeader = hideMobileHeaderViews.includes(viewId);
   const shouldHideImmersionNav = hideImmersionNavViews.includes(viewId);
@@ -405,7 +425,7 @@ async function initAppBootstrap() {
     calculatePolyvagalState
   });
   initDashboard({ fb, navigateTo });
-  initNotebook({ fb, navigateTo });
+  initNotebook({ fb, navigateTo, setHUD });
   initMeditationFlow({ fb, navigateTo, resetBioFeedback: () => SensoryEngine.stopHaptics(), AudioEngine: MeditationAudio, setHUD, loadDashboard });
   initMeditations({ 
     navigateTo,
@@ -452,6 +472,9 @@ async function initAppBootstrap() {
     updateSettingsView();
   });
 
+  // Initialize WebGL Liquid Glass shader for header + buttons
+  requestAnimationFrame(() => initLiquidGlass());
+
   let scrollTicking = false;
   if (elements.app) {
     elements.app.addEventListener('scroll', () => {
@@ -494,6 +517,7 @@ async function initAppBootstrap() {
   });
 
   initGlobalCursorEffect();
+  initGlobalHeaderBackBtn();
   startAppFlow(null);
 
   initSwipeNavigation();
@@ -595,6 +619,74 @@ function initSwipeNavigation() {
       navigateTo(`view-${visibleTabs[targetIndex]}`);
     }
   }, { passive: true });
+}
+
+/**
+ * Global Header Back Button
+ * Watches for active subpages and toggles the header back button visibility.
+ * Only shows droplet when the VISIBLE parent view has an active subpage.
+ */
+function initGlobalHeaderBackBtn() {
+  const backBtn = elements.globalHeaderBackBtn;
+  if (!backBtn) return;
+
+  // Click handler: find and click the original hidden back button
+  backBtn.addEventListener('click', () => {
+    SensoryEngine.triggerHaptic('light');
+    SensoryEngine.playTick();
+
+    // Settings subpage (only if settings view is visible)
+    const settingsView = document.getElementById('view-settings');
+    if (settingsView && !settingsView.classList.contains('hidden')) {
+      const sub = settingsView.querySelector('.settings-subpage.active');
+      if (sub) {
+        const btn = sub.querySelector('.settings-back-btn');
+        if (btn) btn.click();
+        return;
+      }
+    }
+
+    // Notebook subpage (only if notebook view is visible)
+    const notebookView = document.getElementById('view-notebook');
+    if (notebookView && !notebookView.classList.contains('hidden')) {
+      const sub = notebookView.querySelector('.notebook-subpage.active');
+      if (sub) {
+        const btn = sub.querySelector('.back-circle-btn');
+        if (btn) btn.click();
+        return;
+      }
+    }
+  });
+
+  // Visibility check — only show if VISIBLE view has active subpage
+  const checkDroplet = () => {
+    const settingsView = document.getElementById('view-settings');
+    const notebookView = document.getElementById('view-notebook');
+
+    const settingsActive = settingsView && !settingsView.classList.contains('hidden') &&
+      settingsView.querySelector('.settings-subpage.active');
+    const notebookActive = notebookView && !notebookView.classList.contains('hidden') &&
+      notebookView.querySelector('.notebook-subpage.active');
+
+    if (settingsActive || notebookActive) {
+      backBtn.classList.add('show');
+    } else {
+      backBtn.classList.remove('show');
+    }
+  };
+
+  // Observe subpage class changes
+  const observer = new MutationObserver(checkDroplet);
+  const allSubpages = document.querySelectorAll('.settings-subpage, .notebook-subpage');
+  allSubpages.forEach(sp => {
+    observer.observe(sp, { attributes: true, attributeFilter: ['class'] });
+  });
+
+  // Also observe parent view visibility to hide droplet when navigating away
+  const parentViews = document.querySelectorAll('#view-settings, #view-notebook');
+  parentViews.forEach(v => {
+    observer.observe(v, { attributes: true, attributeFilter: ['class'] });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', initAppBootstrap);

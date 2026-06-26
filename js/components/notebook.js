@@ -3,11 +3,16 @@ import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { getHumanizedTime, renderMiniDeltaSVG, vibrate } from '../core/utils.js';
 import { deleteSingleCheckin } from '../services/auth.js';
+import { showInfoModal } from './modals.js';
 
 let configProps = {
   fb: null,
-  navigateTo: null
+  navigateTo: null,
+  setHUD: null
 };
+
+let loadedEntries = [];
+let openOrigin = null; // 'dashboard' or 'notebook'
 
 export function initNotebook(config) {
   Object.assign(configProps, config);
@@ -16,6 +21,8 @@ export function initNotebook(config) {
   elements.notebookEntries?.addEventListener('click', async (e) => {
     const deleteBtn = e.target.closest('.delete-entry-btn');
     if (!deleteBtn) return;
+    
+    e.stopPropagation(); // Prevent card click trigger
     
     const timestamp = parseInt(deleteBtn.getAttribute('data-ts'));
     if (!timestamp) return;
@@ -36,8 +43,8 @@ export function initNotebook(config) {
           localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
         }
         
-        // 3. Refresh UI
-        loadNotebook();
+        // 3. Refresh UI globally
+        window.dispatchEvent(new CustomEvent('aura-history-updated'));
         vibrate('light');
       } catch (err) {
         console.error("Delete failed:", err);
@@ -46,6 +53,247 @@ export function initNotebook(config) {
       }
     }
   });
+
+  // Card click details (subpage reader)
+  elements.notebookEntries?.addEventListener('click', (e) => {
+    if (e.target.closest('.delete-entry-btn')) return;
+    
+    const card = e.target.closest('.aura-card');
+    if (!card) return;
+
+    const timestamp = parseInt(card.getAttribute('data-ts'));
+    if (!timestamp) return;
+
+    const entry = loadedEntries.find(h => h.timestamp === timestamp);
+    if (entry && entry.savoringText && entry.savoringText.length > 120) {
+      openArticleSubpage(entry);
+    }
+  });
+
+  // Subpage Back Button
+  elements.notebookBackBtn?.addEventListener('click', () => {
+    closeArticleSubpage();
+  });
+
+  // Writing Subpage Back Button
+  elements.notebookWriteBackBtn?.addEventListener('click', () => {
+    closeWriteSubpage();
+  });
+
+  // MutationObserver to reset notebook view back to list when navigating away
+  const notebookView = document.getElementById('view-notebook');
+  if (notebookView) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.target.classList.contains('hidden')) {
+          // View became hidden - reset subpages
+          elements.notebookSubpageDetail?.classList.remove('active');
+          elements.notebookSubpageDetail?.classList.add('hidden');
+          elements.notebookSubpageWrite?.classList.remove('active');
+          elements.notebookSubpageWrite?.classList.add('hidden');
+          elements.notebookMainMenu?.classList.remove('hidden');
+        }
+      });
+    });
+    observer.observe(notebookView, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  // Quick Action Card Handlers
+  const quickNoteBtn = document.getElementById('notebookQuickNoteBtn');
+  if (quickNoteBtn) {
+    quickNoteBtn.addEventListener('click', () => {
+      openWriteSubpage();
+    });
+  }
+
+  const articleBtn = document.getElementById('notebookArticleBtn');
+  if (articleBtn) {
+    articleBtn.addEventListener('click', () => {
+      vibrate('light');
+      showInfoModal('notebook');
+    });
+  }
+
+  // Input Character Count Handler + HUD integration
+  elements.notebookWriteInput?.addEventListener('input', () => {
+    const len = elements.notebookWriteInput.value.length;
+    if (elements.notebookWriteCharCount) {
+      elements.notebookWriteCharCount.textContent = `${len} / 1000`;
+    }
+    // HUD save button logic
+    if (configProps.setHUD) {
+      const text = elements.notebookWriteInput.value.trim();
+      if (text.length > 0) {
+        configProps.setHUD('check', () => {
+          elements.notebookSaveNoteBtn?.click();
+        });
+      } else {
+        configProps.setHUD(null);
+      }
+    }
+  });
+
+  // Save Note Handler
+  elements.notebookSaveNoteBtn?.addEventListener('click', async () => {
+    const text = elements.notebookWriteInput?.value.trim() || '';
+    if (text) {
+      const entry = {
+        state: 'okay', 
+        polyvagal_state: 'ventral',
+        pre_arousal: 5,
+        pre_valence: 5,
+        somatic_selections: [],
+        selected_emotions: [],
+        subEmotion: 'se_neutral', 
+        customEmotion: AppState.lang === 'tr' ? 'Hızlı Günlük' : 'Quick Journal', 
+        sensations: [],
+        savoringText: text,
+        timestamp: Date.now()
+      };
+      
+      // Save locally
+      if (!AppState.mockHistory) AppState.mockHistory = [];
+      AppState.mockHistory.unshift(entry);
+      localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+
+      // Save to cloud in background if authenticated
+      const fb = configProps.fb;
+      if (fb && fb.isInitialized && AppState.user && !AppState.user.guest) {
+        try {
+          await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...entry });
+        } catch(e) {
+          console.warn("Quick journal cloud save failed", e);
+        }
+      }
+      
+      if (elements.notebookWriteInput) {
+        elements.notebookWriteInput.value = '';
+      }
+      
+      vibrate('medium');
+      // Reload history globally
+      window.dispatchEvent(new CustomEvent('aura-history-updated'));
+    }
+    
+    closeWriteSubpage();
+  });
+
+  // Global listener to open writing subpage
+  window.addEventListener('aura-open-write-notebook', () => {
+    openWriteSubpage('dashboard');
+  });
+
+  // Handle updates dynamically
+  window.addEventListener('aura-history-updated', loadNotebook);
+}
+
+function openArticleSubpage(entry) {
+  if (!elements.notebookSubpageDetail || !elements.notebookMainMenu) return;
+
+  vibrate('light');
+
+  // Populate subpage elements
+  const stateKey = entry.polyvagal_state || entry.state || 'ventral';
+  if (elements.articleOrb) elements.articleOrb.className = `aura-orb ${stateKey}`;
+  if (elements.articleTime) elements.articleTime.textContent = getHumanizedTime(entry.timestamp);
+
+  const stateNameMap = { 
+    'ventral': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
+    'okay': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
+    'sympathetic': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
+    'wired': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
+    'dorsal': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal',
+    'foggy': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal'
+  };
+  const stateName = stateNameMap[stateKey] || '...';
+  let emotionLabel = '';
+  if (entry.selected_emotions && entry.selected_emotions.length > 0) {
+    emotionLabel = entry.selected_emotions.map(e => t(e)).join(', ');
+  } else {
+    emotionLabel = entry.customEmotion || (entry.subEmotion ? t(entry.subEmotion) : '');
+  }
+  if (!emotionLabel || emotionLabel === 'null') emotionLabel = stateName;
+  if (elements.articleState) elements.articleState.textContent = emotionLabel;
+
+  // Somatic Tags
+  const tags = [];
+  if (entry.somatic_selections) entry.somatic_selections.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
+  if (entry.sensations) entry.sensations.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
+  
+  if (elements.articleSomaticTags) {
+    if (tags.length > 0) {
+      elements.articleSomaticTags.innerHTML = tags.map(tag => `<span class="notebook-sensation-tag">${tag}</span>`).join('');
+      elements.articleSomaticTags.style.display = 'flex';
+    } else {
+      elements.articleSomaticTags.innerHTML = '';
+      elements.articleSomaticTags.style.display = 'none';
+    }
+  }
+
+  if (elements.articleBody) elements.articleBody.textContent = entry.savoringText || '...';
+
+  // Toggle visibility with transition class
+  elements.notebookMainMenu.classList.add('hidden');
+  elements.notebookSubpageDetail.classList.remove('hidden');
+  setTimeout(() => {
+    elements.notebookSubpageDetail.classList.add('active');
+  }, 50);
+}
+
+function closeArticleSubpage() {
+  if (!elements.notebookSubpageDetail || !elements.notebookMainMenu) return;
+
+  vibrate('light');
+
+  elements.notebookSubpageDetail.classList.remove('active');
+  setTimeout(() => {
+    elements.notebookSubpageDetail.classList.add('hidden');
+    elements.notebookMainMenu.classList.remove('hidden');
+  }, 350); // Match transition duration (0.35s)
+}
+
+function openWriteSubpage(origin = 'notebook') {
+  if (!elements.notebookSubpageWrite || !elements.notebookMainMenu) return;
+
+  openOrigin = origin;
+  vibrate('light');
+
+  // Reset textarea & char count
+  if (elements.notebookWriteInput) {
+    elements.notebookWriteInput.value = '';
+  }
+  if (elements.notebookWriteCharCount) {
+    elements.notebookWriteCharCount.textContent = `0 / 1000`;
+  }
+
+  // Toggle visibility with transition class
+  elements.notebookMainMenu.classList.add('hidden');
+  elements.notebookSubpageWrite.classList.remove('hidden');
+  setTimeout(() => {
+    elements.notebookSubpageWrite.classList.add('active');
+    if (elements.notebookWriteInput) {
+      elements.notebookWriteInput.focus();
+    }
+  }, 50);
+}
+
+function closeWriteSubpage() {
+  if (!elements.notebookSubpageWrite || !elements.notebookMainMenu) return;
+
+  vibrate('light');
+  if (configProps.setHUD) configProps.setHUD(null);
+
+  elements.notebookSubpageWrite.classList.remove('active');
+  setTimeout(() => {
+    elements.notebookSubpageWrite.classList.add('hidden');
+    // Smart navigation: go back to dashboard if opened from there
+    if (openOrigin === 'dashboard' && configProps.navigateTo) {
+      configProps.navigateTo('view-dashboard');
+    } else {
+      elements.notebookMainMenu.classList.remove('hidden');
+    }
+    openOrigin = null;
+  }, 350); // Match transition duration (0.35s)
 }
 
 export async function loadNotebook() {
@@ -82,6 +330,7 @@ export async function loadNotebook() {
 export function renderNotebook(providedEntries) {
   if (!elements.notebookEntries) return;
   const history = providedEntries || (AppState.user && AppState.user.history ? AppState.user.history : (AppState.mockHistory || []));
+  loadedEntries = history;
   let html = '';
 
   if (history.length === 0) {
@@ -123,8 +372,12 @@ export function renderNotebook(providedEntries) {
         }
       }
 
+      const isLong = entry.savoringText && entry.savoringText.length > 120;
+      const cardText = isLong ? `${entry.savoringText.substring(0, 120)}...` : (entry.savoringText || '...');
+      const cardClass = isLong ? 'aura-card glow-card fade-in-pure has-long-note' : 'aura-card glow-card fade-in-pure';
+
       html += `
-        <div class="aura-card glow-card fade-in-pure">
+        <div class="${cardClass}" data-ts="${entry.timestamp}">
           <div class="card-header">
             <div class="aura-orb ${entry.polyvagal_state || 'ventral'}"></div>
             <div class="time-meta">${timeStr}</div>
@@ -134,7 +387,8 @@ export function renderNotebook(providedEntries) {
             </button>
           </div>
           <div class="card-body">
-            <p class="user-note">${entry.savoringText || '...'}</p>
+            <p class="user-note">${cardText}</p>
+            ${isLong ? `<span class="read-more-btn">${t('notebook_read_more')}</span>` : ''}
           </div>
           ${somaticSummary ? `<div class="card-footer"><span class="somatic-summary">${somaticSummary}</span></div>` : ''}
         </div>`;

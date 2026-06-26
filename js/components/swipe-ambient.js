@@ -8,6 +8,7 @@ import { AMBIENT_SOUNDS, ICONS } from './ambient.js';
 import { t } from '../core/i18n.js';
 import { SensoryEngine } from '../services/sensory.js';
 import { vibrate } from '../core/utils.js';
+import { AppState } from '../core/state.js';
 
 let configProps = {
   navigateTo: null
@@ -327,7 +328,7 @@ function startBreathingGuide() {
   let cycleTime = 0;
   if (breathIntervalId) clearInterval(breathIntervalId);
 
-  const isTR = t('lang') === 'tr';
+  const isTR = AppState.lang === 'tr';
   const txtIn = isTR ? 'Nefes Al' : 'Breathe In';
   const txtOut = isTR ? 'Nefes Ver' : 'Breathe Out';
   const txtHold = isTR ? 'Tut' : 'Hold';
@@ -550,7 +551,7 @@ export function startSwipeAmbientFlow() {
         <!-- TOP ROW: category tag & type -->
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px;">
           <span style="background: rgba(255, 255, 255, 0.05); padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; text-transform: uppercase; border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.65); font-weight: 600; letter-spacing: 1px;">
-            ${categoryLabel}
+            ${t('cat_' + categoryLabel.toLowerCase())}
           </span>
           <span style="font-size: 0.75rem; opacity: 0.55; font-weight: 500; letter-spacing: 0.5px;">
             ${t('nav_ambient')}
@@ -581,7 +582,7 @@ export function startSwipeAmbientFlow() {
           
           <!-- Elegant action pill button -->
           <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; padding: 6px 16px; font-size: 0.75rem; font-weight: 600; color: #fff; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); cursor: pointer;">
-            <span>${t('lang') === 'tr' ? 'DİNLE' : 'LISTEN'}</span>
+            <span>${t('btn_listen_badge').toUpperCase()}</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
           </div>
         </div>

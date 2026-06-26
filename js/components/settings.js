@@ -360,7 +360,7 @@ export function updateSettingsView() {
 
   const latest = localHistory[localHistory.length - 1]; // Get most recent
   if (latest && elements.auraCoreSphere) {
-    const colors = { okay: '#64E49F', wired: '#FBA044', foggy: '#62A4FF', ventral: '#64E49F', sympathetic: '#FBA044', dorsal: '#62A4FF' };
+    const colors = { okay: '#7d917b', wired: '#c48b71', foggy: '#6d7f94', ventral: '#7d917b', sympathetic: '#c48b71', dorsal: '#6d7f94' };
     const stateKey = latest.polyvagal_state || latest.state;
     const color = colors[stateKey] || colors.okay;
     elements.auraCoreSphere.style.setProperty('--vagal-accent', color);
