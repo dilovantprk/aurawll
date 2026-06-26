@@ -303,7 +303,8 @@ export function navigateTo(viewId, skipHistory = false) {
     if (typeof syncNavVisibility !== 'undefined') syncNavVisibility();
   }
 
-
+  // Sync back button visibility
+  if (typeof syncBackBtnVisibility !== 'undefined') syncBackBtnVisibility();
 
   requestAnimationFrame(() => {
     // Nav pill updates removed for cleaner look
@@ -622,61 +623,91 @@ function initSwipeNavigation() {
 }
 
 /**
+ * Synchronize the global header back button visibility
+ */
+export function syncBackBtnVisibility() {
+  const backBtn = elements.globalHeaderBackBtn;
+  if (!backBtn) return;
+
+  const settingsView = document.getElementById('view-settings');
+  const notebookView = document.getElementById('view-notebook');
+
+  const settingsActive = settingsView && !settingsView.classList.contains('hidden') &&
+    settingsView.querySelector('.settings-subpage.active');
+  const notebookActive = notebookView && !notebookView.classList.contains('hidden') &&
+    notebookView.querySelector('.notebook-subpage.active');
+
+  const currentViewId = AppState.currentView;
+  const isSpecialView = currentViewId === 'view-swipe-breathing' || 
+                        currentViewId === 'view-swipe-ambient' || 
+                        currentViewId === 'view-insight';
+
+  if (settingsActive || notebookActive || isSpecialView) {
+    backBtn.classList.add('show');
+  } else {
+    backBtn.classList.remove('show');
+  }
+}
+
+/**
  * Global Header Back Button
  * Watches for active subpages and toggles the header back button visibility.
- * Only shows droplet when the VISIBLE parent view has an active subpage.
+ * Only shows when a subpage or special view is active.
  */
 function initGlobalHeaderBackBtn() {
   const backBtn = elements.globalHeaderBackBtn;
   if (!backBtn) return;
 
-  // Click handler: find and click the original hidden back button
+  // Click handler: find and click the original hidden back button, or navigate to previous view
   backBtn.addEventListener('click', () => {
     SensoryEngine.triggerHaptic('light');
     SensoryEngine.playTick();
 
-    // Settings subpage (only if settings view is visible)
+    // 1. Settings subpage (only if settings view is visible)
     const settingsView = document.getElementById('view-settings');
     if (settingsView && !settingsView.classList.contains('hidden')) {
       const sub = settingsView.querySelector('.settings-subpage.active');
       if (sub) {
         const btn = sub.querySelector('.settings-back-btn');
-        if (btn) btn.click();
+        if (btn) {
+          btn.click();
+        } else {
+          sub.classList.remove('active');
+          syncBackBtnVisibility();
+        }
         return;
       }
     }
 
-    // Notebook subpage (only if notebook view is visible)
+    // 2. Notebook subpage (only if notebook view is visible)
     const notebookView = document.getElementById('view-notebook');
     if (notebookView && !notebookView.classList.contains('hidden')) {
       const sub = notebookView.querySelector('.notebook-subpage.active');
       if (sub) {
         const btn = sub.querySelector('.back-circle-btn');
-        if (btn) btn.click();
+        if (btn) {
+          btn.click();
+        } else {
+          sub.classList.remove('active');
+          syncBackBtnVisibility();
+        }
         return;
+      }
+    }
+
+    // 3. Special views
+    const currentViewId = AppState.currentView;
+    if (currentViewId === 'view-swipe-breathing' || currentViewId === 'view-swipe-ambient' || currentViewId === 'view-insight') {
+      if (AppState.previousView) {
+        navigateTo(AppState.previousView);
+      } else {
+        navigateTo('view-dashboard');
       }
     }
   });
 
-  // Visibility check — only show if VISIBLE view has active subpage
-  const checkDroplet = () => {
-    const settingsView = document.getElementById('view-settings');
-    const notebookView = document.getElementById('view-notebook');
-
-    const settingsActive = settingsView && !settingsView.classList.contains('hidden') &&
-      settingsView.querySelector('.settings-subpage.active');
-    const notebookActive = notebookView && !notebookView.classList.contains('hidden') &&
-      notebookView.querySelector('.notebook-subpage.active');
-
-    if (settingsActive || notebookActive) {
-      backBtn.classList.add('show');
-    } else {
-      backBtn.classList.remove('show');
-    }
-  };
-
   // Observe subpage class changes
-  const observer = new MutationObserver(checkDroplet);
+  const observer = new MutationObserver(() => syncBackBtnVisibility());
   const allSubpages = document.querySelectorAll('.settings-subpage, .notebook-subpage');
   allSubpages.forEach(sp => {
     observer.observe(sp, { attributes: true, attributeFilter: ['class'] });
@@ -687,6 +718,9 @@ function initGlobalHeaderBackBtn() {
   parentViews.forEach(v => {
     observer.observe(v, { attributes: true, attributeFilter: ['class'] });
   });
+  
+  // Initial check
+  syncBackBtnVisibility();
 }
 
 document.addEventListener('DOMContentLoaded', initAppBootstrap);
