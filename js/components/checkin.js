@@ -305,7 +305,7 @@ export function prepareExercise(protocolId) {
   configProps.timeRemaining = ex.totalDuration;
   if (configProps.navigateTo) configProps.navigateTo('view-exercise');
   setTimeout(() => {
-    setHUD('skip', () => advanceFromExercise());
+    setHUD('skip', () => advanceFromExercise(), true);
     if (elements.globalHUD) elements.globalHUD.classList.add('active');
   }, 1000);
 }
@@ -340,10 +340,10 @@ function startMarinationFlow() {
   }
 }
 
-export function setHUD(mode, onClick) {
+export function setHUD(mode, onClick, isMinimal = false) {
   if (!elements.globalHUD || !elements.globalHUDBtn) return;
   if (!mode) {
-    elements.globalHUD.classList.remove('active');
+    elements.globalHUD.classList.remove('active', 'hud-minimal');
     elements.globalHUDBtn.innerHTML = '';
     elements.globalHUDBtn.onclick = null;
     return;
@@ -356,5 +356,10 @@ export function setHUD(mode, onClick) {
   };
   elements.globalHUDBtn.innerHTML = svgs[mode] || '';
   elements.globalHUD.classList.add('active');
+  if (isMinimal) {
+    elements.globalHUD.classList.add('hud-minimal');
+  } else {
+    elements.globalHUD.classList.remove('hud-minimal');
+  }
   elements.globalHUDBtn.onclick = (e) => { e.preventDefault(); if (onClick) onClick(); };
 }

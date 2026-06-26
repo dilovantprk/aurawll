@@ -24,11 +24,24 @@ export function startExerciseEngine() {
   if (isExerciseActive) return;
   isExerciseActive = true;
   currentPhaseIndex = 0;
-  timeRemaining = configProps.getExerciseParams().totalDuration;
+  const total = configProps.getExerciseParams().totalDuration;
+  timeRemaining = total;
+  
+  const progressRing = document.querySelector('.progress-ring-bar');
+  if (progressRing) {
+    progressRing.style.strokeDashoffset = '722.56';
+  }
   
   if (breathTimerInterval) clearInterval(breathTimerInterval);
   breathTimerInterval = setInterval(() => {
     timeRemaining--;
+    
+    if (progressRing) {
+      const progress = (total - timeRemaining) / total;
+      const offset = 722.56 * (1 - progress);
+      progressRing.style.strokeDashoffset = offset;
+    }
+    
     if (timeRemaining <= 0) {
       stopExercise();
       if (configProps.onComplete) configProps.onComplete();
@@ -67,4 +80,8 @@ export function stopExercise() {
   isExerciseActive = false;
   clearInterval(breathTimerInterval);
   clearTimeout(exerciseTimer);
+  const progressRing = document.querySelector('.progress-ring-bar');
+  if (progressRing) {
+    progressRing.style.strokeDashoffset = '722.56';
+  }
 }

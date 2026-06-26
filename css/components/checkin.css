@@ -396,11 +396,11 @@
 }
 
 .hud-btn {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -408,22 +408,23 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.5s var(--spring-easing), background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+  transition: transform 0.5s var(--spring-easing), background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .hud-btn svg {
   width: 24px;
   height: 24px;
-  stroke-width: 2.5;
+  stroke-width: 2.2;
   transition: transform 0.3s ease, stroke-width 0.3s ease;
 }
 
 .hud-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.45);
 }
 
 .hud-btn:hover svg {
@@ -431,7 +432,42 @@
 }
 
 .hud-btn:active {
-  transform: translateY(0) scale(0.95);
+  transform: translateY(0) scale(0.97);
+}
+
+/* Minimal HUD for calming steps (Breathing, Meditation scan) to prevent distraction */
+.hud-minimal .hud-btn {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.35);
+  width: 52px;
+  height: 52px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.hud-minimal .hud-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.0;
+  opacity: 0.7;
+}
+
+.hud-minimal .hud-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.hud-minimal .hud-btn:hover svg {
+  opacity: 1;
+}
+
+.hud-minimal .hud-btn:active {
+  transform: scale(0.96);
 }
 /* Hide legacy grid/list displays */
 .somatic-list, .emotion-grid-v2 { display: none; }
@@ -602,6 +638,17 @@
   min-height: 220px; 
   margin-top: 1rem;
   margin-bottom: 0.5rem; 
+}
+.breath-progress-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  pointer-events: none;
+  z-index: 1;
+}
+.progress-ring-bar {
+  transition: stroke-dashoffset 0.4s linear;
 }
 .breath-circle {
   width: 170px; 

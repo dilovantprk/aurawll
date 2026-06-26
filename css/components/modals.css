@@ -40,7 +40,7 @@
   max-width: 480px;
   margin: 0 auto;
   border-radius: 32px 32px 0 0;
-  padding: 3rem 2.2rem calc(3rem + var(--safe-bottom, 0px));
+  padding: 2.2rem 1.8rem calc(1.8rem + var(--safe-bottom, 0px));
   position: relative;
   /* Organic Liquid Glass — Aura palette uyumlu */
   background:
@@ -189,8 +189,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1rem 0;
+  gap: 1rem;
+  padding: 0.5rem 0 0 0;
 }
 
 .info-sheet-icon {
@@ -251,7 +251,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 .pill-btn {
   border-radius: 100px;
@@ -344,7 +344,7 @@
   border: 1px solid var(--glass-border);
   border-bottom: none;
   border-radius: 32px 32px 0 0;
-  padding: 2.5rem 1.8rem calc(2.5rem + var(--safe-bottom));
+  padding: 1.8rem 1.5rem calc(1.5rem + var(--safe-bottom));
   transform: translateY(110%);
   visibility: hidden;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0.6s;
@@ -419,7 +419,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-bottom: 2rem; /* Increased margin */
+  margin-bottom: 1.2rem;
 }
 
 .stat-card {

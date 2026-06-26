@@ -154,9 +154,13 @@ export function navigateTo(viewId, skipHistory = false) {
 
     setTimeout(() => {
       let slug = newSlug;
-      if (checkinSteps.includes(slug)) slug = 'checkin';
+      if (checkinSteps.includes(slug)) {
+        const hasSpecificTranslation = t('nav_' + slug) !== ('nav_' + slug);
+        if (!hasSpecificTranslation) slug = 'checkin';
+      }
       if (slug === 'swipe-breathing') slug = 'breathe';
       if (slug === 'swipe-ambient') slug = 'ambient';
+      if (slug === 'meditations') slug = 'breathe';
       
       // Dashboard: show only "Aura." — hide tab name entirely
       if (slug === 'dashboard') {
@@ -175,9 +179,13 @@ export function navigateTo(viewId, skipHistory = false) {
     }, 200);
   } else if (tabName && skipHeaderAnimation) {
     let slug = newSlug;
-    if (checkinSteps.includes(slug)) slug = 'checkin';
+    if (checkinSteps.includes(slug)) {
+      const hasSpecificTranslation = t('nav_' + slug) !== ('nav_' + slug);
+      if (!hasSpecificTranslation) slug = 'checkin';
+    }
     if (slug === 'swipe-breathing') slug = 'breathe';
     if (slug === 'swipe-ambient') slug = 'ambient';
+    if (slug === 'meditations') slug = 'breathe';
     if (slug === 'dashboard') {
       tabName.textContent = '';
       tabName.style.display = 'none';
@@ -258,6 +266,7 @@ export function navigateTo(viewId, skipHistory = false) {
       let slug = newSlug;
       if (slug === 'swipe-breathing') slug = 'breathe';
       if (slug === 'swipe-ambient') slug = 'ambient';
+      if (slug === 'meditations') slug = 'breathe';
       const tabLabel = t('nav_' + slug) || slug;
       if (tabLabel) desktopActiveName.textContent = tabLabel;
       desktopActiveName.classList.add('visible');

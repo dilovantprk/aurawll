@@ -269,6 +269,7 @@
           <button class="nav-item" data-view="notebook" data-i18n="nav_notebook">Notes</button>
           <button class="nav-item" data-view="settings" data-i18n="nav_profile">Profile</button>
         </div>
+        <div class="nav-brand-spacer" style="visibility: hidden; font-size: 1.2rem; font-weight: 500; letter-spacing: -0.8px; user-select: none; pointer-events: none;">Aura.</div>
       </div>
     </nav>
 
@@ -578,7 +579,13 @@
       </div>
 
       <!-- Breathing Visualizer -->
-      <div class="breathing-container fade-in delay-1">
+      <div class="breathing-container fade-in delay-1" style="position: relative;">
+        <!-- Stable Outer Progress Ring -->
+        <svg class="breath-progress-ring" width="260" height="260" viewBox="0 0 260 260">
+          <circle class="progress-ring-bg" cx="130" cy="130" r="115" stroke="rgba(255,255,255,0.03)" stroke-width="1.5" fill="none"></circle>
+          <circle class="progress-ring-bar" cx="130" cy="130" r="115" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" stroke-dasharray="722.56" stroke-dashoffset="722.56" stroke-linecap="round"></circle>
+        </svg>
+
         <div id="breathCircle" class="breath-circle">
           <span id="breathInstruction" data-i18n="ex_ready">Ready</span>
         </div>
@@ -608,7 +615,7 @@
       <!-- Phase 2: Sensation Selection -->
       <div id="marPhase2" class="marination-phase hidden">
         <div class="neural-hive-wrapper">
-          <div id="marSensationContainer" class="rhizome-container hive-grid">
+          <div id="marSensationContainer" class="rhizome-container nebula-cluster">
             <!-- Hexagonal Cells Rendered by JS -->
           </div>
         </div>
@@ -631,8 +638,6 @@
           </p>
         </div>
 
-        <button id="scanExitBtn" class="ghost-btn" style="opacity: 0.6; margin-bottom: 3rem;"
-          data-i18n="mar_offer_done">Egzersizi Bitir</button>
       </div>
 
       <!-- Phase 3: Savoring Log (Step 6) -->
@@ -695,22 +700,6 @@
         <div class="view-header">
           <h2 data-i18n="nav_breathe">Breathe</h2>
           <p data-i18n="med_desc">Select a protocol for your current state.</p>
-        </div>
-
-        <!-- Entry Card for Swipe Sub-page -->
-        <div class="quick-action-card-premium theme-green stagger-2" id="openSwipeBreathingBtn">
-          <div class="quick-card-left">
-            <div class="quick-icon-wrapper">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-            </div>
-            <div class="quick-card-info">
-              <h3 data-i18n="dash_sos_title" class="quick-card-title">Sadece 1 Dakika</h3>
-              <p class="quick-card-subtitle" data-i18n="swipe_breathing_sub_short">Kartları kaydırarak hızlı egzersiz seç</p>
-            </div>
-          </div>
-          <div class="quick-arrow-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
         </div>
 
         <div id="recommendationsContainer" class="rec-section-container hidden">
@@ -1487,22 +1476,6 @@
           <h2 data-i18n="nav_ambient">ambiance</h2>
           <p data-i18n="amb_subtitle">find your sensory balance</p>
         </header>
-
-        <!-- Entry Card for Swipe Sub-page -->
-        <div class="quick-action-card-premium theme-purple stagger-2" id="openSwipeAmbientBtn">
-          <div class="quick-card-left">
-            <div class="quick-icon-wrapper">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-            </div>
-            <div class="quick-card-info">
-              <h3 data-i18n="dash_ambient_title" class="quick-card-title">Ambiyans Keşfi</h3>
-              <p class="quick-card-subtitle" data-i18n="swipe_ambient_sub_short">Kartları kaydırarak dinlendirici sesler bul</p>
-            </div>
-          </div>
-          <div class="quick-arrow-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </div>
 
         <div id="ambientList" class="ambient-grid-v2 stagger-3">
           <!-- Rendered by JS as large visual cards -->

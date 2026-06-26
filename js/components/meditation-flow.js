@@ -100,7 +100,7 @@ export function startMeditationLoading(protocolId) {
 }
 
 export function runMeditation(customDuration = null) {
-  if (configProps.setHUD) configProps.setHUD(null); 
+  if (configProps.setHUD) configProps.setHUD('skip', () => finishGuidedScan(), true); 
   if (meditationIndex >= 5) return;
 
   // Use the actual protocol that was just practiced
