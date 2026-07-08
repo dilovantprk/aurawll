@@ -36,6 +36,7 @@ import { initLiquidGlass } from './js/services/liquid-glass-webgl.js';
 
 // Services
 import { signInAsGuest, logoutUser } from './js/services/auth.js';
+import { initSpeedInsights } from './js/services/speed-insights.js';
 
 let fb;
 let isNavigating = false;
@@ -401,6 +402,9 @@ async function initAppBootstrap() {
   });
   renderLocalization(); 
   NotificationService.init();
+  
+  // Initialize Vercel Speed Insights for performance tracking
+  initSpeedInsights();
 
   try {
     fb = await Promise.race([

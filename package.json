@@ -1,0 +1,14 @@
+{
+  "name": "aurawell-wmhi",
+  "version": "1.0.0",
+  "description": "Aura - Daily Wellness Spacer",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve .",
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  },
+  "license": "ISC"
+}
