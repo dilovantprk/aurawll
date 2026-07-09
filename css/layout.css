@@ -692,7 +692,8 @@ body.nav-hidden .desktop-header-nav {
 /* === GLOBAL HEADER BACK BUTTON — Premium Glass Circle === */
 .header-back-btn {
   position: fixed;
-  top: calc(1.2rem + 50px + 22px);
+  /* Move the back button slightly higher for better visual alignment with the header */
+  top: calc(1.2rem + 50px + 6px);
   left: calc(50% - 260px);
   z-index: 3000;
 
