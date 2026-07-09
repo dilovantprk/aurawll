@@ -419,11 +419,23 @@ function _applyAll() {
   }
 
   // 2. Yuvarlak Küçük Cam Butonlar
-  document.querySelectorAll('.glass-btn.small-btn, .header-back-btn').forEach(el => {
+  // Exclude the global header back button from the WebGL render pipeline because
+  // small-button shaders can produce visible artefacts in tight circular controls
+  // on some GPUs/browsers. The header back button keeps a pure CSS treatment.
+  document.querySelectorAll('.glass-btn.small-btn').forEach(el => {
     if (!_renderers.has(el)) {
       _renderers.set(el, new LiquidGlassRenderer(el, { radius: 50 }));
     }
   });
+  // Special case: the header back button should keep the CSS-only styling to avoid
+  // rendering seams on its inner diamond highlight. If it's present and we have a
+  // previously created renderer for it (from an older run), destroy it.
+  const backBtn = document.querySelector('.header-back-btn');
+  if (backBtn && _renderers.has(backBtn)) {
+    const r = _renderers.get(backBtn);
+    if (r && typeof r.destroy === 'function') r.destroy();
+    _renderers.delete(backBtn);
+  }
 }
 
 export function destroyLiquidGlass() {
