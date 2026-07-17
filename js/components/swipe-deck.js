@@ -5,6 +5,184 @@
 
 import { SensoryEngine } from '../services/sensory.js';
 
+// ─── Prosedürel Swipe Ses Motoru ────────────────────────
+const SwipeAudio = {
+  get _ctx() { return SensoryEngine.audioCtx; },
+  get _master() { return SensoryEngine.masterGain; },
+  get _ok() { return !SensoryEngine.isMuted && SensoryEngine.uiSoundsEnabled; },
+
+  _init() {
+    if (!this._ctx) SensoryEngine.initAudio();
+    SensoryEngine.resumeAudio();
+    return !!this._ctx && this._ok;
+  },
+
+  /** Kart kaldırma — cam yüzeyden ayırma sesi */
+  playLift() {
+    if (!this._init()) return;
+    const ctx = this._ctx;
+    const now = ctx.currentTime;
+
+    // Hafif "glass lift" — kısa noise burst + yükselen ton
+    const bufSize = Math.ceil(0.08 * ctx.sampleRate);
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    const nFilter = ctx.createBiquadFilter();
+    nFilter.type = 'highpass';
+    nFilter.frequency.value = 4000;
+    const nG = ctx.createGain();
+    nG.gain.setValueAtTime(0.03, now);
+    nG.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+    noise.connect(nFilter);
+    nFilter.connect(nG);
+    nG.connect(this._master);
+    noise.start(now);
+    noise.stop(now + 0.1);
+
+    // İnce cam tını
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(2400, now);
+    osc.frequency.exponentialRampToValueAtTime(3200, now + 0.06);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.025, now + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+    osc.connect(g);
+    g.connect(this._master);
+    osc.start(now);
+    osc.stop(now + 0.12);
+  },
+
+  /** Sağa swipe — kristal kabul chime'ı (yükselen harmonikler) */
+  playSwipeRight() {
+    if (!this._init()) return;
+    const ctx = this._ctx;
+    const now = ctx.currentTime;
+
+    // 3-nota arpej: C5 → E5 → G5 (major triad, kabul/onay hissi)
+    const notes = [523, 659, 784];
+    notes.forEach((freq, i) => {
+      const t0 = now + i * 0.06;
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+
+      // Kristal shimmer — hafif detune ikinci osilatör
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.value = freq * 2;
+      osc2.detune.value = 5;
+
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.07 - (i * 0.015), t0 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.35 - (i * 0.05));
+
+      const g2 = ctx.createGain();
+      g2.gain.setValueAtTime(0, t0);
+      g2.gain.linearRampToValueAtTime(0.02, t0 + 0.01);
+      g2.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2);
+
+      osc.connect(g);
+      osc2.connect(g2);
+      g.connect(this._master);
+      g2.connect(this._master);
+
+      osc.start(t0);
+      osc2.start(t0);
+      osc.stop(t0 + 0.4);
+      osc2.stop(t0 + 0.25);
+    });
+
+    // Cam parıltısı — yüksek frekanslı shimmer tail
+    const shimmer = ctx.createOscillator();
+    shimmer.type = 'sine';
+    shimmer.frequency.setValueAtTime(3500, now + 0.15);
+    shimmer.frequency.exponentialRampToValueAtTime(5000, now + 0.5);
+    const sG = ctx.createGain();
+    sG.gain.setValueAtTime(0, now + 0.15);
+    sG.gain.linearRampToValueAtTime(0.012, now + 0.2);
+    sG.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    shimmer.connect(sG);
+    sG.connect(this._master);
+    shimmer.start(now + 0.15);
+    shimmer.stop(now + 0.65);
+  },
+
+  /** Sola swipe — rüzgar sweep (geçiş/pas) */
+  playSwipeLeft() {
+    if (!this._init()) return;
+    const ctx = this._ctx;
+    const now = ctx.currentTime;
+
+    // Filtered noise sweep — hızlı rüzgar
+    const bufSize = Math.ceil(0.4 * ctx.sampleRate);
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(3000, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + 0.3); // Sweep aşağı
+    filter.Q.value = 2;
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.06, now + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+
+    noise.connect(filter);
+    filter.connect(g);
+    g.connect(this._master);
+    noise.start(now);
+    noise.stop(now + 0.4);
+
+    // Alçalan ton — "uzaklaşma" hissi
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(250, now + 0.25);
+    const tG = ctx.createGain();
+    tG.gain.setValueAtTime(0, now);
+    tG.gain.linearRampToValueAtTime(0.04, now + 0.02);
+    tG.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+    osc.connect(tG);
+    tG.connect(this._master);
+    osc.start(now);
+    osc.stop(now + 0.35);
+  },
+
+  /** Geri dönüş (snap back) — yumuşak cam yerine oturma */
+  playSnapBack() {
+    if (!this._init()) return;
+    const ctx = this._ctx;
+    const now = ctx.currentTime;
+
+    // Kısa "tık" + hafif rezonans — cam yerine oturdu
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1800, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.08);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.04, now + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    osc.connect(g);
+    g.connect(this._master);
+    osc.start(now);
+    osc.stop(now + 0.15);
+  }
+};
+
 export class SwipeDeck {
   constructor(container, options = {}) {
     if (!container) {
@@ -194,6 +372,7 @@ export class SwipeDeck {
     this.grabRelativeY = (clientY - rect.top) / (rect.height || 1);
 
     this.topCard.style.transition = 'none';
+    SwipeAudio.playLift();
     if (this.secondCard) {
       this.secondCard.style.transition = 'none';
     }
@@ -220,6 +399,13 @@ export class SwipeDeck {
 
     // Apply translation & rotation to top card
     this.topCard.style.transform = `translate(${deltaX}px, ${deltaY}px) rotate(${rotate}deg)`;
+
+    // Parmak takip eden cam parıltısı — CSS custom property güncelle
+    const rect = this.topCard.getBoundingClientRect();
+    const relX = ((this.currentX - rect.left) / (rect.width || 1)) * 100;
+    const relY = ((this.currentY - rect.top) / (rect.height || 1)) * 100;
+    this.topCard.style.setProperty('--touch-x', `${relX}%`);
+    this.topCard.style.setProperty('--touch-y', `${relY}%`);
 
     // Scale up second card slightly as top card moves away
     if (this.secondCard) {
@@ -292,6 +478,7 @@ export class SwipeDeck {
     if (!this.topCard) return;
     
     SensoryEngine.triggerHaptic('light');
+    SwipeAudio.playSnapBack();
 
     this.topCard.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s';
     this.topCard.style.transform = 'translate(0, 0) rotate(0)';
@@ -334,6 +521,13 @@ export class SwipeDeck {
     this.isSwiping = true; // Lock further interactions
 
     SensoryEngine.triggerHaptic('medium');
+    
+    // Yön-bağımlı swipe sesi
+    if (isRight) {
+      SwipeAudio.playSwipeRight();
+    } else {
+      SwipeAudio.playSwipeLeft();
+    }
 
     const cardToDismiss = this.topCard;
     cardToDismiss.style.pointerEvents = 'none'; // Prevent clicks during flight

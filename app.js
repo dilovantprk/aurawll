@@ -53,29 +53,60 @@ export function triggerPortalTransition(targetViewId, colorRGB = '16, 185, 129',
     return;
   }
 
-  // Update background with specific RGB
-  portal.style.background = `radial-gradient(circle at 100% 50%, rgba(${colorRGB}, 0.75) 0%, rgba(5, 5, 8, 0.98) 100%)`;
+  // CSS custom property'ler ile renk ve pozisyon
+  portal.style.setProperty('--portal-rgb', colorRGB);
+  portal.classList.remove('closing');
+
+  // Zen açılış sesi — yumuşak singing bowl
+  if (typeof SensoryEngine !== 'undefined' && SensoryEngine.audioCtx && !SensoryEngine.isMuted) {
+    const ctx = SensoryEngine.audioCtx;
+    const now = ctx.currentTime;
+    SensoryEngine.resumeAudio();
+
+    // Kısa, ince singing bowl — portal açılış
+    const freqs = [523, 784, 1046];
+    const g = ctx.createGain();
+    g.connect(SensoryEngine.masterGain);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.06, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.02, now + 0.3);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      osc.detune.value = i * 3;
+      const hG = ctx.createGain();
+      hG.gain.value = 1.0 / (1 + i * 0.5);
+      osc.connect(hG);
+      hG.connect(g);
+      osc.start(now);
+      osc.stop(now + 2.0);
+    });
+  }
+
+  // Aç
   portal.style.opacity = '1';
   portal.classList.add('active');
 
-  // Navigate midway through transition (450ms)
+  // Navigate midway — portal tam açıldığında (550ms)
   setTimeout(() => {
     if (callback) callback();
     else navigateTo(targetViewId);
-  }, 450);
+  }, 550);
 
-  // Fade out smoothly
+  // Kapat — yumuşak fade-out
   setTimeout(() => {
-    portal.style.transition = 'opacity 0.5s ease-out, clip-path 0s';
-    portal.style.opacity = '0';
     portal.classList.remove('active');
-    
-    // Restore transition parameters
+    portal.classList.add('closing');
+
+    // Temizle
     setTimeout(() => {
-      portal.style.transition = '';
+      portal.classList.remove('closing');
       portal.style.opacity = '';
-    }, 500);
-  }, 900);
+    }, 700);
+  }, 1100);
 }
 
 /**
@@ -103,13 +134,15 @@ export function navigateTo(viewId, skipHistory = false) {
   if (currentView && currentView.id === 'view-meditations') {
     stopMeditationBgAnimation();
   }
+  if (currentView && currentView.id === 'view-savoring') {
+    SensoryEngine.stopAllSensory();
+  }
 
   const target = document.getElementById(viewId);
   if (!target) return;
 
   if (!skipHistory) {
     SensoryEngine.triggerHaptic('medium');
-    SensoryEngine.playSwipe();
   }
 
   // Restore UI from Focus Immersion
@@ -123,6 +156,30 @@ export function navigateTo(viewId, skipHistory = false) {
   setHUD(null);
 
   AppState.currentView = viewId;
+
+  // Update Global Header Info Button for Check-in steps
+  const globalInfoBtn = document.getElementById('globalInfoBtn');
+  if (globalInfoBtn) {
+    const checkinInfoKeys = {
+      'view-somatic-entry': 'info_step1_desc',
+      'view-affect-grid': 'info_step2_desc',
+      'view-emotion-refinement': 'info_step2b_desc',
+      'view-savoring': 'info_step4_desc',
+    };
+    
+    if (checkinInfoKeys[viewId]) {
+      globalInfoBtn.setAttribute('data-info', checkinInfoKeys[viewId]);
+      globalInfoBtn.removeAttribute('data-type');
+      globalInfoBtn.classList.remove('hidden');
+    } else if (viewId === 'view-exercise') {
+      const protocolId = AppState.currentExercise?.id || 'p_resonance';
+      globalInfoBtn.setAttribute('data-type', protocolId);
+      globalInfoBtn.removeAttribute('data-info');
+      globalInfoBtn.classList.remove('hidden');
+    } else {
+      globalInfoBtn.classList.add('hidden');
+    }
+  }
 
   // Track visit stats
   const activeNavId = document.querySelector(`.nav-item[data-view="${viewId.replace('view-', '')}"]`)?.id;
@@ -448,6 +505,7 @@ async function initAppBootstrap() {
   initExercise({ 
     getExerciseParams: () => AppState.currentExercise, 
     initAudio: () => SensoryEngine.initAudio(),
+    setBreathingPhase: (phase, duration) => SensoryEngine.setBreathingPhase(phase, duration),
     onComplete: () => advanceFromExercise()
   });
   initAuth({

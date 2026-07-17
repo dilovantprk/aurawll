@@ -63,14 +63,7 @@
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
             </svg>
           </button>
-          <button id="globalInfoBtn" class="glass-btn small-btn hidden" aria-label="Info">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-          </button>
+          <button id="globalInfoBtn" class="glass-btn small-btn info-trigger hidden" aria-label="Info">i</button>
         </div>
       </div>
     </header>
@@ -454,21 +447,21 @@
       <div class="step-header fade-in">
         <h2 data-i18n="morning_title">Günaydın.</h2>
       </div>
-      <div id="morningQuestions" class="morning-questions-container fade-in-pure delay-1" style="width: 100%; max-width: 400px; margin-top: 2rem; text-align: left;">
-        <div class="question-block" style="margin-bottom: 2rem;">
-          <p style="margin-bottom: 1rem; font-size: 1.1rem;" data-i18n="morning_q_dream">Dün gece rüya gördün mü?</p>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="morningDreamBtns">
-            <button class="ghost-btn morning-btn" data-val="yes" style="flex:1;">Evet</button>
-            <button class="ghost-btn morning-btn" data-val="no" style="flex:1;">Hayır</button>
-            <button class="ghost-btn morning-btn" data-val="vague" style="flex:1;">Hayal Meyal</button>
+      <div id="morningQuestions" class="morning-questions-container fade-in-pure delay-1">
+        <div class="question-block">
+          <p data-i18n="morning_q_dream">Dün gece rüya gördün mü?</p>
+          <div class="morning-btn-group" id="morningDreamBtns">
+            <button class="ghost-btn morning-btn" data-val="yes">Evet</button>
+            <button class="ghost-btn morning-btn" data-val="no">Hayır</button>
+            <button class="ghost-btn morning-btn" data-val="vague">Hayal Meyal</button>
           </div>
         </div>
         <div class="question-block">
-          <p style="margin-bottom: 1rem; font-size: 1.1rem;" data-i18n="morning_q_body">Uyanınca bedenin nasıl hissettirdi?</p>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="morningBodyBtns">
-            <button class="ghost-btn morning-btn" data-val="refreshed" style="flex:1;">Dinlenmiş</button>
-            <button class="ghost-btn morning-btn" data-val="heavy" style="flex:1;">Ağır</button>
-            <button class="ghost-btn morning-btn" data-val="neutral" style="flex:1;">Nötr</button>
+          <p data-i18n="morning_q_body">Uyanınca bedenin nasıl hissettirdi?</p>
+          <div class="morning-btn-group" id="morningBodyBtns">
+            <button class="ghost-btn morning-btn" data-val="refreshed">Dinlenmiş</button>
+            <button class="ghost-btn morning-btn" data-val="heavy">Ağır</button>
+            <button class="ghost-btn morning-btn" data-val="neutral">Nötr</button>
           </div>
         </div>
         <button id="morningNextBtn" class="primary-btn mt-8 hidden w-full">Devam</button>
@@ -573,8 +566,18 @@
       <div class="breathing-container fade-in delay-1" style="position: relative;">
         <!-- Stable Outer Progress Ring -->
         <svg class="breath-progress-ring" width="260" height="260" viewBox="0 0 260 260">
-          <circle class="progress-ring-bg" cx="130" cy="130" r="115" stroke="rgba(255,255,255,0.03)" stroke-width="1.5" fill="none"></circle>
-          <circle class="progress-ring-bar" cx="130" cy="130" r="115" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" stroke-dasharray="722.56" stroke-dashoffset="722.56" stroke-linecap="round"></circle>
+          <defs>
+            <filter id="wavy-ring">
+              <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="1" result="noise">
+                <animate attributeName="baseFrequency" dur="15s" values="0.008 0.008;0.012 0.006;0.008 0.008" repeatCount="indefinite" />
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+          <g filter="url(#wavy-ring)">
+            <circle class="progress-ring-bg" cx="130" cy="130" r="115" stroke="rgba(255,255,255,0.03)" stroke-width="1.5" fill="none"></circle>
+            <circle class="progress-ring-bar" cx="130" cy="130" r="115" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" stroke-dasharray="722.56" stroke-dashoffset="722.56" stroke-linecap="round"></circle>
+          </g>
         </svg>
 
         <div id="breathCircle" class="breath-circle">

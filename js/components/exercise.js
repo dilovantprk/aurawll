@@ -62,11 +62,11 @@ function runPhase() {
 
   elements.breathCircle.className = `breath-circle ${phase.class}`;
   elements.breathCircle.style.transitionDuration = `${duration / 1000}s`;
-  elements.breathInstruction.textContent = t(`ex_${phase.name.toLowerCase().replace(' ', '_')}`);
+  elements.breathInstruction.textContent = t(`ex_${phase.name.toLowerCase().replace(/[\s-]/g, '_')}`);
 
   if (configProps.setBreathingPhase) {
     const pId = phase.name.toLowerCase();
-    const mapped = pId.includes('in') ? 'inhale' : (pId.includes('out') ? 'exhale' : 'hold');
+    const mapped = pId.includes('in') ? 'inhale' : ((pId.includes('out') || pId.includes('ex') || pId.includes('empty')) ? 'exhale' : 'hold');
     configProps.setBreathingPhase(mapped, duration);
   }
 
@@ -83,5 +83,8 @@ export function stopExercise() {
   const progressRing = document.querySelector('.progress-ring-bar');
   if (progressRing) {
     progressRing.style.strokeDashoffset = '722.56';
+  }
+  if (configProps.setBreathingPhase) {
+    configProps.setBreathingPhase('stop', 500);
   }
 }

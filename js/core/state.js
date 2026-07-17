@@ -15,7 +15,7 @@ export const AppState = {
   lang: safeGetItem('aura_lang') || 'tr',
   isMuted: safeGetItem('aura_muted') === 'true',
   hapticEnabled: safeGetItem('aura_haptic') !== 'false', // Default true
-  droneEnabled: safeGetItem('aura_drone') !== 'false', // Default true
+  droneEnabled: safeGetItem('aura_drone') === 'true', // Default false
   uiSoundsEnabled: safeGetItem('aura_ui_sounds') === 'true', // Default false
   appVolume: parseInt(safeGetItem('aura_volume')) || 50, // Default 50
   showNotebook: safeGetItem('aura_show_notebook') === 'true', // Default false

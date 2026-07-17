@@ -20,19 +20,22 @@ export const ICONS = {
 };
 
 export const AMBIENT_SOUNDS = [
-  { id: 'rain', titleKey: 'amb_rain', category: 'nature', icon: 'rain', visual: 'rain', url: 'assets/audio/ambient/rain.mp3' },
-  { id: 'waves', titleKey: 'amb_waves', category: 'nature', icon: 'waves', visual: 'ocean', url: 'assets/audio/ambient/waves.mp3' },
+  { id: 'rain', titleKey: 'amb_rain', category: 'nature', icon: 'rain', visual: 'rain', url: 'assets/audio/ambient/soul_serenity_sounds-garden-ambience-236744.mp3' },
+  { id: 'waves', titleKey: 'amb_waves', category: 'nature', icon: 'waves', visual: 'ocean', url: 'assets/audio/ambient/soul_serenity_sounds-water-noises-241049.mp3' },
   { id: 'forest_birds', titleKey: 'amb_forest_birds', category: 'nature', icon: 'birds', visual: 'rain', url: 'assets/audio/ambient/kalsstockmedia-ambient-forest-bird-sounds-280152.mp3' },
   { id: 'jungle', titleKey: 'amb_jungle', category: 'nature', icon: 'jungle', visual: 'rain', url: 'assets/audio/ambient/freesound_community-ambient-01_junglehillswav-14614.mp3' },
   { id: 'stream', titleKey: 'amb_stream', category: 'nature', icon: 'waves', visual: 'ocean', url: 'assets/audio/ambient/blendertimer-small-gentle-stream-loop-514373.mp3' },
   { id: 'whale', titleKey: 'amb_whale', category: 'nature', icon: 'whale', visual: 'ocean', url: 'assets/audio/ambient/saturn-3-music-underwater-whale-and-diving-sound-ambient-116185.mp3' },
+  { id: 'spring_forest', titleKey: 'amb_spring', category: 'nature', icon: 'birds', visual: 'rain', url: 'assets/audio/ambient/soundreality-ambient-spring-forest-323801.mp3' },
+  { id: 'frogs', titleKey: 'amb_frogs', category: 'nature', icon: 'birds', visual: 'night', url: 'assets/audio/ambient/freesound_community-frog-croak-ambient-70548.mp3' },
+  { id: 'spaceship', titleKey: 'amb_spaceship', category: 'focus', icon: 'noise', visual: 'focus', url: 'assets/audio/ambient/freesound_community-spaceship-ambient-27988.mp3' },
   { id: 'pink_noise', titleKey: 'amb_pink', category: 'focus', icon: 'noise', visual: 'focus', type: 'noise' },
   { id: 'brown_noise', titleKey: 'amb_brown', category: 'focus', icon: 'noise', visual: 'focus', type: 'noise' },
   { id: 'bin_focus', titleKey: 'amb_bin_focus', category: 'focus', icon: 'focus', visual: 'focus', type: 'binaural', subtype: 'focus' },
   { id: 'bin_relax', titleKey: 'amb_bin_relax', category: 'peace', icon: 'peace', visual: 'night', type: 'binaural', subtype: 'relax' },
   { id: 'bin_sleep', titleKey: 'amb_bin_sleep', category: 'peace', icon: 'peace', visual: 'night', type: 'binaural', subtype: 'sleep' },
   { id: 'midnight', titleKey: 'amb_midnight', category: 'peace', icon: 'peace', visual: 'night', url: 'assets/audio/ambient/recordx_media-midnight-sound-effect-199863.mp3' },
-  { id: 'storm', titleKey: 'amb_storm', category: 'nature', icon: 'rain', visual: 'rain', url: 'assets/audio/ambient/storm.mp3' }
+  { id: 'storm', titleKey: 'amb_storm', category: 'nature', icon: 'rain', visual: 'rain', url: 'assets/audio/ambient/soul_serenity_sounds-garden-ambience-236744.mp3' }
 ];
 
 let activeSoundId = null;

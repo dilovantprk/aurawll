@@ -27,8 +27,6 @@
   width: 100%;
   height: 100%;
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.05);
   cursor: grab;
   user-select: none;
   touch-action: none;
@@ -36,17 +34,96 @@
   will-change: transform, opacity;
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+
+  /* ── Premium Glassmorphism ── */
+  background:
+    radial-gradient(
+      ellipse at var(--touch-x, 50%) var(--touch-y, 30%),
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.02) 40%,
+      rgba(255, 255, 255, 0.0) 100%
+    );
+  background-color: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+
+  /* ── Çift katmanlı cam kenar ── */
   border: 0.5px solid rgba(255, 255, 255, 0.12);
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
-              opacity 0.45s, 
-              border-color 0.3s;
+  box-shadow:
+    /* Dış derinlik gölgesi */
+    0 20px 50px rgba(0, 0, 0, 0.35),
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    /* İç cam yansıma — üst kenar ışığı */
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+    /* Cam kenar parıltısı */
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset -1px 0 0 rgba(255, 255, 255, 0.05);
+
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.45s,
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+/* ── Prismatik kenar efekti (::before) ── */
+.swipe-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 25px;
+  padding: 1px;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    rgba(255, 255, 255, 0.0) 0%,
+    rgba(255, 255, 255, 0.1) 15%,
+    rgba(168, 190, 255, 0.12) 25%,
+    rgba(255, 255, 255, 0.0) 40%,
+    rgba(168, 230, 207, 0.08) 55%,
+    rgba(255, 255, 255, 0.1) 70%,
+    rgba(200, 170, 255, 0.1) 85%,
+    rgba(255, 255, 255, 0.0) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
+  transition: opacity 0.4s ease;
+}
+
+/* ── İç ışık yansıması (::after) ── */
+.swipe-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    transparent 100%
+  );
+  border-radius: 24px 24px 0 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .swipe-card.top {
   z-index: 5;
+}
+
+.swipe-card.top::before {
+  opacity: 1;
 }
 
 .swipe-card.second {
@@ -54,8 +131,21 @@
   pointer-events: none;
 }
 
+.swipe-card.second::before,
+.swipe-card.second::after {
+  opacity: 0;
+}
+
 .swipe-card:active {
   cursor: grabbing;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.4),
+    0 10px 25px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    inset 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset -1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Swipe Badges */
@@ -73,23 +163,24 @@
   pointer-events: none;
   transform: rotate(-10deg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .badge-left {
   right: 24px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
   color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.06);
   transform: rotate(10deg);
 }
 
 .badge-right {
   left: 24px;
-  border: 2px solid var(--state-ventral-border, rgba(46, 213, 115, 0.6));
+  border: 1.5px solid var(--state-ventral-border, rgba(46, 213, 115, 0.5));
   color: var(--state-ventral-text, #2ed573);
-  background: rgba(46, 213, 115, 0.05);
-  backdrop-filter: blur(5px);
+  background: rgba(46, 213, 115, 0.06);
+  box-shadow: 0 4px 20px rgba(46, 213, 115, 0.15);
 }
 
 /* Card inner content layout */
@@ -102,6 +193,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  z-index: 2;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
@@ -118,18 +210,33 @@
   pointer-events: auto;
 }
 
-/* Animations */
-@keyframes card-glow-pulse {
+/* ── Nefes alan glow animasyonu ── */
+@keyframes card-glass-breathe {
   0%, 100% {
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 20px 50px rgba(0, 0, 0, 0.35),
+      0 8px 20px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+      inset 1px 0 0 rgba(255, 255, 255, 0.05),
+      inset -1px 0 0 rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
   }
   50% {
-    box-shadow: 0 20px 60px rgba(255, 255, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.3),
+      0 10px 25px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+      inset 1px 0 0 rgba(255, 255, 255, 0.08),
+      inset -1px 0 0 rgba(255, 255, 255, 0.08),
+      0 0 30px rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.16);
   }
 }
 
 .swipe-card.top {
-  animation: card-glow-pulse 6s infinite ease-in-out;
+  animation: card-glass-breathe 5s infinite ease-in-out;
 }
 
 /* Embedded Swipe Section styles */
@@ -180,3 +287,4 @@
     margin-bottom: 0 !important;
   }
 }
+

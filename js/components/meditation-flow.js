@@ -3,6 +3,8 @@ import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { syncGlobalTheme } from '../core/utils.js';
 import { protocols, subEmotionMap, PROTOCOL_META } from '../core/constants.js';
+import { CheckinAudio } from '../services/checkin-audio.js';
+import { SensoryEngine } from '../services/sensory.js';
 
 let configProps = {
   fb: null,
@@ -65,6 +67,8 @@ export function startMeditationLoading(protocolId) {
   if (iconEl) { iconEl.textContent = "5"; iconEl.style.opacity = '1'; iconEl.style.transform = 'scale(1)'; }
   
   if (configProps.navigateTo) configProps.navigateTo('view-meditation-loading');
+  CheckinAudio.playMeditationLoadingStart();
+  CheckinAudio.playMeditationLoadingTick(5);
 
   if (meditationLoadingTimeout) clearTimeout(meditationLoadingTimeout);
   if (meditationCountdownInterval) clearInterval(meditationCountdownInterval);
@@ -79,6 +83,7 @@ export function startMeditationLoading(protocolId) {
         setTimeout(() => {
           iconEl.textContent = timeLeft; iconEl.style.transform = 'scale(1.1)'; iconEl.style.opacity = '1';
           setTimeout(() => { iconEl.style.transform = 'scale(1)'; }, 150);
+          CheckinAudio.playMeditationLoadingTick(timeLeft);
           timeLeft--;
           if (timeLeft < 0) clearInterval(meditationCountdownInterval);
         }, 150);
@@ -87,6 +92,25 @@ export function startMeditationLoading(protocolId) {
 
     meditationLoadingTimeout = setTimeout(() => {
       if (configProps.navigateTo) configProps.navigateTo('view-savoring');
+      
+      // Start polyvagal-tuned background ambient music & binaural beats for the guided scan
+      const legacyState = AppState.currentCheckIn?.state || 'Okay';
+      const stateId = legacyState.toLowerCase();
+      
+      try {
+        SensoryEngine.initAudio();
+        SensoryEngine.update(stateId);
+        SensoryEngine.setDroneEnabled(true);
+        
+        // Soothe the nervous system with Alpha (relax) or Delta (sleep) beats
+        if (stateId === 'foggy') {
+          SensoryEngine.playBinaural('sleep'); // Delta for foggy/dorsal grounding
+        } else {
+          SensoryEngine.playBinaural('relax'); // Alpha for ventral & sympathetic soothing
+        }
+      } catch(e) {
+        console.warn("SensoryEngine background music failed to initialize", e);
+      }
       
       const savoringHeader = document.querySelector('#view-savoring .step-header');
       if (savoringHeader) savoringHeader.classList.add('hidden');
@@ -147,6 +171,12 @@ function finishGuidedScan() {
   scanTimeouts.forEach(clearTimeout);
   scanTimeouts = [];
   
+  // Transition background music concept to 'savoring' mode (pure ventral + 432Hz/8Hz theta-alpha bridge)
+  try {
+    SensoryEngine.update('savoring');
+    SensoryEngine.playBinaural('savoring');
+  } catch(e) {}
+  
   const savoringHeader = document.querySelector('#view-savoring .step-header');
   if (savoringHeader) savoringHeader.classList.remove('hidden');
 
@@ -165,6 +195,9 @@ function finishGuidedScan() {
 function renderMarinationSensations() {
   const container = elements.marSensationContainer;
   if (!container) return;
+  
+  // Play the magical rising pentatonic chime cascade matching the stagger fade-in animation
+  CheckinAudio.playSensationCascade();
   
   const sensations = [
     {id: 'mar_calmer'}, {id: 'mar_warmer'}, 
@@ -191,13 +224,18 @@ function renderMarinationSensations() {
       if (idx > -1) {
         AppState.currentCheckIn.sensations.splice(idx, 1);
         chip.classList.remove('selected');
+        CheckinAudio.playChipDeselect();
       } else {
         AppState.currentCheckIn.sensations.push(id);
         chip.classList.add('selected');
+        CheckinAudio.playSensationSelect(AppState.currentCheckIn.sensations.length);
       }
       
       if (AppState.currentCheckIn.sensations.length > 0) {
-        configProps.setHUD('check', () => goToSavoring(elements.marPhase2));
+        configProps.setHUD('check', () => {
+          CheckinAudio.playStepTransition();
+          goToSavoring(elements.marPhase2);
+        });
       } else {
         configProps.setHUD(null);
       }
@@ -387,17 +425,25 @@ async function submitSavoringLog() {
   }
 
   if (configProps.resetBioFeedback) configProps.resetBioFeedback();
+  
+  // Stop background ambient music immediately before completion
+  try {
+    SensoryEngine.stopAllSensory();
+  } catch(e) {}
+  
   AppState.justFinishedCheckIn = true;
   AppState.lastCheckInState = AppState.currentCheckIn.state;
   syncGlobalTheme();
   
   if (configProps.navigateTo) configProps.navigateTo('view-completion');
+  CheckinAudio.playCompletion();
   
   // Modern HUD-based navigation
   if (elements.returnHomeBtn) elements.returnHomeBtn.style.display = 'none';
   
   if (configProps.setHUD) {
     configProps.setHUD('home', () => {
+      CheckinAudio.playLanding();
       if (configProps.loadDashboard) configProps.loadDashboard();
       if (configProps.navigateTo) configProps.navigateTo('view-dashboard', 'left');
     });

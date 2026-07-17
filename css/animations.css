@@ -603,15 +603,86 @@ body.crystal-entry .app-container {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  background: radial-gradient(circle at 100% 50%, rgba(16, 185, 129, 0.75) 0%, rgba(5, 5, 8, 0.98) 100%);
-  clip-path: circle(0% at 100% 50%);
   opacity: 0;
-  transition: clip-path 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out;
+
+  /* Çok katmanlı zen gradient — merkez glow + dış karartma */
+  background:
+    radial-gradient(
+      circle at var(--portal-x, 85%) var(--portal-y, 50%),
+      rgba(var(--portal-rgb, 16, 185, 129), 0.5) 0%,
+      rgba(var(--portal-rgb, 16, 185, 129), 0.15) 25%,
+      rgba(5, 5, 8, 0.6) 50%,
+      rgba(5, 5, 8, 0.95) 100%
+    );
+
+  /* İlk durum: küçük daire */
+  clip-path: circle(0% at var(--portal-x, 85%) var(--portal-y, 50%));
+  transition:
+    clip-path 1s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease-out;
+}
+
+/* Işık halkası efekti */
+.portal-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at var(--portal-x, 85%) var(--portal-y, 50%),
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 15%,
+      transparent 35%
+    );
+  opacity: 0;
+  transition: opacity 0.6s ease-out 0.2s;
+}
+
+.portal-overlay.active::before {
+  opacity: 1;
+}
+
+/* Parçacık dokusu */
+.portal-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle at 20% 30%, rgba(255, 255, 255, 0.04) 1px, transparent 1px
+  ),
+  radial-gradient(
+    circle at 60% 70%, rgba(255, 255, 255, 0.03) 1px, transparent 1px
+  ),
+  radial-gradient(
+    circle at 80% 20%, rgba(255, 255, 255, 0.025) 1px, transparent 1px
+  );
+  background-size: 120px 120px, 80px 80px, 160px 160px;
+  opacity: 0;
+  transition: opacity 0.8s ease-out 0.3s;
+  animation: portal-dust-drift 8s linear infinite;
+}
+
+.portal-overlay.active::after {
+  opacity: 1;
+}
+
+@keyframes portal-dust-drift {
+  from { background-position: 0 0, 0 0, 0 0; }
+  to { background-position: 120px 60px, -80px 40px, 60px -80px; }
 }
 
 .portal-overlay.active {
-  clip-path: circle(150% at 100% 50%);
+  clip-path: circle(150% at var(--portal-x, 85%) var(--portal-y, 50%));
   opacity: 1;
+}
+
+/* Kapanış: daha yumuşak fade-out */
+.portal-overlay.closing {
+  clip-path: circle(150% at var(--portal-x, 85%) var(--portal-y, 50%));
+  opacity: 0;
+  transition:
+    opacity 0.6s ease-out,
+    clip-path 0s 0.6s;
 }
 
 /* Staggered Chip Fade-In Animation */

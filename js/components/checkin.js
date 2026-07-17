@@ -3,6 +3,7 @@ import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { SOMATIC_MAP, EMOTION_OPTIONS, protocols, subEmotionMap, stateLegacyMap, PROTOCOL_META, EMOTION_PROTOCOL_MAP } from '../core/constants.js';
 import { vibrate } from '../core/utils.js';
+import { CheckinAudio } from '../services/checkin-audio.js';
 
 
 let configProps = {
@@ -76,6 +77,7 @@ function isMorningCheckin() {
 
 function renderMorningCheckin() {
   if (configProps.navigateTo) configProps.navigateTo('view-morning-checkin');
+  CheckinAudio.playMorningOpen();
   
   const dreamBtns = document.querySelectorAll('#morningDreamBtns .morning-btn');
   const bodyBtns = document.querySelectorAll('#morningBodyBtns .morning-btn');
@@ -98,6 +100,7 @@ function renderMorningCheckin() {
       btn.classList.add('active', 'selected');
       dreamVal = btn.getAttribute('data-val');
       AppState.currentCheckIn.sleep_data.dream = dreamVal;
+      CheckinAudio.playMorningSelect('dream');
       checkNext();
     };
   });
@@ -108,17 +111,20 @@ function renderMorningCheckin() {
       btn.classList.add('active', 'selected');
       bodyVal = btn.getAttribute('data-val');
       AppState.currentCheckIn.sleep_data.body = bodyVal;
+      CheckinAudio.playMorningSelect('body');
       checkNext();
     };
   });
 
   nextBtn.onclick = () => {
+    CheckinAudio.playMorningNext();
     renderSomaticEntry();
   };
 }
 
 export function renderSomaticEntry() {
   if (configProps.navigateTo) configProps.navigateTo('view-somatic-entry');
+  CheckinAudio.playSomaticOpen();
   const container = elements.somaticContainer;
   if (!container) return;
   const shuffledKeys = Object.keys(SOMATIC_MAP).sort(() => Math.random() - 0.5);
@@ -128,20 +134,30 @@ export function renderSomaticEntry() {
     chip.addEventListener('click', () => {
       vibrate('light');
       const key = chip.getAttribute('data-key');
+      const chipState = chip.getAttribute('data-state');
       const idx = AppState.currentCheckIn.somatic_selections.indexOf(key);
       if (idx === -1) {
         if (AppState.currentCheckIn.somatic_selections.length < 3) {
           AppState.currentCheckIn.somatic_selections.push(key);
           chip.classList.add('selected');
+          CheckinAudio.playChipSelect(chipState);
+          // 3 chip dolunca saturation chord
+          if (AppState.currentCheckIn.somatic_selections.length === 3) {
+            setTimeout(() => CheckinAudio.playChipSaturation(), 250);
+          }
         }
       } else {
         AppState.currentCheckIn.somatic_selections.splice(idx, 1);
         chip.classList.remove('selected');
+        CheckinAudio.playChipDeselect();
       }
       applyDynamicFilter(chips, container);
       updatePrediction();
       if (AppState.currentCheckIn.somatic_selections.length > 0) {
-        setHUD('arrow', () => renderAffectGrid());
+        setHUD('arrow', () => {
+          CheckinAudio.playStepTransition();
+          renderAffectGrid();
+        });
       } else {
         setHUD(null);
       }
@@ -200,6 +216,7 @@ function applyDynamicFilter(chips, container) {
 
 export function renderAffectGrid() {
   if (configProps.navigateTo) configProps.navigateTo('view-affect-grid');
+  CheckinAudio.playGridOpen();
   const area = elements.gridTouchArea;
   const userDot = elements.userDot;
   if (!area || !userDot) return;
@@ -211,6 +228,7 @@ export function renderAffectGrid() {
     const a = Math.max(0, Math.min(1, 1 - ((e.clientY - rect.top) / rect.height)));
     AppState.currentCheckIn.pre_arousal = a;
     AppState.currentCheckIn.pre_valence = v;
+    CheckinAudio.playGridTouch(a, v);
 
     userDot.style.left = `${v * 100}%`;
     userDot.style.top = `${(1 - a) * 100}%`;
@@ -229,6 +247,7 @@ export function renderAffectGrid() {
     if (elements.suggestionDot) elements.suggestionDot.style.opacity = '0.3';
     
     setHUD('arrow', () => {
+      CheckinAudio.playStepTransition();
       const state = configProps.calculatePolyvagalState(a, v);
       AppState.currentCheckIn.polyvagal_state = state;
       AppState.currentCheckIn.state = stateLegacyMap[state]; 
@@ -248,6 +267,7 @@ export function renderAffectGrid() {
 
 export function renderEmotionRefinement(state) {
   if (configProps.navigateTo) configProps.navigateTo('view-emotion-refinement');
+  CheckinAudio.playEmotionOpen(state);
   const container = elements.emotionRefinementContainer;
   container.className = 'rhizome-container nebula-cluster'; // Apply new layout
   container.innerHTML = EMOTION_OPTIONS[state].map(emoKey => `<button class="rhizome-chip ${state}" data-emo="${emoKey}">${t(emoKey)}</button>`).join('');
@@ -261,14 +281,17 @@ export function renderEmotionRefinement(state) {
         if (AppState.currentCheckIn.selected_emotions.length < 3) {
           AppState.currentCheckIn.selected_emotions.push(emo);
           chip.classList.add('selected');
+          CheckinAudio.playEmotionSelect(state, AppState.currentCheckIn.selected_emotions.length);
         }
       } else {
         AppState.currentCheckIn.selected_emotions.splice(idx, 1);
         chip.classList.remove('selected');
+        CheckinAudio.playChipDeselect();
       }
       
       if (AppState.currentCheckIn.selected_emotions.length > 0) {
         setHUD('arrow', () => {
+          CheckinAudio.playStepTransition();
           // Diversity logic: Use the first selected emotion's specific protocol
           const firstEmotion = AppState.currentCheckIn.selected_emotions[0];
           const protocolId = EMOTION_PROTOCOL_MAP[firstEmotion] || (state === 'sympathetic' ? 'p_478' : (state === 'dorsal' ? 'p_bellows' : 'p_resonance'));
@@ -301,6 +324,11 @@ export function prepareExercise(protocolId) {
     exerciseInfoBtn.setAttribute('data-type', protocolId);
     exerciseInfoBtn.removeAttribute('data-info');
   }
+  const globalInfoBtn = document.getElementById('globalInfoBtn');
+  if (globalInfoBtn) {
+    globalInfoBtn.setAttribute('data-type', protocolId);
+    globalInfoBtn.removeAttribute('data-info');
+  }
 
   configProps.timeRemaining = ex.totalDuration;
   if (configProps.navigateTo) configProps.navigateTo('view-exercise');
@@ -318,10 +346,12 @@ export function advanceFromExercise() {
     setHUD(null);
     if (configProps.navigateTo) configProps.navigateTo('view-completion');
     vibrate('success');
+    CheckinAudio.playCompletion();
     // Hide the old button and use HUD instead
     if (elements.returnHomeBtn) elements.returnHomeBtn.style.display = 'none';
     
     setHUD('home', () => {
+      CheckinAudio.playLanding();
       if (configProps.loadDashboard) configProps.loadDashboard();
       if (configProps.navigateTo) configProps.navigateTo('view-dashboard', 'left');
     });

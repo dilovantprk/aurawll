@@ -3,6 +3,7 @@ import { t } from '../core/i18n.js';
 import { PROTOCOL_META, BADGES, protocols } from '../core/constants.js';
 import { AppState } from '../core/state.js';
 import { vibrate, calculateEarnedBadges } from '../core/utils.js';
+import { SensoryEngine } from '../services/sensory.js';
 
 let galaxyAnimationId = null;
 
@@ -43,6 +44,11 @@ export function initModals(config) {
       const infoKey = infoBtn.getAttribute('data-info') || infoBtn.getAttribute('data-type');
       const isCurrentlyActive = elements.infoModal.classList.contains('active') || elements.vagalModal.classList.contains('active');
       
+      // Play glass slide sound
+      try {
+        SensoryEngine.playGlassSlide();
+      } catch(e) {}
+
       if (isCurrentlyActive && lastInfoBtn === infoBtn) {
         closeAll();
       } else {

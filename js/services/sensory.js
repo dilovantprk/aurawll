@@ -11,13 +11,12 @@ export const SensoryEngine = {
   sympTremoloLFO: null,
   dorsalGain: null,
   dorsalLFO: null,
-  breathNoise: null,
-  breathGain: null,
-  breathFilter: null,
+  activeBreathSource: null,
+  activeBreathGain: null,
   hapticInterval: null,
   currentPattern: null,
   isMuted: false,
-  droneEnabled: true,
+  droneEnabled: false,
   hapticEnabled: true,
   uiSoundsEnabled: false,
   appVolume: 50,
@@ -156,19 +155,10 @@ export const SensoryEngine = {
   },
 
   _initBreathNoise() {
-    this.breathGain = this.audioCtx.createGain(); this.breathGain.gain.value = 0;
-    this.breathFilter = this.audioCtx.createBiquadFilter();
-    this.breathFilter.type = 'lowpass'; this.breathFilter.frequency.value = 1000;
-    const bufferSize = 2 * this.audioCtx.sampleRate;
-    const noiseBuffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-    this.breathSource = this.audioCtx.createBufferSource();
-    this.breathSource.buffer = noiseBuffer; this.breathSource.loop = true;
-    this.breathSource.connect(this.breathFilter);
-    this.breathFilter.connect(this.breathGain);
-    this.breathGain.connect(this.masterGain);
-    this.breathSource.start();
+    // Continuous breath background sound disabled per user preference
+    this.breathGain = null;
+    this.breathFilter = null;
+    this.breathOscs = [];
   },
 
   resumeAudio() {
@@ -199,6 +189,11 @@ export const SensoryEngine = {
        this.ventralGain.gain.setTargetAtTime(0.2, now, 1.0);
        this.sympTremoloGain.gain.setTargetAtTime(0.0, now, 1.0);
        this.dorsalGain.gain.setTargetAtTime(0.8, now, 1.0);
+    } else if (stateId === 'savoring') {
+       // Warm, slow-evolving ventral pad for deep savoring integration
+       this.ventralGain.gain.setTargetAtTime(1.1, now, 1.5);
+       this.sympTremoloGain.gain.setTargetAtTime(0.0, now, 1.5);
+       this.dorsalGain.gain.setTargetAtTime(0.0, now, 1.5);
     }
 
     if (document.documentElement) {
@@ -226,34 +221,127 @@ export const SensoryEngine = {
     if (!this.audioCtx) this.initAudio();
     if (!this.audioCtx || this.isMuted || !this.uiSoundsEnabled) return;
     this.resumeAudio();
-    const now = this.audioCtx.currentTime;
-    const osc = this.audioCtx.createOscillator();
-    const gain = this.audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(1200, now);
-    osc.frequency.exponentialRampToValueAtTime(800, now + 0.04);
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.08, now + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-    osc.connect(gain); gain.connect(this.masterGain);
-    osc.start(now); osc.stop(now + 0.06);
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+
+    // ── Kristal darbe fiziği ──
+    // Gerçek cam/kristal nesnelerin inharmonik partial dizisi:
+    // f, 2.76f, 5.4f, 8.93f — tam tam oktav değil, biraz kaymış
+
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.065, now);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+    master.connect(this.masterGain);
+
+    // Darbe transient'i — çok kısa gürültü patlaması
+    const impSize = Math.ceil(0.012 * ctx.sampleRate);
+    const impBuf = ctx.createBuffer(1, impSize, ctx.sampleRate);
+    const impData = impBuf.getChannelData(0);
+    for (let i = 0; i < impSize; i++) {
+      impData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (impSize * 0.3));
+    }
+    const imp = ctx.createBufferSource();
+    imp.buffer = impBuf;
+    const impF = ctx.createBiquadFilter();
+    impF.type = 'highpass';
+    impF.frequency.value = 3000;
+    const impG = ctx.createGain();
+    impG.gain.setValueAtTime(0.9, now);
+    impG.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
+    imp.connect(impF); impF.connect(impG); impG.connect(master);
+    imp.start(now); imp.stop(now + 0.015);
+
+    // İnharmonik partial'lar — her biri farklı hızda söner (gerçek cam fiziği)
+    const base = 1100;
+    const partials = [
+      { ratio: 1.0,   decayT: 0.50, vol: 1.0    },  // fundamental
+      { ratio: 2.756, decayT: 0.28, vol: 0.55   },  // 2. partial (inharmonik)
+      { ratio: 5.404, decayT: 0.14, vol: 0.28   },  // 3. partial
+      { ratio: 8.933, decayT: 0.07, vol: 0.12   },  // 4. partial (çok kısa)
+    ];
+
+    partials.forEach(p => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = base * p.ratio;
+      // Hafif detune — fiziksel belirsizlik
+      osc.detune.value = (Math.random() - 0.5) * 8;
+
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(p.vol * 0.9, now + 0.001);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + p.decayT);
+
+      osc.connect(g); g.connect(master);
+      osc.start(now); osc.stop(now + p.decayT + 0.02);
+    });
   },
 
   playSwipe() {
     if (!this.audioCtx) this.initAudio();
     if (!this.audioCtx || this.isMuted || !this.uiSoundsEnabled) return;
     this.resumeAudio();
-    const now = this.audioCtx.currentTime;
-    const osc = this.audioCtx.createOscillator();
-    const gain = this.audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.05, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
-    osc.connect(gain); gain.connect(this.masterGain);
-    osc.start(now); osc.stop(now + 0.2);
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+
+    // ── Shakuhachi / bambu nefes fiziği ──
+    // Shakuhachi = Japon bambu flütü: hollow pipe + nefes gürültüsü + embouchure vibrato
+
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0, now);
+    master.gain.linearRampToValueAtTime(0.055, now + 0.06);  // nefes dolumu
+    master.gain.setValueAtTime(0.055, now + 0.22);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+    master.connect(this.masterGain);
+
+    // Hollow pipe resonance — fundamental + 3. harmonik (flüt karakteristiği)
+    const fundamental = 370; // F#4 — mistik, biraz tuhaf
+    [1, 3].forEach((harmonic, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = fundamental * harmonic;
+
+      // Embouchure vibrato — nefes basıncı kaymasını simüle eder
+      const vibLFO = ctx.createOscillator();
+      vibLFO.type = 'sine';
+      vibLFO.frequency.value = 5.2; // ~5Hz insan nefes vibratosu
+      const vibDepth = ctx.createGain();
+      vibDepth.gain.value = 6 + (i * 3); // üst harmoniklerde daha derin vibrato
+      vibLFO.connect(vibDepth);
+      vibDepth.connect(osc.detune);
+
+      const g = ctx.createGain();
+      g.gain.value = i === 0 ? 1.0 : 0.35;
+
+      osc.connect(g); g.connect(master);
+      vibLFO.start(now + 0.05); // vibrato biraz geç başlar
+      osc.start(now);
+      osc.stop(now + 0.6);
+      vibLFO.stop(now + 0.6);
+    });
+
+    // Nefes türbülansı — flütün "hava" katmanı
+    const breathSize = Math.ceil(0.55 * ctx.sampleRate);
+    const breathBuf = ctx.createBuffer(1, breathSize, ctx.sampleRate);
+    const breathData = breathBuf.getChannelData(0);
+    for (let i = 0; i < breathSize; i++) breathData[i] = Math.random() * 2 - 1;
+    const breath = ctx.createBufferSource();
+    breath.buffer = breathBuf;
+
+    // Bandpass filter — flüt embouchure hole rezonansı
+    const breathF = ctx.createBiquadFilter();
+    breathF.type = 'bandpass';
+    breathF.frequency.setValueAtTime(fundamental * 2, now);
+    breathF.frequency.exponentialRampToValueAtTime(fundamental * 0.8, now + 0.5);
+    breathF.Q.value = 2.5;
+
+    const breathG = ctx.createGain();
+    breathG.gain.setValueAtTime(0, now);
+    breathG.gain.linearRampToValueAtTime(0.022, now + 0.08);
+    breathG.gain.linearRampToValueAtTime(0.012, now + 0.35);
+    breathG.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+
+    breath.connect(breathF); breathF.connect(breathG); breathG.connect(master);
+    breath.start(now); breath.stop(now + 0.58);
   },
 
   triggerHaptic(type = 'light') {
@@ -295,18 +383,91 @@ export const SensoryEngine = {
     chordGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.0);
   },
 
+  playBreathCue(type, durationMs = 2000) {
+    if (!this.audioCtx || this.isMuted) return;
+    const now = this.audioCtx.currentTime;
+    
+    // Stop any existing active breath source immediately to prevent overlaps
+    if (this.activeBreathSource) {
+      const oldSource = this.activeBreathSource;
+      const oldGain = this.activeBreathGain;
+      if (oldGain) {
+        try {
+          oldGain.gain.cancelScheduledValues(now);
+          oldGain.gain.setValueAtTime(oldGain.gain.value, now);
+          oldGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // quick smooth fadeout
+        } catch(e) {}
+      }
+      setTimeout(() => {
+        try { oldSource.stop(); } catch(e) {}
+      }, 200);
+    }
+
+    if (type !== 'inhale' && type !== 'exhale') {
+      this.activeBreathSource = null;
+      this.activeBreathGain = null;
+      return;
+    }
+
+    const durationSec = durationMs / 1000;
+    const sampleRate = this.audioCtx.sampleRate;
+    const bufferSize = Math.max(1, Math.ceil(durationSec * sampleRate));
+    const buffer = this.audioCtx.createBuffer(1, bufferSize, sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    
+    const noise = this.audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    
+    // Bandpass filter with mild resonance to mimic natural human throat/nasal airflow
+    const filter = this.audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.value = 3.0; // Slightly wider for airier, more natural breathing sound
+    
+    const gain = this.audioCtx.createGain();
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    
+    this.activeBreathSource = noise;
+    this.activeBreathGain = gain;
+    
+    if (type === 'inhale') {
+      // Inhale: natural intake of air, filter sweeps up as vocal tract opens
+      filter.frequency.setValueAtTime(400, now);
+      filter.frequency.exponentialRampToValueAtTime(1000, now + durationSec);
+      
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.08, now + 0.5); // 0.5s soft attack/intake
+      gain.gain.setValueAtTime(0.08, now + durationSec - 0.2); // sustain
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec); // decay at end
+    } else if (type === 'exhale') {
+      // Exhale: natural, soft releasing sigh, filter sweeps down
+      filter.frequency.setValueAtTime(900, now);
+      filter.frequency.exponentialRampToValueAtTime(300, now + durationSec);
+      
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.08, now + 0.4); // soft release attack
+      gain.gain.linearRampToValueAtTime(0.01, now + durationSec - 0.3); // slow gradual linear fade out
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec); // final drop at the end
+    }
+    
+    noise.start(now);
+    noise.stop(now + durationSec + 0.1);
+  },
+
   setBreathingPhase(phase, durationMs = 2000) {
       if (!this.audioCtx || this.isMuted) return;
-      const now = this.audioCtx.currentTime;
-      const durationSec = durationMs / 1000;
+
       if (phase === 'inhale') {
-          this.biquadFilter.frequency.exponentialRampToValueAtTime(3500, now + durationSec);
-          this.breathGain.gain.linearRampToValueAtTime(0.12, now + durationSec);
+          this.playBreathCue('inhale', durationMs);
       } else if (phase === 'exhale') {
-          this.biquadFilter.frequency.exponentialRampToValueAtTime(300, now + durationSec);
-          this.breathGain.gain.linearRampToValueAtTime(0.02, now + durationSec);
+          this.playBreathCue('exhale', durationMs);
       } else {
-          this.breathGain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+          this.playBreathCue(phase, durationMs);
       }
   },
 
@@ -490,6 +651,7 @@ export const SensoryEngine = {
     if (type === 'focus') { baseFreq = 380; offset = 20; } // Beta
     if (type === 'relax') { baseFreq = 400; offset = 10; } // Alpha
     if (type === 'sleep') { baseFreq = 390; offset = 2.5; } // Delta
+    if (type === 'savoring') { baseFreq = 432; offset = 8; } // 8Hz Theta/Alpha bridge, 432Hz tuning
 
     this.binauralOscL = this.audioCtx.createOscillator();
     this.binauralOscR = this.audioCtx.createOscillator();
@@ -510,6 +672,70 @@ export const SensoryEngine = {
     this.binauralOscL.start();
     this.binauralOscR.start();
     this.binauralGain.gain.setTargetAtTime(0.12, now, 2.0);
+  },
+
+  /** 'i' info butonlarına özel cam kaydırma (glass sliding) fiziksel modeli */
+  playGlassSlide() {
+    if (!this.audioCtx) this.initAudio();
+    if (!this.audioCtx || this.isMuted || !this.uiSoundsEnabled) return;
+    this.resumeAudio();
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+    const dur = 0.45; // 450ms slide
+
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0, now);
+    master.gain.linearRampToValueAtTime(0.04, now + 0.05); // Smooth slide fade-in
+    master.gain.setValueAtTime(0.04, now + 0.2);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    master.connect(this.masterGain);
+
+    // 1. Friction Noise (Camın yüzeye sürtünmesi)
+    const bufSize = Math.ceil(dur * ctx.sampleRate);
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    // Envelope for white noise to simulate uneven friction surface
+    for (let i = 0; i < bufSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * (0.8 + Math.random() * 0.2);
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1200, now);
+    // Slide movement: speed increases slightly then slows down
+    filter.frequency.exponentialRampToValueAtTime(1800, now + 0.15);
+    filter.frequency.exponentialRampToValueAtTime(900, now + dur - 0.05);
+    filter.Q.value = 3.5; // High Q to make it sound thin/cam-like
+
+    noise.connect(filter);
+    filter.connect(master);
+    noise.start(now);
+    noise.stop(now + dur);
+
+    // 2. Glass Resonance Ring (Sürtünmeyle uyarılan cam rezonansı)
+    // Non-integer high frequency partials representing glass vibration
+    const baseFreq = 880;
+    const partials = [1.0, 2.76, 5.4];
+    partials.forEach((ratio, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(baseFreq * ratio, now);
+      // Pitch shifts slightly with speed
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * ratio * 1.1, now + 0.15);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * ratio * 0.9, now + dur);
+
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(0.015 / (i + 1), now + 0.08);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + dur - (i * 0.05));
+
+      osc.connect(g);
+      g.connect(master);
+      osc.start(now);
+      osc.stop(now + dur);
+    });
   },
 
   stopAllSensory() {

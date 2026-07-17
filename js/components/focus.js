@@ -362,7 +362,7 @@ function playCurrentAmbient() {
   }
 
   const ambientMap = {
-    'rain': 'soul_serenity_sounds-water-noises-241049.mp3',
+    'rain': 'soul_serenity_sounds-garden-ambience-236744.mp3',
     'night': 'recordx_media-midnight-sound-effect-199863.mp3',
     'nature': 'kalsstockmedia-ambient-forest-bird-sounds-280152.mp3',
     'space': 'freesound_community-spaceship-ambient-27988.mp3'
