@@ -1285,10 +1285,18 @@
 }
 
 .morning-greeting-icon {
-  font-size: 2.8rem;
+  width: 48px;
+  height: 48px;
   margin-bottom: 0.6rem;
+  color: rgba(255, 183, 77, 0.95);
   filter: drop-shadow(0 4px 20px rgba(255, 183, 77, 0.35));
   animation: morning-icon-float 4s ease-in-out infinite;
+}
+
+.morning-greeting-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 @keyframes morning-icon-float {
@@ -1501,7 +1509,8 @@
     margin-bottom: 1.5rem;
   }
   .morning-greeting-icon {
-    font-size: 2rem;
+    width: 36px;
+    height: 36px;
   }
   .morning-title {
     font-size: 2rem !important;
