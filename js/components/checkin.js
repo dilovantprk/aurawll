@@ -81,7 +81,6 @@ function renderMorningCheckin() {
   
   const dreamBtns = document.querySelectorAll('#morningDreamBtns .morning-btn');
   const bodyBtns = document.querySelectorAll('#morningBodyBtns .morning-btn');
-  const nextBtn = document.getElementById('morningNextBtn');
   
   let dreamVal = null;
   let bodyVal = null;
@@ -90,7 +89,13 @@ function renderMorningCheckin() {
 
   const checkNext = () => {
     if (dreamVal && bodyVal) {
-      nextBtn.classList.remove('hidden');
+      setHUD('arrow', () => {
+        CheckinAudio.playMorningNext();
+        setHUD(null);
+        renderSomaticEntry();
+      });
+    } else {
+      setHUD(null);
     }
   };
 
@@ -116,10 +121,7 @@ function renderMorningCheckin() {
     };
   });
 
-  nextBtn.onclick = () => {
-    CheckinAudio.playMorningNext();
-    renderSomaticEntry();
-  };
+  setHUD(null);
 }
 
 export function renderSomaticEntry() {
