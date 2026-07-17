@@ -18,7 +18,7 @@ export const SensoryEngine = {
   isMuted: false,
   droneEnabled: false,
   hapticEnabled: true,
-  uiSoundsEnabled: false,
+  uiSoundsEnabled: true,
   appVolume: 50,
   droneGain: null, // Dedicated gain for drones
 
