@@ -481,13 +481,13 @@
 
 .relative-grid {
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: 300px;
+  height: 300px;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(24px) saturate(150%);
   -webkit-backdrop-filter: blur(24px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 24px;
+  border-radius: 28px;
   box-shadow:
     0 2px 24px rgba(0, 0, 0, 0.35),
     inset 0 0 0 1px rgba(255,255,255,0.04);
@@ -526,7 +526,7 @@
 
 .grid-quadrant-label {
   position: absolute;
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: #fff;
   opacity: 0.3;
@@ -553,17 +553,17 @@
 
 .grid-label {
   position: absolute;
-  font-size: 0.58rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 1.2px;
   z-index: 3;
 }
-.grid-label.top    { top: -22px;  left: 50%; transform: translateX(-50%); }
-.grid-label.bottom { bottom: -22px; left: 50%; transform: translateX(-50%); }
-.grid-label.left   { left: -32px;  top: 50%; transform: translateY(-50%) rotate(-90deg); }
-.grid-label.right  { right: -32px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+.grid-label.top    { top: -26px;  left: 50%; transform: translateX(-50%); }
+.grid-label.bottom { bottom: -26px; left: 50%; transform: translateX(-50%); }
+.grid-label.left   { left: -38px;  top: 50%; transform: translateY(-50%) rotate(-90deg); }
+.grid-label.right  { right: -38px; top: 50%; transform: translateY(-50%) rotate(90deg); }
 
 .suggestion-dot {
   position: absolute;
@@ -1229,130 +1229,365 @@
   }
 }
 
-/* --- MORNING CHECK-IN REDESIGN --- */
+/* --- MORNING CHECK-IN — PREMIUM REDESIGN --- */
+
+/* Override center-content for this specific view */
+#view-morning-checkin.center-content {
+  justify-content: center !important;
+  padding-top: 0 !important;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating ambient glow orb — warm sunrise feel */
+.morning-ambient-glow {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 183, 77, 0.12) 0%,
+    rgba(255, 152, 67, 0.06) 30%,
+    rgba(168, 85, 247, 0.04) 55%,
+    transparent 75%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+  animation: morning-glow-breathe 6s ease-in-out infinite;
+}
+
+@keyframes morning-glow-breathe {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.15);
+  }
+}
+
+/* Greeting block — warm, centered, intimate */
+.morning-greeting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 2.5rem;
+  z-index: 2;
+  position: relative;
+}
+
+.morning-greeting-icon {
+  font-size: 2.8rem;
+  margin-bottom: 0.6rem;
+  filter: drop-shadow(0 4px 20px rgba(255, 183, 77, 0.35));
+  animation: morning-icon-float 4s ease-in-out infinite;
+}
+
+@keyframes morning-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.morning-title {
+  font-size: clamp(2.4rem, 10vw, 3.2rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: -1.5px !important;
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 200, 120, 0.9) 50%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.3rem !important;
+  text-shadow: none !important;
+}
+
+.morning-subtitle {
+  font-size: 1rem !important;
+  color: var(--text-muted) !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.3px;
+  opacity: 0.7;
+  text-shadow: none !important;
+}
+
+/* Glass card — elevated, inner light, soft edges */
 .morning-questions-container {
-  width: 100%;
+  width: calc(100% - 2.5rem);
   max-width: 420px;
-  margin-top: 2rem;
+  margin-top: 0;
   text-align: left;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 24px;
-  padding: 2.2rem 1.8rem;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 
-    0 24px 48px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 28px;
+  padding: 2rem 1.6rem 1.8rem;
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    0 2px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 40px rgba(255, 255, 255, 0.01);
   box-sizing: border-box;
+  z-index: 2;
+  position: relative;
+}
+
+/* Subtle top-edge highlight */
+.morning-questions-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  border-radius: 1px;
 }
 
 .question-block {
-  margin-bottom: 2.2rem;
+  margin-bottom: 1.8rem;
 }
 
 .question-block:last-of-type {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.4rem;
 }
 
 .question-block p {
   color: var(--text-main);
   font-weight: 500;
-  font-size: 1.05rem;
-  letter-spacing: -0.3px;
-  margin-bottom: 1.2rem;
-  opacity: 0.95;
+  font-size: 1rem;
+  letter-spacing: -0.2px;
+  margin-bottom: 1rem;
+  opacity: 0.9;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Button group — tighter, more polished */
 .morning-btn-group {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.6rem;
   width: 100%;
   box-sizing: border-box;
 }
 
+/* Individual morning buttons — glass pill, tactile */
 .morning-btn {
   flex: 1;
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: var(--text-muted) !important;
-  padding: 0.85rem 0.5rem !important;
-  border-radius: 16px !important;
-  font-size: 0.9rem !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  padding: 0.75rem 0.4rem !important;
+  border-radius: 14px !important;
+  font-size: 0.88rem !important;
   font-weight: 500 !important;
   text-align: center;
   transition: all 0.4s var(--spring-easing) !important;
   cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.morning-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .morning-btn:hover {
   background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
   color: var(--text-main) !important;
   transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.morning-btn:hover::before {
+  opacity: 1;
 }
 
 .morning-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.97) !important;
+  transition-duration: 0.1s !important;
 }
 
-/* Selected State Styles aligned with Polyvagal themes */
+/* === SELECTED STATES — Polyvagal-themed glow === */
 .morning-btn.selected {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  color: #fff !important;
-  box-shadow: 
-    0 0 25px rgba(255, 255, 255, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
   transform: translateY(-1px) scale(1.02);
+  color: #fff !important;
 }
 
-/* Dream options specific selection coloring */
+/* Dream: Yes — warm white */
 .morning-btn.selected[data-val="yes"] {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  color: #fff !important;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.1),
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
+/* Dream: No — subtle neutral */
 .morning-btn.selected[data-val="no"] {
-  background: rgba(255, 255, 255, 0.12) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.06),
+    0 4px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
+/* Dream: Vague — dreamy purple */
 .morning-btn.selected[data-val="vague"] {
-  background: rgba(168, 85, 247, 0.2) !important;
-  border-color: rgba(168, 85, 247, 0.5) !important;
-  color: #c084fc !important;
-  box-shadow: 0 0 25px rgba(168, 85, 247, 0.3) !important;
+  background: rgba(168, 85, 247, 0.18) !important;
+  border-color: rgba(168, 85, 247, 0.45) !important;
+  color: #d8b4fe !important;
+  box-shadow: 
+    0 0 25px rgba(168, 85, 247, 0.2),
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 0 15px rgba(168, 85, 247, 0.05) !important;
 }
 
-/* Body feeling specific selection coloring */
+/* Body: Refreshed — ventral green */
 .morning-btn.selected[data-val="refreshed"] {
-  background: rgba(34, 197, 94, 0.2) !important;
-  border-color: rgba(34, 197, 94, 0.5) !important;
-  color: #4ade80 !important;
-  box-shadow: 0 0 25px rgba(34, 197, 94, 0.3) !important;
+  background: rgba(34, 197, 94, 0.18) !important;
+  border-color: rgba(34, 197, 94, 0.45) !important;
+  color: #86efac !important;
+  box-shadow: 
+    0 0 25px rgba(34, 197, 94, 0.2),
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 0 15px rgba(34, 197, 94, 0.05) !important;
 }
 
+/* Body: Heavy — dorsal blue */
 .morning-btn.selected[data-val="heavy"] {
-  background: rgba(59, 130, 246, 0.2) !important;
-  border-color: rgba(59, 130, 246, 0.5) !important;
-  color: #60a5fa !important;
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.3) !important;
+  background: rgba(59, 130, 246, 0.18) !important;
+  border-color: rgba(59, 130, 246, 0.45) !important;
+  color: #93c5fd !important;
+  box-shadow: 
+    0 0 25px rgba(59, 130, 246, 0.2),
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 0 15px rgba(59, 130, 246, 0.05) !important;
 }
 
+/* Body: Neutral — soft white */
 .morning-btn.selected[data-val="neutral"] {
-  background: rgba(255, 255, 255, 0.12) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  color: #fff !important;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 0 18px rgba(255, 255, 255, 0.08),
+    0 4px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
+/* === DEVAM BUTTON — Premium CTA === */
+.morning-next-btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  margin-top: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: var(--font-family);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.5s var(--spring-easing);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.morning-next-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 183, 77, 0.08), rgba(168, 85, 247, 0.06), transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.morning-next-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.35),
+    0 0 20px rgba(255, 183, 77, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.morning-next-btn:hover::before {
+  opacity: 1;
+}
+
+.morning-next-btn:active {
+  transform: scale(0.97);
+  transition-duration: 0.1s;
+}
+
+/* Reveal animation when both selections made */
+.morning-next-btn {
+  animation: morning-btn-reveal 0.6s var(--spring-easing) forwards;
+}
+
+@keyframes morning-btn-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.morning-next-btn.hidden {
+  display: none !important;
+}
+
+/* Small screen optimization */
+@media (max-height: 680px) {
+  .morning-greeting {
+    margin-bottom: 1.5rem;
+  }
+  .morning-greeting-icon {
+    font-size: 2rem;
+  }
+  .morning-title {
+    font-size: 2rem !important;
+  }
+  .morning-questions-container {
+    padding: 1.5rem 1.4rem;
+  }
+  .question-block {
+    margin-bottom: 1.2rem;
+  }
+  .morning-ambient-glow {
+    width: 220px;
+    height: 220px;
+    top: 8%;
+  }
+}
 
 

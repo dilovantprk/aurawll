@@ -444,9 +444,15 @@
 
     <!-- STEP 0: MORNING CHECK-IN -->
     <section id="view-morning-checkin" class="view hidden center-content">
-      <div class="step-header fade-in">
-        <h2 data-i18n="morning_title">Günaydın.</h2>
+      <!-- Morning ambient glow -->
+      <div class="morning-ambient-glow"></div>
+      
+      <div class="morning-greeting fade-in">
+        <div class="morning-greeting-icon" id="morningGreetingIcon">☀️</div>
+        <h2 class="morning-title" data-i18n="morning_title">Günaydın.</h2>
+        <p class="morning-subtitle" data-i18n="morning_subtitle">Bugüne sakin bir başlangıç yapalım.</p>
       </div>
+
       <div id="morningQuestions" class="morning-questions-container fade-in-pure delay-1">
         <div class="question-block">
           <p data-i18n="morning_q_dream">Dün gece rüya gördün mü?</p>
@@ -464,7 +470,7 @@
             <button class="ghost-btn morning-btn" data-val="neutral">Nötr</button>
           </div>
         </div>
-        <button id="morningNextBtn" class="primary-btn mt-8 hidden w-full">Devam</button>
+        <button id="morningNextBtn" class="morning-next-btn hidden" data-i18n="morning_next">Devam</button>
       </div>
     </section>
 
