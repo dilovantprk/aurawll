@@ -7,3 +7,4 @@
 /aura-android/.idea/
 /aura-android/app/release/
 *.log
+.vercel

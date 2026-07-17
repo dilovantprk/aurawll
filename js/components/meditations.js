@@ -71,25 +71,29 @@ export function renderMeditationsList() {
     const sciTitle = t(`sci_${id}_title`);
 
     return `
-      <div class="meditation-card" 
+      <div class="meditation-card liquid-glass" 
            data-protocol="${id}" 
-           data-category="${p.category || 'all'}" 
-           style="--card-accent: ${metaData.accent};">
-        <div class="meditation-card-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            ${metaData.icon}
-          </svg>
-        </div>
-        <div class="meditation-card-info">
-          <span class="meditation-card-title">${sciTitle}</span>
-          <div class="meditation-card-meta">
-            <span class="meditation-card-mins">${mins} ${t('meditations_duration')}</span>
-            <div class="meditation-card-details">
+           data-category="${p.category || 'all'}">
+        
+        <button class="cockpit-info-btn info-trigger" data-type="${id}">i</button>
+        
+        <div class="meditation-card-content">
+          <div class="meditation-card-top">
+            <h3 class="card-title-v2">${sciTitle}</h3>
+          </div>
+          
+          <div class="meditation-card-bottom">
+            <div class="meditation-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                ${metaData.icon}
+              </svg>
+            </div>
+            <div class="meditation-card-meta">
+              <span class="meditation-card-mins">${mins} ${t('meditations_duration')}</span>
               <span class="meditation-card-original-title">${t(p.titleKey)}</span>
             </div>
           </div>
         </div>
-        <button class="cockpit-info-btn info-trigger" data-type="${id}">i</button>
       </div>`;
   };
 

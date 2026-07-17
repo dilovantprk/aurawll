@@ -169,34 +169,8 @@ export function initSettings(config) {
     if (configProps.navigateTo) configProps.navigateTo('view-auth');
   });
 
-  // Interface Toggles
-  elements.showNotebookToggle?.addEventListener('change', (e) => {
-    AppState.showNotebook = e.target.checked;
-    localStorage.setItem('aura_show_notebook', AppState.showNotebook);
-    syncNavVisibility();
-    vibrate('light');
-  });
-
-  elements.showFocusToggle?.addEventListener('change', (e) => {
-    AppState.showFocus = e.target.checked;
-    localStorage.setItem('aura_show_focus', AppState.showFocus);
-    syncNavVisibility();
-    vibrate('light');
-  });
-
-  elements.showSleepToggle?.addEventListener('change', (e) => {
-    AppState.showSleep = e.target.checked;
-    localStorage.setItem('aura_show_sleep', AppState.showSleep);
-    syncNavVisibility();
-    vibrate('light');
-  });
-
-  elements.showAmbientToggle?.addEventListener('change', (e) => {
-    AppState.showAmbient = e.target.checked;
-    localStorage.setItem('aura_show_ambient', AppState.showAmbient);
-    syncNavVisibility();
-    vibrate('light');
-  });
+  // Render modules market
+  renderModuleMarket();
 
   if (elements.langToggleBtn) {
     const langDropdownMenu = document.getElementById('langDropdownMenu');
@@ -414,34 +388,7 @@ export function updateSettingsView() {
     elements.deleteAccountBtn.style.display = isGuest ? 'none' : 'block';
     elements.deleteAccountBtn.classList.toggle('hidden', isGuest);
   }
-  if (elements.showNotebookToggle) elements.showNotebookToggle.checked = AppState.showNotebook !== false;
-  
-  if (elements.showFocusToggle) {
-    const row = elements.showFocusToggle.closest('.settings-row');
-    if (AppState.unlockedFocus) {
-      if (row) row.style.display = 'flex';
-      elements.showFocusToggle.checked = AppState.showFocus === true;
-    } else {
-      if (row) row.style.display = 'none';
-    }
-  }
-  
-  if (elements.showAmbientToggle) {
-    const row = elements.showAmbientToggle.closest('.settings-row');
-    if (AppState.unlockedAmbient) {
-      if (row) row.style.display = 'flex';
-      elements.showAmbientToggle.checked = AppState.showAmbient === true;
-    } else {
-      if (row) row.style.display = 'none';
-    }
-  }
-  
-  if (elements.showSleepToggle) {
-    const row = elements.showSleepToggle.closest('.settings-row');
-    // Sleep is default true or unlocked? Usually Sleep is internal, let's keep it visible or handle it
-    if (row) row.style.display = 'flex'; 
-    elements.showSleepToggle.checked = AppState.showSleep === true;
-  }
+  renderModuleMarket();
   
   syncNavVisibility();
 
@@ -615,4 +562,113 @@ export function syncNavVisibility() {
       if (view === 'ambient') item.style.display = showAmbient ? '' : 'none';
     });
   }
+}
+
+export function renderModuleMarket() {
+  const marketGrid = document.getElementById('moduleMarketGrid');
+  if (!marketGrid) return;
+  
+  const modules = [
+    {
+      id: 'notebook',
+      title: t('market_notebook_title'),
+      desc: t('market_notebook_desc'),
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z" /><path d="M16 8 2 22" /><path d="M17.5 15H9" /></svg>',
+      isInstalled: true,
+      isActive: AppState.showNotebook
+    },
+    {
+      id: 'focus',
+      title: t('market_focus_title'),
+      desc: t('market_focus_desc'),
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+      isInstalled: AppState.unlockedFocus,
+      isActive: AppState.showFocus
+    },
+    {
+      id: 'ambient',
+      title: t('market_ambient_title'),
+      desc: t('market_ambient_desc'),
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>',
+      isInstalled: AppState.unlockedAmbient,
+      isActive: AppState.showAmbient
+    },
+    {
+      id: 'sleep',
+      title: t('market_sleep_title'),
+      desc: t('market_sleep_desc'),
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
+      isInstalled: AppState.unlockedSleep,
+      isActive: AppState.showSleep
+    }
+  ];
+
+  marketGrid.innerHTML = modules.map(mod => `
+    <div class="market-list-item info-trigger" data-info="${mod.id}">
+      <div class="market-item-icon">${mod.icon}</div>
+      <div class="market-item-title-row">
+        <span class="market-item-title">${mod.title}</span>
+        <span class="market-item-status ${mod.isInstalled ? 'installed' : ''}">
+          ${mod.isInstalled ? (mod.isActive ? t('market_status_active') : t('market_status_inactive')) : t('market_status_locked')}
+        </span>
+      </div>
+      <p class="market-item-desc">${mod.desc}</p>
+      <div class="market-item-right">
+        <button class="market-btn ${mod.isInstalled ? (mod.isActive ? 'market-btn-active' : 'market-btn-inactive') : 'market-btn-install'}" 
+                data-mod="${mod.id}">
+          ${mod.isInstalled ? (mod.isActive ? t('market_btn_disable') : t('market_btn_enable')) : t('market_btn_install')}
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  marketGrid.querySelectorAll('.market-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const modId = e.currentTarget.getAttribute('data-mod');
+      handleModuleAction(modId);
+    });
+  });
+}
+
+export function handleModuleAction(modId) {
+  if (typeof vibrate !== 'undefined') vibrate('light');
+  
+  if (modId === 'notebook') {
+    AppState.showNotebook = !AppState.showNotebook;
+    localStorage.setItem('aura_show_notebook', AppState.showNotebook);
+  } else if (modId === 'focus') {
+    if (!AppState.unlockedFocus) {
+      AppState.unlockedFocus = true;
+      AppState.showFocus = true;
+      localStorage.setItem('aura_unlocked_focus', 'true');
+    } else {
+      AppState.showFocus = !AppState.showFocus;
+    }
+    localStorage.setItem('aura_show_focus', AppState.showFocus);
+  } else if (modId === 'ambient') {
+    if (!AppState.unlockedAmbient) {
+      AppState.unlockedAmbient = true;
+      AppState.showAmbient = true;
+      localStorage.setItem('aura_unlocked_ambient', 'true');
+    } else {
+      AppState.showAmbient = !AppState.showAmbient;
+    }
+    localStorage.setItem('aura_show_ambient', AppState.showAmbient);
+  } else if (modId === 'sleep') {
+    if (!AppState.unlockedSleep) {
+      AppState.unlockedSleep = true;
+      AppState.showSleep = true;
+      localStorage.setItem('aura_unlocked_sleep', 'true');
+    } else {
+      AppState.showSleep = !AppState.showSleep;
+    }
+    localStorage.setItem('aura_show_sleep', AppState.showSleep);
+  }
+  
+  renderModuleMarket(); // Re-render marketplace
+  
+  // Update UI navigation instantly
+  const appEvent = new CustomEvent('aura-modules-updated');
+  window.dispatchEvent(appEvent);
 }

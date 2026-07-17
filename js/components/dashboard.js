@@ -143,7 +143,6 @@ function renderDashboardComponents(data) {
   renderHistory(displayData);
   
   renderDailyContent();
-  renderModuleMarket();
 
   // Show/Hide Quick Action cards based on active modules
   const custom1Btn = document.getElementById('customAction1Btn');
@@ -178,124 +177,6 @@ function renderDailyContent() {
   
   const biteEl = document.getElementById('dailyBiteText');
   if (biteEl) biteEl.textContent = t('bite_' + (dayOfYear % bitesCount));
-}
-
-function renderModuleMarket() {
-  const marketGrid = document.getElementById('moduleMarketGrid');
-  if (!marketGrid) return;
-  
-  const modules = [
-    {
-      id: 'notebook',
-      title: 'Notebook',
-      desc: t('market_notebook_desc'),
-      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z" /><path d="M16 8 2 22" /><path d="M17.5 15H9" /></svg>',
-      isInstalled: true,
-      isActive: AppState.showNotebook,
-      preview: `<div class="preview-notebook"><div class="preview-line"></div><div class="preview-line w-70"></div><div class="preview-line w-40"></div></div>`
-    },
-    {
-      id: 'focus',
-      title: 'Focus Series',
-      desc: t('market_focus_desc'),
-      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
-      isInstalled: AppState.unlockedFocus,
-      isActive: AppState.showFocus,
-      preview: `<div class="preview-focus"><div class="preview-ring"></div><div class="preview-time">25:00</div></div>`
-    },
-    {
-      id: 'ambient',
-      title: 'Ambient Space',
-      desc: t('market_ambient_desc'),
-      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>',
-      isInstalled: AppState.unlockedAmbient,
-      isActive: AppState.showAmbient,
-      preview: `<div class="preview-ambient"><div class="wave-bar"></div><div class="wave-bar h-60"></div><div class="wave-bar h-80"></div><div class="wave-bar h-40"></div></div>`
-    },
-    {
-      id: 'sleep',
-      title: 'Deep Sleep',
-      desc: t('market_sleep_desc'),
-      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
-      isInstalled: AppState.unlockedSleep,
-      isActive: AppState.showSleep,
-      preview: `<div class="preview-sleep"><div class="preview-stars"></div><div class="preview-moon"></div></div>`
-    }
-  ];
-
-  marketGrid.innerHTML = modules.map(mod => `
-    <div class="market-card glow-card info-trigger" data-info="${mod.id}" style="cursor: pointer;">
-      <div class="market-card-header">
-        <div class="market-icon">${mod.icon}</div>
-        <div class="market-info">
-          <div class="market-title">${mod.title}</div>
-          <div class="market-status ${mod.isInstalled ? 'installed' : ''}">
-            ${mod.isInstalled ? (mod.isActive ? t('market_status_active') : t('market_status_inactive')) : t('market_status_locked')}
-          </div>
-        </div>
-      </div>
-      
-      <div class="market-preview-box">
-        ${mod.preview}
-        ${!mod.isActive ? '<div class="preview-overlay"></div>' : ''}
-      </div>
-
-      <p class="market-desc">${mod.desc}</p>
-      <button class="market-btn ${mod.isInstalled ? (mod.isActive ? 'market-btn-active' : 'market-btn-inactive') : 'market-btn-install'}" 
-              data-mod="${mod.id}" onclick="event.stopPropagation()">
-        ${mod.isInstalled ? (mod.isActive ? t('market_btn_disable') : t('market_btn_enable')) : t('market_btn_install')}
-      </button>
-    </div>
-  `).join('');
-
-  marketGrid.querySelectorAll('.market-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const modId = e.currentTarget.getAttribute('data-mod');
-      handleModuleAction(modId);
-    });
-  });
-}
-
-function handleModuleAction(modId) {
-  window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}));
-  
-  if (modId === 'notebook') {
-    AppState.showNotebook = !AppState.showNotebook;
-    localStorage.setItem('aura_show_notebook', AppState.showNotebook);
-  } else if (modId === 'focus') {
-    if (!AppState.unlockedFocus) {
-      AppState.unlockedFocus = true;
-      AppState.showFocus = true;
-      localStorage.setItem('aura_unlocked_focus', 'true');
-    } else {
-      AppState.showFocus = !AppState.showFocus;
-    }
-    localStorage.setItem('aura_show_focus', AppState.showFocus);
-  } else if (modId === 'ambient') {
-    if (!AppState.unlockedAmbient) {
-      AppState.unlockedAmbient = true;
-      AppState.showAmbient = true;
-      localStorage.setItem('aura_unlocked_ambient', 'true');
-    } else {
-      AppState.showAmbient = !AppState.showAmbient;
-    }
-    localStorage.setItem('aura_show_ambient', AppState.showAmbient);
-  } else if (modId === 'sleep') {
-    if (!AppState.unlockedSleep) {
-      AppState.unlockedSleep = true;
-      AppState.showSleep = true;
-      localStorage.setItem('aura_unlocked_sleep', 'true');
-    } else {
-      AppState.showSleep = !AppState.showSleep;
-    }
-    localStorage.setItem('aura_show_sleep', AppState.showSleep);
-  }
-  
-  renderModuleMarket(); // Re-render marketplace
-  
-  // Update UI navigation instantly
-  const appEvent = new CustomEvent('aura-modules-updated');
-  window.dispatchEvent(appEvent);
 }
 
 export function renderHistory(data) {
