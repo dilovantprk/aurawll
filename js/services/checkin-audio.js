@@ -570,13 +570,13 @@ export const CheckinAudio = {
     const ctx = this._ctx;
     const now = ctx.currentTime;
 
-    const baseFreq = phase === 'inhale' ? 587.33 : (phase === 'exhale' ? 440 : 493.88); // D5, A4, B4
-    const partials = [1.0, 2.0, 2.76, 4.4]; // Metal boru rezonans partials
+    const baseFreq = phase === 'inhale' ? 293.66 : (phase === 'exhale' ? 220.00 : 246.94); // D4, A3, B3 (Lower octave)
+    const partials = [1.0, 1.5, 2.0]; // Warm harmonics (fundamental, fifth, octave)
     const masterG = ctx.createGain();
     
     masterG.gain.setValueAtTime(0, now);
-    masterG.gain.linearRampToValueAtTime(0.035, now + 0.005);
-    masterG.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+    masterG.gain.linearRampToValueAtTime(0.025, now + 0.01); // Softer volume
+    masterG.gain.exponentialRampToValueAtTime(0.0001, now + 0.6); // Slightly longer, gentler decay
     masterG.connect(this._master);
 
     partials.forEach((ratio, i) => {
@@ -585,14 +585,14 @@ export const CheckinAudio = {
       osc.frequency.setValueAtTime(baseFreq * ratio, now);
       
       const g = ctx.createGain();
-      g.gain.setValueAtTime(1.0 / (i + 1), now);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.4 - (i * 0.08));
+      g.gain.setValueAtTime(0.8 / (i + 1), now);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.6 - (i * 0.15));
       
       osc.connect(g);
       g.connect(masterG);
       
       osc.start(now);
-      osc.stop(now + 0.45);
+      osc.stop(now + 0.65);
     });
   },
 
@@ -797,34 +797,34 @@ export const CheckinAudio = {
     const ctx = this._ctx;
     const now = ctx.currentTime;
 
-    // Geri sayım düştükçe pesleşen pentatonik gam
+    // Geri sayım düştükçe pesleşen pentatonik gam (1 oktav daha pes)
     const scale = {
-      5: 880.00, // A5
-      4: 783.99, // G5
-      3: 659.25, // E5
-      2: 587.33, // D5
-      1: 523.25, // C5
-      0: 392.00  // G4
+      5: 440.00, // A4
+      4: 392.00, // G4
+      3: 329.63, // E4
+      2: 293.66, // D4
+      1: 261.63, // C4
+      0: 196.00  // G3
     };
-    const freq = scale[secondsLeft] || 440;
+    const freq = scale[secondsLeft] || 220;
 
     const osc = ctx.createOscillator();
     osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, now);
 
-    // Çan gövde rezonansı harmonikleri (cam/metalik kısmi sesler)
+    // Çan gövde rezonansı harmonikleri (sesi çok daha yumuşak tuttuk)
     const osc2 = ctx.createOscillator();
     osc2.type = 'sine';
     osc2.frequency.setValueAtTime(freq * 2.76, now);
 
     const g = ctx.createGain();
     g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(0.04, now + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    g.gain.linearRampToValueAtTime(0.03, now + 0.008); // Daha yumuşak atak
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.7); // Daha uzun ve yumuşak sönüm
 
     const hG = ctx.createGain();
-    hG.gain.setValueAtTime(0.012, now);
-    hG.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    hG.gain.setValueAtTime(0.004, now); // 0.012'den 0.004'e düşürülmüş yumuşak harmonik
+    hG.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
 
     osc.connect(g);
     osc2.connect(hG);
@@ -833,8 +833,8 @@ export const CheckinAudio = {
 
     osc.start(now);
     osc2.start(now);
-    osc.stop(now + 0.65);
-    osc2.stop(now + 0.65);
+    osc.stop(now + 0.75);
+    osc2.stop(now + 0.75);
   },
 
 

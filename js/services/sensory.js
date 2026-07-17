@@ -387,7 +387,7 @@ export const SensoryEngine = {
     if (!this.audioCtx || this.isMuted) return;
     const now = this.audioCtx.currentTime;
     
-    // Stop any existing active breath source immediately to prevent overlaps
+    // Stop any existing active breath sources and oscillators immediately to prevent overlaps and pops
     if (this.activeBreathSource) {
       const oldSource = this.activeBreathSource;
       const oldGain = this.activeBreathGain;
@@ -395,7 +395,7 @@ export const SensoryEngine = {
         try {
           oldGain.gain.cancelScheduledValues(now);
           oldGain.gain.setValueAtTime(oldGain.gain.value, now);
-          oldGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // quick smooth fadeout
+          oldGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // smooth fadeout
         } catch(e) {}
       }
       setTimeout(() => {
@@ -403,60 +403,113 @@ export const SensoryEngine = {
       }, 200);
     }
 
+    if (this.activeBreathPadGain) {
+      const oldPadGain = this.activeBreathPadGain;
+      try {
+        oldPadGain.gain.cancelScheduledValues(now);
+        oldPadGain.gain.setValueAtTime(oldPadGain.gain.value, now);
+        oldPadGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // smooth fadeout
+      } catch(e) {}
+    }
+
+    if (this.activeBreathOscs) {
+      this.activeBreathOscs.forEach(osc => {
+        try {
+          osc.frequency.cancelScheduledValues(now);
+          osc.stop(now + 0.15);
+        } catch(e) {}
+      });
+    }
+    this.activeBreathOscs = [];
+
     if (type !== 'inhale' && type !== 'exhale') {
       this.activeBreathSource = null;
       this.activeBreathGain = null;
+      this.activeBreathPadGain = null;
       return;
     }
 
     const durationSec = durationMs / 1000;
-    const sampleRate = this.audioCtx.sampleRate;
-    const bufferSize = Math.max(1, Math.ceil(durationSec * sampleRate));
-    const buffer = this.audioCtx.createBuffer(1, bufferSize, sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
     
+    // ── Layer 1: Ambient Brown Noise (Ocean wave simulation) ──
     const noise = this.audioCtx.createBufferSource();
-    noise.buffer = buffer;
+    noise.buffer = this.brownNoiseBuffer || this.whiteNoiseBuffer;
+    noise.loop = true;
     
-    // Bandpass filter with mild resonance to mimic natural human throat/nasal airflow
     const filter = this.audioCtx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.Q.value = 3.0; // Slightly wider for airier, more natural breathing sound
+    filter.type = 'lowpass';
+    filter.Q.value = 0.8; // Very soft, warm filter
     
-    const gain = this.audioCtx.createGain();
+    const noiseGain = this.audioCtx.createGain();
     
     noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.masterGain);
+    filter.connect(noiseGain);
+    noiseGain.connect(this.masterGain);
     
     this.activeBreathSource = noise;
-    this.activeBreathGain = gain;
+    this.activeBreathGain = noiseGain;
+
+    // ── Layer 2: Soothing Sine Wave Pad Swell ──
+    const padGain = this.audioCtx.createGain();
+    padGain.connect(this.masterGain);
+    this.activeBreathPadGain = padGain;
+
+    const baseFreq = 220; // A3 - Deep, grounding musical center
+    const osc1 = this.audioCtx.createOscillator();
+    const osc2 = this.audioCtx.createOscillator();
     
+    osc1.type = 'sine';
+    osc2.type = 'sine';
+    osc1.detune.setValueAtTime(-6, now);
+    osc2.detune.setValueAtTime(6, now);
+    
+    osc1.connect(padGain);
+    osc2.connect(padGain);
+    
+    this.activeBreathOscs.push(osc1, osc2);
+
     if (type === 'inhale') {
-      // Inhale: natural intake of air, filter sweeps up as vocal tract opens
-      filter.frequency.setValueAtTime(400, now);
-      filter.frequency.exponentialRampToValueAtTime(1000, now + durationSec);
+      // Inhale: Filter opens up, volume swells, pitch shifts up slightly (feeling of expansion)
+      filter.frequency.setValueAtTime(140, now);
+      filter.frequency.exponentialRampToValueAtTime(420, now + durationSec);
       
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.08, now + 0.5); // 0.5s soft attack/intake
-      gain.gain.setValueAtTime(0.08, now + durationSec - 0.2); // sustain
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec); // decay at end
+      noiseGain.gain.setValueAtTime(0, now);
+      noiseGain.gain.linearRampToValueAtTime(0.04, now + durationSec * 0.7);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+
+      osc1.frequency.setValueAtTime(baseFreq, now);
+      osc1.frequency.linearRampToValueAtTime(baseFreq + 10, now + durationSec);
+      osc2.frequency.setValueAtTime(baseFreq, now);
+      osc2.frequency.linearRampToValueAtTime(baseFreq + 10, now + durationSec);
+
+      padGain.gain.setValueAtTime(0, now);
+      padGain.gain.linearRampToValueAtTime(0.02, now + durationSec * 0.8);
+      padGain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
     } else if (type === 'exhale') {
-      // Exhale: natural, soft releasing sigh, filter sweeps down
-      filter.frequency.setValueAtTime(900, now);
-      filter.frequency.exponentialRampToValueAtTime(300, now + durationSec);
+      // Exhale: Filter closes down, volume decays, pitch shifts down (feeling of release)
+      filter.frequency.setValueAtTime(450, now);
+      filter.frequency.exponentialRampToValueAtTime(110, now + durationSec);
       
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.08, now + 0.4); // soft release attack
-      gain.gain.linearRampToValueAtTime(0.01, now + durationSec - 0.3); // slow gradual linear fade out
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec); // final drop at the end
+      noiseGain.gain.setValueAtTime(0.04, now);
+      noiseGain.gain.setValueAtTime(0.04, now + 0.1);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+
+      osc1.frequency.setValueAtTime(baseFreq + 10, now);
+      osc1.frequency.linearRampToValueAtTime(baseFreq - 10, now + durationSec);
+      osc2.frequency.setValueAtTime(baseFreq + 10, now);
+      osc2.frequency.linearRampToValueAtTime(baseFreq - 10, now + durationSec);
+
+      padGain.gain.setValueAtTime(0.02, now);
+      padGain.gain.setValueAtTime(0.02, now + 0.1);
+      padGain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
     }
     
     noise.start(now);
-    noise.stop(now + durationSec + 0.1);
+    noise.stop(now + durationSec + 0.05);
+    osc1.start(now);
+    osc1.stop(now + durationSec + 0.05);
+    osc2.start(now);
+    osc2.stop(now + durationSec + 0.05);
   },
 
   setBreathingPhase(phase, durationMs = 2000) {
