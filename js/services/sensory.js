@@ -120,38 +120,68 @@ export const SensoryEngine = {
 
   _initDrones() {
     this.droneGain = this.audioCtx.createGain();
-    this.droneGain.gain.value = this.droneEnabled ? 0.08 : 0;
+    this.droneGain.gain.value = this.droneEnabled ? 0.035 : 0;
     this.droneGain.connect(this.masterGain);
 
-    this.ventralOsc = this.audioCtx.createOscillator();
-    this.ventralOsc.type = 'sine';
-    this.ventralOsc.frequency.value = 216;
-    const vG = this.audioCtx.createGain(); vG.gain.value = 0;
-    this.ventralOsc.connect(vG); vG.connect(this.droneGain);
-    this.ventralGain = vG;
+    // Dedicated lowpass filter — keeps all drones as warm sub-bass, prevents ear fatigue
+    this.droneFilter = this.audioCtx.createBiquadFilter();
+    this.droneFilter.type = 'lowpass';
+    this.droneFilter.frequency.value = 130; // Nothing above 130Hz escapes from drones
+    this.droneFilter.Q.value = 0.8;
+    this.droneFilter.connect(this.droneGain);
 
-    this.sympOsc = this.audioCtx.createOscillator();
-    this.sympOsc.type = 'sine';
-    this.sympOsc.frequency.value = 216; this.sympOsc.detune.value = 15;
-    this.sympTremoloGain = this.audioCtx.createGain(); this.sympTremoloGain.gain.value = 0;
-    this.sympTremoloLFO = this.audioCtx.createOscillator(); this.sympTremoloLFO.type = 'sine';
-    this.sympTremoloLFO.frequency.value = 5;
-    const tD = this.audioCtx.createGain(); tD.gain.value = 0.5;
+    // ── Ventral Drone: A2 + E3 perfect fifth (warm, grounding harmony) ──
+    const vOsc1 = this.audioCtx.createOscillator();
+    const vOsc2 = this.audioCtx.createOscillator();
+    vOsc1.type = 'sine'; vOsc2.type = 'sine';
+    vOsc1.frequency.value = 110; // A2
+    vOsc2.frequency.value = 165; // E3 (perfect fifth)
+    vOsc1.detune.value = -4; vOsc2.detune.value = 4; // Tiny analog warmth
+    this.ventralGain = this.audioCtx.createGain();
+    this.ventralGain.gain.value = 0;
+    vOsc1.connect(this.ventralGain); vOsc2.connect(this.ventralGain);
+    this.ventralGain.connect(this.droneFilter);
+    this.ventralOsc = vOsc1;
+
+    // ── Sympathetic Drone: Same pitch but detuned + very slow breathing tremolo (1.2Hz) ──
+    const sOsc1 = this.audioCtx.createOscillator();
+    const sOsc2 = this.audioCtx.createOscillator();
+    sOsc1.type = 'sine'; sOsc2.type = 'sine';
+    sOsc1.frequency.value = 110; sOsc2.frequency.value = 165;
+    sOsc1.detune.value = 12; sOsc2.detune.value = -12; // Gentle detuning for tension-release
+    this.sympTremoloGain = this.audioCtx.createGain();
+    this.sympTremoloGain.gain.value = 0;
+    this.sympTremoloLFO = this.audioCtx.createOscillator();
+    this.sympTremoloLFO.type = 'sine';
+    this.sympTremoloLFO.frequency.value = 1.2; // Slow breathing rhythm, not nervous 5Hz
+    const tD = this.audioCtx.createGain(); tD.gain.value = 0.2; // Very gentle modulation depth
     this.sympTremoloLFO.connect(tD); tD.connect(this.sympTremoloGain.gain);
-    this.sympOsc.connect(this.sympTremoloGain); this.sympTremoloGain.connect(this.droneGain);
+    sOsc1.connect(this.sympTremoloGain); sOsc2.connect(this.sympTremoloGain);
+    this.sympTremoloGain.connect(this.droneFilter);
+    this.sympOsc = sOsc1;
 
-    this.dorsalOsc = this.audioCtx.createOscillator();
-    this.dorsalOsc.type = 'sine';
-    this.dorsalOsc.frequency.value = 108;
-    this.dorsalGain = this.audioCtx.createGain(); this.dorsalGain.gain.value = 0;
-    this.dorsalLFO = this.audioCtx.createOscillator(); this.dorsalLFO.type = 'sine';
-    this.dorsalLFO.frequency.value = 0.2;
-    const dD = this.audioCtx.createGain(); dD.gain.value = 0.8;
+    // ── Dorsal Drone: Very deep A1 + E2 sub-bass (grounding, safe, tectonic) ──
+    const dOsc1 = this.audioCtx.createOscillator();
+    const dOsc2 = this.audioCtx.createOscillator();
+    dOsc1.type = 'sine'; dOsc2.type = 'sine';
+    dOsc1.frequency.value = 55;  // A1 — deep sub-bass
+    dOsc2.frequency.value = 82.5; // E2 — perfect fifth
+    dOsc2.detune.value = 3;
+    this.dorsalGain = this.audioCtx.createGain();
+    this.dorsalGain.gain.value = 0;
+    this.dorsalLFO = this.audioCtx.createOscillator();
+    this.dorsalLFO.type = 'sine';
+    this.dorsalLFO.frequency.value = 0.08; // Extremely slow tectonic swell
+    const dD = this.audioCtx.createGain(); dD.gain.value = 0.35;
     this.dorsalLFO.connect(dD); dD.connect(this.dorsalGain.gain);
-    this.dorsalOsc.connect(this.dorsalGain); this.dorsalGain.connect(this.droneGain);
+    dOsc1.connect(this.dorsalGain); dOsc2.connect(this.dorsalGain);
+    this.dorsalGain.connect(this.droneFilter);
+    this.dorsalOsc = dOsc1;
 
-    this.ventralOsc.start(); this.sympOsc.start(); this.sympTremoloLFO.start();
-    this.dorsalOsc.start(); this.dorsalLFO.start();
+    // Start all oscillators
+    vOsc1.start(); vOsc2.start();
+    sOsc1.start(); sOsc2.start(); this.sympTremoloLFO.start();
+    dOsc1.start(); dOsc2.start(); this.dorsalLFO.start();
   },
 
   _initBreathNoise() {
@@ -574,11 +604,17 @@ export const SensoryEngine = {
       Howler.volume(val / 100);
     }
   },
-  setDroneEnabled(state) { 
-    this.droneEnabled = state; 
+  setDroneEnabled(state) {
+    this.droneEnabled = state;
     if (this.droneGain) {
-      const target = state ? 0.08 : 0;
-      this.droneGain.gain.setTargetAtTime(target, this.audioCtx.currentTime, 0.5);
+      const target = state ? 0.035 : 0;
+      this.droneGain.gain.setTargetAtTime(target, this.audioCtx.currentTime, 0.8);
+    }
+    // Automatically blend in soft brown noise to mask pure sine tones → rich, spa-like atmosphere
+    if (state) {
+      this.playNoise('brown', 0.045); // Very subtle warmth texture, not intrusive
+    } else {
+      this.playNoise('none');
     }
   },
   applyMasterGain() {
@@ -587,7 +623,7 @@ export const SensoryEngine = {
     const target = (this.isMuted) ? 0 : (this.appVolume / 100) * 0.4;
     this.masterGain.gain.setTargetAtTime(target, now, 0.2);
   },
-  playNoise(type) {
+  playNoise(type, targetGain = 0.2) {
     if (!this.audioCtx) this.initAudio();
     this.resumeAudio();
     const now = this.audioCtx.currentTime;
@@ -616,7 +652,7 @@ export const SensoryEngine = {
     source.start(now);
     this.activeNoiseSource = source;
     // Lower volume for focus noises to allow samples to shine
-    this.activeNoiseGain.gain.setTargetAtTime(0.2, now, 1.0);
+    this.activeNoiseGain.gain.setTargetAtTime(targetGain, now, 1.0);
   },
 
   atmospheres: {},
@@ -740,17 +776,21 @@ export const SensoryEngine = {
 
     if (!type || type === 'none') return;
 
-    let baseFreq = 400;
-    let offset = 10; // Alpha default
+    // LOW sub-bass carrier frequencies — feels like a warm hum, not an annoying sine beep
+    // The binaural beat effect still works because the brain entrains to the DIFFERENCE between
+    // left/right frequencies, regardless of how low the carrier is.
+    let baseFreq = 95;
+    let offset = 10; // Alpha default (10Hz difference = Alpha brainwave)
 
-    if (type === 'focus') { baseFreq = 380; offset = 20; } // Beta
-    if (type === 'relax') { baseFreq = 400; offset = 10; } // Alpha
-    if (type === 'sleep') { baseFreq = 390; offset = 2.5; } // Delta
-    if (type === 'savoring') { baseFreq = 432; offset = 8; } // 8Hz Theta/Alpha bridge, 432Hz tuning
+    if (type === 'focus')   { baseFreq = 120; offset = 15; } // Beta:  15Hz diff
+    if (type === 'relax')   { baseFreq = 95;  offset = 10; } // Alpha: 10Hz diff
+    if (type === 'sleep')   { baseFreq = 70;  offset = 2.5; } // Delta:  2.5Hz diff
+    if (type === 'savoring'){ baseFreq = 80;  offset = 6; }  // Theta:  6Hz diff
 
     this.binauralOscL = this.audioCtx.createOscillator();
     this.binauralOscR = this.audioCtx.createOscillator();
-    
+    this.binauralOscL.type = 'sine';
+    this.binauralOscR.type = 'sine';
     this.binauralOscL.frequency.value = baseFreq;
     this.binauralOscR.frequency.value = baseFreq + offset;
 
@@ -759,14 +799,22 @@ export const SensoryEngine = {
     pannerL.pan.value = -1;
     pannerR.pan.value = 1;
 
+    // Lowpass filter ensures zero harsh mid/high content leaks through
+    const bFilter = this.audioCtx.createBiquadFilter();
+    bFilter.type = 'lowpass';
+    bFilter.frequency.value = 120; // Keep only the warm sub-bass
+    bFilter.Q.value = 0.7;
+
     this.binauralOscL.connect(pannerL);
     this.binauralOscR.connect(pannerR);
-    pannerL.connect(this.binauralGain);
-    pannerR.connect(this.binauralGain);
+    pannerL.connect(bFilter);
+    pannerR.connect(bFilter);
+    bFilter.connect(this.binauralGain);
 
     this.binauralOscL.start();
     this.binauralOscR.start();
-    this.binauralGain.gain.setTargetAtTime(0.12, now, 2.0);
+    // 0.12 → 0.025: raw sines at 0.12 were ear-piercing at 400Hz; at sub-bass it needs almost nothing
+    this.binauralGain.gain.setTargetAtTime(0.025, now, 2.0);
   },
 
   /** 'i' info butonlarına özel cam kaydırma (glass sliding) fiziksel modeli */
