@@ -204,17 +204,59 @@ export const SensoryEngine = {
 
   playUnlock() {
     if (!this.audioCtx || this.isMuted) return;
-    const now = this.audioCtx.currentTime;
-    const osc = this.audioCtx.createOscillator();
-    const gain = this.audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(440, now);
-    osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
-    osc.connect(gain); gain.connect(this.masterGain);
-    osc.start(now); osc.stop(now + 1.4);
+    this.resumeAudio();
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+    const dur = 4.0; // Rich, warm, lingering decay
+
+    // Master gain for the chord swell
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.09, now + 0.25); // Warm, quick but smooth swell
+    g.gain.setValueAtTime(0.09, now + 0.5); // Hold briefly
+    g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    g.connect(this.masterGain);
+
+    // Warm, lush G Major 9 chord (grounding root + rich harmonics)
+    const freqs = [98.0, 146.83, 196.0, 246.94, 369.99, 440.0];
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      
+      // Detune each voice slightly to create a beautiful, rich analog chorus effect
+      osc.detune.setValueAtTime((i * 4) - 10 + (Math.random() * 2), now);
+
+      // Higher frequencies fade slightly quicker
+      const voiceGain = ctx.createGain();
+      const level = 1.0 / (1 + i * 0.4);
+      voiceGain.gain.setValueAtTime(level, now);
+      
+      osc.connect(voiceGain);
+      voiceGain.connect(g);
+      
+      osc.start(now);
+      osc.stop(now + dur + 0.1);
+    });
+    
+    // Add a very subtle, sparkling high shimmer to crown the transition
+    const shimmerGain = ctx.createGain();
+    shimmerGain.gain.setValueAtTime(0, now);
+    shimmerGain.gain.linearRampToValueAtTime(0.015, now + 0.4);
+    shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
+    shimmerGain.connect(this.masterGain);
+
+    const shimmerFreqs = [587.33, 783.99, 1174.66]; // D5, G5, D6 - Sparkling pentatonic extensions
+    shimmerFreqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.detune.setValueAtTime((Math.random() - 0.5) * 8, now);
+      
+      osc.connect(shimmerGain);
+      osc.start(now + 0.1);
+      osc.stop(now + 2.6);
+    });
   },
 
   playTick() {
