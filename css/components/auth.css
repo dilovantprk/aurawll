@@ -434,13 +434,16 @@
   bottom: 0;
   left: 0;
   right: 0;
+  width: calc(100% - 2.4rem);
+  max-width: 480px;
+  margin: 0 auto;
   z-index: 9001;
   background: rgba(18, 18, 24, 0.96);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: none;
-  border-radius: 28px 28px 0 0;
+  border-radius: 32px 32px 0 0;
   padding: 1rem 1.5rem calc(env(safe-area-inset-bottom, 20px) + 1.5rem);
   max-height: 90dvh;
   overflow-y: auto;
