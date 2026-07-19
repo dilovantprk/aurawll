@@ -337,4 +337,14 @@ export function renderVagalHeatmap(data, isModal = false) {
   targetBlob.classList.remove('pulse-slow', 'pulse-fast');
   if (regState === 'mobilization') targetBlob.classList.add('pulse-fast');
   else targetBlob.classList.add('pulse-slow');
+
+  // Update dynamic label content and position to float with the blob
+  const statusLabel = isModal 
+    ? document.querySelector('#vagalModalHeatmap .v-sympathetic') 
+    : document.querySelector('#vagalHeatmapCard .v-sympathetic');
+    
+  if (statusLabel) {
+    statusLabel.textContent = getRegulationStateLabel(R, a, AppState.lang);
+    statusLabel.style.top = point.y;
+  }
 }

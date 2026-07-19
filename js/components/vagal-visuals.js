@@ -1,6 +1,7 @@
 import { elements } from '../core/dom.js';
 import { calculateVagalPoint, calculateVagalState, getWeightsFromState, calculateRegulationCapacity } from '../core/vagal-engine.js';
-import { normalizeEntry } from '../core/utils.js';
+import { normalizeEntry, getRegulationStateLabel } from '../core/utils.js';
+import { AppState } from '../core/state.js';
 
 export function renderVagalHeatmap(data, isModal = false) {
   const targetBlob = isModal ? document.querySelector('#vagalModalHeatmap .vagal-blob') : elements.vagalBlob;
@@ -25,6 +26,16 @@ export function renderVagalHeatmap(data, isModal = false) {
     
     document.documentElement.style.setProperty('--vagal-x', point.x);
     document.documentElement.style.setProperty('--vagal-y', point.y);
+
+    // Update dynamic label content and position next to the blob
+    const statusLabel = isModal 
+      ? document.querySelector('#vagalModalHeatmap .v-sympathetic') 
+      : document.querySelector('#vagalHeatmapCard .v-sympathetic');
+      
+    if (statusLabel) {
+      statusLabel.textContent = getRegulationStateLabel(R, a, AppState.lang);
+      statusLabel.style.top = point.y;
+    }
   }
 
   if (targetTraces) {
