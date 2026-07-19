@@ -870,14 +870,19 @@
 .notif-modal-card {
   width: 100%;
   max-width: 400px;
-  background: rgba(20, 20, 25, 0.85);
-  backdrop-filter: blur(30px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 36px;
+  background: 
+    radial-gradient(circle at 100% 0%, rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.08) 0%, transparent 50%),
+    var(--glass-bg, rgba(13, 15, 22, 0.45));
+  backdrop-filter: var(--glass-blur, blur(45px) saturate(160%));
+  -webkit-backdrop-filter: var(--glass-blur, blur(45px) saturate(160%));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.07));
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 32px;
   padding: 3rem 2rem;
   text-align: center;
-  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    0 40px 100px rgba(0, 0, 0, 0.85), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -893,8 +898,10 @@
 .notif-icon {
   font-size: 3.5rem;
   margin-bottom: 0.5rem;
-  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
+  color: var(--vagal-accent, #fff);
+  filter: drop-shadow(0 0 15px rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.25));
 }
+
 
 .notif-modal-card h3 {
   font-size: 1.6rem;
@@ -1021,6 +1028,17 @@ textarea.quick-journal-textarea-v2::placeholder {
 
 .quick-journal-save-btn:active {
   transform: scale(0.95);
+}
+
+/* Notification Permission Modal Button overrides for dynamic polyvagal accents */
+.notif-modal-card .primary-btn {
+  background: rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.08);
+  border: 1px solid rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.22);
+}
+
+.notif-modal-card .primary-btn:hover {
+  background: rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.15);
+  border-color: rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.4);
 }
 
 
