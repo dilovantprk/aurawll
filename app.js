@@ -465,7 +465,12 @@ async function initAppBootstrap() {
     showInfoModal,
     getExerciseParams: () => AppState.currentExercise,
     stopExercise,
-    startMeditationLoading
+    startMeditationLoading,
+    prepareExercise: (id) => {
+      AppState.isCheckIn = false;
+      prepareExercise(id);
+      navigateTo('view-exercise');
+    }
   });
   renderLocalization(); 
   NotificationService.init();

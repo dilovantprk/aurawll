@@ -103,9 +103,16 @@ export function initCommunityModal() {
 
 function handleInfoModalSwipeUp() {
   const AppState = configProps.AppState;
-  if (AppState && AppState.currentView === 'view-exercise') {
-    const protocolId = currentProtocolId || AppState.currentExercise?.id || 'p_resonance';
-    
+  if (!AppState) return;
+  
+  const protocolId = currentProtocolId || AppState.currentExercise?.id || 'p_resonance';
+  
+  if (AppState.currentView === 'view-meditations') {
+    hideInfoModal();
+    if (typeof configProps.prepareExercise === 'function') {
+      configProps.prepareExercise(protocolId);
+    }
+  } else if (AppState.currentView === 'view-exercise') {
     if (typeof configProps.stopExercise === 'function') {
       configProps.stopExercise();
     }
@@ -670,8 +677,9 @@ export function openInfoArchive(key, triggerBtn) {
   const swipeHint = document.getElementById('infoSwipeHint');
   if (swipeHint) {
     const isExerciseView = configProps.AppState && configProps.AppState.currentView === 'view-exercise';
+    const isMeditationsView = configProps.AppState && configProps.AppState.currentView === 'view-meditations';
     const isMobile = window.innerWidth < 1024;
-    if (isExerciseView && isMobile) {
+    if ((isExerciseView || isMeditationsView) && pId && isMobile) {
       swipeHint.classList.remove('hidden');
     } else {
       swipeHint.classList.add('hidden');
