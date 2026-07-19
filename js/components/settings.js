@@ -163,8 +163,13 @@ export function initSettings(config) {
     }
   });
 
-  // Guest → Login
+  // Guest → Login (card button + data subpage button)
   elements.settingsLoginBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (configProps.navigateTo) configProps.navigateTo('view-auth');
+  });
+
+  elements.cardLoginBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     if (configProps.navigateTo) configProps.navigateTo('view-auth');
   });
@@ -394,8 +399,11 @@ export function updateSettingsView() {
 
   if (elements.syncCtaText) elements.syncCtaText.classList.toggle('hidden', !isGuest);
   if (elements.settingsLoginBtn) {
-    elements.settingsLoginBtn.style.display = isGuest ? 'flex' : 'none';
-    elements.settingsLoginBtn.classList.toggle('hidden', !isGuest);
+    elements.settingsLoginBtn.style.display = 'none';
+    elements.settingsLoginBtn.classList.add('hidden');
+  }
+  if (elements.cardLoginBtn) {
+    elements.cardLoginBtn.classList.toggle('hidden', !isGuest);
   }
 
   // Handle volume visibility on view load

@@ -176,6 +176,7 @@ export const elements = {
   exportTxtBtn: document.getElementById('exportTxtBtn'),
   resetMemoryBtn: document.getElementById('resetMemoryBtn'),
   settingsLoginBtn: document.getElementById('settingsLoginBtn'),
+  cardLoginBtn: document.getElementById('cardLoginBtn'),
   
   // Scientific Info Modal
   get infoModal() { return document.getElementById('infoModal'); },

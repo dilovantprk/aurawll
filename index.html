@@ -911,6 +911,17 @@
 
             <div class="arc-h-footer">
               <div id="identity-badges" class="arc-h-badges"></div>
+
+              <!-- Guest CTA: Login button inside the card -->
+              <button id="cardLoginBtn" class="arc-card-login-btn hidden" data-i18n="btn_login">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                  <polyline points="10 17 15 12 10 7"></polyline>
+                  <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>
+                <span data-i18n="btn_login">Giriş Yap</span>
+              </button>
+
               <div class="arc-h-bottom-row">
                 <div class="arc-h-brand">AURA.SPACE // NEURAL RECORD</div>
                 <div class="neural-stamp">
@@ -1189,7 +1200,7 @@
               <svg class="settings-nav-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </div>
 
-            <div class="settings-row hidden" id="settingsLoginBtn" style="cursor:pointer;">
+            <div class="settings-row hidden" id="settingsLoginBtn" style="cursor:pointer;display:none!important;">
               <div class="settings-label">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                   stroke-linecap="round" stroke-linejoin="round">
