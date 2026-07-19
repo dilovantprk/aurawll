@@ -9,42 +9,39 @@ export const SENSORY_CONFIG = {
 };
 
 /**
- * Calculates continuous autonomic regulation capacity index R in [0, 1].
+ * Calculates continuous autonomic regulation capacity index R in [0, 100].
  * Valence (v) is primary positive input; Arousal (a) acts as a modulator.
- * Optimal regulation is at high valence and calm, alert arousal (a ~ 0.25).
+ * A low score (0) represents high regulation, a high score (100) represents low regulation/protection.
  */
 export function calculateRegulationCapacity(a, v) {
-  const optimalA = 0.25; 
-  const arousalPen = Math.abs(a - optimalA) * 0.4;
-  const score = v - arousalPen;
-  return Math.max(0, Math.min(1, score));
+  const R = (1 - v) * 70 + (1 - a) * 30;
+  return Math.max(0, Math.min(100, R));
 }
 
 /**
  * Maps autonomic state proportions to a vertical coordinate on the Autonomic Coherence Ladder.
- * Instead of static divisions, y is generated continuously from the implicit regulation index:
- * R_implicit = p_coherence * 0.85 + p_mobilization * 0.50 + p_immobilization * 0.15
- * y = (1 - R_implicit) * 100% (ranging continuously from 15% to 85%)
+ * maps R (0 to 100) linearly to vertical axis (15% at top, 85% at bottom):
+ * y = 15 + R * 0.70
  */
 export function calculateVagalPoint(v, s, d) {
-  let R = 0.5;
+  let R = 50;
   if (typeof v === 'object' && v !== null) {
     const a = v.pre_arousal !== undefined ? v.pre_arousal : 0.5;
     const val = v.pre_valence !== undefined ? v.pre_valence : 0.5;
     R = calculateRegulationCapacity(a, val);
   } else if (s === undefined && d === undefined) {
-    R = typeof v === 'number' ? v : 0.5;
+    R = typeof v === 'number' ? v : 50;
   } else {
     const total = v + s + d || 1;
     const pV = v / total;
     const pS = s / total;
     const pD = d / total;
-    R = pV * 0.85 + pS * 0.50 + pD * 0.15;
+    R = pS * 50 + pD * 100;
   }
   
-  const rNorm = R > 1 ? R / 100 : R;
+  const rNorm = R > 100 ? 100 : (R < 0 ? 0 : R);
   const x = 50; // Centered
-  const y = (0.85 - (rNorm * 0.70)) * 100; // R = 1 -> y = 15%, R = 0 -> y = 85%
+  const y = 15 + (rNorm * 0.70); // R = 0 -> y = 15%, R = 100 -> y = 85%
   
   return { x: `${x}%`, y: `${y}%` };
 }
@@ -86,7 +83,7 @@ export function calculatePlasticity(history) {
   
   const recent = history.slice(0, 10);
   
-  // Calculate R for each entry in recent history
+  // Calculate R for each entry in recent history (R is in [0, 100])
   const rValues = recent.map(h => {
     let a = h.pre_arousal !== undefined ? h.pre_arousal : 0.5;
     let v = h.pre_valence !== undefined ? h.pre_valence : 0.5;
@@ -107,7 +104,7 @@ export function calculatePlasticity(history) {
   });
   
   if (rValues.length < 2) {
-    const score = Math.round(rValues[0] * 50 + 20); // between 20 and 70
+    const score = Math.round(100 - rValues[0]);
     return { score, level: score > 70 ? 'high' : (score > 40 ? 'medium' : 'low') };
   }
   
@@ -115,17 +112,17 @@ export function calculatePlasticity(history) {
   const mean = rValues.reduce((sum, r) => sum + r, 0) / rValues.length;
   const variance = rValues.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) / rValues.length;
   
-  // 2. Calculate recovery speed (upward shifts from low R < 0.45)
+  // 2. Calculate recovery speed (downward shifts from high R > 55 to lower R)
   let recoveries = 0;
   let totalTransitions = 0;
   for (let i = rValues.length - 1; i > 0; i--) {
     const rPrev = rValues[i];
     const rNext = rValues[i - 1];
     
-    if (rPrev < 0.45) {
+    if (rPrev > 55) {
       totalTransitions++;
-      if (rNext > rPrev) {
-        const recoveryMagnitude = rNext - rPrev;
+      if (rNext < rPrev) {
+        const recoveryMagnitude = (rPrev - rNext) / 100;
         recoveries += recoveryMagnitude; 
       }
     }
@@ -135,7 +132,7 @@ export function calculatePlasticity(history) {
   
   // Autonomic flexibility score components
   const activityComponent = Math.min(1.0, rValues.length / 7);
-  const varianceComponent = Math.min(1.0, variance * 8);
+  const varianceComponent = Math.min(1.0, (variance / 10000) * 8);
   const recoveryComponent = Math.min(1.0, recoveryScore * 1.5);
   
   let finalScore = (activityComponent * 0.3 + varianceComponent * 0.35 + recoveryComponent * 0.35) * 100;

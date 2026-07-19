@@ -99,24 +99,24 @@ export function normalizeCheckinData(data) {
 
 export function calculateRegulationState(a, v) {
   const R = calculateRegulationCapacity(a, v);
-  if (R >= 0.60) return "coherence";
+  if (R < 45) return "coherence";
   return a >= 0.5 ? "mobilization" : "immobilization";
 }
 
 export function getRegulationStateLabel(R, a, lang = 'tr') {
-  if (R >= 0.75) {
-    return lang === 'tr' ? 'Yüksek Regülasyon (Optimal Denge)' : 'High Regulation (Optimal Balance)';
+  if (R < 30) {
+    return lang === 'tr' ? 'Sosyal uyum ve prefrontal regülasyon' : 'Social coherence & prefrontal regulation';
   }
-  if (R >= 0.60) {
-    return lang === 'tr' ? 'Aktif Uyum (Sosyal Bağlantı)' : 'Active Coherence (Social Connection)';
+  if (R < 45) {
+    return lang === 'tr' ? 'Regülasyona yakın geçiş' : 'Near-regulation transition';
   }
-  if (R >= 0.45) {
-    return lang === 'tr' ? 'Geçiş Bölgesi (Hassas Denge)' : 'Transition Zone (Sensitive Balance)';
+  if (R < 55) {
+    return lang === 'tr' ? 'Aktif mobilizasyon' : 'Active mobilization';
   }
-  if (a >= 0.5) {
-    return lang === 'tr' ? 'Düşük Regülasyon (Aktif Stres Tepkisi)' : 'Low Regulation (Active Stress Response)';
+  if (R < 70) {
+    return lang === 'tr' ? 'Korumaya yakın geçiş' : 'Near-protection transition';
   }
-  return lang === 'tr' ? 'Düşük Regülasyon (Enerji Koruma / Kapanma)' : 'Low Regulation (Energy Conservation / Shutdown)';
+  return lang === 'tr' ? 'Koruyucu enerji tasarrufu (kapanma)' : 'Protective energy conservation (shutdown)';
 }
 
 export function calculatePolyvagalState(a, v) {
