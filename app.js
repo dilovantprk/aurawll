@@ -256,7 +256,10 @@ export function navigateTo(viewId, skipHistory = false) {
   }
 
   // Handle View Transitions (Human Fade)
-  if (currentView) {
+  const skipTransition = AppState.skipNextTransition;
+  AppState.skipNextTransition = false;
+
+  if (currentView && !skipTransition) {
     currentView.classList.add('view-human-out');
     target.classList.remove('hidden');
     target.classList.add('active', 'view-human-in');
@@ -272,11 +275,18 @@ export function navigateTo(viewId, skipHistory = false) {
       syncMiniPlayerState();
     }, 600);
   } else {
+    if (currentView) {
+      currentView.classList.add('hidden');
+      currentView.classList.remove('active');
+    }
     if (elements.views) {
-      Array.from(elements.views).forEach(v => v.classList.add('hidden'));
+      Array.from(elements.views).forEach(v => {
+        if (v.id !== viewId) v.classList.add('hidden');
+      });
     }
     target.classList.remove('hidden');
     target.classList.add('active');
+    target.scrollTop = 0;
     isNavigating = false;
     syncMiniPlayerState();
   }

@@ -150,6 +150,7 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
   let isDragging = false;
   let startTf = '';
   let activeDragIsHandle = false;
+  let targetView = null;
 
   const startDrag = (y, isHandle = false) => {
     // Only allow swipe if at top of scroll OR if dragging by the handle
@@ -163,6 +164,30 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
     if (startTf === 'none') startTf = '';
     content.style.transition = 'none';
     if (handle) handle.style.background = 'rgba(255, 255, 255, 0.4)';
+
+    // Find and prepare adjacent targetView for swipe-up animation if on mobile
+    const isMobile = window.innerWidth < 1024;
+    const AppState = configProps.AppState;
+    if (swipeUpFn && isMobile && AppState) {
+      if (AppState.currentView === 'view-meditations') {
+        targetView = document.getElementById('view-exercise');
+      } else if (AppState.currentView === 'view-exercise') {
+        targetView = document.getElementById('view-meditation-loading');
+      }
+      
+      if (targetView) {
+        targetView.classList.remove('hidden');
+        targetView.style.position = 'fixed';
+        targetView.style.top = '0';
+        targetView.style.left = '0';
+        targetView.style.width = '100%';
+        targetView.style.height = '100%';
+        targetView.style.zIndex = '1000000'; // Right below infoModal (1000001)
+        targetView.style.transform = 'translateY(100%)';
+        targetView.style.transition = 'none';
+        targetView.style.opacity = '1';
+      }
+    }
   };
 
   const moveDrag = (y) => {
@@ -187,8 +212,12 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
         const isNotScrollable = modal.scrollHeight <= modal.clientHeight + 5;
         if (activeDragIsHandle || atBottom || isNotScrollable) {
           content.style.transform = `${startTf} translateY(${deltaY}px)`;
+          if (targetView) {
+            targetView.style.transform = `translateY(calc(100% + ${deltaY}px))`;
+          }
         } else {
           content.style.transform = startTf;
+          if (targetView) targetView.style.transform = 'translateY(100%)';
         }
       } else {
         content.style.transform = startTf;
@@ -202,32 +231,75 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
     
     const deltaY = currentY - startY;
 
+    const cleanupTargetView = () => {
+      if (targetView) {
+        targetView.style.position = '';
+        targetView.style.top = '';
+        targetView.style.left = '';
+        targetView.style.width = '';
+        targetView.style.height = '';
+        targetView.style.zIndex = '';
+        targetView.style.transform = '';
+        targetView.style.transition = '';
+        targetView.style.opacity = '';
+        targetView = null;
+      }
+    };
+
     if (deltaY > 100) { 
-      // Successful swipe down - clear inline styles to allow CSS transition to take over
+      // Successful swipe down
       content.style.transform = '';
       content.style.transition = '';
       backdrop.style.opacity = '';
       backdrop.style.transition = '';
+      if (targetView) {
+        targetView.classList.add('hidden');
+        cleanupTargetView();
+      }
       if (closeFn) closeFn();
     } else if (deltaY < -80 && swipeUpFn && window.innerWidth < 1024) {
       // Successful swipe up
       const atBottom = modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 5;
       const isNotScrollable = modal.scrollHeight <= modal.clientHeight + 5;
       if (activeDragIsHandle || atBottom || isNotScrollable) {
-        content.style.transform = '';
-        content.style.transition = '';
-        backdrop.style.opacity = '';
-        backdrop.style.transition = '';
-        swipeUpFn();
+        const AppState = configProps.AppState;
+        if (AppState) {
+          AppState.skipNextTransition = true;
+        }
+
+        content.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        content.style.transform = 'translateY(-100%)';
+
+        if (targetView) {
+          targetView.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+          targetView.style.transform = 'translateY(0)';
+        }
+
+        setTimeout(() => {
+          content.style.transform = '';
+          content.style.transition = '';
+          backdrop.style.opacity = '';
+          backdrop.style.transition = '';
+          cleanupTargetView();
+          swipeUpFn();
+        }, 400);
       } else {
         // Snap back
         content.style.transition = 'transform 0.5s var(--spring-easing)';
         content.style.transform = '';
         backdrop.style.opacity = '';
         backdrop.style.transition = 'opacity 0.5s ease';
+        if (targetView) {
+          targetView.style.transition = 'transform 0.5s var(--spring-easing)';
+          targetView.style.transform = 'translateY(100%)';
+        }
         setTimeout(() => {
           content.style.transition = '';
           backdrop.style.transition = '';
+          if (targetView) {
+            targetView.classList.add('hidden');
+            cleanupTargetView();
+          }
         }, 500);
       }
     } else {
@@ -236,11 +308,19 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
       content.style.transform = '';
       backdrop.style.opacity = '';
       backdrop.style.transition = 'opacity 0.5s ease';
+      if (targetView) {
+        targetView.style.transition = 'transform 0.5s var(--spring-easing)';
+        targetView.style.transform = 'translateY(100%)';
+      }
       
       // Cleanup inline transitions after snapping back
       setTimeout(() => {
         content.style.transition = '';
         backdrop.style.transition = '';
+        if (targetView) {
+          targetView.classList.add('hidden');
+          cleanupTargetView();
+        }
       }, 500);
     }
     
