@@ -776,11 +776,14 @@ body.nav-hidden .desktop-header-nav {
     top: auto;
     bottom: calc(64px + env(safe-area-inset-bottom, 20px) + 0.8rem);
     left: calc(12.5% + 0.45rem - 20px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.85);
     box-shadow: 
-      0 12px 32px rgba(0, 0, 0, 0.45),
-      inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.22);
-    background: rgba(20, 22, 28, 0.75); /* Darker glass background for solid floating overlay */
+      0 8px 24px rgba(0, 0, 0, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.1);
   }
 
   .header-back-btn.has-mini-player-active {
