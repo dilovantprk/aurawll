@@ -7,6 +7,7 @@
 }
 
 :root {
+  color-scheme: dark;
   /* High-Fidelity Neural Cockpit v5.0 Palette */
   --bg-primary: #090a0d;
   --bg-secondary: #0e1013;

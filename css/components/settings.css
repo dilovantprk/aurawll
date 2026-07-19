@@ -370,6 +370,7 @@
   transition: all 0.3s ease;
   font-family: inherit;
   outline: none;
+  color-scheme: dark; /* Force browser user-agent to open dark themed picker wheel */
 }
 
 .nudge-time-input:focus {
