@@ -176,6 +176,7 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
       }
       
       if (targetView) {
+        backdrop.style.zIndex = '999999'; // Push backdrop below targetView
         targetView.classList.remove('hidden');
         targetView.style.position = 'fixed';
         targetView.style.top = '0';
@@ -186,6 +187,8 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
         targetView.style.transform = 'translateY(100%)';
         targetView.style.transition = 'none';
         targetView.style.opacity = '1';
+        targetView.style.visibility = 'visible';
+        targetView.style.pointerEvents = 'auto';
       }
     }
   };
@@ -232,6 +235,7 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
     const deltaY = currentY - startY;
 
     const cleanupTargetView = () => {
+      backdrop.style.zIndex = '';
       if (targetView) {
         targetView.style.position = '';
         targetView.style.top = '';
@@ -242,6 +246,8 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
         targetView.style.transform = '';
         targetView.style.transition = '';
         targetView.style.opacity = '';
+        targetView.style.visibility = '';
+        targetView.style.pointerEvents = '';
         targetView = null;
       }
     };
