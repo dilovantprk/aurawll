@@ -1,7 +1,7 @@
 import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
-import { getHumanizedTime, renderMiniDeltaSVG, vibrate } from '../core/utils.js';
+import { getHumanizedTime, renderMiniDeltaSVG, vibrate, normalizeEntry, getAutonomicClass } from '../core/utils.js';
 import { deleteSingleCheckin } from '../services/auth.js';
 import { showInfoModal, showConfirm } from './modals.js';
 
@@ -145,7 +145,7 @@ export function initNotebook(config) {
     if (text) {
       const entry = {
         state: 'okay', 
-        polyvagal_state: 'ventral',
+        regulation_state: 'coherence',
         pre_arousal: 5,
         pre_valence: 5,
         somatic_selections: [],
@@ -199,17 +199,21 @@ function openArticleSubpage(entry) {
   vibrate('light');
 
   // Populate subpage elements
-  const stateKey = entry.polyvagal_state || entry.state || 'ventral';
-  if (elements.articleOrb) elements.articleOrb.className = `aura-orb ${stateKey}`;
-  if (elements.articleTime) elements.articleTime.textContent = getHumanizedTime(entry.timestamp);
+  const normalized = normalizeEntry(entry);
+  const stateKey = normalized.regulation_state || normalized.state || 'coherence';
+  if (elements.articleOrb) elements.articleOrb.className = `aura-orb ${getAutonomicClass(stateKey)}`;
+  if (elements.articleTime) elements.articleTime.textContent = getHumanizedTime(normalized.timestamp);
 
   const stateNameMap = { 
-    'ventral': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
-    'okay': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
-    'sympathetic': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
-    'wired': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
-    'dorsal': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal',
-    'foggy': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal'
+    'coherence': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+    'ventral': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+    'okay': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+    'mobilization': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+    'sympathetic': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+    'wired': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+    'immobilization': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
+    'dorsal': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
+    'foggy': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation'
   };
   const stateName = stateNameMap[stateKey] || '...';
   let emotionLabel = '';
@@ -343,29 +347,33 @@ export function renderNotebook(providedEntries) {
     html = `<div class="empty-state">${t('notebook_empty')}</div>`;
   } else {
     history.forEach(entry => {
-      const timeStr = getHumanizedTime(entry.timestamp);
-      const stateKey = entry.polyvagal_state || entry.state;
+      const normalized = normalizeEntry(entry);
+      const timeStr = getHumanizedTime(normalized.timestamp);
+      const stateKey = normalized.regulation_state || normalized.state;
       const stateNameMap = { 
-        'ventral': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
-        'okay': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
-        'sympathetic': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
-        'wired': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
-        'dorsal': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal',
-        'foggy': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal'
+        'coherence': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+        'ventral': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+        'okay': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+        'mobilization': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+        'sympathetic': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+        'wired': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+        'immobilization': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
+        'dorsal': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
+        'foggy': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation'
       };
       const stateName = stateNameMap[stateKey] || '...';
 
       let emotionLabel = '';
-      if (entry.selected_emotions && entry.selected_emotions.length > 0) {
-        emotionLabel = entry.selected_emotions.map(e => t(e)).join(', ');
+      if (normalized.selected_emotions && normalized.selected_emotions.length > 0) {
+        emotionLabel = normalized.selected_emotions.map(e => t(e)).join(', ');
       } else {
-        emotionLabel = entry.customEmotion || (entry.subEmotion ? t(entry.subEmotion) : '');
+        emotionLabel = normalized.customEmotion || (normalized.subEmotion ? t(normalized.subEmotion) : '');
       }
 
       if (!emotionLabel || emotionLabel === 'null') emotionLabel = stateName;
       const tags = [];
-      if (entry.somatic_selections) entry.somatic_selections.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
-      if (entry.sensations) entry.sensations.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
+      if (normalized.somatic_selections) normalized.somatic_selections.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
+      if (normalized.sensations) normalized.sensations.forEach(s => { const trans = t(s); if (trans && trans !== s && trans !== 'null') tags.push(trans); });
       
       let somaticSummary = '';
       if (tags.length > 0) {
@@ -378,14 +386,14 @@ export function renderNotebook(providedEntries) {
         }
       }
 
-      const isLong = entry.savoringText && entry.savoringText.length > 120;
-      const cardText = isLong ? `${entry.savoringText.substring(0, 120)}...` : (entry.savoringText || '...');
+      const isLong = normalized.savoringText && normalized.savoringText.length > 120;
+      const cardText = isLong ? `${normalized.savoringText.substring(0, 120)}...` : (normalized.savoringText || '...');
       const cardClass = isLong ? 'aura-card glow-card fade-in-pure has-long-note' : 'aura-card glow-card fade-in-pure';
 
       html += `
-        <div class="${cardClass}" data-ts="${entry.timestamp}">
+        <div class="${cardClass}" data-ts="${normalized.timestamp}">
           <div class="card-header">
-            <div class="aura-orb ${entry.polyvagal_state || 'ventral'}"></div>
+            <div class="aura-orb ${getAutonomicClass(normalized.regulation_state)}"></div>
             <div class="time-meta">${timeStr}</div>
             <div class="state-label">${emotionLabel}</div>
             <button class="delete-entry-btn" data-ts="${entry.timestamp}" aria-label="Delete">

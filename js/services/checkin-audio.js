@@ -189,6 +189,7 @@ export const CheckinAudio = {
    */
   playChipSelect(state) {
     if (!this._init()) return;
+    state = state === 'coherence' ? 'ventral' : (state === 'mobilization' ? 'sympathetic' : (state === 'immobilization' ? 'dorsal' : state));
     const ctx = this._ctx;
     const now = ctx.currentTime;
 
@@ -465,6 +466,7 @@ export const CheckinAudio = {
    * @param {'ventral'|'sympathetic'|'dorsal'} state
    */
   playEmotionOpen(state) {
+    state = state === 'coherence' ? 'ventral' : (state === 'mobilization' ? 'sympathetic' : (state === 'immobilization' ? 'dorsal' : state));
     const beds = {
       ventral:     [330, 415, 495],    // sıcak major
       sympathetic: [440, 523, 660],    // parlak, hafif gergin
@@ -481,6 +483,7 @@ export const CheckinAudio = {
    */
   playEmotionSelect(state, count) {
     if (!this._init()) return;
+    state = state === 'coherence' ? 'ventral' : (state === 'mobilization' ? 'sympathetic' : (state === 'immobilization' ? 'dorsal' : state));
     const ctx = this._ctx;
     const now = ctx.currentTime;
 

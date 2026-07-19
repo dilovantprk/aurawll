@@ -2,7 +2,7 @@ import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { protocols } from '../core/constants.js';
-import { normalizeCheckinData, getHumanizedTime, renderMiniDeltaSVG } from '../core/utils.js';
+import { normalizeCheckinData, getHumanizedTime, renderMiniDeltaSVG, normalizeEntry, getAutonomicClass } from '../core/utils.js';
 import { calculateVagalPoint, calculatePlasticity } from '../core/vagal-engine.js';
 import { getWeeklyInsight } from '../services/insight-engine.js';
 import { SensoryEngine } from '../services/sensory.js';
@@ -189,17 +189,20 @@ export function renderHistory(data) {
   historySection?.classList.remove('hidden');
   elements.historyList.classList.remove('locked-preview');
   elements.historyList.innerHTML = data.map((doc, index) => {
-    const item = normalizeCheckinData(doc);
+    const item = normalizeEntry(normalizeCheckinData(doc));
     const timeStr = getHumanizedTime(item.timestamp);
 
-    const stateKey = item.polyvagal_state || item.state;
+    const stateKey = item.regulation_state || item.state;
     const stateNameMap = {
-      'ventral': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
-      'okay': AppState.lang === 'tr' ? 'Sistemsel Güvenlik' : 'Systemic Safety',
-      'sympathetic': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
-      'wired': AppState.lang === 'tr' ? 'Sempatik Mobilizasyon' : 'Sympathetic Mobilization',
-      'dorsal': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal',
-      'foggy': AppState.lang === 'tr' ? 'Davranışsal Geri Çekilme' : 'Behavioral Withdrawal'
+      'coherence': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+      'ventral': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+      'okay': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
+      'mobilization': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+      'sympathetic': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+      'wired': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
+      'immobilization': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
+      'dorsal': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
+      'foggy': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation'
     };
     const stateName = stateNameMap[stateKey] || '...';
 
@@ -228,7 +231,7 @@ export function renderHistory(data) {
     return `
       <div class="aura-card glow-card stagger-${(index % 4) + 3}" onclick="window.dispatchEvent(new CustomEvent('aura-haptic', {detail: 'light'}))">
         <div class="card-header">
-          <div class="aura-orb ${item.polyvagal_state || 'ventral'}"></div>
+          <div class="aura-orb ${getAutonomicClass(item.regulation_state)}"></div>
           <div class="time-meta">${timeStr}</div>
           <div class="state-label">${emotionLabel}</div>
         </div>
@@ -243,7 +246,9 @@ export function renderHistory(data) {
 export function analyzeWeeklyPatterns(historyData) {
   const now = Date.now();
   const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
-  const weeklyData = historyData.filter(item => item.timestamp >= sevenDaysAgo);
+  const weeklyData = historyData
+    .filter(item => item.timestamp >= sevenDaysAgo)
+    .map(item => normalizeEntry(normalizeCheckinData(item)));
   const plasticity = calculatePlasticity(weeklyData);
   renderPlasticityBar(plasticity);
   let timelineHTML = '';
@@ -323,15 +328,18 @@ export function renderVagalHeatmap(data, isModal = false) {
   const targetBlob = isModal ? document.querySelector('#vagalModalHeatmap .vagal-blob') : elements.vagalBlob;
   if (!targetBlob) return;
 
-  // Map state to weights if exact numeric data is missing (for the new flow)
-  let v = data?.ventral || 0;
-  let s = data?.sympathetic || 0;
-  let d = data?.dorsal || 0;
+  const normalized = normalizeEntry(data);
+  const regState = normalized?.regulation_state;
 
-  if (v === 0 && s === 0 && d === 0 && data?.polyvagal_state) {
-    if (data.polyvagal_state === 'ventral') { v = 80; s = 10; d = 10; }
-    else if (data.polyvagal_state === 'sympathetic') { v = 10; s = 80; d = 10; }
-    else if (data.polyvagal_state === 'dorsal') { v = 10; s = 10; d = 80; }
+  // Map state to weights if exact numeric data is missing (for the new flow)
+  let v = data?.ventral || data?.coherence || 0;
+  let s = data?.sympathetic || data?.mobilization || 0;
+  let d = data?.dorsal || data?.immobilization || 0;
+
+  if (v === 0 && s === 0 && d === 0 && regState) {
+    if (regState === 'coherence') { v = 80; s = 10; d = 10; }
+    else if (regState === 'mobilization') { v = 10; s = 80; d = 10; }
+    else if (regState === 'immobilization') { v = 10; s = 10; d = 80; }
   } else if (v === 0 && s === 0 && d === 0) {
     // Default center
     v = 33; s = 33; d = 34;
@@ -347,6 +355,6 @@ export function renderVagalHeatmap(data, isModal = false) {
 
   // Add a subtle "pulse" based on state
   targetBlob.classList.remove('pulse-slow', 'pulse-fast');
-  if (data?.polyvagal_state === 'sympathetic') targetBlob.classList.add('pulse-fast');
+  if (regState === 'mobilization') targetBlob.classList.add('pulse-fast');
   else targetBlob.classList.add('pulse-slow');
 }

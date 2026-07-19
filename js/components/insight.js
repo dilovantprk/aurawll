@@ -2,10 +2,10 @@ import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { AppState } from '../core/state.js';
 import { calculatePlasticity, getWeightsFromState, calculateVagalPoint } from '../core/vagal-engine.js';
-import { normalizeCheckinData } from '../core/utils.js';
+import { normalizeCheckinData, normalizeEntry } from '../core/utils.js';
 
 export function updateInsightView(history) {
-    const normalizedHistory = history.map(h => normalizeCheckinData(h));
+    const normalizedHistory = history.map(h => normalizeEntry(normalizeCheckinData(h)));
     const safeHistory = (normalizedHistory.length > 0) ? normalizedHistory : [{ state: 'okay', timestamp: Date.now() }];
     
     const plasticity = calculatePlasticity(safeHistory);

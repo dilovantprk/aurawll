@@ -7,7 +7,7 @@
 import { AppState, safeGetItem, safeSetItem, saveHistoryToLocal } from './js/core/state.js';
 import { elements } from './js/core/dom.js';
 import { t, renderLocalization } from './js/core/i18n.js';
-import { normalizeCheckinData, calculatePolyvagalState, syncGlobalTheme } from './js/core/utils.js';
+import { normalizeCheckinData, calculateRegulationState, syncGlobalTheme } from './js/core/utils.js';
 import { SensoryEngine } from './js/services/sensory.js';
 import { MeditationAudio } from './js/services/meditation-audio.js';
 
@@ -520,7 +520,7 @@ async function initAppBootstrap() {
     renderSomaticEntry,
     stopExercise,
     startMeditationLoading,
-    calculatePolyvagalState
+    calculateRegulationState
   });
   initDashboard({ fb, navigateTo });
   initNotebook({ fb, navigateTo, setHUD });

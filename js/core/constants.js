@@ -1,45 +1,52 @@
 /* --- SOMATIC & POLYVAGAL CONSTANTS --- */
 export const SOMATIC_MAP = {
     // Ventral
-    "bs_ventral_shoulders": { a: 0.3, v: 0.8, state: 'ventral' },
-    "bs_ventral_belly": { a: 0.4, v: 0.8, state: 'ventral' },
-    "bs_ventral_settling": { a: 0.3, v: 0.7, state: 'ventral' },
-    "bs_ventral_belong": { a: 0.4, v: 0.9, state: 'ventral' },
-    "bs_ventral_jaw": { a: 0.3, v: 0.8, state: 'ventral' },
+    "bs_ventral_shoulders": { a: 0.3, v: 0.8, state: 'coherence' },
+    "bs_ventral_belly": { a: 0.4, v: 0.8, state: 'coherence' },
+    "bs_ventral_settling": { a: 0.3, v: 0.7, state: 'coherence' },
+    "bs_ventral_belong": { a: 0.4, v: 0.9, state: 'coherence' },
+    "bs_ventral_jaw": { a: 0.3, v: 0.8, state: 'coherence' },
     // Sympathetic
-    "bs_symp_jaw": { a: 0.8, v: 0.4, state: 'sympathetic' },
-    "bs_symp_shoulders": { a: 0.8, v: 0.3, state: 'sympathetic' },
-    "bs_symp_chest": { a: 0.7, v: 0.3, state: 'sympathetic' },
-    "bs_symp_hands": { a: 0.7, v: 0.4, state: 'sympathetic' },
-    "bs_symp_legs": { a: 0.9, v: 0.4, state: 'sympathetic' },
-    "bs_symp_heart": { a: 0.9, v: 0.3, state: 'sympathetic' },
-    "bs_symp_spring": { a: 0.8, v: 0.4, state: 'sympathetic' },
+    "bs_symp_jaw": { a: 0.8, v: 0.4, state: 'mobilization' },
+    "bs_symp_shoulders": { a: 0.8, v: 0.3, state: 'mobilization' },
+    "bs_symp_chest": { a: 0.7, v: 0.3, state: 'mobilization' },
+    "bs_symp_hands": { a: 0.7, v: 0.4, state: 'mobilization' },
+    "bs_symp_legs": { a: 0.9, v: 0.4, state: 'mobilization' },
+    "bs_symp_heart": { a: 0.9, v: 0.3, state: 'mobilization' },
+    "bs_symp_spring": { a: 0.8, v: 0.4, state: 'mobilization' },
     // Dorsal
-    "bs_dorsal_distant": { a: 0.2, v: 0.2, state: 'dorsal' },
-    "bs_dorsal_heavy": { a: 0.2, v: 0.3, state: 'dorsal' },
-    "bs_dorsal_numb": { a: 0.1, v: 0.2, state: 'dorsal' },
-    "bs_dorsal_eyes": { a: 0.3, v: 0.3, state: 'dorsal' },
-    "bs_dorsal_vulnerable": { a: 0.3, v: 0.2, state: 'dorsal' },
-    "bs_dorsal_voice": { a: 0.2, v: 0.4, state: 'dorsal' },
+    "bs_dorsal_distant": { a: 0.2, v: 0.2, state: 'immobilization' },
+    "bs_dorsal_heavy": { a: 0.2, v: 0.3, state: 'immobilization' },
+    "bs_dorsal_numb": { a: 0.1, v: 0.2, state: 'immobilization' },
+    "bs_dorsal_eyes": { a: 0.3, v: 0.3, state: 'immobilization' },
+    "bs_dorsal_vulnerable": { a: 0.3, v: 0.2, state: 'immobilization' },
+    "bs_dorsal_voice": { a: 0.2, v: 0.4, state: 'immobilization' },
     // Neutral
-    "bs_neutral_deep": { a: 0.4, v: 0.7, state: 'ventral' },
-    "bs_neutral_weight": { a: 0.3, v: 0.4, state: 'dorsal' },
-    "bs_neutral_cold": { a: 0.6, v: 0.4, state: 'sympathetic' },
-    "bs_neutral_face": { a: 0.7, v: 0.4, state: 'sympathetic' },
+    "bs_neutral_deep": { a: 0.4, v: 0.7, state: 'coherence' },
+    "bs_neutral_weight": { a: 0.3, v: 0.4, state: 'immobilization' },
+    "bs_neutral_cold": { a: 0.6, v: 0.4, state: 'mobilization' },
+    "bs_neutral_face": { a: 0.7, v: 0.4, state: 'mobilization' },
     // Digestion
-    "bs_digest_throat": { a: 0.7, v: 0.3, state: 'sympathetic' },
-    "bs_digest_appetite": { a: 0.2, v: 0.3, state: 'dorsal' },
-    "bs_digest_stomach": { a: 0.6, v: 0.3, state: 'sympathetic' },
-    "bs_digest_head": { a: 0.7, v: 0.4, state: 'sympathetic' }
+    "bs_digest_throat": { a: 0.7, v: 0.3, state: 'mobilization' },
+    "bs_digest_appetite": { a: 0.2, v: 0.3, state: 'immobilization' },
+    "bs_digest_stomach": { a: 0.6, v: 0.3, state: 'mobilization' },
+    "bs_digest_head": { a: 0.7, v: 0.4, state: 'mobilization' }
 };
 
 export const EMOTION_OPTIONS = {
+    coherence: ["emo_grateful", "emo_curious", "emo_peaceful", "emo_joyful", "emo_compassionate", "emo_connected"],
+    mobilization: ["emo_anxious", "emo_angry", "emo_overwhelmed", "emo_excited", "emo_tense", "emo_impatient"],
+    immobilization: ["emo_numb", "emo_tired", "emo_sad", "emo_empty", "emo_hopeless", "emo_dull"],
+    // Legacy support
     ventral: ["emo_grateful", "emo_curious", "emo_peaceful", "emo_joyful", "emo_compassionate", "emo_connected"],
     sympathetic: ["emo_anxious", "emo_angry", "emo_overwhelmed", "emo_excited", "emo_tense", "emo_impatient"],
     dorsal: ["emo_numb", "emo_tired", "emo_sad", "emo_empty", "emo_hopeless", "emo_dull"]
 };
 
-export const stateLegacyMap = { ventral: "Okay", sympathetic: "Wired", dorsal: "Foggy" };
+export const stateLegacyMap = { 
+  ventral: "Okay", sympathetic: "Wired", dorsal: "Foggy",
+  coherence: "Okay", mobilization: "Wired", immobilization: "Foggy" 
+};
 
 export const protocols = {
   p_478: {

@@ -1,6 +1,7 @@
 import { t } from './i18n.js';
 import { AppState } from './state.js';
 import { protocols } from './constants.js';
+import { calculateRegulationCapacity } from './vagal-engine.js';
 
 export function calculateEarnedBadges(history) {
   const earned = new Set();
@@ -20,8 +21,9 @@ export function calculateEarnedBadges(history) {
 
   let ventralCount = 0;
   for (let i = 0; i < history.length; i++) {
-    const state = history[i].polyvagal_state || history[i].state;
-    if (state === 'ventral' || state === 'okay') {
+    const entry = normalizeEntry({ ...history[i] });
+    const state = entry.regulation_state || entry.state;
+    if (state === 'coherence' || state === 'ventral' || state === 'okay' || state === 'Okay') {
       ventralCount++;
       if (ventralCount >= 5) { earned.add('zen'); break; }
     } else {
@@ -35,29 +37,76 @@ export function calculateEarnedBadges(history) {
   return Array.from(earned);
 }
 
+export function getAutonomicClass(state) {
+  const map = {
+    coherence: 'ventral',
+    mobilization: 'sympathetic',
+    immobilization: 'dorsal',
+    ventral: 'ventral',
+    sympathetic: 'sympathetic',
+    dorsal: 'dorsal'
+  };
+  return map[state] || 'ventral';
+}
+
+export function normalizeEntry(entry) {
+  if (!entry) return null;
+  // If entry uses old polyvagal_state key, map to regulation_state
+  if (entry.polyvagal_state && !entry.regulation_state) {
+    entry.regulation_state = entry.polyvagal_state;
+  }
+  // Normalize old state values to new NIM state values
+  if (entry.regulation_state === 'ventral') entry.regulation_state = 'coherence';
+  if (entry.regulation_state === 'sympathetic') entry.regulation_state = 'mobilization';
+  if (entry.regulation_state === 'dorsal') entry.regulation_state = 'immobilization';
+  
+  // Normalize entry.state legacy display values if they are old strings
+  if (entry.state === 'ventral' || entry.state === 'coherence' || entry.state === 'Okay' || entry.state === 'okay') entry.state = 'okay';
+  if (entry.state === 'sympathetic' || entry.state === 'mobilization' || entry.state === 'Wired' || entry.state === 'wired') entry.state = 'wired';
+  if (entry.state === 'dorsal' || entry.state === 'immobilization' || entry.state === 'Foggy' || entry.state === 'foggy') entry.state = 'foggy';
+
+  return entry;
+}
+
 export function normalizeCheckinData(data) {
   if (!data) return data;
+  
+  // Normalize key names
+  if (data.polyvagal_state && !data.regulation_state) {
+    data.regulation_state = data.polyvagal_state;
+  }
+  
   if (data.pre_arousal === undefined) {
     const legacyMap = {
-      "Wired": { a: 0.8, v: 0.2, state: "sympathetic" },
-      "Foggy": { a: 0.2, v: 0.2, state: "dorsal" },
-      "Okay":  { a: 0.5, v: 0.8, state: "ventral" }
+      "Wired": { a: 0.8, v: 0.2, state: "mobilization" },
+      "Foggy": { a: 0.2, v: 0.2, state: "immobilization" },
+      "Okay":  { a: 0.5, v: 0.8, state: "coherence" }
     };
     const mapped = legacyMap[data.state] || legacyMap["Okay"];
-    return {
-      ...data,
-      pre_arousal: mapped.a,
-      pre_valence: mapped.v,
-      polyvagal_state: mapped.state,
-      is_legacy: true
-    };
+    data.pre_arousal = mapped.a;
+    data.pre_valence = mapped.v;
+    data.regulation_state = mapped.state;
+    data.is_legacy = true;
   }
+  
+  // Ensure regulation_state is mapped correctly
+  if (data.regulation_state === 'ventral') data.regulation_state = 'coherence';
+  if (data.regulation_state === 'sympathetic') data.regulation_state = 'mobilization';
+  if (data.regulation_state === 'dorsal') data.regulation_state = 'immobilization';
+  
   return data;
 }
 
+export function calculateRegulationState(a, v) {
+  const R = calculateRegulationCapacity(a, v);
+  if (R >= 0.60) return "coherence";
+  return a >= 0.5 ? "mobilization" : "immobilization";
+}
+
 export function calculatePolyvagalState(a, v) {
-  if (v >= 0.5) return "ventral";
-  return a >= 0.5 ? "sympathetic" : "dorsal";
+  const state = calculateRegulationState(a, v);
+  const legacyMap = { coherence: 'ventral', mobilization: 'sympathetic', immobilization: 'dorsal' };
+  return legacyMap[state] || state;
 }
 
 export function getHumanizedTime(timestamp) {
@@ -88,8 +137,9 @@ export function getHumanizedTime(timestamp) {
 
 export function renderMiniDeltaSVG(entry) {
   if (!entry) return '';
-  const a = entry.pre_arousal || 0.5;
-  const v = entry.pre_valence || 0.5;
+  const normalized = normalizeEntry({ ...entry });
+  const a = normalized.pre_arousal || 0.5;
+  const v = normalized.pre_valence || 0.5;
   const color = (v >= 0.5) ? 'rgb(100, 228, 159)' : (a >= 0.5 ? 'rgb(255, 107, 107)' : 'rgb(98, 164, 255)');
   return `<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="${v * 24}" cy="${(1 - a) * 24}" r="3" fill="${color}" /></svg>`;
 }
@@ -112,23 +162,26 @@ export function vibrate(type = 'light') {
 
 /**
  * Synchronizes the global application theme (background gradient)
- * based on the user's most recent polyvagal state.
+ * based on the user's most recent autonomic regulation state.
  */
 export function syncGlobalTheme() {
   const history = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : (AppState.mockHistory || []);
   if (!history || history.length === 0) return;
   
-  const latest = history[0];
-  const state = latest.polyvagal_state || latest.state;
+  const latest = normalizeEntry({ ...history[0] });
+  const state = latest.regulation_state || latest.state;
   
   // High-fidelity color mapping
   const colors = {
     okay: { rgb: '125, 145, 123', hex: '#7d917b' },
     ventral: { rgb: '125, 145, 123', hex: '#7d917b' },
+    coherence: { rgb: '125, 145, 123', hex: '#7d917b' },
     wired: { rgb: '196, 139, 113', hex: '#c48b71' },
     sympathetic: { rgb: '196, 139, 113', hex: '#c48b71' },
+    mobilization: { rgb: '196, 139, 113', hex: '#c48b71' },
     foggy: { rgb: '109, 127, 148', hex: '#6d7f94' },
-    dorsal: { rgb: '109, 127, 148', hex: '#6d7f94' }
+    dorsal: { rgb: '109, 127, 148', hex: '#6d7f94' },
+    immobilization: { rgb: '109, 127, 148', hex: '#6d7f94' }
   };
   
   const theme = colors[state] || { rgb: '133, 141, 255', hex: '#858DFF' };

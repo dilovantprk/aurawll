@@ -32,7 +32,7 @@ export const AppState = {
   lastCheckInState: null,
   currentCheckIn: {
     state: null, 
-    polyvagal_state: null,
+    regulation_state: null,
     pre_arousal: null,
     pre_valence: null,
     somatic_selections: [],

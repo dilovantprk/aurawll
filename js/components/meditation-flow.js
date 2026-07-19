@@ -1,7 +1,7 @@
 import { elements } from '../core/dom.js';
 import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
-import { syncGlobalTheme } from '../core/utils.js';
+import { syncGlobalTheme, getAutonomicClass } from '../core/utils.js';
 import { protocols, subEmotionMap, PROTOCOL_META } from '../core/constants.js';
 import { CheckinAudio } from '../services/checkin-audio.js';
 import { SensoryEngine } from '../services/sensory.js';
@@ -205,12 +205,13 @@ function renderMarinationSensations() {
     {id: 'mar_clearer'}, {id: 'mar_grounded'}
   ];
   
-  const state = AppState.currentCheckIn.polyvagal_state || 'ventral';
+  const state = AppState.currentCheckIn.regulation_state || AppState.currentCheckIn.polyvagal_state || 'coherence';
+  const cssClass = getAutonomicClass(state);
   
   container.innerHTML = sensations.map((s, index) => {
     const delay = index * 100; // 100ms stagger delay
     return `
-      <button class="rhizome-chip ${state} chip-fade-in" data-id="${s.id}" style="animation-delay: ${delay}ms;">
+      <button class="rhizome-chip ${cssClass} chip-fade-in" data-id="${s.id}" style="animation-delay: ${delay}ms;">
         <span>${t(s.id)}</span>
       </button>
     `;

@@ -3,7 +3,7 @@ import { t } from '../core/i18n.js';
 import { AppState, safeSetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
 import { BADGES } from '../core/constants.js';
-import { calculateEarnedBadges, vibrate } from '../core/utils.js';
+import { calculateEarnedBadges, vibrate, normalizeEntry } from '../core/utils.js';
 import { openCommunityModal, showConfirm } from './modals.js';
 import { openAuthSheet } from './auth.js';
 
@@ -212,9 +212,10 @@ export function initSettings(config) {
     const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
     let txt = "Aura Wellness Report\n====================\n\n";
     data.forEach(item => {
-      txt += `Date: ${new Date(item.timestamp).toLocaleString()}\n`;
-      txt += `State: ${item.state} (${item.polyvagal_state || 'Unknown'})\n`;
-      if (item.subEmotion) txt += `Emotion: ${item.subEmotion}\n`;
+      const normalized = normalizeEntry(item);
+      txt += `Date: ${normalized.timestamp ? new Date(normalized.timestamp).toLocaleString() : '...'}\n`;
+      txt += `State: ${normalized.state} (${normalized.regulation_state || normalized.polyvagal_state || 'Unknown'})\n`;
+      if (normalized.subEmotion) txt += `Emotion: ${normalized.subEmotion}\n`;
       if (item.customEmotion) txt += `Custom Emotion: ${item.customEmotion}\n`;
       if (item.somatic_selections) txt += `Somatic: ${item.somatic_selections.join(', ')}\n`;
       if (item.savoringText) txt += `Note: ${item.savoringText}\n`;
@@ -475,8 +476,13 @@ export function updateSettingsView() {
 
   const latest = localHistory[localHistory.length - 1]; // Get most recent
   if (latest && elements.auraCoreSphere) {
-    const colors = { okay: '#7d917b', wired: '#c48b71', foggy: '#6d7f94', ventral: '#7d917b', sympathetic: '#c48b71', dorsal: '#6d7f94' };
-    const stateKey = latest.polyvagal_state || latest.state;
+    const normalized = normalizeEntry(latest);
+    const colors = { 
+      okay: '#7d917b', ventral: '#7d917b', coherence: '#7d917b',
+      wired: '#c48b71', sympathetic: '#c48b71', mobilization: '#c48b71',
+      foggy: '#6d7f94', dorsal: '#6d7f94', immobilization: '#6d7f94' 
+    };
+    const stateKey = normalized.regulation_state || normalized.state;
     const color = colors[stateKey] || colors.okay;
     elements.auraCoreSphere.style.setProperty('--vagal-accent', color);
   }
@@ -503,10 +509,11 @@ export function updateSettingsView() {
   const sigPath = document.querySelector('#vagal-signature-svg path');
   if (sigPath && localHistory.length > 0) {
     const states = localHistory.slice(-10).map(h => {
-      const s = h.polyvagal_state || h.state;
-      if (s === 'ventral') return 10;
-      if (s === 'sympathetic') return 30;
-      return 20; // dorsal
+      const normalized = normalizeEntry(h);
+      const s = normalized.regulation_state || normalized.state;
+      if (s === 'coherence' || s === 'ventral') return 10;
+      if (s === 'mobilization' || s === 'sympathetic') return 30;
+      return 20; // immobilization / dorsal
     });
     
     if (states.length < 10) {

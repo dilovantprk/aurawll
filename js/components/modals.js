@@ -401,7 +401,7 @@ function initDataSovereigntyActions() {
     let txt = "Aura Wellness Report\n====================\n\n";
     data.forEach(item => {
       txt += `Date: ${new Date(item.timestamp).toLocaleString()}\n`;
-      txt += `State: ${item.state} (${item.polyvagal_state || 'Unknown'})\n`;
+      txt += `State: ${item.state} (${item.regulation_state || item.polyvagal_state || 'Unknown'})\n`;
       if (item.subEmotion) txt += `Emotion: ${item.subEmotion}\n`;
       if (item.customEmotion) txt += `Custom Emotion: ${item.customEmotion}\n`;
       if (item.somatic_selections) txt += `Somatic: ${item.somatic_selections.join(', ')}\n`;

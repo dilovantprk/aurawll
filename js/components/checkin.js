@@ -2,7 +2,7 @@ import { elements } from '../core/dom.js';
 import { AppState, saveHistoryToLocal } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { SOMATIC_MAP, EMOTION_OPTIONS, protocols, subEmotionMap, stateLegacyMap, PROTOCOL_META, EMOTION_PROTOCOL_MAP } from '../core/constants.js';
-import { vibrate } from '../core/utils.js';
+import { vibrate, getAutonomicClass } from '../core/utils.js';
 import { CheckinAudio } from '../services/checkin-audio.js';
 
 
@@ -10,7 +10,7 @@ let configProps = {
   navigateTo: null,
   updateEmbodiedUI: null,
   SensoryEngine: null,
-  calculatePolyvagalState: null,
+  calculateRegulationState: null,
   loadDashboard: null,
   resetBioFeedback: null,
   saveCheckinToFirebase: null,
@@ -33,7 +33,7 @@ export function initCheckin(config) {
       AppState.isCheckIn = true; // Set flow context
       AppState.currentCheckIn = { 
         state: null, 
-        polyvagal_state: null,
+        regulation_state: null,
         pre_arousal: null,
         pre_valence: null,
         somatic_selections: [],
@@ -130,7 +130,10 @@ export function renderSomaticEntry() {
   const container = elements.somaticContainer;
   if (!container) return;
   const shuffledKeys = Object.keys(SOMATIC_MAP).sort(() => Math.random() - 0.5);
-  container.innerHTML = shuffledKeys.map((key) => `<button class="rhizome-chip ${SOMATIC_MAP[key].state}" data-key="${key}" data-state="${SOMATIC_MAP[key].state}">${t(key)}</button>`).join('');
+  container.innerHTML = shuffledKeys.map((key) => {
+    const cssClass = getAutonomicClass(SOMATIC_MAP[key].state);
+    return `<button class="rhizome-chip ${cssClass}" data-key="${key}" data-state="${SOMATIC_MAP[key].state}">${t(key)}</button>`;
+  }).join('');
   const chips = container.querySelectorAll('.rhizome-chip');
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
@@ -194,7 +197,7 @@ function applyDynamicFilter(chips, container) {
   if (selectedKeys.length > 0) {
     container.classList.add('has-selection');
     const activeStates = [...new Set(selectedKeys.map(k => SOMATIC_MAP[k]?.state).filter(Boolean))];
-    activeStates.forEach(state => container.classList.add(`selected-category-${state}`));
+    activeStates.forEach(state => container.classList.add(`selected-category-${getAutonomicClass(state)}`));
     
     // Neural Clustering Logic: Prioritize SPECIFICALLY selected chips
     chips.forEach(chip => {
@@ -250,8 +253,8 @@ export function renderAffectGrid() {
     
     setHUD('arrow', () => {
       CheckinAudio.playStepTransition();
-      const state = configProps.calculatePolyvagalState(a, v);
-      AppState.currentCheckIn.polyvagal_state = state;
+      const state = configProps.calculateRegulationState(a, v);
+      AppState.currentCheckIn.regulation_state = state;
       AppState.currentCheckIn.state = stateLegacyMap[state]; 
       renderEmotionRefinement(state);
     });
@@ -272,7 +275,8 @@ export function renderEmotionRefinement(state) {
   CheckinAudio.playEmotionOpen(state);
   const container = elements.emotionRefinementContainer;
   container.className = 'rhizome-container nebula-cluster'; // Apply new layout
-  container.innerHTML = EMOTION_OPTIONS[state].map(emoKey => `<button class="rhizome-chip ${state}" data-emo="${emoKey}">${t(emoKey)}</button>`).join('');
+  const cssClass = getAutonomicClass(state);
+  container.innerHTML = EMOTION_OPTIONS[state].map(emoKey => `<button class="rhizome-chip ${cssClass}" data-emo="${emoKey}">${t(emoKey)}</button>`).join('');
   AppState.currentCheckIn.selected_emotions = [];
   const chips = container.querySelectorAll('.rhizome-chip');
   chips.forEach(chip => {
@@ -296,7 +300,7 @@ export function renderEmotionRefinement(state) {
           CheckinAudio.playStepTransition();
           // Diversity logic: Use the first selected emotion's specific protocol
           const firstEmotion = AppState.currentCheckIn.selected_emotions[0];
-          const protocolId = EMOTION_PROTOCOL_MAP[firstEmotion] || (state === 'sympathetic' ? 'p_478' : (state === 'dorsal' ? 'p_bellows' : 'p_resonance'));
+          const protocolId = EMOTION_PROTOCOL_MAP[firstEmotion] || (state === 'sympathetic' || state === 'mobilization' ? 'p_478' : (state === 'dorsal' || state === 'immobilization' ? 'p_bellows' : 'p_resonance'));
           prepareExercise(protocolId);
         });
       } else {
