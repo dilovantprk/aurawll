@@ -31,7 +31,7 @@ uniform float u_hover;        // 0.0 → 1.0 hover lerp
 uniform float u_press;        // 0.0 → 1.0 press lerp
 uniform vec2  u_ripple;       // Ripple merkezi
 uniform float u_rippleT;      // Ripple zamanı (0..1)
-uniform float u_radius;       // Cam kenar ovalliği (px)
+uniform vec4  u_radii;        // Cam kenar ovallikleri: vec4(topRight, bottomRight, topLeft, bottomLeft)
 uniform vec3  u_themeColor;   // Vagal duruma göre ana sıvı rengi (RGB)
 
 in vec2 v_uv;
@@ -58,10 +58,12 @@ float fbm(vec2 p) {
   return f;
 }
 
-// --- Signed Distance Field (SDF) for Rounded Box ---
-float roundedBoxSDF(vec2 p, vec2 size, float radius) {
-  vec2 d = abs(p) - size + vec2(radius);
-  return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - radius;
+// --- Signed Distance Field (SDF) for Rounded Box with asymmetric corner radii ---
+float roundedBoxSDF(vec2 p, vec2 size, vec4 radii) {
+  radii.xy = (p.x > 0.0) ? radii.xy : radii.zw;
+  float r = (p.y > 0.0) ? radii.x : radii.y;
+  vec2 q = abs(p) - size + r;
+  return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
 }
 
 void main() {
@@ -71,7 +73,7 @@ void main() {
 
   // 1. 3D Cam Eğimi (Normal Map Hesaplama)
   // Elementin sınırlarına olan uzaklığı SDF ile buluyoruz
-  float dist = roundedBoxSDF(pixelPos - center, center, u_radius);
+  float dist = roundedBoxSDF(pixelPos - center, center, u_radii);
   
   // Sınırdan içeriye doğru 15 piksellik bir "eğim" (bevel) alanı
   float rollOff = clamp(-dist / 15.0, 0.0, 1.0);
@@ -169,7 +171,9 @@ class LiquidGlassRenderer {
     this.dead = false;
     this.rafId = null;
     this.themeColor = [125/255, 145/255, 123/255]; // Varsayılan Ventral Yeşil
-    this.rect = null;
+    this.width = 0;
+    this.height = 0;
+    this.radii = [this.opts.radius, this.opts.radius, this.opts.radius, this.opts.radius];
     this.needsResize = true;
 
     this.isVisible = true;
@@ -268,7 +272,7 @@ class LiquidGlassRenderer {
       press: gl.getUniformLocation(prog, 'u_press'),
       ripple: gl.getUniformLocation(prog, 'u_ripple'),
       rippleT: gl.getUniformLocation(prog, 'u_rippleT'),
-      radius: gl.getUniformLocation(prog, 'u_radius'),
+      radii: gl.getUniformLocation(prog, 'u_radii'),
       themeColor: gl.getUniformLocation(prog, 'u_themeColor')
     };
 
@@ -292,7 +296,7 @@ class LiquidGlassRenderer {
   _bindEvents() {
     const el = this.el;
     const updateMouse = (e) => {
-      const r = this.rect || el.getBoundingClientRect();
+      const r = el.getBoundingClientRect(); // Fresh viewport coordinates for mouse tracking
       const cx = (e.clientX ?? e.touches?.[0]?.clientX ?? 0) - r.left;
       const cy = (e.clientY ?? e.touches?.[0]?.clientY ?? 0) - r.top;
       this.mouse.x = cx / r.width;
@@ -306,7 +310,7 @@ class LiquidGlassRenderer {
     
     const onDown = (e) => {
       this._tPress = 1;
-      const r = this.rect || el.getBoundingClientRect();
+      const r = el.getBoundingClientRect(); // Fresh viewport coordinates for ripple start
       this.ripple.x = ((e.clientX ?? e.touches?.[0]?.clientX ?? 0) - r.left) / r.width;
       this.ripple.y = ((e.clientY ?? e.touches?.[0]?.clientY ?? 0) - r.top) / r.height;
       this.ripple.t = 0.001;
@@ -370,21 +374,43 @@ class LiquidGlassRenderer {
 
     // Resize canvas only when needed (initial render, visibility change, or window resize)
     const pr = Math.min(devicePixelRatio, 2);
-    if (this.needsResize || !this.rect) {
-      this.rect = this.el.getBoundingClientRect();
-      const w = Math.round(this.rect.width * pr);
-      const h = Math.round(this.rect.height * pr);
+    if (this.needsResize || !this.width || !this.height) {
+      const layoutW = this.el.offsetWidth;
+      const layoutH = this.el.offsetHeight;
       
-      if (this.cv.width !== w || this.cv.height !== h) {
-        this.cv.width = w;
-        this.cv.height = h;
-        gl.viewport(0, 0, w, h);
+      if (layoutW > 0 && layoutH > 0) {
+        const w = Math.round(layoutW * pr);
+        const h = Math.round(layoutH * pr);
         
-        // Compute border radius from CSS
-        const br = parseFloat(getComputedStyle(this.el).borderRadius) || this.opts.radius;
-        this.opts.radius = br * pr; // Scale radius by device pixel ratio
+        this.width = layoutW;
+        this.height = layoutH;
+        
+        if (this.cv.width !== w || this.cv.height !== h) {
+          this.cv.width = w;
+          this.cv.height = h;
+          gl.viewport(0, 0, w, h);
+          
+          // Helper to parse percentages vs pixel values for border-radius
+          const getRadius = (val, maxVal) => {
+            if (typeof val === 'string' && val.endsWith('%')) {
+              return (parseFloat(val) / 100) * maxVal;
+            }
+            return parseFloat(val) || 0;
+          };
+
+          // Compute border radii individually from CSS to support asymmetric corners
+          const style = getComputedStyle(this.el);
+          const maxVal = Math.min(layoutW, layoutH);
+          const tl = getRadius(style.borderTopLeftRadius, maxVal);
+          const tr = getRadius(style.borderTopRightRadius, maxVal);
+          const br = getRadius(style.borderBottomRightRadius, maxVal);
+          const bl = getRadius(style.borderBottomLeftRadius, maxVal);
+          
+          // Save physical pixel radii
+          this.radii = [tr * pr, br * pr, tl * pr, bl * pr];
+        }
+        this.needsResize = false;
       }
-      this.needsResize = false;
     }
 
     const w = this.cv.width;
@@ -412,7 +438,7 @@ class LiquidGlassRenderer {
     gl.uniform1f(this.u.press, this.press);
     gl.uniform2f(this.u.ripple, this.ripple.x, this.ripple.y);
     gl.uniform1f(this.u.rippleT, Math.max(0, this.ripple.t));
-    gl.uniform1f(this.u.radius, this.opts.radius);
+    gl.uniform4f(this.u.radii, this.radii[0], this.radii[1], this.radii[2], this.radii[3]);
     gl.uniform3f(this.u.themeColor, this.themeColor[0], this.themeColor[1], this.themeColor[2]);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -438,18 +464,14 @@ export function initLiquidGlass() {
   const testCanvas = document.createElement('canvas');
   if (!testCanvas.getContext('webgl2')) return; // WebGL2 yoksa fallback CSS zaten çalışır
   
+  // Clean up any leftover WebGL canvases inside the header-island to resolve mobile caching or hot-reload ghosting
+  document.querySelectorAll('.header-island canvas').forEach(cv => cv.remove());
+
   _applyAll();
 }
 
 function _applyAll() {
-  // Sadece Header ve Ana Butonlara uygula (Performans için)
-  // 1. Header (Ana Cam Panel)
-  const header = document.querySelector('.header-island');
-  if (header && !_renderers.has(header)) {
-    _renderers.set(header, new LiquidGlassRenderer(header, { radius: 24 }));
-  }
-
-  // 2. Yuvarlak Küçük Cam Butonlar
+  // Sadece Yuvarlak Küçük Cam Butonlara uygula (Performans ve stabilite için, mobil header'da WebGL kaldırıldı)
   document.querySelectorAll('.glass-btn.small-btn, .header-back-btn').forEach(el => {
     if (!_renderers.has(el)) {
       _renderers.set(el, new LiquidGlassRenderer(el, { radius: 50 }));
