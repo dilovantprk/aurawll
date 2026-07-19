@@ -690,13 +690,13 @@ export const locales = {
     // Onboarding
     "onb_skip": "Skip",
     "onb_1_title": "Your nervous system is always talking.",
-    "onb_1_sub": "Aura helps you listen — and respond.",
+    "onb_1_sub": "Aura helps you decode your body's bio-signals and restore your inner balance.",
     "onb_2_title": "You're not broken. You're dysregulated.",
     "onb_2_sub": "Your nervous system isn't a mood — it's a biological state. When it's overwhelmed, it shifts into survival mode: restless, foggy, or shut down. You didn't choose that. But you can work with it. Specific breathing patterns send direct signals to your brain that say: <em>it's safe to come back now.</em> That's not wellness speak. That's physiology.",
-    "onb_3_title": "Check in. Regulate. Absorb.",
-    "onb_3_sub": "30 seconds to notice your state. 3 minutes to shift it. 20 seconds to let it land.",
-    "onb_4_title": "Ready to check in?",
-    "onb_4_sub": "No streaks. No pressure. Just your system, and a moment of honesty.",
+    "onb_3_title": "Notice. Regulate. Integrate.",
+    "onb_3_sub": "30 seconds to sense your state. 3 minutes to regulate. 20 seconds to let it settle.",
+    "onb_4_title": "Ready to connect with yourself?",
+    "onb_4_sub": "No streaks. No pressure. Just your system, and a safe space to breathe.",
     "onb_lets_go": "Let's go",
 
     // Savoring (Step 4)
@@ -1548,13 +1548,13 @@ export const locales = {
     // Onboarding
     "onb_skip": "Atla",
     "onb_1_title": "Sinir sistemin sürekli seninle konuşuyor.",
-    "onb_1_sub": "Aura, bedeninin sesini dinlemene ve ona doğru şekilde yanıt vermene yardımcı olur.",
+    "onb_1_sub": "Aura, bedeninden gelen biyolojik sinyalleri anlamlandırmana ve içsel dengeni kurmana rehberlik eder.",
     "onb_2_title": "Dengen şaşmış olabilir, bu çok normal.",
     "onb_2_sub": "Sinir sistemin sadece bir ruh hali değildir; biyolojik bir durumdur. Sistem fazla yüklendiğinde hayatta kalma moduna geçer: tetikte, puslu veya kapanmış. Bunu sen seçmedin. Ama onunla birlikte çalışabilirsin. Belirli nefes kalıpları beyne doğrudan şu sinyali gönderir: <em>Artık burası güvenli.</em> Bu bir efsane değil, tamamen fizyoloji.",
-    "onb_3_title": "Fark et. Düzenle. Bütünleş.",
-    "onb_3_sub": "Durumunu fark etmek için 30 saniye. Düzenlemek için 3 dakika. Bedenine işlemesi için 20 saniye.",
-    "onb_4_title": "Durum kontrolüne hazır mısın?",
-    "onb_4_sub": "Seri zorunluluğu yok. Baskı yok. Sadece sen ve şu an.",
+    "onb_3_title": "Fark Et. Düzenle. Bütünleş.",
+    "onb_3_sub": "Durumunu hissetmek için 30 saniye. Nefesle düzenlemek için 3 dakika. Etkiyi bedenine işlemek için 20 saniye.",
+    "onb_4_title": "Kendinle buluşmaya hazır mısın?",
+    "onb_4_sub": "Seri zorunluluğu yok. Baskı yok. Sadece sinir sistemin ve dürüst bir nefes alanı.",
     "onb_lets_go": "Başlayalım",
 
     // Savoring (Step 4)
