@@ -22,8 +22,9 @@ export function startOnboardingFlow(config) {
   const track = elements.onbScreensContainer.querySelector('.onb-track');
   
   const showScreen = (idx) => {
-    if (track) {
-      track.style.transform = `translateX(-${idx * 100}%)`;
+    if (track && screens.length > 0) {
+      const shiftPercent = idx * (100 / screens.length);
+      track.style.transform = `translateX(-${shiftPercent}%)`;
     }
 
     dots.forEach((d, i) => {
@@ -66,6 +67,17 @@ export function startOnboardingFlow(config) {
       currentOnbScreen = idx;
       showScreen(idx);
     };
+  });
+
+  // Tap anywhere on onboarding view/screen area to advance (excluding interactive buttons)
+  elements.onbScreensContainer.addEventListener('click', (e) => {
+    if (e.target.closest('button') || e.target.closest('.onb-dot')) {
+      return;
+    }
+    if (currentOnbScreen < screens.length - 1) {
+      currentOnbScreen++;
+      showScreen(currentOnbScreen);
+    }
   });
 
   const finish = () => {

@@ -311,8 +311,17 @@ export function navigateTo(viewId, skipHistory = false) {
 
   // Mobile Header Visibility
   if (elements.header) {
-    if (shouldHideMobileHeader) elements.header.classList.add('hidden');
-    else elements.header.classList.remove('hidden');
+    if (shouldHideMobileHeader) {
+      elements.header.classList.add('hidden');
+    } else {
+      elements.header.classList.remove('hidden');
+    }
+
+    if (viewId === 'view-onboarding') {
+      elements.header.classList.add('is-onboarding');
+    } else {
+      elements.header.classList.remove('is-onboarding');
+    }
   }
 
   // Desktop Sync Tab Name
