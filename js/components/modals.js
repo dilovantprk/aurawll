@@ -68,6 +68,20 @@ export function initModals(config) {
     }
   });
 
+  // Start Button inside Info Modal (Desktop alternative)
+  if (elements.infoStartBtn) {
+    elements.infoStartBtn.onclick = () => {
+      const AppState = configProps.AppState;
+      if (AppState && AppState.currentView === 'view-meditations') {
+        const protocolId = currentProtocolId || AppState.currentExercise?.id || 'p_resonance';
+        hideInfoModal();
+        if (typeof configProps.prepareExercise === 'function') {
+          configProps.prepareExercise(protocolId);
+        }
+      }
+    };
+  }
+
   initCommunityModal();
   initDataSovereigntyActions();
 }
@@ -683,6 +697,17 @@ export function openInfoArchive(key, triggerBtn) {
       swipeHint.classList.remove('hidden');
     } else {
       swipeHint.classList.add('hidden');
+    }
+  }
+
+  // Show or hide the desktop start button
+  if (elements.infoStartBtn) {
+    const isMeditationsView = configProps.AppState && configProps.AppState.currentView === 'view-meditations';
+    const isDesktop = window.innerWidth >= 1024;
+    if (isMeditationsView && pId && isDesktop) {
+      elements.infoStartBtn.classList.remove('hidden');
+    } else {
+      elements.infoStartBtn.classList.add('hidden');
     }
   }
 

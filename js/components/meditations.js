@@ -2,6 +2,7 @@ import { protocols, PROTOCOL_META } from '../core/constants.js';
 import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { AppState } from '../core/state.js';
+import { openInfoArchive } from './modals.js';
 
 let configProps = {};
 
@@ -35,15 +36,10 @@ export function initMeditations(config) {
     }, { passive: true });
 
     elements.meditationsList.onclick = (e) => {
-      const infoTrigger = e.target.closest('.info-trigger');
-      if (infoTrigger) {
-        // Handled by global listener in modals.js, but stop bubble here
-        return;
-      }
       const card = e.target.closest('.meditation-card');
-      if (card && configProps.prepareExercise) {
+      if (card) {
         const protocolId = card.getAttribute('data-protocol');
-        configProps.prepareExercise(protocolId);
+        openInfoArchive(protocolId, card);
       }
     };
   }
@@ -74,8 +70,6 @@ export function renderMeditationsList() {
       <div class="meditation-card liquid-glass" 
            data-protocol="${id}" 
            data-category="${p.category || 'all'}">
-        
-        <button class="cockpit-info-btn info-trigger" data-type="${id}">i</button>
         
         <div class="meditation-card-content">
           <div class="meditation-card-top">

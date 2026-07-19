@@ -186,6 +186,7 @@ export const elements = {
   get infoTitle() { return document.getElementById('infoTitle'); },
   get infoBody() { return document.getElementById('infoBody'); },
   get infoRef() { return document.getElementById('infoRef'); },
+  get infoStartBtn() { return document.getElementById('infoStartBtn'); },
   globalInfoBtn: document.getElementById('globalInfoBtn'),
   globalMuteBtn: document.getElementById('globalMuteBtn'),
   muteIconOn: document.getElementById('muteIconOn'),
