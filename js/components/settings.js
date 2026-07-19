@@ -85,11 +85,112 @@ export function initSettings(config) {
     });
   }
 
+  const customTimeBtn = document.getElementById('customTimeBtn');
+  const customTimeVal = document.getElementById('customTimeVal');
+  const customTimeDropdown = document.getElementById('customTimeDropdown');
+  const timeHoursCol = document.getElementById('timeHoursCol');
+  const timeMinutesCol = document.getElementById('timeMinutesCol');
+
   if (elements.nudgeTimePicker) {
     elements.nudgeTimePicker.value = savedTime;
     elements.nudgeTimePicker.addEventListener('change', (e) => {
       localStorage.setItem('aura_notif_time', e.target.value);
+      if (customTimeVal) customTimeVal.textContent = e.target.value;
     });
+
+    if (customTimeVal) customTimeVal.textContent = savedTime;
+
+    // Build custom dropdown columns dynamically
+    if (timeHoursCol && timeMinutesCol) {
+      // Hours (00-23)
+      for (let h = 0; h < 24; h++) {
+        const hStr = h.toString().padStart(2, '0');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'time-item';
+        btn.textContent = hStr;
+        btn.dataset.val = hStr;
+        timeHoursCol.appendChild(btn);
+      }
+
+      // Minutes (00-59)
+      for (let m = 0; m < 60; m++) {
+        const mStr = m.toString().padStart(2, '0');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'time-item';
+        btn.textContent = mStr;
+        btn.dataset.val = mStr;
+        timeMinutesCol.appendChild(btn);
+      }
+
+      const updateSelectedStates = (hVal, mVal) => {
+        timeHoursCol.querySelectorAll('.time-item').forEach(el => {
+          el.classList.toggle('selected', el.dataset.val === hVal);
+        });
+        timeMinutesCol.querySelectorAll('.time-item').forEach(el => {
+          el.classList.toggle('selected', el.dataset.val === mVal);
+        });
+      };
+
+      const scrollToSelected = () => {
+        const selectedHour = timeHoursCol.querySelector('.time-item.selected');
+        const selectedMinute = timeMinutesCol.querySelector('.time-item.selected');
+        if (selectedHour) {
+          timeHoursCol.scrollTop = selectedHour.offsetTop - timeHoursCol.clientHeight / 2 + selectedHour.clientHeight / 2;
+        }
+        if (selectedMinute) {
+          timeMinutesCol.scrollTop = selectedMinute.offsetTop - timeMinutesCol.clientHeight / 2 + selectedMinute.clientHeight / 2;
+        }
+      };
+
+      // Toggle dropdown visibility
+      customTimeBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !customTimeDropdown.classList.contains('hidden');
+        if (isOpen) {
+          customTimeDropdown.classList.add('hidden');
+        } else {
+          // Open & scroll to currently selected
+          const [currH, currM] = (elements.nudgeTimePicker.value || '21:00').split(':');
+          updateSelectedStates(currH, currM);
+          customTimeDropdown.classList.remove('hidden');
+          // Delay scroll slightly to allow rendering
+          setTimeout(scrollToSelected, 50);
+        }
+      });
+
+      // Handle hour click
+      timeHoursCol.addEventListener('click', (e) => {
+        const btn = e.target.closest('.time-item');
+        if (!btn) return;
+        const [currH, currM] = (elements.nudgeTimePicker.value || '21:00').split(':');
+        const newTime = `${btn.dataset.val}:${currM}`;
+        elements.nudgeTimePicker.value = newTime;
+        elements.nudgeTimePicker.dispatchEvent(new Event('change'));
+        updateSelectedStates(btn.dataset.val, currM);
+      });
+
+      // Handle minute click
+      timeMinutesCol.addEventListener('click', (e) => {
+        const btn = e.target.closest('.time-item');
+        if (!btn) return;
+        const [currH, currM] = (elements.nudgeTimePicker.value || '21:00').split(':');
+        const newTime = `${currH}:${btn.dataset.val}`;
+        elements.nudgeTimePicker.value = newTime;
+        elements.nudgeTimePicker.dispatchEvent(new Event('change'));
+        updateSelectedStates(currH, btn.dataset.val);
+      });
+
+      // Click outside to close dropdown
+      document.addEventListener('click', (e) => {
+        if (customTimeDropdown && !customTimeDropdown.classList.contains('hidden')) {
+          if (!e.target.closest('.custom-time-wrapper')) {
+            customTimeDropdown.classList.add('hidden');
+          }
+        }
+      });
+    }
   }
 
   // Export Data

@@ -379,6 +379,76 @@
   box-shadow: none;
 }
 
+/* Custom Time Picker Dropdown (Matte Glassmorphic) */
+.custom-time-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 1000;
+  display: flex;
+  width: 140px;
+  height: 200px;
+  background: rgba(18, 18, 24, 0.95);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px; /* Softer rounded corners */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: dropdown-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdown-fade-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-time-dropdown.hidden {
+  display: none !important;
+}
+
+.time-column {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  scrollbar-width: none;
+}
+
+.time-column::-webkit-scrollbar {
+  display: none;
+}
+
+.time-item {
+  width: 80%;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 2px 0;
+  flex-shrink: 0;
+}
+
+.time-item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.time-item.selected {
+  color: #fff;
+  font-weight: 600;
+  background: rgba(133, 141, 255, 0.18);
+  border: 1px solid rgba(133, 141, 255, 0.3);
+}
+
+
 /* Chrome/Safari time picker icon override (optional but nice) */
 .nudge-time-input::-webkit-calendar-picker-indicator {
   filter: invert(1);

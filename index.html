@@ -1129,7 +1129,20 @@
               <div id="nudgeTimeContainer" class="hidden"
                 style="display: flex; align-items: center; justify-content: space-between; padding-left: 2.2rem; margin-top: 0.5rem;">
                 <span style="font-size: 0.9rem; opacity: 0.6;" data-i18n="prof_reminder_time">Time</span>
-                <input type="time" id="nudgeTimePicker" class="nudge-time-input">
+                <div class="custom-time-wrapper" style="position: relative;">
+                  <button type="button" id="customTimeBtn" class="nudge-time-input" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 100px; padding: 0.5rem 1.2rem; font-family: inherit; font-size: 0.85rem; color: rgba(255, 255, 255, 0.85); cursor: pointer;">
+                    <span id="customTimeVal">21:00</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </button>
+                  <div id="customTimeDropdown" class="custom-time-dropdown hidden">
+                    <div class="time-column hours-column" id="timeHoursCol"></div>
+                    <div class="time-column minutes-column" id="timeMinutesCol"></div>
+                  </div>
+                  <input type="time" id="nudgeTimePicker" style="display: none !important;">
+                </div>
               </div>
             </div>
           </div>
