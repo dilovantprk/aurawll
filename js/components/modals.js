@@ -840,9 +840,17 @@ export function openInfoArchive(key, triggerBtn) {
     elements.infoBody.innerHTML = body || '...';
   }
 
-  // Content injection
   if (elements.infoTitle) elements.infoTitle.textContent = title;
-  if (elements.infoRef) elements.infoRef.textContent = ref || '';
+  if (elements.infoRef) {
+    if (ref) {
+      const prefix = (AppState && AppState.language === 'tr') ? 'Kaynak: ' : 'Source: ';
+      elements.infoRef.textContent = prefix + ref;
+      elements.infoRef.style.display = 'block';
+    } else {
+      elements.infoRef.textContent = '';
+      elements.infoRef.style.display = 'none';
+    }
+  }
   if (elements.infoIcon) elements.infoIcon.innerHTML = getAuraSVGIcon(iconType);
 
   positionModalNearButton(elements.infoModal, triggerBtn);
