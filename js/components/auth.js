@@ -8,6 +8,7 @@ import {
   handleRedirectResult 
 } from '../services/auth.js';
 import { t } from '../core/i18n.js';
+import { initSwipeToDismiss } from './modals.js';
 
 /**
  * Initializes the Authentication UI (Login/Register tabs and forms)
@@ -236,6 +237,12 @@ export function initAuthSheet({ onAuthenticated, navigateTo }) {
 
   // Close on backdrop click
   backdrop?.addEventListener('click', closeAuthSheet);
+
+  // Enable touch swipe-to-dismiss and dragging by handle
+  const authSheet = document.getElementById('auth-sheet');
+  if (authSheet && backdrop) {
+    initSwipeToDismiss(authSheet, backdrop, closeAuthSheet);
+  }
 
   // Show email form
   sheetShowEmailBtn?.addEventListener('click', () => {

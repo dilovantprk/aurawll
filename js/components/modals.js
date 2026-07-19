@@ -100,11 +100,11 @@ export function initCommunityModal() {
   initSwipeToDismiss(elements.infoModal, elements.infoBackdrop, hideInfoModal);
 }
 
-function initSwipeToDismiss(modal, backdrop, closeFn) {
+export function initSwipeToDismiss(modal, backdrop, closeFn) {
   if (!modal || !backdrop) return;
 
   const content = modal.querySelector('.modal-content') || modal;
-  const handle = modal.querySelector('.modal-handle');
+  const handle = modal.querySelector('.modal-handle') || modal.querySelector('.auth-sheet-handle');
   
   let startY = 0;
   let currentY = 0;
@@ -174,7 +174,7 @@ function initSwipeToDismiss(modal, backdrop, closeFn) {
 
   // Touch Events
   modal.addEventListener('touchstart', (e) => {
-    const isHandle = e.target.classList.contains('modal-handle');
+    const isHandle = e.target.classList.contains('modal-handle') || e.target.classList.contains('auth-sheet-handle');
     startDrag(e.touches[0].clientY, isHandle);
   }, { passive: true });
 
@@ -187,7 +187,7 @@ function initSwipeToDismiss(modal, backdrop, closeFn) {
   // Mouse Events
   modal.addEventListener('mousedown', (e) => {
     const isInteractive = e.target.closest('button, a, input, select, textarea, .comm-tab-btn');
-    const isHandle = e.target.classList.contains('modal-handle');
+    const isHandle = e.target.classList.contains('modal-handle') || e.target.classList.contains('auth-sheet-handle');
     
     if (!isInteractive || isHandle) {
       startDrag(e.clientY, isHandle);
