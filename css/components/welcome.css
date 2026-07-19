@@ -522,7 +522,16 @@
   max-width: 240px;
 }
 
-/* Mobile Full Screen Layout for Onboarding */
+/* Desktop transparent header island styling for onboarding */
+#mobile-header.is-onboarding .header-island {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Mobile Full Screen Layout & Matching Native Header for Onboarding */
 @media (max-width: 768px) {
   .onb-glass-card {
     position: fixed;
@@ -540,15 +549,20 @@
       radial-gradient(circle at 50% 0%, rgba(133, 141, 255, 0.1) 0%, transparent 50%),
       rgba(10, 11, 16, 0.98);
   }
-}
 
-/* Transparent Header Island for Onboarding to prevent cutoff lines */
-#mobile-header.is-onboarding .header-island {
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  box-shadow: none !important;
+  /* Make header look like the native full-screen card page header */
+  #mobile-header.is-onboarding .header-island {
+    width: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    background: rgba(10, 11, 16, 0.98) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
 }
 
 
