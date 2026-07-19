@@ -164,12 +164,30 @@
 }
 
 /* --- ONBOARDING FLOW (Modern Neural Redesign) --- */
-.onb-skip-btn {
+.onb-header-bar {
   position: absolute;
-  top: calc(var(--safe-top, 20px) + 1rem);
-  right: 1.5rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
   z-index: 100;
-  padding: 0.6rem 1.2rem;
+  margin-top: env(safe-area-inset-top, 20px);
+}
+
+.onb-logo {
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: #fff;
+  opacity: 0.95;
+}
+
+.onb-skip-btn {
+  padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
@@ -179,6 +197,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .onb-skip-btn:hover {
@@ -509,4 +528,34 @@
   margin-top: 1.5rem;
   max-width: 240px;
 }
+
+/* Mobile Full Screen Layout for Onboarding */
+@media (max-width: 768px) {
+  .onb-glass-card {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    min-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    padding: calc(64px + env(safe-area-inset-top, 20px) + 2.5rem) 1.5rem calc(2rem + env(safe-area-inset-bottom, 20px));
+    background: 
+      radial-gradient(circle at 50% 0%, rgba(133, 141, 255, 0.1) 0%, transparent 50%),
+      rgba(10, 11, 16, 0.98);
+  }
+
+  .onb-screen {
+    top: 0;
+    padding: 0;
+  }
+
+  .onb-header-bar {
+    padding: 0 1.5rem;
+  }
+}
+
 
