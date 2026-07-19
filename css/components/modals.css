@@ -849,9 +849,9 @@
   position: fixed;
   inset: 0;
   z-index: 1000005; /* Above standard modals & nav */
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center; /* Center vertically for focus */
   justify-content: center;
@@ -869,7 +869,7 @@
 
 .notif-modal-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 340px; /* More compact layout */
   background: 
     radial-gradient(circle at 100% 0%, rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.08) 0%, transparent 50%),
     var(--glass-bg, rgba(13, 15, 22, 0.45));
@@ -877,8 +877,8 @@
   -webkit-backdrop-filter: var(--glass-blur, blur(45px) saturate(160%));
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.07));
   border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 32px;
-  padding: 3rem 2rem;
+  border-radius: 28px; /* Slightly tighter rounded corners for smaller scale */
+  padding: 2.2rem 1.6rem; /* Compact padding */
   text-align: center;
   box-shadow: 
     0 40px 100px rgba(0, 0, 0, 0.85), 
@@ -886,7 +886,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.1rem; /* Closer elements for compact look */
   transform: translateY(20px) scale(0.95);
   transition: transform 0.6s var(--spring-easing);
 }
@@ -896,26 +896,25 @@
 }
 
 .notif-icon {
-  font-size: 3.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 2.5rem; /* Proportionate icon scale */
+  margin-bottom: 0.2rem;
   color: var(--vagal-accent, #fff);
   filter: drop-shadow(0 0 15px rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.25));
 }
 
-
 .notif-modal-card h3 {
-  font-size: 1.6rem;
+  font-size: 1.35rem; /* Scaled header text */
   font-weight: 500;
   color: #fff;
   letter-spacing: -0.5px;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .notif-modal-card p {
-  font-size: 1.05rem;
+  font-size: 0.92rem; /* Clean readable body size */
   color: rgba(255, 255, 255, 0.65);
-  line-height: 1.6;
+  line-height: 1.5;
   margin: 0;
   font-weight: 300;
 }
