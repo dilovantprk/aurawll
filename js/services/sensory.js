@@ -39,13 +39,30 @@ export const SensoryEngine = {
     this.masterGain.gain.value = this.isMuted ? 0 : volScale;
     this.resumeAudio();
     
+    // Master highpass filter to block sub-bass rumble (<75Hz) causing physical phone speaker rattling
+    this.highpassFilter = this.audioCtx.createBiquadFilter();
+    this.highpassFilter.type = 'highpass';
+    this.highpassFilter.frequency.value = 75;
+    this.highpassFilter.Q.value = 0.7;
+
     this.biquadFilter = this.audioCtx.createBiquadFilter();
     this.biquadFilter.type = 'lowpass';
     this.biquadFilter.frequency.value = 1000;
     this.biquadFilter.Q.value = 1.0;
+
+    // Master limiter (dynamics compressor) to prevent digital clipping/distortion
+    this.limiter = this.audioCtx.createDynamicsCompressor();
+    this.limiter.threshold.setValueAtTime(-1.0, this.audioCtx.currentTime); // -1dB threshold
+    this.limiter.knee.setValueAtTime(0, this.audioCtx.currentTime);        // Hard knee
+    this.limiter.ratio.setValueAtTime(20, this.audioCtx.currentTime);      // Heavy limiting
+    this.limiter.attack.setValueAtTime(0.003, this.audioCtx.currentTime);  // 3ms attack
+    this.limiter.release.setValueAtTime(0.08, this.audioCtx.currentTime);  // 80ms release
     
-    this.masterGain.connect(this.biquadFilter);
-    this.biquadFilter.connect(this.audioCtx.destination);
+    // Connect audio graph
+    this.masterGain.connect(this.highpassFilter);
+    this.highpassFilter.connect(this.biquadFilter);
+    this.biquadFilter.connect(this.limiter);
+    this.limiter.connect(this.audioCtx.destination);
 
     this._initDrones();
     this._initBreathNoise();
@@ -242,13 +259,13 @@ export const SensoryEngine = {
     // Master gain for the chord swell
     const g = ctx.createGain();
     g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(0.09, now + 0.25); // Warm, quick but smooth swell
-    g.gain.setValueAtTime(0.09, now + 0.5); // Hold briefly
+    g.gain.linearRampToValueAtTime(0.06, now + 0.25); // Warm, quick but smooth swell
+    g.gain.setValueAtTime(0.06, now + 0.5); // Hold briefly
     g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
     g.connect(this.masterGain);
 
-    // Warm, lush G Major 9 chord (grounding root + rich harmonics)
-    const freqs = [98.0, 146.83, 196.0, 246.94, 369.99, 440.0];
+    // Warm, lush G Major 9 chord (grounding root + rich harmonics) - Shifted 1 octave higher for mobile speakers clarity
+    const freqs = [196.0, 293.66, 392.0, 493.88, 739.98, 880.0];
     freqs.forEach((freq, i) => {
       const osc = ctx.createOscillator();
       osc.type = 'sine';
@@ -318,7 +335,7 @@ export const SensoryEngine = {
     impF.type = 'highpass';
     impF.frequency.value = 3000;
     const impG = ctx.createGain();
-    impG.gain.setValueAtTime(0.9, now);
+    impG.gain.setValueAtTime(0.30, now);
     impG.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
     imp.connect(impF); impF.connect(impG); impG.connect(master);
     imp.start(now); imp.stop(now + 0.015);
@@ -340,7 +357,7 @@ export const SensoryEngine = {
       osc.detune.value = (Math.random() - 0.5) * 8;
 
       const g = ctx.createGain();
-      g.gain.setValueAtTime(p.vol * 0.9, now + 0.001);
+      g.gain.setValueAtTime(p.vol * 0.30, now + 0.001);
       g.gain.exponentialRampToValueAtTime(0.0001, now + p.decayT);
 
       osc.connect(g); g.connect(master);
@@ -623,7 +640,7 @@ export const SensoryEngine = {
     const target = (this.isMuted) ? 0 : (this.appVolume / 100) * 0.4;
     this.masterGain.gain.setTargetAtTime(target, now, 0.2);
   },
-  playNoise(type, targetGain = 0.2) {
+  playNoise(type, targetGain = 0.06) {
     if (!this.audioCtx) this.initAudio();
     this.resumeAudio();
     const now = this.audioCtx.currentTime;
@@ -700,7 +717,7 @@ export const SensoryEngine = {
 
     const sound = this.atmospheres[id];
     sound.play();
-    sound.fade(0, 0.7, 2500);
+    sound.fade(0, 0.22, 2500);
     
     // Also trigger procedural texture if we want extra richness
     this._startTextureSynthesis(id);

@@ -1,8 +1,13 @@
+import { SensoryEngine } from './sensory.js';
+
 export const MeditationAudio = {
-  ctx: null,
+  get ctx() { return SensoryEngine.audioCtx; },
+  get master() { return SensoryEngine.masterGain; },
+
   init() {
-    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!SensoryEngine.audioCtx) SensoryEngine.initAudio();
   },
+
   setBreathingPhase(phase, durationMs = 2000) {
       if (!this.ctx) return;
       const now = this.ctx.currentTime;
@@ -11,9 +16,11 @@ export const MeditationAudio = {
       // Simplistic placeholder logic for now, similar to what was in app.js
       // Can be expanded as needed.
   },
+
   playBell(type = 'soft') {
-    if (!this.ctx) return;
-    if (this.ctx.state === 'suspended') this.ctx.resume();
+    this.init();
+    if (!this.ctx || (SensoryEngine.isMuted || !SensoryEngine.uiSoundsEnabled)) return;
+    SensoryEngine.resumeAudio();
 
     const now = this.ctx.currentTime;
     const osc1 = this.ctx.createOscillator();
@@ -29,10 +36,11 @@ export const MeditationAudio = {
 
     osc1.connect(gainNode);
     osc2.connect(gainNode);
-    gainNode.connect(this.ctx.destination);
+    gainNode.connect(this.master);
 
     gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.15, now + 0.5);
+    // Lower volume from 0.15 to 0.08 to prevent digital/analog clipping on mobile
+    gainNode.gain.linearRampToValueAtTime(0.08, now + 0.5);
     gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 4);
 
     osc1.start(now);
