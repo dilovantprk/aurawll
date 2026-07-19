@@ -228,8 +228,9 @@
   top: 10%;
   bottom: 10%;
   width: 4px;
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(to top, var(--vagal-dorsal, #62A4FF) 0%, var(--vagal-sympathetic, #FBA044) 50%, var(--vagal-ventral, #64E49F) 100%);
   border-radius: 2px;
+  opacity: 0.8;
 }
 
 /* Horizontal Ladder Rungs */
@@ -269,9 +270,7 @@
 }
 
 .v-sympathetic {
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--vagal-sympathetic, #FBA044);
+  display: none;
 }
 
 .v-dorsal {

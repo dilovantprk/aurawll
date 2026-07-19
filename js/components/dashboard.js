@@ -2,8 +2,8 @@ import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { protocols } from '../core/constants.js';
-import { normalizeCheckinData, getHumanizedTime, renderMiniDeltaSVG, normalizeEntry, getAutonomicClass } from '../core/utils.js';
-import { calculateVagalPoint, calculatePlasticity } from '../core/vagal-engine.js';
+import { normalizeCheckinData, getHumanizedTime, renderMiniDeltaSVG, normalizeEntry, getAutonomicClass, getRegulationStateLabel, calculateEarnedBadges } from '../core/utils.js';
+import { calculateVagalPoint, calculatePlasticity, calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { getWeeklyInsight } from '../services/insight-engine.js';
 import { SensoryEngine } from '../services/sensory.js';
 import { prepareExercise } from './checkin.js';
@@ -192,19 +192,10 @@ export function renderHistory(data) {
     const item = normalizeEntry(normalizeCheckinData(doc));
     const timeStr = getHumanizedTime(item.timestamp);
 
-    const stateKey = item.regulation_state || item.state;
-    const stateNameMap = {
-      'coherence': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-      'ventral': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-      'okay': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-      'mobilization': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-      'sympathetic': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-      'wired': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-      'immobilization': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
-      'dorsal': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
-      'foggy': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation'
-    };
-    const stateName = stateNameMap[stateKey] || '...';
+    const a = item.pre_arousal !== undefined ? item.pre_arousal : 0.5;
+    const v = item.pre_valence !== undefined ? item.pre_valence : 0.5;
+    const R = calculateRegulationCapacity(a, v);
+    const stateName = getRegulationStateLabel(R, a, AppState.lang);
 
     let emotionLabel = '';
     if (item.selected_emotions && item.selected_emotions.length > 0) {
@@ -329,23 +320,11 @@ export function renderVagalHeatmap(data, isModal = false) {
   if (!targetBlob) return;
 
   const normalized = normalizeEntry(data);
-  const regState = normalized?.regulation_state;
+  const a = normalized?.pre_arousal !== undefined ? normalized.pre_arousal : 0.5;
+  const v = normalized?.pre_valence !== undefined ? normalized.pre_valence : 0.5;
+  const R = calculateRegulationCapacity(a, v);
 
-  // Map state to weights if exact numeric data is missing (for the new flow)
-  let v = data?.ventral || data?.coherence || 0;
-  let s = data?.sympathetic || data?.mobilization || 0;
-  let d = data?.dorsal || data?.immobilization || 0;
-
-  if (v === 0 && s === 0 && d === 0 && regState) {
-    if (regState === 'coherence') { v = 80; s = 10; d = 10; }
-    else if (regState === 'mobilization') { v = 10; s = 80; d = 10; }
-    else if (regState === 'immobilization') { v = 10; s = 10; d = 80; }
-  } else if (v === 0 && s === 0 && d === 0) {
-    // Default center
-    v = 33; s = 33; d = 34;
-  }
-
-  const point = calculateVagalPoint(v, s, d);
+  const point = calculateVagalPoint(R);
 
   // Apply with transition for "living" feel
   targetBlob.style.transition = 'all 1.5s cubic-bezier(0.4, 0, 0.2, 1)';

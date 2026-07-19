@@ -1,7 +1,7 @@
 import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { AppState } from '../core/state.js';
-import { calculatePlasticity, getWeightsFromState, calculateVagalPoint } from '../core/vagal-engine.js';
+import { calculatePlasticity, getWeightsFromState, calculateVagalPoint, calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { normalizeCheckinData, normalizeEntry } from '../core/utils.js';
 
 export function updateInsightView(history) {
@@ -26,8 +26,11 @@ export function updateInsightView(history) {
     }
 
     const latest = history.length > 0 ? history[history.length - 1] : { state: 'okay' };
-    const weights = getWeightsFromState(latest.state);
-    const point = calculateVagalPoint(weights.wV, weights.wS, weights.wD);
+    const normalized = normalizeEntry(latest);
+    const a = normalized?.pre_arousal !== undefined ? normalized.pre_arousal : 0.5;
+    const v = normalized?.pre_valence !== undefined ? normalized.pre_valence : 0.5;
+    const R = calculateRegulationCapacity(a, v);
+    const point = calculateVagalPoint(R);
     
     if (elements.macroBlob) {
         elements.macroBlob.style.left = point.x || '50%';

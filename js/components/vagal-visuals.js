@@ -1,5 +1,5 @@
 import { elements } from '../core/dom.js';
-import { calculateVagalPoint, calculateVagalState, getWeightsFromState } from '../core/vagal-engine.js';
+import { calculateVagalPoint, calculateVagalState, getWeightsFromState, calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { normalizeEntry } from '../core/utils.js';
 
 export function renderVagalHeatmap(data, isModal = false) {
@@ -9,11 +9,11 @@ export function renderVagalHeatmap(data, isModal = false) {
   if (!data) return;
 
   const normalized = normalizeEntry({ ...data });
-  const v = data.ventral || data.coherence || 0;
-  const s = data.sympathetic || data.mobilization || 0;
-  const d = data.dorsal || data.immobilization || 0;
+  const a = normalized?.pre_arousal !== undefined ? normalized.pre_arousal : 0.5;
+  const v = normalized?.pre_valence !== undefined ? normalized.pre_valence : 0.5;
+  const R = calculateRegulationCapacity(a, v);
 
-  const point = calculateVagalPoint(v, s, d);
+  const point = calculateVagalPoint(R);
   if (targetBlob) {
     targetBlob.style.left = point.x;
     targetBlob.style.top = point.y;

@@ -103,6 +103,22 @@ export function calculateRegulationState(a, v) {
   return a >= 0.5 ? "mobilization" : "immobilization";
 }
 
+export function getRegulationStateLabel(R, a, lang = 'tr') {
+  if (R >= 0.75) {
+    return lang === 'tr' ? 'Yüksek Regülasyon (Optimal Denge)' : 'High Regulation (Optimal Balance)';
+  }
+  if (R >= 0.60) {
+    return lang === 'tr' ? 'Aktif Uyum (Sosyal Bağlantı)' : 'Active Coherence (Social Connection)';
+  }
+  if (R >= 0.45) {
+    return lang === 'tr' ? 'Geçiş Bölgesi (Hassas Denge)' : 'Transition Zone (Sensitive Balance)';
+  }
+  if (a >= 0.5) {
+    return lang === 'tr' ? 'Düşük Regülasyon (Aktif Stres Tepkisi)' : 'Low Regulation (Active Stress Response)';
+  }
+  return lang === 'tr' ? 'Düşük Regülasyon (Enerji Koruma / Kapanma)' : 'Low Regulation (Energy Conservation / Shutdown)';
+}
+
 export function calculatePolyvagalState(a, v) {
   const state = calculateRegulationState(a, v);
   const legacyMap = { coherence: 'ventral', mobilization: 'sympathetic', immobilization: 'dorsal' };

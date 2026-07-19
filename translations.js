@@ -318,8 +318,8 @@ export const locales = {
     "day_1": "Mon", "day_2": "Tue", "day_3": "Wed", "day_4": "Thu", "day_5": "Fri", "day_6": "Sat", "day_0": "Sun",
 
     // Vagal Heatmap
-    "vagal_ventral": "High Regulation & Social Coherence",
-    "vagal_dorsal": "Low Regulation & Energy Conservation",
+    "vagal_ventral": "High Regulation",
+    "vagal_dorsal": "Low Regulation",
     "vagal_symp": "Active Mobilization & Stress Response",
     "recommendation_title": "System Recommendation",
     "vagal_intensity_light": "Light",
@@ -1191,8 +1191,8 @@ export const locales = {
     "day_1": "Pzt", "day_2": "Sal", "day_3": "Çar", "day_4": "Per", "day_5": "Cum", "day_6": "Cmt", "day_0": "Paz",
 
     // Vagal Heatmap
-    "vagal_ventral": "Sosyal Uyum ve Prefrontal Regülasyon",
-    "vagal_dorsal": "Koruyucu Enerji Tasarrufu (Kapanma)",
+    "vagal_ventral": "Yüksek Regülasyon",
+    "vagal_dorsal": "Düşük Regülasyon",
     "vagal_symp": "Aktif Mobilizasyon ve Stres Tepkisi",
     "recommendation_title": "Sistem Önerisi",
     "vagal_intensity_light": "Hafif",

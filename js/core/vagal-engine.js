@@ -27,14 +27,24 @@ export function calculateRegulationCapacity(a, v) {
  * y = (1 - R_implicit) * 100% (ranging continuously from 15% to 85%)
  */
 export function calculateVagalPoint(v, s, d) {
-  const total = v + s + d || 1;
-  const pV = v / total;
-  const pS = s / total;
-  const pD = d / total;
+  let R = 0.5;
+  if (typeof v === 'object' && v !== null) {
+    const a = v.pre_arousal !== undefined ? v.pre_arousal : 0.5;
+    const val = v.pre_valence !== undefined ? v.pre_valence : 0.5;
+    R = calculateRegulationCapacity(a, val);
+  } else if (s === undefined && d === undefined) {
+    R = typeof v === 'number' ? v : 0.5;
+  } else {
+    const total = v + s + d || 1;
+    const pV = v / total;
+    const pS = s / total;
+    const pD = d / total;
+    R = pV * 0.85 + pS * 0.50 + pD * 0.15;
+  }
   
-  const R_implicit = pV * 0.85 + pS * 0.50 + pD * 0.15;
+  const rNorm = R > 1 ? R / 100 : R;
   const x = 50; // Centered
-  const y = (1 - R_implicit) * 100;
+  const y = (0.85 - (rNorm * 0.70)) * 100; // R = 1 -> y = 15%, R = 0 -> y = 85%
   
   return { x: `${x}%`, y: `${y}%` };
 }

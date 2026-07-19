@@ -1,7 +1,8 @@
 import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
-import { getHumanizedTime, renderMiniDeltaSVG, vibrate, normalizeEntry, getAutonomicClass } from '../core/utils.js';
+import { getHumanizedTime, renderMiniDeltaSVG, vibrate, normalizeEntry, getAutonomicClass, getRegulationStateLabel } from '../core/utils.js';
+import { calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { deleteSingleCheckin } from '../services/auth.js';
 import { showInfoModal, showConfirm } from './modals.js';
 
@@ -204,18 +205,10 @@ function openArticleSubpage(entry) {
   if (elements.articleOrb) elements.articleOrb.className = `aura-orb ${getAutonomicClass(stateKey)}`;
   if (elements.articleTime) elements.articleTime.textContent = getHumanizedTime(normalized.timestamp);
 
-  const stateNameMap = { 
-    'coherence': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-    'ventral': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-    'okay': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-    'mobilization': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-    'sympathetic': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-    'wired': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-    'immobilization': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
-    'dorsal': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
-    'foggy': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation'
-  };
-  const stateName = stateNameMap[stateKey] || '...';
+  const a = normalized.pre_arousal !== undefined ? normalized.pre_arousal : 0.5;
+  const v = normalized.pre_valence !== undefined ? normalized.pre_valence : 0.5;
+  const R = calculateRegulationCapacity(a, v);
+  const stateName = getRegulationStateLabel(R, a, AppState.lang);
   let emotionLabel = '';
   if (entry.selected_emotions && entry.selected_emotions.length > 0) {
     emotionLabel = entry.selected_emotions.map(e => t(e)).join(', ');
@@ -350,18 +343,10 @@ export function renderNotebook(providedEntries) {
       const normalized = normalizeEntry(entry);
       const timeStr = getHumanizedTime(normalized.timestamp);
       const stateKey = normalized.regulation_state || normalized.state;
-      const stateNameMap = { 
-        'coherence': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-        'ventral': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-        'okay': AppState.lang === 'tr' ? 'Sosyal Uyum' : 'Social Coherence',
-        'mobilization': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-        'sympathetic': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-        'wired': AppState.lang === 'tr' ? 'Aktif Mobilizasyon' : 'Active Mobilization',
-        'immobilization': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
-        'dorsal': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation',
-        'foggy': AppState.lang === 'tr' ? 'Koruyucu Kapanma' : 'Energy Conservation'
-      };
-      const stateName = stateNameMap[stateKey] || '...';
+      const a = normalized.pre_arousal !== undefined ? normalized.pre_arousal : 0.5;
+      const v = normalized.pre_valence !== undefined ? normalized.pre_valence : 0.5;
+      const R = calculateRegulationCapacity(a, v);
+      const stateName = getRegulationStateLabel(R, a, AppState.lang);
 
       let emotionLabel = '';
       if (normalized.selected_emotions && normalized.selected_emotions.length > 0) {
