@@ -516,32 +516,7 @@
   max-width: 240px;
 }
 
-/* Make mobile header visible on onboarding even on desktop layout */
-#mobile-header.is-onboarding {
-  display: flex !important;
-}
 
-/* Global full-width borderless matching header island for onboarding */
-#mobile-header.is-onboarding .header-island {
-  width: 100% !important;
-  border-radius: 0 !important;
-  border: none !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-  background: rgba(10, 11, 16, 0.98) !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  padding-left: 2rem !important;
-  padding-right: 2rem !important;
-}
-
-/* Adjust paddings for onboarding header under mobile viewports */
-@media (max-width: 768px) {
-  #mobile-header.is-onboarding .header-island {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
-  }
-}
 
 
 
