@@ -2,6 +2,7 @@ import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { vibrate } from '../core/utils.js';
 import { SensoryEngine } from '../services/sensory.js';
+import { showConfirm } from './modals.js';
 
 let timer = null;
 let timeLeft = 0;
@@ -273,7 +274,7 @@ function startFocusSession() {
   startImmersionTimer();
 }
 
-function stopFocusSession() {
+async function stopFocusSession() {
   vibrate('heavy');
   pauseTimer();
   clearTimeout(immersionTimer);
@@ -282,7 +283,13 @@ function stopFocusSession() {
     elements.focusConfirmModal.classList.add('active');
   } else {
     // Fallback if modal not found
-    if (confirm(t('focus_confirm_stop') || 'Stop session?')) {
+    const ok = await showConfirm({
+      title: t('warn_title') || 'Uyarı',
+      message: t('focus_confirm_stop') || 'Oturumu sonlandırmak istediğinizden emin misiniz?',
+      confirmText: t('btn_yes') || 'Evet',
+      cancelText: t('btn_cancel') || 'Vazgeçtim'
+    });
+    if (ok) {
       stopAmbient();
       elements.focusActive.classList.add('hidden');
       elements.focusSetup.classList.remove('hidden');

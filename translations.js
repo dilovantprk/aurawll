@@ -716,6 +716,11 @@ export const locales = {
     "notif_modal_desc": "We'll gently reach out around the time you checked in today. No streaks, no guilt.",
     "btn_im_in": "Yes, I'm in",
     "btn_not_now": "Not now",
+    "btn_yes": "Yes",
+    "btn_cancel": "Cancel",
+    "btn_ok": "OK",
+    "btn_delete": "Delete",
+    "warn_title": "Warning",
     "dash_daily_nudges": "Daily Nudges",
     "dash_nudge_desc": "Gentle reminders to check in.",
 
@@ -1567,6 +1572,11 @@ export const locales = {
     "notif_modal_desc": "Bugün durum kontrolü yaptığın saate yakın bir zamanda sana şefkatlice yazacağız. Bildirim kirliliği veya suçluluk hissi yok.",
     "btn_im_in": "Olur",
     "btn_not_now": "Yok yaa",
+    "btn_yes": "Evet",
+    "btn_cancel": "Vazgeçtim",
+    "btn_ok": "Tamam",
+    "btn_delete": "Sil",
+    "warn_title": "Uyarı",
     "dash_daily_nudges": "Günlük Hatırlatıcılar",
     "dash_nudge_desc": "Kendinle bağ kurman için küçük, nazik hatırlatıcılar.",
 

@@ -1036,4 +1036,52 @@ textarea.quick-journal-textarea-v2::placeholder {
   border-color: rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.4);
 }
 
+/* Custom Alert / Confirm Dialog Styles matching Focus modal */
+.alert-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1.8rem;
+  width: 100%;
+  margin-top: 1.2rem;
+}
+
+#alertCancelBtn {
+  background: transparent;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  width: auto;
+}
+
+#alertCancelBtn:hover {
+  color: #fff;
+  background: transparent;
+  border-color: transparent;
+  transform: none;
+}
+
+#alertConfirmBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.65rem 1.5rem;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  color: #fff;
+  width: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#alertConfirmBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+
 

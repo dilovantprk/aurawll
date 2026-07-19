@@ -4,7 +4,7 @@ import { AppState, safeSetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
 import { BADGES } from '../core/constants.js';
 import { calculateEarnedBadges, vibrate } from '../core/utils.js';
-import { openCommunityModal } from './modals.js';
+import { openCommunityModal, showConfirm } from './modals.js';
 import { openAuthSheet } from './auth.js';
 
 import { NotificationService } from '../services/notifications.js';
@@ -225,7 +225,13 @@ export function initSettings(config) {
 
   // Delete all data (local + Firebase)
   elements.resetMemoryBtn?.addEventListener('click', async () => {
-    if (confirm(t('prof_reset_confirm'))) {
+    const ok = await showConfirm({
+      title: t('warn_title') || 'Uyarı',
+      message: t('prof_reset_confirm') || 'Emin misiniz?',
+      confirmText: t('btn_yes') || 'Evet',
+      cancelText: t('btn_cancel') || 'Vazgeçtim'
+    });
+    if (ok) {
       if (configProps.eraseAllData) {
         elements.resetMemoryBtn.disabled = true;
         await configProps.eraseAllData();
@@ -246,7 +252,13 @@ export function initSettings(config) {
   // Delete Account
   elements.deleteAccountBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (confirm(t('prof_delete_account_confirm'))) {
+    const ok = await showConfirm({
+      title: t('warn_title') || 'Uyarı',
+      message: t('prof_delete_account_confirm') || 'Hesabınız ve tüm verileriniz kalıcı olarak silinecek. Emin misiniz?',
+      confirmText: t('btn_yes') || 'Evet',
+      cancelText: t('btn_cancel') || 'Vazgeçtim'
+    });
+    if (ok) {
       try {
         elements.deleteAccountBtn.disabled = true;
         const success = await deleteUserAccount();
@@ -256,10 +268,20 @@ export function initSettings(config) {
       } catch (err) {
         elements.deleteAccountBtn.disabled = false;
         if (err.message === 'REAUTH_NEEDED') {
-          alert(AppState.lang === 'tr' ? 'Bu işlem için tekrar giriş yapmanız gerekiyor.' : 'You need to log in again to perform this action.');
+          await showConfirm({
+            title: t('warn_title') || 'Uyarı',
+            message: AppState.lang === 'tr' ? 'Bu işlem için tekrar giriş yapmanız gerekiyor.' : 'You need to log in again to perform this action.',
+            confirmText: t('btn_ok') || 'Tamam',
+            isAlert: true
+          });
           if (configProps.logout) configProps.logout();
         } else {
-          alert(AppState.lang === 'tr' ? 'Bir hata oluştu.' : 'An error occurred.');
+          await showConfirm({
+            title: t('warn_title') || 'Uyarı',
+            message: AppState.lang === 'tr' ? 'Bir hata oluştu.' : 'An error occurred.',
+            confirmText: t('btn_ok') || 'Tamam',
+            isAlert: true
+          });
         }
       }
     }

@@ -237,7 +237,13 @@ function initDataSovereigntyActions() {
   });
 
   elements.resetMemoryBtnModal?.addEventListener('click', async () => {
-    if (confirm(t('prof_reset_confirm'))) {
+    const ok = await showConfirm({
+      title: t('warn_title') || 'Uyarı',
+      message: t('prof_reset_confirm') || 'Emin misiniz?',
+      confirmText: t('btn_yes') || 'Evet',
+      cancelText: t('btn_cancel') || 'Vazgeçtim'
+    });
+    if (ok) {
       if (configProps.eraseAllData) {
         elements.resetMemoryBtnModal.disabled = true;
         await configProps.eraseAllData();
@@ -690,3 +696,60 @@ export function hideInfoModal() {
     configProps.resumeMeditation();
   }
 }
+
+/**
+ * Custom confirm modal (Promise-based) to replace browser's native confirm() dialog.
+ * Uses the same HTML layout and styles as the notification permission card.
+ */
+export function showConfirm({ title, message, confirmText, cancelText, isAlert = false }) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('alertModal');
+    const titleEl = document.getElementById('alertTitle');
+    const descEl = document.getElementById('alertDesc');
+    const confirmBtn = document.getElementById('alertConfirmBtn');
+    const cancelBtn = document.getElementById('alertCancelBtn');
+
+    if (!modal) {
+      resolve(false);
+      return;
+    }
+
+    // Set texts
+    if (titleEl) titleEl.textContent = title || 'Uyarı';
+    if (descEl) descEl.textContent = message || '';
+    if (confirmBtn) confirmBtn.textContent = confirmText || 'Evet';
+    
+    if (cancelBtn) {
+      if (isAlert) {
+        cancelBtn.classList.add('hidden');
+      } else {
+        cancelBtn.classList.remove('hidden');
+        cancelBtn.textContent = cancelText || 'Vazgeçtim';
+      }
+    }
+
+    // Show modal
+    modal.classList.remove('hidden');
+
+    const cleanUp = () => {
+      modal.classList.add('hidden');
+      if (confirmBtn) confirmBtn.onclick = null;
+      if (cancelBtn) cancelBtn.onclick = null;
+    };
+
+    if (confirmBtn) {
+      confirmBtn.onclick = () => {
+        cleanUp();
+        resolve(true);
+      };
+    }
+
+    if (cancelBtn) {
+      cancelBtn.onclick = () => {
+        cleanUp();
+        resolve(false);
+      };
+    }
+  });
+}
+

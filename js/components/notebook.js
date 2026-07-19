@@ -3,7 +3,7 @@ import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { getHumanizedTime, renderMiniDeltaSVG, vibrate } from '../core/utils.js';
 import { deleteSingleCheckin } from '../services/auth.js';
-import { showInfoModal } from './modals.js';
+import { showInfoModal, showConfirm } from './modals.js';
 
 let configProps = {
   fb: null,
@@ -27,7 +27,13 @@ export function initNotebook(config) {
     const timestamp = parseInt(deleteBtn.getAttribute('data-ts'));
     if (!timestamp) return;
     
-    if (confirm(t('notebook_delete_confirm'))) {
+    const ok = await showConfirm({
+      title: t('warn_title') || 'Uyarı',
+      message: t('notebook_delete_confirm') || 'Bu günlüğü silmek istediğinizden emin misiniz?',
+      confirmText: t('btn_delete') || 'Sil',
+      cancelText: t('btn_cancel') || 'Vazgeçtim'
+    });
+    if (ok) {
       try {
         deleteBtn.disabled = true;
         deleteBtn.style.opacity = '0.3';
