@@ -254,7 +254,12 @@ export function analyzeWeeklyPatterns(historyData) {
     let dominantState = null;
     if (logsThisDay.length > 0) {
       const counts = { wired: 0, foggy: 0, okay: 0 };
-      logsThisDay.forEach(log => { if (log.state) counts[log.state] = (counts[log.state] || 0) + 1; });
+      logsThisDay.forEach(log => { 
+        if (log.state) {
+          const stateKey = log.state.toLowerCase();
+          counts[stateKey] = (counts[stateKey] || 0) + 1;
+        }
+      });
       dominantState = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
     }
     timelineHTML += `<div class="day-col"><div class="day-label" data-i18n="${dayKey}">${t(dayKey)}</div><div class="${dominantState ? `day-circle day-${dominantState}` : 'day-circle'}"></div></div>`;
