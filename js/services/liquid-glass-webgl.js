@@ -464,10 +464,8 @@ export function initLiquidGlass() {
   const testCanvas = document.createElement('canvas');
   if (!testCanvas.getContext('webgl2')) return; // WebGL2 yoksa fallback CSS zaten çalışır
   
-  // Clean up any leftover WebGL canvases inside the header-island to resolve mobile caching or hot-reload ghosting
-  document.querySelectorAll('.header-island canvas').forEach(cv => cv.remove());
-
-  _applyAll();
+  // Clean up any leftover WebGL canvases inside elements to resolve caching or hot-reload ghosting
+  document.querySelectorAll('.header-island canvas, .glass-btn canvas, .header-back-btn canvas').forEach(cv => cv.remove());
 }
 
 function _applyAll() {
