@@ -257,34 +257,27 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.onb-screen {
+.onb-track-wrapper {
   width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.onb-track {
+  display: flex;
+  width: 300%; /* 3 screens */
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.onb-screen {
+  width: 33.3333%;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  transition: opacity 0.5s var(--spring-easing), transform 0.5s var(--spring-easing);
-  pointer-events: none;
-  opacity: 0;
-  transform: scale(0.96) translateY(15px);
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 2.5rem;
-  padding: 0 2rem;
-}
-
-.onb-screen.active {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-  pointer-events: auto;
-  position: relative;
-  top: 0;
-  padding: 0;
-}
-
-.onb-screen.hidden {
-  display: none !important;
+  padding: 1.5rem 1rem 0;
 }
 
 /* Slide 1 Visual: Heart Rate Wave */
@@ -542,19 +535,10 @@
     border-radius: 0;
     border: none;
     box-shadow: none;
-    padding: calc(64px + env(safe-area-inset-top, 20px) + 2.5rem) 1.5rem calc(2rem + env(safe-area-inset-bottom, 20px));
+    padding: calc(64px + env(safe-area-inset-top, 20px) + 1rem) 1.5rem calc(2rem + env(safe-area-inset-bottom, 20px));
     background: 
       radial-gradient(circle at 50% 0%, rgba(133, 141, 255, 0.1) 0%, transparent 50%),
       rgba(10, 11, 16, 0.98);
-  }
-
-  .onb-screen {
-    top: 0;
-    padding: 0;
-  }
-
-  .onb-header-bar {
-    padding: 0 1.5rem;
   }
 }
 

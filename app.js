@@ -297,7 +297,7 @@ export function navigateTo(viewId, skipHistory = false) {
   
   renderLocalization();
 
-  const hideMobileHeaderViews = ['view-welcome', 'view-auth', 'view-onboarding'];
+  const hideMobileHeaderViews = ['view-welcome', 'view-auth'];
   const hideImmersionNavViews = ['view-welcome', 'view-auth', 'view-onboarding', 'view-morning-checkin', 'view-somatic-entry', 'view-affect-grid', 'view-emotion-refinement', 'view-exercise', 'view-savoring', 'view-meditation-loading', 'view-completion'];
   
   const shouldHideMobileHeader = hideMobileHeaderViews.includes(viewId);

@@ -19,22 +19,12 @@ export function startOnboardingFlow(config) {
   const dots = elements.onbScreensContainer.querySelectorAll('.onb-dot');
   const nextBtn = document.getElementById('onbNextBtn');
   
+  const track = elements.onbScreensContainer.querySelector('.onb-track');
+  
   const showScreen = (idx) => {
-    screens.forEach((s, i) => {
-      if (i === idx) {
-        s.classList.remove('hidden');
-        s.style.position = 'relative';
-        s.style.pointerEvents = 'auto';
-        setTimeout(() => { s.style.opacity = '1'; }, 20);
-      } else {
-        s.style.opacity = '0';
-        s.style.pointerEvents = 'none';
-        setTimeout(() => {
-          s.classList.add('hidden');
-          s.style.position = 'absolute';
-        }, 500);
-      }
-    });
+    if (track) {
+      track.style.transform = `translateX(-${idx * 100}%)`;
+    }
 
     dots.forEach((d, i) => {
       if (i === idx) {

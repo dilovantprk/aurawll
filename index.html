@@ -101,59 +101,58 @@
       <div class="onb-ambient-glow onb-glow-1"></div>
       <div class="onb-ambient-glow onb-glow-2"></div>
 
-      <!-- Header Bar -->
-      <div class="onb-header-bar">
-        <span class="onb-logo">Aura</span>
-        <button id="onbSkipBtn" class="onb-skip-btn" data-i18n="btn_skip">Geç</button>
-      </div>
-
       <div id="onbScreensContainer" class="onb-screens-container onb-glass-card liquid-border glow-card" style="z-index: 10;">
-        
-        <!-- Screen 1: Hook -->
-        <div class="onb-screen active">
-          <div class="onb-visual-container">
-            <svg class="onb-wave-svg" viewBox="0 0 200 100">
-              <defs>
-                <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="rgba(133, 141, 255, 0.2)" />
-                  <stop offset="50%" stop-color="rgba(133, 141, 255, 1)" />
-                  <stop offset="100%" stop-color="rgba(133, 141, 255, 0.2)" />
-                </linearGradient>
-              </defs>
-              <path class="onb-wave-path onb-wave-bg" d="M 0 50 C 30 50, 45 50, 55 20 C 65 80, 75 50, 90 50 C 120 50, 135 50, 145 20 C 155 80, 165 50, 180 50 L 200 50" />
-              <path class="onb-wave-path onb-wave-pulse" d="M 0 50 C 30 50, 45 50, 55 20 C 65 80, 75 50, 90 50 C 120 50, 135 50, 145 20 C 155 80, 165 50, 180 50 L 200 50" />
-            </svg>
-            <div class="onb-visual-pulse-dot"></div>
-          </div>
-          <h2 class="onb-title" data-i18n="onb_1_title">Sinir sistemin daima konuşur.</h2>
-          <p class="onb-desc" data-i18n="onb_1_sub">Aura, onu dinlemene ve<br>uyumlanmana yardımcı olur.</p>
-        </div>
-
-        <!-- Screen 2: Method -->
-        <div class="onb-screen hidden">
-          <div class="onb-breath-visualizer">
-            <div class="onb-breath-ring onb-breath-ring-1"></div>
-            <div class="onb-breath-ring onb-breath-ring-2"></div>
-            <div class="onb-breath-ring onb-breath-ring-3"></div>
-            <div class="onb-breath-core">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4M8 23h8"/>
-              </svg>
+        <div class="onb-track-wrapper" style="width: 100%; overflow: hidden;">
+          <div class="onb-track">
+            
+            <!-- Screen 1: Hook -->
+            <div class="onb-screen">
+              <div class="onb-visual-container">
+                <svg class="onb-wave-svg" viewBox="0 0 200 100">
+                  <defs>
+                    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="rgba(133, 141, 255, 0.2)" />
+                      <stop offset="50%" stop-color="rgba(133, 141, 255, 1)" />
+                      <stop offset="100%" stop-color="rgba(133, 141, 255, 0.2)" />
+                    </linearGradient>
+                  </defs>
+                  <path class="onb-wave-path onb-wave-bg" d="M 0 50 C 30 50, 45 50, 55 20 C 65 80, 75 50, 90 50 C 120 50, 135 50, 145 20 C 155 80, 165 50, 180 50 L 200 50" />
+                  <path class="onb-wave-path onb-wave-pulse" d="M 0 50 C 30 50, 45 50, 55 20 C 65 80, 75 50, 90 50 C 120 50, 135 50, 145 20 C 155 80, 165 50, 180 50 L 200 50" />
+                </svg>
+                <div class="onb-visual-pulse-dot"></div>
+              </div>
+              <h2 class="onb-title" data-i18n="onb_1_title">Sinir sistemin daima konuşur.</h2>
+              <p class="onb-desc" data-i18n="onb_1_sub">Aura, onu dinlemene ve<br>uyumlanmana yardımcı olur.</p>
             </div>
-          </div>
-          <h2 class="onb-title" data-i18n="onb_3_title">Fark Et. Dengelen. Bütünleş.</h2>
-          <p class="onb-desc" data-i18n="onb_3_sub">Nefes pratikleri ve duygu takibi ile<br>sinir sistemi regülasyonu.</p>
-        </div>
 
-        <!-- Screen 3: Invitation -->
-        <div class="onb-screen hidden">
-          <div class="onb-welcome-visual">
-            <div class="onb-welcome-orb-glow"></div>
-            <div class="onb-welcome-orb"></div>
+            <!-- Screen 2: Method -->
+            <div class="onb-screen">
+              <div class="onb-breath-visualizer">
+                <div class="onb-breath-ring onb-breath-ring-1"></div>
+                <div class="onb-breath-ring onb-breath-ring-2"></div>
+                <div class="onb-breath-ring onb-breath-ring-3"></div>
+                <div class="onb-breath-core">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                    <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4M8 23h8"/>
+                  </svg>
+                </div>
+              </div>
+              <h2 class="onb-title" data-i18n="onb_3_title">Fark Et. Dengelen. Bütünleş.</h2>
+              <p class="onb-desc" data-i18n="onb_3_sub">Nefes pratikleri ve duygu takibi ile<br>sinir sistemi regülasyonu.</p>
+            </div>
+
+            <!-- Screen 3: Invitation -->
+            <div class="onb-screen">
+              <div class="onb-welcome-visual">
+                <div class="onb-welcome-orb-glow"></div>
+                <div class="onb-welcome-orb"></div>
+              </div>
+              <h2 class="onb-title" data-i18n="onb_4_title">Başlamaya hazır mısın?</h2>
+              <button id="onbLetsGoBtn" class="primary-btn onb-letsgo-btn" data-i18n="onb_lets_go">İçeri Gir</button>
+            </div>
+
           </div>
-          <h2 class="onb-title" data-i18n="onb_4_title">Başlamaya hazır mısın?</h2>
-          <button id="onbLetsGoBtn" class="primary-btn onb-letsgo-btn" data-i18n="onb_lets_go">İçeri Gir</button>
         </div>
 
         <!-- Controls Footer -->
