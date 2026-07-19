@@ -230,31 +230,25 @@
 }
 
 .onb-glass-card {
-  padding: 3rem 2rem 2rem;
-  width: 100%;
-  max-width: 400px;
-  min-height: 485px;
-  margin: 0 auto;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  min-height: none;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: calc(64px + env(safe-area-inset-top, 20px) + 2rem) 1.5rem calc(2rem + env(safe-area-inset-bottom, 20px));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  position: relative;
   overflow: hidden;
-  border-radius: 32px;
   background: 
-    radial-gradient(circle at 0% 0%, rgba(133, 141, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(74, 222, 128, 0.05) 0%, transparent 50%),
-    rgba(15, 16, 22, 0.45);
-  backdrop-filter: blur(40px) saturate(140%);
-  -webkit-backdrop-filter: blur(40px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 
-    0 40px 100px rgba(0, 0, 0, 0.7),
-    0 0 100px rgba(133, 141, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    radial-gradient(circle at 50% 0%, rgba(133, 141, 255, 0.1) 0%, transparent 50%),
+    rgba(10, 11, 16, 0.98);
 }
 
 .onb-track-wrapper {
@@ -522,44 +516,28 @@
   max-width: 240px;
 }
 
-/* Desktop transparent header island styling for onboarding */
-#mobile-header.is-onboarding .header-island {
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  box-shadow: none !important;
+/* Make mobile header visible on onboarding even on desktop layout */
+#mobile-header.is-onboarding {
+  display: flex !important;
 }
 
-/* Mobile Full Screen Layout & Matching Native Header for Onboarding */
-@media (max-width: 768px) {
-  .onb-glass-card {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    max-width: none;
-    min-height: none;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-    padding: calc(64px + env(safe-area-inset-top, 20px) + 1rem) 1.5rem calc(2rem + env(safe-area-inset-bottom, 20px));
-    background: 
-      radial-gradient(circle at 50% 0%, rgba(133, 141, 255, 0.1) 0%, transparent 50%),
-      rgba(10, 11, 16, 0.98);
-  }
+/* Global full-width borderless matching header island for onboarding */
+#mobile-header.is-onboarding .header-island {
+  width: 100% !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: rgba(10, 11, 16, 0.98) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+}
 
-  /* Make header look like the native full-screen card page header */
+/* Adjust paddings for onboarding header under mobile viewports */
+@media (max-width: 768px) {
   #mobile-header.is-onboarding .header-island {
-    width: 100% !important;
-    border-radius: 0 !important;
-    border: none !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-    background: rgba(10, 11, 16, 0.98) !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
     padding-left: 1.5rem !important;
     padding-right: 1.5rem !important;
   }
