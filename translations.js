@@ -1565,8 +1565,8 @@ export const locales = {
     // Notifications
     "notif_modal_title": "Aura'dan günlük bir hatırlatma ister misin?",
     "notif_modal_desc": "Bugün durum kontrolü yaptığın saate yakın bir zamanda sana şefkatlice yazacağız. Bildirim kirliliği veya suçluluk hissi yok.",
-    "btn_im_in": "Evet, Katılıyorum",
-    "btn_not_now": "Şimdi değil",
+    "btn_im_in": "Olur",
+    "btn_not_now": "Yok yaa",
     "dash_daily_nudges": "Günlük Hatırlatıcılar",
     "dash_nudge_desc": "Kendinle bağ kurman için küçük, nazik hatırlatıcılar.",
 
