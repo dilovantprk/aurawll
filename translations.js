@@ -155,6 +155,7 @@ export const locales = {
     "prof_show_notebook": "Show Notebook Tab",
     "prof_show_focus": "Show Focus Tab",
     "prof_show_ambient": "Show Ambient Tab",
+    "prof_reminder_time": "Time",
     "notebook_delete_confirm": "Delete this entry?",
 
     "nav_focus": "Focus",
@@ -1010,6 +1011,7 @@ export const locales = {
     "prof_show_notebook": "Notlar Sekmesini Göster",
     "prof_show_focus": "Odak Sekmesini Göster",
     "prof_show_ambient": "Ambiyans Sekmesini Göster",
+    "prof_reminder_time": "Saat",
     "notebook_delete_confirm": "Bu kaydı silmek istediğine emin misin?",
 
     "nav_focus": "Odak",

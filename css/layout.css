@@ -346,9 +346,9 @@ label {
 }
 
 
-/* Add padding to views when nav is visible so content isn't hidden behind the nav */
+/* Add padding to views when nav is visible so content isn't hidden behind the nav and floating back button */
 body.has-nav .view {
-  padding-bottom: calc(5rem + var(--safe-bottom));
+  padding-bottom: calc(150px + env(safe-area-inset-bottom, 20px)) !important;
 }
 body.has-nav .dashboard-content {
   padding-bottom: 2rem;
