@@ -115,7 +115,7 @@ export function triggerPortalTransition(targetViewId, colorRGB = '16, 185, 129',
 export function navigateTo(viewId, skipHistory = false) {
   if (isNavigating) return;
   
-  const currentView = Array.from(elements.views).find(v => !v.classList.contains('hidden'));
+  const currentView = Array.from(elements.views).find(v => v.classList.contains('active'));
   if (currentView && currentView.id === viewId) return;
 
   // Track previous view for smart back navigation
