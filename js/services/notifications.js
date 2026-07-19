@@ -21,16 +21,32 @@ export const NotificationService = {
 
   hideModal() {
     if (elements.notifModal) elements.notifModal.classList.add('hidden');
+    if (elements.notifToggleCheckbox) {
+      elements.notifToggleCheckbox.checked = false;
+    }
+    localStorage.setItem('aura_notif', 'false');
+    if (elements.nudgeTimeContainer) {
+      elements.nudgeTimeContainer.classList.add('hidden');
+    }
   },
 
   async requestPermission() {
-    this.hideModal();
+    if (elements.notifModal) elements.notifModal.classList.add('hidden');
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
         // console.log('[Aura] Notification permission granted.');
         await this.registerToken();
         return true;
+      } else {
+        // Permission denied/default -> Turn off checkbox and hide time picker
+        if (elements.notifToggleCheckbox) {
+          elements.notifToggleCheckbox.checked = false;
+        }
+        localStorage.setItem('aura_notif', 'false');
+        if (elements.nudgeTimeContainer) {
+          elements.nudgeTimeContainer.classList.add('hidden');
+        }
       }
     } catch (err) {
       console.error('[Aura] Error requesting permission', err);

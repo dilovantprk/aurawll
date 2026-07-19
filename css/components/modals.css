@@ -849,9 +849,9 @@
   position: fixed;
   inset: 0;
   z-index: 1000005; /* Above standard modals & nav */
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: none !important; /* Completely remove background blur */
+  -webkit-backdrop-filter: none !important;
   display: flex;
   align-items: center; /* Center vertically for focus */
   justify-content: center;
@@ -869,24 +869,20 @@
 
 .notif-modal-card {
   width: 100%;
-  max-width: 340px; /* More compact layout */
-  background: 
-    radial-gradient(circle at 100% 0%, rgba(var(--vagal-accent-rgb, 255, 255, 255), 0.08) 0%, transparent 50%),
-    var(--glass-bg, rgba(13, 15, 22, 0.45));
-  backdrop-filter: var(--glass-blur, blur(45px) saturate(160%));
-  -webkit-backdrop-filter: var(--glass-blur, blur(45px) saturate(160%));
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.07));
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 28px; /* Slightly tighter rounded corners for smaller scale */
-  padding: 2.2rem 1.6rem; /* Compact padding */
+  max-width: 340px; /* Keep compact layout size */
+  background: rgba(20, 20, 25, 0.85); /* Restored original dark design and opacity */
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Restored original border */
+  border-radius: 28px; /* Compact corners */
+  padding: 2.2rem 1.6rem; /* Keep compact padding */
   text-align: center;
-  box-shadow: 
-    0 40px 100px rgba(0, 0, 0, 0.85), 
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.05); /* Restored original box shadow */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.1rem; /* Closer elements for compact look */
+  gap: 1.1rem; /* Keep compact gap */
   transform: translateY(20px) scale(0.95);
   transition: transform 0.6s var(--spring-easing);
 }
