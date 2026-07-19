@@ -334,6 +334,7 @@ function enterImmersion() {
 }
 
 export function exitImmersion() {
+  exitLSD();
   clearTimeout(immersionTimer);
   const focusView = document.getElementById('view-focus');
   if (focusView) focusView.classList.remove('immersion-mode');

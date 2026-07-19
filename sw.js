@@ -52,6 +52,11 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Skip non-GET requests and non-http/https schemes to prevent caching issues/errors
+  if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) {
+    return;
+  }
+
   // Stale-While-Revalidate Strategy
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {

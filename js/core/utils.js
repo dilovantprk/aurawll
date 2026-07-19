@@ -141,5 +141,8 @@ export function syncGlobalTheme() {
   // Also update a slightly brighter version for hover if needed (automated)
   root.style.setProperty('--accent-primary-hover', theme.hex); 
 
+  // Dispatch custom event for WebGL or other listeners to update without layout thrashing
+  window.dispatchEvent(new CustomEvent('aura-theme-updated', { detail: { rgb: theme.rgb } }));
+
   // console.log(`[Aura Theme] Syncing background & accents to state: ${state}`);
 }

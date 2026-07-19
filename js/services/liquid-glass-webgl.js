@@ -169,15 +169,26 @@ class LiquidGlassRenderer {
     this.dead = false;
     this.rafId = null;
     this.themeColor = [125/255, 145/255, 123/255]; // Varsayılan Ventral Yeşil
+    this.rect = null;
+    this.needsResize = true;
 
     this.isVisible = true;
     this.io = new IntersectionObserver(entries => {
       this.isVisible = entries[0].isIntersecting;
+      if (this.isVisible) {
+        this.needsResize = true;
+      }
     });
     this.io.observe(this.el);
 
     this._prepareDOM();
     if (!this._initGL()) return;
+    
+    this._handleResize = () => {
+      this.needsResize = true;
+    };
+    window.addEventListener('resize', this._handleResize, { passive: true });
+
     this._bindEvents();
     this._loop();
   }
@@ -281,7 +292,7 @@ class LiquidGlassRenderer {
   _bindEvents() {
     const el = this.el;
     const updateMouse = (e) => {
-      const r = el.getBoundingClientRect();
+      const r = this.rect || el.getBoundingClientRect();
       const cx = (e.clientX ?? e.touches?.[0]?.clientX ?? 0) - r.left;
       const cy = (e.clientY ?? e.touches?.[0]?.clientY ?? 0) - r.top;
       this.mouse.x = cx / r.width;
@@ -295,7 +306,7 @@ class LiquidGlassRenderer {
     
     const onDown = (e) => {
       this._tPress = 1;
-      const r = el.getBoundingClientRect();
+      const r = this.rect || el.getBoundingClientRect();
       this.ripple.x = ((e.clientX ?? e.touches?.[0]?.clientX ?? 0) - r.left) / r.width;
       this.ripple.y = ((e.clientY ?? e.touches?.[0]?.clientY ?? 0) - r.top) / r.height;
       this.ripple.t = 0.001;
@@ -306,10 +317,21 @@ class LiquidGlassRenderer {
     const onUp = () => this._tPress = 0;
     el.addEventListener('mouseup', onUp, { passive: true });
     el.addEventListener('touchend', onUp, { passive: true });
+
+    // Listen for global theme updates to avoid getComputedStyle polling
+    this._onThemeUpdated = (e) => {
+      if (e.detail && e.detail.rgb) {
+        const parts = e.detail.rgb.split(',').map(s => parseInt(s.trim()));
+        if (parts.length === 3 && !isNaN(parts[0])) {
+          this.themeColor = [parts[0] / 255.0, parts[1] / 255.0, parts[2] / 255.0];
+        }
+      }
+    };
+    window.addEventListener('aura-theme-updated', this._onThemeUpdated, { passive: true });
   }
 
   _updateThemeColor() {
-    // CSS'ten aktif Vagal Rengi dinamik çek (RGBA string gelir örn: "125, 145, 123")
+    // Initial fetch of active Vagal color on load
     const rgbStr = getComputedStyle(document.documentElement).getPropertyValue('--vagal-color-rgb').trim();
     if (rgbStr) {
       const parts = rgbStr.split(',').map(s => parseInt(s.trim()));
@@ -321,6 +343,13 @@ class LiquidGlassRenderer {
 
   _loop = (ts = 0) => {
     if (this.dead) return;
+
+    // Clean up automatically if the element is disconnected from DOM
+    if (!this.el.isConnected) {
+      this.destroy();
+      return;
+    }
+
     this.rafId = requestAnimationFrame(this._loop);
     
     // Performans Optimizasyonu: Element ekranda görünmüyorsa GPU'yu yorma
@@ -339,24 +368,32 @@ class LiquidGlassRenderer {
       if (this.ripple.t >= 1) this.ripple.t = -1;
     }
 
-    // Resize canvas to match element
+    // Resize canvas only when needed (initial render, visibility change, or window resize)
     const pr = Math.min(devicePixelRatio, 2);
-    const rect = this.el.getBoundingClientRect();
-    const w = Math.round(rect.width * pr);
-    const h = Math.round(rect.height * pr);
-    
-    if (this.cv.width !== w || this.cv.height !== h) {
-      this.cv.width = w;
-      this.cv.height = h;
-      gl.viewport(0, 0, w, h);
+    if (this.needsResize || !this.rect) {
+      this.rect = this.el.getBoundingClientRect();
+      const w = Math.round(this.rect.width * pr);
+      const h = Math.round(this.rect.height * pr);
       
-      // Compute border radius from CSS
-      const br = parseFloat(getComputedStyle(this.el).borderRadius) || this.opts.radius;
-      this.opts.radius = br * pr; // Scale radius by device pixel ratio
+      if (this.cv.width !== w || this.cv.height !== h) {
+        this.cv.width = w;
+        this.cv.height = h;
+        gl.viewport(0, 0, w, h);
+        
+        // Compute border radius from CSS
+        const br = parseFloat(getComputedStyle(this.el).borderRadius) || this.opts.radius;
+        this.opts.radius = br * pr; // Scale radius by device pixel ratio
+      }
+      this.needsResize = false;
     }
 
-    // Periyodik olarak tema rengini güncelle (saniyede bir kere yeterli)
-    if (Math.random() < 0.05) this._updateThemeColor();
+    const w = this.cv.width;
+    const h = this.cv.height;
+
+    // Fetch theme color initially if it hasn't been synced yet
+    if (this.themeColor[0] === 125/255 && this.themeColor[1] === 145/255 && this.themeColor[2] === 123/255) {
+      this._updateThemeColor();
+    }
 
     gl.clearColor(0.0, 0.0, 0.0, 0.0); // Şeffaf temizle (CSS Blur görünsün)
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -386,6 +423,8 @@ class LiquidGlassRenderer {
     cancelAnimationFrame(this.rafId);
     if (this.cv) this.cv.remove();
     if (this.io) this.io.disconnect();
+    if (this._handleResize) window.removeEventListener('resize', this._handleResize);
+    if (this._onThemeUpdated) window.removeEventListener('aura-theme-updated', this._onThemeUpdated);
   }
 }
 
@@ -400,14 +439,6 @@ export function initLiquidGlass() {
   if (!testCanvas.getContext('webgl2')) return; // WebGL2 yoksa fallback CSS zaten çalışır
   
   _applyAll();
-
-  // Dinamik olarak oluşturulan elemanlar için MutationObserver (Performans için Debounce eklendi)
-  let timeout = null;
-  _observer = new MutationObserver(() => {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(_applyAll, 200);
-  });
-  _observer.observe(document.body, { childList: true, subtree: true });
 }
 
 function _applyAll() {
@@ -427,7 +458,10 @@ function _applyAll() {
 }
 
 export function destroyLiquidGlass() {
-  if (_observer) _observer.disconnect();
+  if (_observer) {
+    _observer.disconnect();
+    _observer = null;
+  }
   _renderers.forEach(r => r.destroy());
   _renderers.clear();
 }
