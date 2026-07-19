@@ -180,6 +180,169 @@ export function initAuth({ onAuthenticated, navigateTo }) {
   updateTabs();
 }
 
+/**
+ * Opens the auth bottom sheet (mobile only)
+ */
+export function openAuthSheet() {
+  const sheet = document.getElementById('auth-sheet');
+  const backdrop = document.getElementById('auth-sheet-backdrop');
+  if (!sheet || !backdrop) return;
+  sheet.classList.add('open');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Closes the auth bottom sheet
+ */
+export function closeAuthSheet() {
+  const sheet = document.getElementById('auth-sheet');
+  const backdrop = document.getElementById('auth-sheet-backdrop');
+  if (!sheet || !backdrop) return;
+  sheet.classList.remove('open');
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+  // Reset to main options view when closed
+  const mainOpts = document.getElementById('sheet-mainAuthOptions');
+  const emailView = document.getElementById('sheet-emailAuthView');
+  if (mainOpts) mainOpts.classList.remove('hidden');
+  if (emailView) emailView.classList.add('hidden');
+}
+
+/**
+ * Initializes the Auth Bottom Sheet (mobile modal)
+ */
+export function initAuthSheet({ onAuthenticated, navigateTo }) {
+  const backdrop = document.getElementById('auth-sheet-backdrop');
+  const sheetGoogleBtn = document.getElementById('sheet-googleLoginBtn');
+  const sheetXBtn = document.getElementById('sheet-xLoginBtn');
+  const sheetSkipBtn = document.getElementById('sheet-skipAuthBtn');
+  const sheetShowEmailBtn = document.getElementById('sheet-showEmailAuthBtn');
+  const sheetBackBtn = document.getElementById('sheet-backToMainAuthBtn');
+  const sheetMainOpts = document.getElementById('sheet-mainAuthOptions');
+  const sheetEmailView = document.getElementById('sheet-emailAuthView');
+  const sheetTabLogin = document.getElementById('sheet-tabLogin');
+  const sheetTabRegister = document.getElementById('sheet-tabRegister');
+  const sheetTabsPill = document.getElementById('sheet-tabs-pill');
+  const sheetForm = document.getElementById('sheet-authForm');
+  const sheetSubmitBtn = document.getElementById('sheet-authSubmitBtn');
+  const sheetError = document.getElementById('sheet-authError');
+  const sheetNameGroup = document.getElementById('sheet-nameInputGroup');
+  const sheetLegalGroup = document.getElementById('sheet-authLegalGroup');
+  const sheetNameInput = document.getElementById('sheet-nameInput');
+  const sheetEmailInput = document.getElementById('sheet-emailInput');
+  const sheetPasswordInput = document.getElementById('sheet-passwordInput');
+  const sheetLegalCheckbox = document.getElementById('sheet-legalCheckbox');
+
+  // Close on backdrop click
+  backdrop?.addEventListener('click', closeAuthSheet);
+
+  // Show email form
+  sheetShowEmailBtn?.addEventListener('click', () => {
+    sheetMainOpts?.classList.add('hidden');
+    sheetEmailView?.classList.remove('hidden');
+  });
+
+  sheetBackBtn?.addEventListener('click', () => {
+    sheetEmailView?.classList.add('hidden');
+    sheetMainOpts?.classList.remove('hidden');
+    if (sheetError) sheetError.classList.add('hidden');
+  });
+
+  // Tab switching
+  let sheetActiveTab = 'login';
+  const updateSheetTabs = () => {
+    if (sheetActiveTab === 'login') {
+      sheetTabLogin?.classList.add('active');
+      sheetTabRegister?.classList.remove('active');
+      if (sheetTabsPill) sheetTabsPill.style.transform = 'translateX(0)';
+      if (sheetSubmitBtn) sheetSubmitBtn.textContent = 'Giriş Yap';
+      sheetNameGroup?.classList.add('hidden');
+      sheetLegalGroup?.classList.add('hidden');
+    } else {
+      sheetTabRegister?.classList.add('active');
+      sheetTabLogin?.classList.remove('active');
+      if (sheetTabsPill) sheetTabsPill.style.transform = 'translateX(100%)';
+      if (sheetSubmitBtn) sheetSubmitBtn.textContent = 'Kayıt Ol';
+      sheetNameGroup?.classList.remove('hidden');
+      sheetLegalGroup?.classList.remove('hidden');
+    }
+  };
+
+  sheetTabLogin?.addEventListener('click', () => { sheetActiveTab = 'login'; updateSheetTabs(); });
+  sheetTabRegister?.addEventListener('click', () => { sheetActiveTab = 'register'; updateSheetTabs(); });
+  updateSheetTabs();
+
+  // Email form submit
+  sheetForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (sheetError) sheetError.classList.add('hidden');
+    if (sheetSubmitBtn) { sheetSubmitBtn.disabled = true; sheetSubmitBtn.classList.add('loading'); }
+    try {
+      let user;
+      if (sheetActiveTab === 'login') {
+        user = await loginWithEmail(sheetEmailInput?.value, sheetPasswordInput?.value);
+      } else {
+        if (!sheetLegalCheckbox?.checked) {
+          if (sheetError) { sheetError.textContent = 'Lütfen kullanım koşullarını onaylayın.'; sheetError.classList.remove('hidden'); }
+          return;
+        }
+        user = await registerWithEmail(sheetEmailInput?.value, sheetPasswordInput?.value, sheetNameInput?.value);
+      }
+      closeAuthSheet();
+      if (onAuthenticated) onAuthenticated(user);
+    } catch (err) {
+      if (sheetError) { sheetError.textContent = translateFirebaseError(err.code); sheetError.classList.remove('hidden'); }
+    } finally {
+      if (sheetSubmitBtn) { sheetSubmitBtn.disabled = false; sheetSubmitBtn.classList.remove('loading'); }
+    }
+  });
+
+  // Guest
+  sheetSkipBtn?.addEventListener('click', async () => {
+    try {
+      const user = await signInAsGuest();
+      localStorage.setItem('aura_onboarded', 'true');
+      closeAuthSheet();
+      if (onAuthenticated) onAuthenticated(user);
+    } catch (err) {
+      console.error('[Aura] Sheet Guest login failed', err);
+    }
+  });
+
+  // Google
+  sheetGoogleBtn?.addEventListener('click', async () => {
+    if (sheetError) sheetError.textContent = '';
+    try {
+      const userPromise = loginWithGoogle();
+      if (sheetGoogleBtn) { sheetGoogleBtn.disabled = true; sheetGoogleBtn.classList.add('loading'); }
+      const user = await userPromise;
+      closeAuthSheet();
+      if (onAuthenticated) onAuthenticated(user);
+    } catch (err) {
+      if (sheetError) { sheetError.textContent = translateFirebaseError(err.code); sheetError.classList.remove('hidden'); }
+    } finally {
+      if (sheetGoogleBtn) { sheetGoogleBtn.disabled = false; sheetGoogleBtn.classList.remove('loading'); }
+    }
+  });
+
+  // X
+  sheetXBtn?.addEventListener('click', async () => {
+    if (sheetError) sheetError.textContent = '';
+    try {
+      const userPromise = loginWithX();
+      if (sheetXBtn) { sheetXBtn.disabled = true; sheetXBtn.classList.add('loading'); }
+      const user = await userPromise;
+      closeAuthSheet();
+      if (onAuthenticated) onAuthenticated(user);
+    } catch (err) {
+      if (sheetError) { sheetError.textContent = translateFirebaseError(err.code); sheetError.classList.remove('hidden'); }
+    } finally {
+      if (sheetXBtn) { sheetXBtn.disabled = false; sheetXBtn.classList.remove('loading'); }
+    }
+  });
+}
+
 function translateFirebaseError(code) {
   switch (code) {
     case 'auth/invalid-email': return 'Geçersiz e-posta adresi.';

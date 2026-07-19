@@ -167,6 +167,14 @@
   text-shadow: 0 0 20px rgba(var(--vagal-accent-rgb, 255,255,255), 0.2);
 }
 
+/* Name row: name + login pill side by side */
+.arc-h-name-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .vagal-signature-wrapper {
   height: 30px;
   width: 100%;

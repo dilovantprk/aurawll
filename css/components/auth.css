@@ -408,3 +408,93 @@
   pointer-events: none;
 }
 
+/* =============================================
+   AUTH BOTTOM SHEET (Mobile only)
+   ============================================= */
+
+.auth-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.auth-sheet-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.auth-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9001;
+  background: rgba(18, 18, 24, 0.96);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+  border-radius: 28px 28px 0 0;
+  padding: 1rem 1.5rem calc(env(safe-area-inset-bottom, 20px) + 1.5rem);
+  max-height: 90dvh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.auth-sheet.open {
+  transform: translateY(0);
+}
+
+.auth-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 100px;
+  margin: 0 auto 1.5rem;
+}
+
+.auth-sheet-header {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.auth-sheet-title {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.4));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.3rem 0;
+}
+
+.auth-sheet-subtitle {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.auth-sheet-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Hide sheet on desktop — only for mobile */
+@media (min-width: 1024px) {
+  .auth-sheet,
+  .auth-sheet-backdrop {
+    display: none !important;
+  }
+}

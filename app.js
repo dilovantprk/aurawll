@@ -23,7 +23,7 @@ import { initSettings, updateSettingsView, syncNavVisibility } from './js/compon
 import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
-import { initAuth } from './js/components/auth.js';
+import { initAuth, initAuthSheet } from './js/components/auth.js';
 import { handleRedirectResult } from './js/services/auth.js';
 import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
@@ -509,6 +509,10 @@ async function initAppBootstrap() {
     onComplete: () => advanceFromExercise()
   });
   initAuth({
+    navigateTo,
+    onAuthenticated: (user) => startAppFlow(user)
+  });
+  initAuthSheet({
     navigateTo,
     onAuthenticated: (user) => startAppFlow(user)
   });

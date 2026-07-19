@@ -5,6 +5,7 @@ import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.j
 import { BADGES } from '../core/constants.js';
 import { calculateEarnedBadges, vibrate } from '../core/utils.js';
 import { openCommunityModal } from './modals.js';
+import { openAuthSheet } from './auth.js';
 
 import { NotificationService } from '../services/notifications.js';
 import { deleteUserAccount } from '../services/auth.js';
@@ -171,7 +172,11 @@ export function initSettings(config) {
 
   elements.cardLoginBtn?.addEventListener('click', (e) => {
     e.preventDefault();
-    if (configProps.navigateTo) configProps.navigateTo('view-auth');
+    if (window.innerWidth < 1024) {
+      openAuthSheet();
+    } else {
+      if (configProps.navigateTo) configProps.navigateTo('view-auth');
+    }
   });
 
   // Render modules market
