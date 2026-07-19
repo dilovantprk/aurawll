@@ -284,11 +284,16 @@ export function navigateTo(viewId, skipHistory = false) {
         if (v.id !== viewId) v.classList.add('hidden');
       });
     }
+    target.classList.add('skip-entry-animation');
     target.classList.remove('hidden');
     target.classList.add('active');
     target.scrollTop = 0;
     isNavigating = false;
     syncMiniPlayerState();
+
+    setTimeout(() => {
+      target.classList.remove('skip-entry-animation');
+    }, 800);
   }
 
   // Feature Triggers

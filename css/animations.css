@@ -713,3 +713,28 @@ body.crystal-entry .app-container {
   50% { transform: translateY(-4px); }
 }
 
+/* Adjacent Swipe Transition Overrides */
+.view.swiping-up,
+.view.skip-entry-animation {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.view.swiping-up .stagger-1,
+.view.swiping-up .stagger-2,
+.view.swiping-up .stagger-3,
+.view.swiping-up .stagger-4,
+.view.swiping-up .stagger-5,
+.view.swiping-up .stagger-6,
+.view.skip-entry-animation .stagger-1,
+.view.skip-entry-animation .stagger-2,
+.view.skip-entry-animation .stagger-3,
+.view.skip-entry-animation .stagger-4,
+.view.skip-entry-animation .stagger-5,
+.view.skip-entry-animation .stagger-6 {
+  opacity: 1 !important;
+  animation: none !important;
+  transform: none !important;
+}
+

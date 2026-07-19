@@ -178,6 +178,7 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
       if (targetView) {
         backdrop.style.zIndex = '999999'; // Push backdrop below targetView
         targetView.classList.remove('hidden');
+        targetView.classList.add('swiping-up');
         targetView.style.position = 'fixed';
         targetView.style.top = '0';
         targetView.style.left = '0';
@@ -237,6 +238,7 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
     const cleanupTargetView = () => {
       backdrop.style.zIndex = '';
       if (targetView) {
+        targetView.classList.remove('swiping-up');
         targetView.style.position = '';
         targetView.style.top = '';
         targetView.style.left = '';
@@ -273,8 +275,16 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
           AppState.skipNextTransition = true;
         }
 
-        content.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-        content.style.transform = 'translateY(-100%)';
+        if (targetView) {
+          targetView.classList.add('skip-entry-animation');
+        }
+
+        content.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease-out';
+        content.style.transform = `translateY(${deltaY - 100}px)`;
+        content.style.opacity = '0';
+
+        backdrop.style.transition = 'opacity 0.4s ease-out';
+        backdrop.style.opacity = '0';
 
         if (targetView) {
           targetView.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
@@ -284,6 +294,7 @@ export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
         setTimeout(() => {
           content.style.transform = '';
           content.style.transition = '';
+          content.style.opacity = '';
           backdrop.style.opacity = '';
           backdrop.style.transition = '';
           cleanupTargetView();
