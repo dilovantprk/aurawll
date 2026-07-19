@@ -344,7 +344,18 @@ export function renderVagalHeatmap(data, isModal = false) {
     : document.querySelector('#vagalHeatmapCard .v-sympathetic');
     
   if (statusLabel) {
-    statusLabel.textContent = getRegulationStateLabel(R, a, AppState.lang);
+    const rScore = Math.round(R * 100);
+    const stateLabel = getRegulationStateLabel(R, a, AppState.lang);
+    const scoreText = AppState.lang === 'tr' ? `R skoru: ${rScore}` : `R score: ${rScore}`;
+    
+    let stateColor = '#64E49F'; // coherence
+    if (regState === 'mobilization') stateColor = '#FBA044';
+    else if (regState === 'immobilization') stateColor = '#62A4FF';
+
+    statusLabel.innerHTML = `
+      <div class="status-name" style="color: ${stateColor}; font-weight: 600; font-size: 0.8rem; line-height: 1.2;">${stateLabel}</div>
+      <div class="status-score" style="font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-top: 3px;">${scoreText}</div>
+    `;
     statusLabel.style.top = point.y;
   }
 }
