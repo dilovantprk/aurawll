@@ -323,6 +323,7 @@ export function renderVagalHeatmap(data, isModal = false) {
   const a = normalized?.pre_arousal !== undefined ? normalized.pre_arousal : 0.5;
   const v = normalized?.pre_valence !== undefined ? normalized.pre_valence : 0.5;
   const R = calculateRegulationCapacity(a, v);
+  const regState = normalized?.regulation_state || (R >= 0.60 ? 'coherence' : (a >= 0.5 ? 'mobilization' : 'immobilization'));
 
   const point = calculateVagalPoint(R);
 
