@@ -721,6 +721,7 @@ export const locales = {
     "btn_ok": "OK",
     "btn_delete": "Delete",
     "warn_title": "Warning",
+    "logout_confirm": "Are you sure you want to log out?",
     "dash_daily_nudges": "Daily Nudges",
     "dash_nudge_desc": "Gentle reminders to check in.",
 
@@ -1577,6 +1578,7 @@ export const locales = {
     "btn_ok": "Tamam",
     "btn_delete": "Sil",
     "warn_title": "Uyarı",
+    "logout_confirm": "Hesabınızdan çıkış yapmak istediğinizden emin misiniz?",
     "dash_daily_nudges": "Günlük Hatırlatıcılar",
     "dash_nudge_desc": "Kendinle bağ kurman için küçük, nazik hatırlatıcılar.",
 

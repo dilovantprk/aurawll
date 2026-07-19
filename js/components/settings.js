@@ -243,10 +243,18 @@ export function initSettings(config) {
   });
 
   // Logout
-  elements.logoutBtn?.addEventListener('click', (e) => {
+  elements.logoutBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (configProps.logout) configProps.logout();
-    else window.location.reload();
+    const ok = await showConfirm({
+      title: t('warn_title') || 'Uyarı',
+      message: t('logout_confirm') || 'Çıkış yapmak istediğinizden emin misiniz?',
+      confirmText: t('btn_logout') || 'Çıkış Yap',
+      cancelText: t('btn_cancel') || 'Vazgeçtim'
+    });
+    if (ok) {
+      if (configProps.logout) configProps.logout();
+      else window.location.reload();
+    }
   });
   
   // Delete Account
