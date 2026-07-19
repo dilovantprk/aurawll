@@ -391,6 +391,7 @@ export const locales = {
     "info_step6_title": "Neural Savoring",
     "info_step6_body": "Anchor your regulated state by focusing on a specific positive signal. This intentional hold counters the brain's innate negativity bias.",
     "info_step6_ref": "Hanson (2013) / Bryant (2006)",
+    "info_swipe_meditation": "Swipe up to begin guided meditation",
 
     // 3x3x2 Deterministic Insight Matrix (Antigravity v2)
     "insight_okay_light_day": "Your system is naturally balanced and engaged. A great time for focus.",
@@ -1262,6 +1263,7 @@ export const locales = {
     "info_step6_title": "İyi Hissi Pekiştirme",
     "info_step6_body": "Ulaştığın bu huzurlu hali bedendeki güzel bir hisse odaklanarak kalıcı hale getir. Zihnini kasıtlı olarak bu olumlu hisse yönlendirmek, beynin sürekli olumsuza odaklanma eğilimini kırar.",
     "info_step6_ref": "Hanson (2013) / Bryant (2006)",
+    "info_swipe_meditation": "Meditasyonu başlatmak için yukarı kaydırın",
 
     // 3x3x2 Deterministic Insight Matrix (Antigravity v2)
     "insight_okay_light_day": "Sistemin dengede ve aktif. Odaklanmak için harika bir zaman.",

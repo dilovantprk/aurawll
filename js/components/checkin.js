@@ -310,8 +310,8 @@ export function renderEmotionRefinement(state) {
 
 export function prepareExercise(protocolId) {
   const ex = protocols[protocolId];
-  AppState.currentExercise = ex; // Fix for exercise.js:27
-  configProps.exerciseParams = ex;
+  AppState.currentExercise = { ...ex, id: protocolId }; // Fix for exercise.js:27
+  configProps.exerciseParams = AppState.currentExercise;
   elements.exerciseTitle.textContent = t(ex.titleKey);
   if(elements.exerciseMicrocopy) elements.exerciseMicrocopy.textContent = t(`mc_${protocolId}`);
   

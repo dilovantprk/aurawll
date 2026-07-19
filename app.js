@@ -463,7 +463,9 @@ async function initAppBootstrap() {
     navigateTo, 
     AppState, 
     showInfoModal,
-    getExerciseParams: () => AppState.currentExercise
+    getExerciseParams: () => AppState.currentExercise,
+    stopExercise,
+    startMeditationLoading
   });
   renderLocalization(); 
   NotificationService.init();

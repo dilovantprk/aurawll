@@ -10,6 +10,7 @@ let galaxyAnimationId = null;
 let isModalOpen = false;
 let lastInfoBtn = null;
 let isInitialized = false;
+let currentProtocolId = null;
 
 let configProps = {
   pauseExercise: null,
@@ -97,10 +98,27 @@ export function initCommunityModal() {
 
   initSwipeToDismiss(elements.communityModal, elements.communityBackdrop, hideCommunityModal);
   initSwipeToDismiss(elements.vagalModal, elements.vagalBackdrop, hideVagalModal);
-  initSwipeToDismiss(elements.infoModal, elements.infoBackdrop, hideInfoModal);
+  initSwipeToDismiss(elements.infoModal, elements.infoBackdrop, hideInfoModal, handleInfoModalSwipeUp);
 }
 
-export function initSwipeToDismiss(modal, backdrop, closeFn) {
+function handleInfoModalSwipeUp() {
+  const AppState = configProps.AppState;
+  if (AppState && AppState.currentView === 'view-exercise') {
+    const protocolId = currentProtocolId || AppState.currentExercise?.id || 'p_resonance';
+    
+    if (typeof configProps.stopExercise === 'function') {
+      configProps.stopExercise();
+    }
+    
+    hideInfoModal();
+    
+    if (typeof configProps.startMeditationLoading === 'function') {
+      configProps.startMeditationLoading(protocolId);
+    }
+  }
+}
+
+export function initSwipeToDismiss(modal, backdrop, closeFn, swipeUpFn = null) {
   if (!modal || !backdrop) return;
 
   const content = modal.querySelector('.modal-content') || modal;
@@ -110,18 +128,20 @@ export function initSwipeToDismiss(modal, backdrop, closeFn) {
   let currentY = 0;
   let isDragging = false;
   let startTf = '';
+  let activeDragIsHandle = false;
 
   const startDrag = (y, isHandle = false) => {
     // Only allow swipe if at top of scroll OR if dragging by the handle
     if (!isHandle && modal.scrollTop > 0) return;
     
+    activeDragIsHandle = isHandle;
     startY = y;
+    currentY = y;
     isDragging = true;
     startTf = window.getComputedStyle(content).transform;
     if (startTf === 'none') startTf = '';
     content.style.transition = 'none';
     if (handle) handle.style.background = 'rgba(255, 255, 255, 0.4)';
-    // console.log("[Aura] Drag started at Y:", y, "isHandle:", isHandle);
   };
 
   const moveDrag = (y) => {
@@ -129,13 +149,29 @@ export function initSwipeToDismiss(modal, backdrop, closeFn) {
     currentY = y;
     const deltaY = currentY - startY;
 
-    // Only visually drag if we are moving DOWN
     if (deltaY > 0) {
-      content.style.transform = `${startTf} translateY(${deltaY}px)`;
-      backdrop.style.opacity = 1 - (deltaY / 600);
+      // Swiping DOWN
+      const atTop = modal.scrollTop <= 0;
+      if (activeDragIsHandle || atTop) {
+        content.style.transform = `${startTf} translateY(${deltaY}px)`;
+        backdrop.style.opacity = 1 - (deltaY / 600);
+      } else {
+        content.style.transform = startTf;
+      }
     } else {
-      // If swiping UP, reset transform to prevent jumping and allow natural scroll
-      content.style.transform = startTf;
+      // Swiping UP
+      const isMobile = window.innerWidth < 1024;
+      if (swipeUpFn && isMobile) {
+        const atBottom = modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 5;
+        const isNotScrollable = modal.scrollHeight <= modal.clientHeight + 5;
+        if (activeDragIsHandle || atBottom || isNotScrollable) {
+          content.style.transform = `${startTf} translateY(${deltaY}px)`;
+        } else {
+          content.style.transform = startTf;
+        }
+      } else {
+        content.style.transform = startTf;
+      }
     }
   };
 
@@ -144,7 +180,6 @@ export function initSwipeToDismiss(modal, backdrop, closeFn) {
     isDragging = false;
     
     const deltaY = currentY - startY;
-    // console.log("[Aura] Drag ended. DeltaY:", deltaY);
 
     if (deltaY > 100) { 
       // Successful swipe down - clear inline styles to allow CSS transition to take over
@@ -153,6 +188,27 @@ export function initSwipeToDismiss(modal, backdrop, closeFn) {
       backdrop.style.opacity = '';
       backdrop.style.transition = '';
       if (closeFn) closeFn();
+    } else if (deltaY < -80 && swipeUpFn && window.innerWidth < 1024) {
+      // Successful swipe up
+      const atBottom = modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 5;
+      const isNotScrollable = modal.scrollHeight <= modal.clientHeight + 5;
+      if (activeDragIsHandle || atBottom || isNotScrollable) {
+        content.style.transform = '';
+        content.style.transition = '';
+        backdrop.style.opacity = '';
+        backdrop.style.transition = '';
+        swipeUpFn();
+      } else {
+        // Snap back
+        content.style.transition = 'transform 0.5s var(--spring-easing)';
+        content.style.transform = '';
+        backdrop.style.opacity = '';
+        backdrop.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          content.style.transition = '';
+          backdrop.style.transition = '';
+        }, 500);
+      }
     } else {
       // Aborted swipe - snap back
       content.style.transition = 'transform 0.5s var(--spring-easing)';
@@ -170,6 +226,7 @@ export function initSwipeToDismiss(modal, backdrop, closeFn) {
     if (handle) handle.style.background = 'rgba(255, 255, 255, 0.15)';
     startY = 0;
     currentY = 0;
+    activeDragIsHandle = false;
   };
 
   // Touch Events
@@ -605,6 +662,20 @@ export function openInfoArchive(key, triggerBtn) {
   // If we are in breathing/exercise context, try to resolve pId from active exercise
   if (!pId && (cleanKey === 'breathing' || cleanKey === 'step3' || cleanKey === 'exercise') && activeEx) {
     pId = activeEx.id;
+  }
+
+  currentProtocolId = pId;
+
+  // Show or hide the swipe-up hint
+  const swipeHint = document.getElementById('infoSwipeHint');
+  if (swipeHint) {
+    const isExerciseView = configProps.AppState && configProps.AppState.currentView === 'view-exercise';
+    const isMobile = window.innerWidth < 1024;
+    if (isExerciseView && isMobile) {
+      swipeHint.classList.remove('hidden');
+    } else {
+      swipeHint.classList.add('hidden');
+    }
   }
 
   // 1. Try Specific Scientific Content
