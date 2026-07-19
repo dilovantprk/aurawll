@@ -722,7 +722,8 @@ body.nav-hidden .desktop-header-nav {
   transition:
     transform 0.4s var(--spring-easing),
     opacity 0.3s ease,
-    visibility 0s 0.3s;
+    visibility 0s 0.3s,
+    bottom 0.5s var(--spring-easing);
 
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.25),
@@ -737,7 +738,8 @@ body.nav-hidden .desktop-header-nav {
   transition:
     transform 0.4s var(--spring-easing),
     opacity 0.3s ease,
-    visibility 0s 0s;
+    visibility 0s 0s,
+    bottom 0.5s var(--spring-easing);
 }
 
 .header-back-btn.show:hover {
@@ -769,9 +771,20 @@ body.nav-hidden .desktop-header-nav {
   display: none !important;
 }
 
-@media (max-width: 540px) {
+@media (max-width: 1023px) {
   .header-back-btn {
-    left: 1.2rem;
+    top: auto;
+    bottom: calc(64px + env(safe-area-inset-bottom, 20px) + 0.8rem);
+    left: calc(12.5% + 0.45rem - 20px);
+    box-shadow: 
+      0 12px 32px rgba(0, 0, 0, 0.45),
+      inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(20, 22, 28, 0.75); /* Darker glass background for solid floating overlay */
+  }
+
+  .header-back-btn.has-mini-player-active {
+    bottom: calc(64px + 52px + env(safe-area-inset-bottom, 20px) + 0.8rem);
   }
 }
 

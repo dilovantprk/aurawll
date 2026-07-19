@@ -902,6 +902,8 @@ export function syncMiniPlayerState() {
     miniPlayer.classList.remove('hidden');
     if (navContainer) navContainer.classList.add('has-mini-player');
     if (mobileNav) mobileNav.classList.add('has-mini-player-active');
+    const backBtn = document.getElementById('globalHeaderBackBtn');
+    if (backBtn) backBtn.classList.add('has-mini-player-active');
     
     // Update labels and artwork
     const titleEl = document.getElementById('miniPlayerTitle');
@@ -928,6 +930,8 @@ export function syncMiniPlayerState() {
     miniPlayer.classList.add('hidden');
     if (navContainer) navContainer.classList.remove('has-mini-player');
     if (mobileNav) mobileNav.classList.remove('has-mini-player-active');
+    const backBtn = document.getElementById('globalHeaderBackBtn');
+    if (backBtn) backBtn.classList.remove('has-mini-player-active');
   }
 }
 
