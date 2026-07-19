@@ -97,10 +97,13 @@
     </section>
 
     <!-- ONBOARDING VIEW -->
-    <section id="view-onboarding" class="view hidden center-content" style="padding-top: 0; justify-content: center; align-items: center; min-height: 100vh;">
+    <section id="view-onboarding" class="view hidden center-content" style="padding-top: 0; justify-content: center; align-items: center; min-height: 100vh; position: relative; overflow: hidden;">
+      <div class="onb-ambient-glow onb-glow-1"></div>
+      <div class="onb-ambient-glow onb-glow-2"></div>
+
       <button id="onbSkipBtn" class="onb-skip-btn" data-i18n="btn_skip">Geç</button>
 
-      <div id="onbScreensContainer" class="onb-screens-container onb-glass-card liquid-border glow-card">
+      <div id="onbScreensContainer" class="onb-screens-container onb-glass-card liquid-border glow-card" style="z-index: 10;">
         
         <!-- Screen 1: Hook -->
         <div class="onb-screen active">
