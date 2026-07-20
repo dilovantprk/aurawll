@@ -1,6 +1,6 @@
 import { elements } from '../core/dom.js';
 import { calculateVagalPoint, calculateVagalState, getWeightsFromState, calculateRegulationCapacity } from '../core/vagal-engine.js';
-import { normalizeEntry, getRegulationStateLabel } from '../core/utils.js';
+import { normalizeEntry, getRegulationStateLabel, getRegulationColor } from '../core/utils.js';
 import { AppState } from '../core/state.js';
 
 export function renderVagalHeatmap(data, isModal = false) {
@@ -21,8 +21,6 @@ export function renderVagalHeatmap(data, isModal = false) {
     targetBlob.style.opacity = '1';
     
     const regState = normalized?.regulation_state || 'coherence';
-    const stateId = regState === 'coherence' ? 'okay' : 
-                    regState === 'mobilization' ? 'wired' : 'foggy';
     
     document.documentElement.style.setProperty('--vagal-x', point.x);
     document.documentElement.style.setProperty('--vagal-y', point.y);
@@ -33,13 +31,11 @@ export function renderVagalHeatmap(data, isModal = false) {
       : document.querySelector('#vagalHeatmapCard .v-sympathetic');
       
     if (statusLabel) {
-      const rScore = Math.round(R * 100);
+      statusLabel.removeAttribute('data-i18n');
+      const rScore = Math.round(R);
       const stateLabel = getRegulationStateLabel(R, a, AppState.lang);
       const scoreText = AppState.lang === 'tr' ? `R skoru: ${rScore}` : `R score: ${rScore}`;
-      
-      let stateColor = '#64E49F'; // coherence
-      if (regState === 'mobilization') stateColor = '#FBA044';
-      else if (regState === 'immobilization') stateColor = '#62A4FF';
+      const stateColor = getRegulationColor(R);
 
       statusLabel.innerHTML = `
         <div class="status-name" style="color: ${stateColor}; font-weight: 600; font-size: 0.8rem; line-height: 1.2;">${stateLabel}</div>

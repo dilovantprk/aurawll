@@ -2,7 +2,7 @@ import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { protocols } from '../core/constants.js';
-import { normalizeCheckinData, getHumanizedTime, renderMiniDeltaSVG, normalizeEntry, getAutonomicClass, getRegulationStateLabel, calculateEarnedBadges } from '../core/utils.js';
+import { normalizeCheckinData, getHumanizedTime, renderMiniDeltaSVG, normalizeEntry, getAutonomicClass, getRegulationStateLabel, calculateEarnedBadges, getRegulationColor } from '../core/utils.js';
 import { calculateVagalPoint, calculatePlasticity, calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { getWeeklyInsight } from '../services/insight-engine.js';
 import { SensoryEngine } from '../services/sensory.js';
@@ -344,13 +344,11 @@ export function renderVagalHeatmap(data, isModal = false) {
     : document.querySelector('#vagalHeatmapCard .v-sympathetic');
     
   if (statusLabel) {
-    const rScore = Math.round(R * 100);
+    statusLabel.removeAttribute('data-i18n');
+    const rScore = Math.round(R);
     const stateLabel = getRegulationStateLabel(R, a, AppState.lang);
     const scoreText = AppState.lang === 'tr' ? `R skoru: ${rScore}` : `R score: ${rScore}`;
-    
-    let stateColor = '#64E49F'; // coherence
-    if (regState === 'mobilization') stateColor = '#FBA044';
-    else if (regState === 'immobilization') stateColor = '#62A4FF';
+    const stateColor = getRegulationColor(R);
 
     statusLabel.innerHTML = `
       <div class="status-name" style="color: ${stateColor}; font-weight: 600; font-size: 0.8rem; line-height: 1.2;">${stateLabel}</div>

@@ -119,6 +119,14 @@ export function getRegulationStateLabel(R, a, lang = 'tr') {
   return lang === 'tr' ? 'Koruyucu enerji tasarrufu (kapanma)' : 'Protective energy conservation (shutdown)';
 }
 
+export function getRegulationColor(R) {
+  if (R < 30) return '#64E49F'; // Green
+  if (R < 45) return '#85E3B3'; // Light Green
+  if (R < 55) return '#FBA044'; // Orange
+  if (R < 70) return '#E0A96D'; // Light Orange
+  return '#62A4FF'; // Blue
+}
+
 export function calculatePolyvagalState(a, v) {
   const state = calculateRegulationState(a, v);
   const legacyMap = { coherence: 'ventral', mobilization: 'sympathetic', immobilization: 'dorsal' };
