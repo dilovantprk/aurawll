@@ -563,6 +563,19 @@ export function updateSettingsView() {
   if (editProfileBtn) {
     editProfileBtn.classList.toggle('hidden', isGuest);
   }
+  
+  // Show/hide settings menu "Profil Düzenle" row for authenticated users
+  const settingsProfileRow = document.getElementById('settingsProfileEditRow');
+  if (settingsProfileRow) {
+    settingsProfileRow.classList.toggle('hidden', isGuest);
+    if (!settingsProfileRow.dataset.clickInit) {
+      settingsProfileRow.dataset.clickInit = '1';
+      settingsProfileRow.addEventListener('click', () => {
+        const btn = document.getElementById('editProfileBtn');
+        if (btn) btn.click();
+      });
+    }
+  }
 
   // Handle volume visibility on view load
   const volContainer = document.getElementById('volumeContainer');
