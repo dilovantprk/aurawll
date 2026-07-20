@@ -35,9 +35,9 @@ Aura maps user-reported somatic and emotional states into autonomic zones derive
 ```mermaid
 graph TD
     A[Affect Grid Input: Valence & Arousal] --> B{calculateRegulationCapacity}
-    B -->|R >= 0.60| C[Coherence / High Regulation]
-    B -->|R < 0.60 & Arousal >= 0.50| D[Mobilization / Active Response]
-    B -->|R < 0.60 & Arousal < 0.50| E[Immobilization / Energy Conservation]
+    B -->|R < 45| C[Coherence / High Regulation]
+    B -->|R >= 45 & Arousal >= 0.50| D[Mobilization / Active Response]
+    B -->|R >= 45 & Arousal < 0.50| E[Immobilization / Energy Conservation]
     
     C --> F[Vagal Brake Active: Safe/Social]
     D --> G[Sympathetic Charge: Fight/Flight/Action]
@@ -46,23 +46,29 @@ graph TD
 
 ### Core Equations:
 
-#### A. Autonomic Regulation Capacity (\(R\))
-Instead of discrete steps, we define a continuous regulation index \(R \in [0, 1]\) based on Valence (\(v\)) and Arousal (\(a\)):
-\[R = v - 0.4 \times |a - 0.25|\]
-*   **Optimal Arousal (\(a = 0.25\)):** The homeostatic baseline representing a calm, alert state.
-*   **Arousal Penalty (\(|a - 0.25| \times 0.4\)):** Deviations from optimal arousal reduce the regulation capacity index.
+#### A. Autonomic Stress/Load Index (\(R\))
+Instead of discrete steps, we define a continuous stress/load index \(R \in [0, 100]\) based on Valence (\(v\)) and Arousal (\(a\)):
+\[R = (1 - v) \times 70 + (1 - a) \times 30\]
+*   **Optimal Balance:** \(R = 0\) (highest valence, high arousal engagement).
+*   **Defensive Protection:** \(R = 100\) (lowest valence, lowest arousal shutdown).
 
-#### B. Continuous Visual Ladder Mapping (\(y\))
-Instead of static weights (Ventral = 0.15, Sympathetic = 0.50, Dorsal = 0.85), \(y\) is generated continuously using the implicit regulation index \(R_{\text{implicit}}\):
-\[R_{\text{implicit}} = p_{\text{coherence}} \times 0.85 + p_{\text{mobilization}} \times 0.50 + p_{\text{immobilization}} \times 0.15\]
-\[y = (1 - R_{\text{implicit}}) \times 100\%\]
-This aligns Ventral/Coherence to \(15\%\) height, Sympathetic/Mobilization to \(50\%\), and Dorsal/Immobilization to \(85\%\), while allowing any intermediate state combinations to glide continuously along the vertical axis.
+#### B. Continuous Readability Bands:
+1.  **0 - 29:** **Sosyal uyum ve prefrontal regülasyon** (High regulation capacity, safe/connected)
+2.  **30 - 44:** **Regülasyona yakın geçiş** (Still regulated, but near boundary)
+3.  **45 - 54:** **Aktif mobilizasyon** (Stress response active, mid-zone)
+4.  **55 - 69:** **Korumaya yakın geçiş** (Slipping from mobilization to shutdown)
+5.  **70 - 100:** **Koruyucu enerji tasarrufu (kapanma)** (Low regulation capacity, shutdown)
 
-#### C. Autonomic Flexibility (Otonom Esneklik)
+#### C. Continuous Visual Ladder Mapping (\(y\))
+\(y\) is mapped linearly to the vertical ladder axis (15% height at top, 85% at bottom):
+\[y = 15 + R \times 0.70\%\]
+This positions optimal balance (\(R=0\)) at \(15\%\), middle stress (\(R=50\)) at \(50\%\), and deep conservation (\(R=100\)) at \(85\%\), allowing continuous sliding.
+
+#### D. Autonomic Flexibility (Otonom Esneklik)
 Autonomic Flexibility replaces the previous check-in plasticity count. Analyzed across the last 10 entries:
 \[\text{Flexibility} = (w_{\text{activity}} \cdot \text{Activity} + w_{\text{var}} \cdot \text{Variance} + w_{\text{rec}} \cdot \text{Recovery}) \times 100\]
 *   **Activity:** \(\min(1.0, N / 7)\) (regular check-ins reward up to 7 logs).
-*   **Variance:** \(\min(1.0, \text{Var}(R_1, \dots, R_N) \times 8)\) (measures active regulation span).
-*   **Recovery:** \(\min(1.0, \text{RecoveryMagnitude} \times 1.5)\) (measures the average positive shifts \(R_{t} - R_{t-1}\) from low-regulation starting states \(R_{t-1} < 0.45\)).
+*   **Variance:** \(\min(1.0, (\text{Var}(R_1, \dots, R_N) / 10000) \times 8)\) (measures active regulation span).
+*   **Recovery:** \(\min(1.0, \text{RecoveryMagnitude} \times 1.5)\) (measures the average positive recovery shifts \((R_{t-1} - R_{t}) / 100\) from low-regulation starting states \(R_{t-1} > 55\)).
 *   **Weights:** \(w_{\text{activity}} = 0.30, w_{\text{var}} = 0.35, w_{\text{rec}} = 0.35\).
 
