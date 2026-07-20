@@ -2,7 +2,8 @@ import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
 import { PROTOCOL_META, BADGES, protocols } from '../core/constants.js';
 import { AppState } from '../core/state.js';
-import { vibrate, calculateEarnedBadges } from '../core/utils.js';
+import { vibrate, calculateEarnedBadges, getRegulationStateLabel, getRegulationColor, normalizeEntry } from '../core/utils.js';
+import { calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { SensoryEngine } from '../services/sensory.js';
 
 let galaxyAnimationId = null;
@@ -828,6 +829,56 @@ export function openInfoArchive(key, triggerBtn) {
     body = t(`info_${cleanKey}_body`);
     ref = t(`info_${cleanKey}_ref`);
     iconType = cleanKey;
+  }
+
+  // 2b. Heatmap card: inject current state block
+  if (cleanKey === 'heatmap') {
+    try {
+      const history = JSON.parse(localStorage.getItem('vagal_history') || '[]');
+      const latest = history[0];
+      if (latest) {
+        const norm = normalizeEntry(latest);
+        const a = norm?.pre_arousal ?? 0.5;
+        const v = norm?.pre_valence ?? 0.5;
+        const R = calculateRegulationCapacity(a, v);
+        const rScore = Math.round(R);
+        const lang = AppState?.lang || 'tr';
+        const stateLabel = getRegulationStateLabel(R, a, lang);
+        const stateColor = getRegulationColor(R);
+        const labelNow = lang === 'tr' ? 'Mevcut Durumun' : 'Your Current State';
+        const labelScore = lang === 'tr' ? 'R skoru' : 'R score';
+        const labelDesc = lang === 'tr'
+          ? 'Bu skor son check-in\'ine dayanmaktadır.'
+          : 'This score is based on your latest check-in.';
+
+        const bandDescriptions = {
+          tr: [
+            { max: 30, desc: 'Prefrontal otonom regülasyon güçlü — güvenlik ve sosyal bağlantı kapasitesi yüksek.' },
+            { max: 45, desc: 'Regülasyon kapasitesi iyi — sınıra yaklaşıyor ama hâlâ dengeli.' },
+            { max: 55, desc: 'Aktif stres tepkisi devrede — sistem mobilize, dikkat ve enerji tüketimi yüksek.' },
+            { max: 70, desc: 'Enerji korumaya kayış başlıyor — sistem yavaşlamaya çalışıyor.' },
+            { max: 101, desc: 'Koruyucu kapanma bölgesi — sistem enerji tasarrufu modunda.' }
+          ],
+          en: [
+            { max: 30, desc: 'Strong prefrontal autonomic regulation — high safety and social connection capacity.' },
+            { max: 45, desc: 'Good regulation capacity — approaching the boundary but still balanced.' },
+            { max: 55, desc: 'Active stress response engaged — system mobilized, high attention and energy use.' },
+            { max: 70, desc: 'Shifting toward energy conservation — system beginning to slow down.' },
+            { max: 101, desc: 'Protective shutdown zone — system in energy conservation mode.' }
+          ]
+        };
+        const bands = bandDescriptions[lang] || bandDescriptions['en'];
+        const bandDesc = (bands.find(b => rScore < b.max) || bands[bands.length - 1]).desc;
+
+        body = `${body}<div style="margin-top:1.2rem; padding:1rem; border-radius:12px; border:1px solid ${stateColor}30; background:${stateColor}10;">
+  <div style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">${labelNow}</div>
+  <div style="font-size:1rem; font-weight:700; color:${stateColor}; margin-bottom:0.25rem;">${stateLabel}</div>
+  <div style="font-size:0.7rem; color:rgba(255,255,255,0.35); margin-bottom:0.6rem;">${labelScore}: ${rScore} / 100</div>
+  <div style="font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5;">${bandDesc}</div>
+  <div style="font-size:0.65rem; color:rgba(255,255,255,0.25); margin-top:0.5rem;">${labelDesc}</div>
+</div>`;
+      }
+    } catch(_) {}
   }
 
   // 3. UI STATE MANAGEMENT: Reset & Visibility
