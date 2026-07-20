@@ -1086,3 +1086,173 @@
   display: none !important;
 }
 
+/* ─── Profile Edit Button ───────────────────────────────── */
+.profile-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+.profile-edit-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.profile-edit-btn.hidden { display: none !important; }
+
+/* ─── Profile Edit Bottom Sheet ─────────────────────────── */
+.profile-edit-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.profile-edit-backdrop.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.profile-edit-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(110%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 9001;
+  background: rgba(22, 22, 28, 0.96);
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: none;
+  border-radius: 24px 24px 0 0;
+  padding: 1rem 1.5rem 2.5rem;
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.profile-edit-sheet.active {
+  transform: translateX(-50%) translateY(0%);
+}
+
+.profile-edit-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
+  margin: 0 auto 0.2rem;
+}
+
+.profile-edit-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main, #fff);
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.profile-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.profile-edit-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.profile-edit-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+.profile-edit-input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.profile-edit-hint {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.profile-edit-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.profile-edit-cancel-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.profile-edit-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-edit-save-btn {
+  flex: 2;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: none;
+  background: var(--vagal-accent, #64E49F);
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.profile-edit-save-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.profile-edit-save-btn:active {
+  transform: scale(0.97);
+}
+.profile-edit-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.profile-edit-error {
+  font-size: 0.78rem;
+  color: #ff6b6b;
+  text-align: center;
+  margin: 0;
+}
+.profile-edit-error.hidden { display: none; }
+

@@ -449,6 +449,9 @@ export function initSettings(config) {
   if (settingsView) {
     settingsResetObserver.observe(settingsView, { attributes: true, attributeFilter: ['class'] });
   }
+
+  // Initialize profile edit bottom sheet
+  initProfileEdit();
 }
 
 export function updateSettingsView() {
@@ -554,6 +557,12 @@ export function updateSettingsView() {
   if (elements.cardLoginBtn) {
     elements.cardLoginBtn.classList.toggle('hidden', !isGuest);
   }
+  
+  // Show edit button only for authenticated (non-guest) users
+  const editProfileBtn = document.getElementById('editProfileBtn');
+  if (editProfileBtn) {
+    editProfileBtn.classList.toggle('hidden', isGuest);
+  }
 
   // Handle volume visibility on view load
   const volContainer = document.getElementById('volumeContainer');
@@ -561,6 +570,88 @@ export function updateSettingsView() {
     if (AppState.droneEnabled) volContainer.classList.remove('hidden');
     else volContainer.classList.add('hidden');
   }
+}
+
+function initProfileEdit() {
+  const editBtn = document.getElementById('editProfileBtn');
+  const sheet = document.getElementById('profileEditSheet');
+  const backdrop = document.getElementById('profileEditBackdrop');
+  const input = document.getElementById('profileNameInput');
+  const saveBtn = document.getElementById('profileEditSaveBtn');
+  const cancelBtn = document.getElementById('profileEditCancelBtn');
+  const errorEl = document.getElementById('profileEditError');
+
+  if (!editBtn || !sheet || !backdrop) return;
+  if (editBtn.dataset.profileEditInit) return;
+  editBtn.dataset.profileEditInit = '1';
+
+  const openSheet = () => {
+    const currentName = AppState.user?.displayName 
+      || localStorage.getItem('aura_guest_name') 
+      || '';
+    input.value = currentName;
+    errorEl.classList.add('hidden');
+    errorEl.textContent = '';
+    sheet.classList.add('active');
+    backdrop.classList.add('active');
+    setTimeout(() => input.focus(), 350);
+  };
+
+  const closeSheet = () => {
+    sheet.classList.remove('active');
+    backdrop.classList.remove('active');
+  };
+
+  editBtn.addEventListener('click', openSheet);
+  backdrop.addEventListener('click', closeSheet);
+  cancelBtn.addEventListener('click', closeSheet);
+
+  saveBtn.addEventListener('click', async () => {
+    const newName = input.value.trim();
+    if (!newName) {
+      errorEl.textContent = AppState.lang === 'tr' ? 'İsim boş olamaz.' : 'Name cannot be empty.';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = AppState.lang === 'tr' ? 'Kaydediliyor...' : 'Saving...';
+    errorEl.classList.add('hidden');
+
+    try {
+      const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
+
+      if (!isGuest && AppState.user) {
+        // Import updateProfile lazily using dynamic import from auth module
+        const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
+        const { auth } = await import('../../firebase.js');
+        await updateProfile(auth.currentUser, { displayName: newName });
+        if (AppState.user) AppState.user.displayName = newName;
+      } else {
+        localStorage.setItem('aura_guest_name', newName);
+      }
+
+      // Reflect immediately in the card
+      const nameEl = document.getElementById('user-display-name');
+      if (nameEl) nameEl.textContent = newName;
+
+      closeSheet();
+    } catch (err) {
+      console.error('Profile update error:', err);
+      errorEl.textContent = AppState.lang === 'tr' 
+        ? 'Bir hata oluştu. Tekrar dene.' 
+        : 'An error occurred. Please try again.';
+      errorEl.classList.remove('hidden');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = AppState.lang === 'tr' ? 'Kaydet' : 'Save';
+    }
+  });
+
+  // Also close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sheet.classList.contains('active')) closeSheet();
+  });
 }
 
 export function syncNavVisibility() {
