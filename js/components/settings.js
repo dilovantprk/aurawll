@@ -3,7 +3,8 @@ import { t } from '../core/i18n.js';
 import { AppState, safeSetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
 import { BADGES } from '../core/constants.js';
-import { calculateEarnedBadges, vibrate, normalizeEntry } from '../core/utils.js';
+import { calculateEarnedBadges, vibrate, normalizeEntry, getRegulationColor } from '../core/utils.js';
+import { calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { openCommunityModal, showConfirm } from './modals.js';
 import { openAuthSheet } from './auth.js';
 
@@ -474,17 +475,22 @@ export function updateSettingsView() {
     elements.uniqueDaysStats.textContent = t('prof_active_days').replace('{count}', uniqueDays);
   }
 
-  const latest = localHistory[localHistory.length - 1]; // Get most recent
+  const latest = localHistory[localHistory.length - 1];
   if (latest && elements.auraCoreSphere) {
     const normalized = normalizeEntry(latest);
-    const colors = { 
-      okay: '#7d917b', ventral: '#7d917b', coherence: '#7d917b',
-      wired: '#c48b71', sympathetic: '#c48b71', mobilization: '#c48b71',
-      foggy: '#6d7f94', dorsal: '#6d7f94', immobilization: '#6d7f94' 
-    };
-    const stateKey = normalized.regulation_state || normalized.state;
-    const color = colors[stateKey] || colors.okay;
+    const a = normalized?.pre_arousal ?? 0.5;
+    const v = normalized?.pre_valence ?? 0.5;
+    const R = calculateRegulationCapacity(a, v);
+    const color = getRegulationColor(R);
+
+    // Parse hex -> r,g,b for glow animations
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
     elements.auraCoreSphere.style.setProperty('--vagal-accent', color);
+    elements.auraCoreSphere.style.setProperty('--vagal-accent-rgb', `${r}, ${g}, ${b}`);
   }
 
   // Render Badges in Bio-Identity
