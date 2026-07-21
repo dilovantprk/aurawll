@@ -558,23 +558,16 @@ export function updateSettingsView() {
     elements.cardLoginBtn.classList.toggle('hidden', !isGuest);
   }
   
-  // Show edit button only for authenticated (non-guest) users
-  const editProfileBtn = document.getElementById('editProfileBtn');
-  if (editProfileBtn) {
-    editProfileBtn.classList.toggle('hidden', isGuest);
-  }
-  
   // Show/hide settings menu "Profil Düzenle" row for authenticated users
   const settingsProfileRow = document.getElementById('settingsProfileEditRow');
   if (settingsProfileRow) {
     settingsProfileRow.classList.toggle('hidden', isGuest);
-    if (!settingsProfileRow.dataset.clickInit) {
-      settingsProfileRow.dataset.clickInit = '1';
-      settingsProfileRow.addEventListener('click', () => {
-        const btn = document.getElementById('editProfileBtn');
-        if (btn) btn.click();
-      });
-    }
+  }
+
+  // Pre-fill profile name input in subpage
+  const profileNameInput = document.getElementById('profileNameInput');
+  if (profileNameInput) {
+    profileNameInput.value = AppState.user?.displayName || localStorage.getItem('aura_guest_name') || '';
   }
 
   // Handle volume visibility on view load
@@ -586,56 +579,33 @@ export function updateSettingsView() {
 }
 
 function initProfileEdit() {
-  const editBtn = document.getElementById('editProfileBtn');
-  const sheet = document.getElementById('profileEditSheet');
-  const backdrop = document.getElementById('profileEditBackdrop');
-  const input = document.getElementById('profileNameInput');
   const saveBtn = document.getElementById('profileEditSaveBtn');
-  const cancelBtn = document.getElementById('profileEditCancelBtn');
+  const input = document.getElementById('profileNameInput');
   const errorEl = document.getElementById('profileEditError');
+  const profileSubpage = document.getElementById('settings-subpage-profile');
 
-  if (!editBtn || !sheet || !backdrop) return;
-  if (editBtn.dataset.profileEditInit) return;
-  editBtn.dataset.profileEditInit = '1';
-
-  const openSheet = () => {
-    const currentName = AppState.user?.displayName 
-      || localStorage.getItem('aura_guest_name') 
-      || '';
-    input.value = currentName;
-    errorEl.classList.add('hidden');
-    errorEl.textContent = '';
-    sheet.classList.add('active');
-    backdrop.classList.add('active');
-    setTimeout(() => input.focus(), 350);
-  };
-
-  const closeSheet = () => {
-    sheet.classList.remove('active');
-    backdrop.classList.remove('active');
-  };
-
-  editBtn.addEventListener('click', openSheet);
-  backdrop.addEventListener('click', closeSheet);
-  cancelBtn.addEventListener('click', closeSheet);
+  if (!saveBtn || !input) return;
+  if (saveBtn.dataset.profileEditInit) return;
+  saveBtn.dataset.profileEditInit = '1';
 
   saveBtn.addEventListener('click', async () => {
     const newName = input.value.trim();
     if (!newName) {
-      errorEl.textContent = AppState.lang === 'tr' ? 'İsim boş olamaz.' : 'Name cannot be empty.';
-      errorEl.classList.remove('hidden');
+      if (errorEl) {
+        errorEl.textContent = AppState.lang === 'tr' ? 'İsim boş olamaz.' : 'Name cannot be empty.';
+        errorEl.classList.remove('hidden');
+      }
       return;
     }
 
     saveBtn.disabled = true;
     saveBtn.textContent = AppState.lang === 'tr' ? 'Kaydediliyor...' : 'Saving...';
-    errorEl.classList.add('hidden');
+    if (errorEl) errorEl.classList.add('hidden');
 
     try {
       const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
 
       if (!isGuest && AppState.user) {
-        // Import updateProfile lazily using dynamic import from auth module
         const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
         const { auth } = await import('../../firebase.js');
         await updateProfile(auth.currentUser, { displayName: newName });
@@ -648,22 +618,21 @@ function initProfileEdit() {
       const nameEl = document.getElementById('user-display-name');
       if (nameEl) nameEl.textContent = newName;
 
-      closeSheet();
+      // Click back button in subpage to return to main settings menu
+      const backBtn = profileSubpage?.querySelector('.settings-back-btn');
+      if (backBtn) backBtn.click();
     } catch (err) {
       console.error('Profile update error:', err);
-      errorEl.textContent = AppState.lang === 'tr' 
-        ? 'Bir hata oluştu. Tekrar dene.' 
-        : 'An error occurred. Please try again.';
-      errorEl.classList.remove('hidden');
+      if (errorEl) {
+        errorEl.textContent = AppState.lang === 'tr' 
+          ? 'Bir hata oluştu. Tekrar dene.' 
+          : 'An error occurred. Please try again.';
+        errorEl.classList.remove('hidden');
+      }
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = AppState.lang === 'tr' ? 'Kaydet' : 'Save';
     }
-  });
-
-  // Also close on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && sheet.classList.contains('active')) closeSheet();
   });
 }
 
