@@ -15,9 +15,8 @@ let configProps = {};
 
 function setBtnSpanText(btn, text) {
   if (!btn) return;
-  const span = btn.querySelector('span');
-  if (span) span.textContent = text;
-  else btn.textContent = text;
+  btn.setAttribute('title', text);
+  btn.setAttribute('aria-label', text);
 }
 
 export function initSettings(config) {
@@ -566,15 +565,20 @@ export function updateSettingsView() {
   }
   
   // Populate Profile & Account subpage fields
+  const currentName = AppState.user?.displayName || localStorage.getItem('aura_guest_name') || 'Misafir';
+  const currentEmail = AppState.user?.email || (isGuest ? 'Misafir Session' : '-');
+
+  const profileNameValueSpan = document.getElementById('profileNameValue');
+  if (profileNameValueSpan) profileNameValueSpan.textContent = currentName;
+
+  const profileEmailValueSpan = document.getElementById('profileEmailValue');
+  if (profileEmailValueSpan) profileEmailValueSpan.textContent = currentEmail;
+
   const profileNameInput = document.getElementById('profileNameInput');
-  if (profileNameInput) {
-    profileNameInput.value = AppState.user?.displayName || localStorage.getItem('aura_guest_name') || '';
-  }
+  if (profileNameInput) profileNameInput.value = currentName === 'Misafir' ? '' : currentName;
 
   const profileEmailInput = document.getElementById('profileEmailInput');
-  if (profileEmailInput) {
-    profileEmailInput.value = AppState.user?.email || '';
-  }
+  if (profileEmailInput) profileEmailInput.value = AppState.user?.email || '';
 
   const providerBadge = document.getElementById('profileProviderBadge');
   if (providerBadge) {
@@ -646,6 +650,56 @@ function initProfileEdit() {
 
   const connectAccountBtn = document.getElementById('profileConnectAccountBtn');
 
+  // Toggle Pencil Edit Mode for Name
+  const editNameToggleBtn = document.getElementById('profileEditNameToggleBtn');
+  const cancelNameBtn = document.getElementById('profileCancelNameBtn');
+  const nameDisplayGroup = document.getElementById('profileNameDisplayGroup');
+  const nameEditGroup = document.getElementById('profileNameEditGroup');
+  const profileNameValue = document.getElementById('profileNameValue');
+
+  if (editNameToggleBtn && !editNameToggleBtn.dataset.init) {
+    editNameToggleBtn.dataset.init = '1';
+    editNameToggleBtn.addEventListener('click', () => {
+      if (nameDisplayGroup) nameDisplayGroup.classList.add('hidden');
+      if (nameEditGroup) nameEditGroup.classList.remove('hidden');
+      if (nameInput) nameInput.focus();
+    });
+  }
+
+  if (cancelNameBtn && !cancelNameBtn.dataset.init) {
+    cancelNameBtn.dataset.init = '1';
+    cancelNameBtn.addEventListener('click', () => {
+      if (nameEditGroup) nameEditGroup.classList.add('hidden');
+      if (nameDisplayGroup) nameDisplayGroup.classList.remove('hidden');
+      if (nameStatus) nameStatus.classList.add('hidden');
+    });
+  }
+
+  // Toggle Pencil Edit Mode for Email
+  const editEmailToggleBtn = document.getElementById('profileEditEmailToggleBtn');
+  const cancelEmailBtn = document.getElementById('profileCancelEmailBtn');
+  const emailDisplayGroup = document.getElementById('profileEmailDisplayGroup');
+  const emailEditGroup = document.getElementById('profileEmailEditGroup');
+  const profileEmailValue = document.getElementById('profileEmailValue');
+
+  if (editEmailToggleBtn && !editEmailToggleBtn.dataset.init) {
+    editEmailToggleBtn.dataset.init = '1';
+    editEmailToggleBtn.addEventListener('click', () => {
+      if (emailDisplayGroup) emailDisplayGroup.classList.add('hidden');
+      if (emailEditGroup) emailEditGroup.classList.remove('hidden');
+      if (emailInput) emailInput.focus();
+    });
+  }
+
+  if (cancelEmailBtn && !cancelEmailBtn.dataset.init) {
+    cancelEmailBtn.dataset.init = '1';
+    cancelEmailBtn.addEventListener('click', () => {
+      if (emailEditGroup) emailEditGroup.classList.add('hidden');
+      if (emailDisplayGroup) emailDisplayGroup.classList.remove('hidden');
+      if (emailStatus) emailStatus.classList.add('hidden');
+    });
+  }
+
   // 1. Save Display Name
   if (saveNameBtn && nameInput && !saveNameBtn.dataset.init) {
     saveNameBtn.dataset.init = '1';
@@ -678,6 +732,10 @@ function initProfileEdit() {
 
         const nameEl = document.getElementById('user-display-name');
         if (nameEl) nameEl.textContent = newName;
+
+        if (profileNameValue) profileNameValue.textContent = newName;
+        if (nameEditGroup) nameEditGroup.classList.add('hidden');
+        if (nameDisplayGroup) nameDisplayGroup.classList.remove('hidden');
 
         if (nameStatus) {
           nameStatus.textContent = AppState.lang === 'tr' ? 'İsim başarıyla güncellendi.' : 'Name updated successfully.';
