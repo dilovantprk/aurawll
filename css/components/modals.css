@@ -1112,5 +1112,40 @@ textarea.quick-journal-textarea-v2::placeholder {
   transform: translateY(-1px);
 }
 
+/* Ultra-Compact Alert / Confirm Dialog override */
+.alert-modal-card {
+  max-width: 300px !important;
+  padding: 1.4rem 1.25rem !important;
+  gap: 0.75rem !important;
+  border-radius: 22px !important;
+}
+
+.alert-modal-card .notif-icon {
+  margin-bottom: 0 !important;
+  display: flex;
+  justify-content: center;
+}
+
+.alert-modal-card .notif-icon svg {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.alert-modal-card h3 {
+  font-size: 1.15rem !important;
+  font-weight: 500 !important;
+}
+
+.alert-modal-card p {
+  font-size: 0.85rem !important;
+  opacity: 0.75 !important;
+  line-height: 1.4 !important;
+}
+
+.alert-modal-card .alert-actions {
+  margin-top: 0.5rem !important;
+  gap: 1rem !important;
+}
+
 
 

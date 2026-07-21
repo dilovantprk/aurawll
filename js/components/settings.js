@@ -595,11 +595,19 @@ export function updateSettingsView() {
     if (googleData) {
       googleStatus.textContent = `${t('profile_linked')}: ${googleData.email || googleData.displayName || ''}`;
       googleStatus.style.color = '#64E49F';
-      setBtnSpanText(googleBtn, t('profile_unlink_btn'));
+      googleBtn.setAttribute('title', AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink');
+      googleBtn.setAttribute('aria-label', AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink');
+      googleBtn.style.color = '#ff6b6b';
+      googleBtn.style.borderColor = 'rgba(255, 107, 107, 0.3)';
+      googleBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
     } else {
       googleStatus.textContent = t('profile_not_linked');
       googleStatus.style.color = 'rgba(255, 255, 255, 0.4)';
-      setBtnSpanText(googleBtn, t('profile_link_btn'));
+      googleBtn.setAttribute('title', AppState.lang === 'tr' ? 'Bağla' : 'Link');
+      googleBtn.setAttribute('aria-label', AppState.lang === 'tr' ? 'Bağla' : 'Link');
+      googleBtn.style.color = 'rgba(255, 255, 255, 0.85)';
+      googleBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      googleBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
     }
   }
 
@@ -611,11 +619,19 @@ export function updateSettingsView() {
     if (xData) {
       xStatus.textContent = `${t('profile_linked')}: ${xData.displayName || xData.email || ''}`;
       xStatus.style.color = '#64E49F';
-      setBtnSpanText(xBtn, t('profile_unlink_btn'));
+      xBtn.setAttribute('title', AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink');
+      xBtn.setAttribute('aria-label', AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink');
+      xBtn.style.color = '#ff6b6b';
+      xBtn.style.borderColor = 'rgba(255, 107, 107, 0.3)';
+      xBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
     } else {
       xStatus.textContent = t('profile_not_linked');
       xStatus.style.color = 'rgba(255, 255, 255, 0.4)';
-      setBtnSpanText(xBtn, t('profile_link_btn'));
+      xBtn.setAttribute('title', AppState.lang === 'tr' ? 'Bağla' : 'Link');
+      xBtn.setAttribute('aria-label', AppState.lang === 'tr' ? 'Bağla' : 'Link');
+      xBtn.style.color = 'rgba(255, 255, 255, 0.85)';
+      xBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      xBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
     }
   }
 
