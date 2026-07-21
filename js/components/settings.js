@@ -558,12 +558,6 @@ export function updateSettingsView() {
     elements.cardLoginBtn.classList.toggle('hidden', !isGuest);
   }
   
-  // Show/hide settings menu "Profil Düzenle" row for authenticated users
-  const settingsProfileRow = document.getElementById('settingsProfileEditRow');
-  if (settingsProfileRow) {
-    settingsProfileRow.classList.toggle('hidden', isGuest);
-  }
-
   // Populate Profile & Account subpage fields
   const profileNameInput = document.getElementById('profileNameInput');
   if (profileNameInput) {
@@ -584,17 +578,7 @@ export function updateSettingsView() {
     else providerBadge.textContent = 'EMAIL';
   }
 
-  const emailRow = document.getElementById('profileEmailRow');
-  const connectedRow = document.getElementById('profileConnectedAccountsRow');
-  const passwordRow = document.getElementById('profilePasswordRow');
   const guestNoticeRow = document.getElementById('profileGuestNoticeRow');
-
-  if (emailRow) emailRow.classList.toggle('hidden', isGuest);
-  if (connectedRow) connectedRow.classList.toggle('hidden', isGuest);
-  if (passwordRow) {
-    const isPasswordProvider = AppState.user?.providerData?.some(p => p.providerId === 'password');
-    passwordRow.classList.toggle('hidden', isGuest || !isPasswordProvider);
-  }
   if (guestNoticeRow) guestNoticeRow.classList.toggle('hidden', !isGuest);
 
   // Update Connected Accounts (Google & X) Statuses
