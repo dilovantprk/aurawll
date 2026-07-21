@@ -584,6 +584,13 @@ export function updateSettingsView() {
   const profileDeleteRow = document.getElementById('profileDeleteAccountRow');
   if (profileDeleteRow) profileDeleteRow.classList.toggle('hidden', isGuest);
 
+function setBtnSpanText(btn, text) {
+  if (!btn) return;
+  const span = btn.querySelector('span');
+  if (span) span.textContent = text;
+  else btn.textContent = text;
+}
+
   // Update Connected Accounts (Google & X) Statuses
   const googleStatus = document.getElementById('googleAccountStatus');
   const googleBtn = document.getElementById('profileLinkGoogleBtn');
@@ -593,11 +600,11 @@ export function updateSettingsView() {
     if (googleData) {
       googleStatus.textContent = `${t('profile_linked')}: ${googleData.email || googleData.displayName || ''}`;
       googleStatus.style.color = '#64E49F';
-      googleBtn.textContent = t('profile_unlink_btn');
+      setBtnSpanText(googleBtn, t('profile_unlink_btn'));
     } else {
       googleStatus.textContent = t('profile_not_linked');
       googleStatus.style.color = 'rgba(255, 255, 255, 0.4)';
-      googleBtn.textContent = t('profile_link_btn');
+      setBtnSpanText(googleBtn, t('profile_link_btn'));
     }
   }
 
@@ -609,11 +616,11 @@ export function updateSettingsView() {
     if (xData) {
       xStatus.textContent = `${t('profile_linked')}: ${xData.displayName || xData.email || ''}`;
       xStatus.style.color = '#64E49F';
-      xBtn.textContent = t('profile_unlink_btn');
+      setBtnSpanText(xBtn, t('profile_unlink_btn'));
     } else {
       xStatus.textContent = t('profile_not_linked');
       xStatus.style.color = 'rgba(255, 255, 255, 0.4)';
-      xBtn.textContent = t('profile_link_btn');
+      setBtnSpanText(xBtn, t('profile_link_btn'));
     }
   }
 
@@ -649,12 +656,8 @@ function initProfileEdit() {
           nameStatus.textContent = AppState.lang === 'tr' ? 'İsim boş olamaz.' : 'Name cannot be empty.';
           nameStatus.style.color = '#ff6b6b';
           nameStatus.classList.remove('hidden');
-        }
-        return;
-      }
-
-      saveNameBtn.disabled = true;
-      saveNameBtn.textContent = AppState.lang === 'tr' ? 'Kaydediliyor...' : 'Saving...';
+         saveNameBtn.disabled = true;
+      setBtnSpanText(saveNameBtn, AppState.lang === 'tr' ? 'Kaydediliyor...' : 'Saving...');
       if (nameStatus) nameStatus.classList.add('hidden');
 
       try {
@@ -687,7 +690,7 @@ function initProfileEdit() {
         }
       } finally {
         saveNameBtn.disabled = false;
-        saveNameBtn.textContent = AppState.lang === 'tr' ? 'Kaydet' : 'Save';
+        setBtnSpanText(saveNameBtn, AppState.lang === 'tr' ? 'Kaydet' : 'Save');
       }
     });
   }
@@ -707,7 +710,7 @@ function initProfileEdit() {
       }
 
       saveEmailBtn.disabled = true;
-      saveEmailBtn.textContent = AppState.lang === 'tr' ? 'Güncelleniyor...' : 'Updating...';
+      setBtnSpanText(saveEmailBtn, AppState.lang === 'tr' ? 'Güncelleniyor...' : 'Updating...');
       if (emailStatus) emailStatus.classList.add('hidden');
 
       try {
@@ -748,7 +751,7 @@ function initProfileEdit() {
         }
       } finally {
         saveEmailBtn.disabled = false;
-        saveEmailBtn.textContent = AppState.lang === 'tr' ? 'Güncelle' : 'Update';
+        setBtnSpanText(saveEmailBtn, AppState.lang === 'tr' ? 'Güncelle' : 'Update');
       }
     });
   }
@@ -761,7 +764,7 @@ function initProfileEdit() {
       if (!email) return;
 
       resetPasswordBtn.disabled = true;
-      resetPasswordBtn.textContent = AppState.lang === 'tr' ? 'Gönderiliyor...' : 'Sending...';
+      setBtnSpanText(resetPasswordBtn, AppState.lang === 'tr' ? 'Gönderiliyor...' : 'Sending...');
       if (passwordStatus) passwordStatus.classList.add('hidden');
 
       try {
@@ -786,7 +789,7 @@ function initProfileEdit() {
         }
       } finally {
         resetPasswordBtn.disabled = false;
-        resetPasswordBtn.textContent = AppState.lang === 'tr' ? 'E-posta Gönder' : 'Send Email';
+        setBtnSpanText(resetPasswordBtn, AppState.lang === 'tr' ? 'E-posta Gönder' : 'Send Email');
       }
     });
   }
