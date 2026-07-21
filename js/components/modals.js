@@ -961,18 +961,61 @@ export function hideInfoModal() {
  * Custom confirm modal (Promise-based) to replace browser's native confirm() dialog.
  * Uses the same HTML layout and styles as the notification permission card.
  */
-export function showConfirm({ title, message, confirmText, cancelText, isAlert = false }) {
+export function showConfirm({ title, message, confirmText, cancelText, isAlert = false, type = 'warning', customIconSvg = null, iconColor = null }) {
   return new Promise((resolve) => {
     const modal = document.getElementById('alertModal');
     const titleEl = document.getElementById('alertTitle');
     const descEl = document.getElementById('alertDesc');
     const confirmBtn = document.getElementById('alertConfirmBtn');
     const cancelBtn = document.getElementById('alertCancelBtn');
+    const iconContainer = modal?.querySelector('.notif-icon');
+    const iconSvg = document.getElementById('alertIconSvg');
 
     if (!modal) {
       resolve(false);
       return;
     }
+
+    // Set contextual icon and color
+    let svgContent = '';
+    let color = '#F59E0B';
+
+    if (customIconSvg) {
+      svgContent = customIconSvg;
+      if (iconColor) color = iconColor;
+    } else {
+      switch (type) {
+        case 'download':
+          color = '#858DFF';
+          svgContent = `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line>`;
+          break;
+        case 'email':
+        case 'security':
+          color = '#64E49F';
+          svgContent = `<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>`;
+          break;
+        case 'logout':
+          color = 'rgba(255, 255, 255, 0.85)';
+          svgContent = `<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>`;
+          break;
+        case 'danger':
+          color = '#FF6B6B';
+          svgContent = `<path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>`;
+          break;
+        case 'warning':
+          color = '#F59E0B';
+          svgContent = `<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>`;
+          break;
+        case 'info':
+        default:
+          color = '#858DFF';
+          svgContent = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>`;
+          break;
+      }
+    }
+
+    if (iconContainer) iconContainer.style.color = color;
+    if (iconSvg) iconSvg.innerHTML = svgContent;
 
     // Set texts
     if (titleEl) titleEl.textContent = title || 'Uyarı';

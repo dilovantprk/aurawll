@@ -215,7 +215,8 @@ export function initSettings(config) {
       title: AppState.lang === 'tr' ? 'Veri İndirme' : 'Export Data',
       message: AppState.lang === 'tr' ? 'Tüm nöro-geçmiş verileriniz JSON dosyası olarak indirilsin mi?' : 'Export all your neural history data as JSON?',
       confirmText: AppState.lang === 'tr' ? 'İndir' : 'Export',
-      cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+      cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel',
+      type: 'download'
     });
     if (!ok) return;
     const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
@@ -227,7 +228,8 @@ export function initSettings(config) {
       title: AppState.lang === 'tr' ? 'Rapor İndirme' : 'Export Report',
       message: AppState.lang === 'tr' ? 'İyi oluş özet raporunuz TXT dosyası olarak indirilsin mi?' : 'Export your wellness summary report as TXT?',
       confirmText: AppState.lang === 'tr' ? 'İndir' : 'Export',
-      cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+      cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel',
+      type: 'download'
     });
     if (!ok) return;
     const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
@@ -257,7 +259,8 @@ export function initSettings(config) {
       title: t('warn_title') || 'Uyarı',
       message: t('prof_reset_confirm') || 'Emin misiniz?',
       confirmText: t('btn_yes') || 'Evet',
-      cancelText: t('btn_cancel') || 'Vazgeçtim'
+      cancelText: t('btn_cancel') || 'Vazgeçtim',
+      type: 'warning'
     });
     if (ok) {
       if (configProps.eraseAllData) {
@@ -274,10 +277,11 @@ export function initSettings(config) {
   elements.logoutBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
     const ok = await showConfirm({
-      title: t('warn_title') || 'Uyarı',
+      title: AppState.lang === 'tr' ? 'Çıkış Yap' : 'Logout',
       message: t('logout_confirm') || 'Çıkış yapmak istediğinizden emin misiniz?',
       confirmText: t('btn_logout') || 'Çıkış Yap',
-      cancelText: t('btn_cancel') || 'Vazgeçtim'
+      cancelText: t('btn_cancel') || 'Vazgeçtim',
+      type: 'logout'
     });
     if (ok) {
       if (configProps.logout) configProps.logout();
@@ -292,7 +296,8 @@ export function initSettings(config) {
       title: t('warn_title') || 'Uyarı',
       message: t('prof_delete_account_confirm') || 'Hesabınız ve tüm verileriniz kalıcı olarak silinecek. Emin misiniz?',
       confirmText: t('btn_yes') || 'Evet',
-      cancelText: t('btn_cancel') || 'Vazgeçtim'
+      cancelText: t('btn_cancel') || 'Vazgeçtim',
+      type: 'danger'
     });
     if (ok) {
       try {
@@ -856,7 +861,8 @@ function initProfileEdit() {
         title: AppState.lang === 'tr' ? 'Şifre Sıfırlama' : 'Password Reset',
         message: AppState.lang === 'tr' ? 'E-posta adresinize şifre sıfırlama bağlantısı gönderilsin mi?' : 'Send password reset link to your email?',
         confirmText: AppState.lang === 'tr' ? 'Gönder' : 'Send',
-        cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+        cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel',
+        type: 'email'
       });
       if (!ok) return;
 
@@ -922,7 +928,8 @@ function initProfileEdit() {
             title: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink Account',
             message: AppState.lang === 'tr' ? 'Google hesabınızın bağlantısını kesmek istediğinizden emin misiniz?' : 'Are you sure you want to unlink your Google account?',
             confirmText: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink',
-            cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+            cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel',
+            type: 'warning'
           });
           if (!ok) return;
 
@@ -988,7 +995,8 @@ function initProfileEdit() {
             title: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink Account',
             message: AppState.lang === 'tr' ? 'X (Twitter) hesabınızın bağlantısını kesmek istediğinizden emin misiniz?' : 'Are you sure you want to unlink your X (Twitter) account?',
             confirmText: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink',
-            cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+            cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel',
+            type: 'warning'
           });
           if (!ok) return;
 
