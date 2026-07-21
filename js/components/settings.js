@@ -210,12 +210,26 @@ export function initSettings(config) {
     document.body.removeChild(a); URL.revokeObjectURL(url);
   };
 
-  const triggerExportJson = () => {
+  const triggerExportJson = async () => {
+    const ok = await showConfirm({
+      title: AppState.lang === 'tr' ? 'Veri İndirme' : 'Export Data',
+      message: AppState.lang === 'tr' ? 'Tüm nöro-geçmiş verileriniz JSON dosyası olarak indirilsin mi?' : 'Export all your neural history data as JSON?',
+      confirmText: AppState.lang === 'tr' ? 'İndir' : 'Export',
+      cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+    });
+    if (!ok) return;
     const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
     downloadFile('aura-wellness-data.json', JSON.stringify(data, null, 2), 'application/json');
   };
 
-  const triggerExportTxt = () => {
+  const triggerExportTxt = async () => {
+    const ok = await showConfirm({
+      title: AppState.lang === 'tr' ? 'Rapor İndirme' : 'Export Report',
+      message: AppState.lang === 'tr' ? 'İyi oluş özet raporunuz TXT dosyası olarak indirilsin mi?' : 'Export your wellness summary report as TXT?',
+      confirmText: AppState.lang === 'tr' ? 'İndir' : 'Export',
+      cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+    });
+    if (!ok) return;
     const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
     let txt = "Aura Wellness Report\n====================\n\n";
     data.forEach(item => {
@@ -838,6 +852,14 @@ function initProfileEdit() {
       const email = AppState.user?.email || emailInput?.value?.trim();
       if (!email) return;
 
+      const ok = await showConfirm({
+        title: AppState.lang === 'tr' ? 'Şifre Sıfırlama' : 'Password Reset',
+        message: AppState.lang === 'tr' ? 'E-posta adresinize şifre sıfırlama bağlantısı gönderilsin mi?' : 'Send password reset link to your email?',
+        confirmText: AppState.lang === 'tr' ? 'Gönder' : 'Send',
+        cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+      });
+      if (!ok) return;
+
       resetPasswordBtn.disabled = true;
       setBtnSpanText(resetPasswordBtn, AppState.lang === 'tr' ? 'Gönderiliyor...' : 'Sending...');
       if (passwordStatus) passwordStatus.classList.add('hidden');
@@ -885,8 +907,6 @@ function initProfileEdit() {
     googleLinkBtn.dataset.init = '1';
     googleLinkBtn.addEventListener('click', async () => {
       if (!AppState.user) return;
-      googleLinkBtn.disabled = true;
-      if (connectedStatus) connectedStatus.classList.add('hidden');
 
       try {
         const { linkWithPopup, unlink, GoogleAuthProvider } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
@@ -898,6 +918,17 @@ function initProfileEdit() {
           if (AppState.user.providerData.length <= 1) {
             throw new Error('ONLY_PROVIDER');
           }
+          const ok = await showConfirm({
+            title: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink Account',
+            message: AppState.lang === 'tr' ? 'Google hesabınızın bağlantısını kesmek istediğinizden emin misiniz?' : 'Are you sure you want to unlink your Google account?',
+            confirmText: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink',
+            cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+          });
+          if (!ok) return;
+
+          googleLinkBtn.disabled = true;
+          if (connectedStatus) connectedStatus.classList.add('hidden');
+
           await unlink(auth.currentUser, 'google.com');
           if (connectedStatus) {
             connectedStatus.textContent = AppState.lang === 'tr' ? 'Google hesabı kaldırıldı.' : 'Google account unlinked.';
@@ -905,6 +936,9 @@ function initProfileEdit() {
             connectedStatus.classList.remove('hidden');
           }
         } else {
+          googleLinkBtn.disabled = true;
+          if (connectedStatus) connectedStatus.classList.add('hidden');
+
           const provider = new GoogleAuthProvider();
           await linkWithPopup(auth.currentUser, provider);
           if (connectedStatus) {
@@ -939,8 +973,6 @@ function initProfileEdit() {
     xLinkBtn.dataset.init = '1';
     xLinkBtn.addEventListener('click', async () => {
       if (!AppState.user) return;
-      xLinkBtn.disabled = true;
-      if (connectedStatus) connectedStatus.classList.add('hidden');
 
       try {
         const { linkWithPopup, unlink, TwitterAuthProvider } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
@@ -952,6 +984,17 @@ function initProfileEdit() {
           if (AppState.user.providerData.length <= 1) {
             throw new Error('ONLY_PROVIDER');
           }
+          const ok = await showConfirm({
+            title: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink Account',
+            message: AppState.lang === 'tr' ? 'X (Twitter) hesabınızın bağlantısını kesmek istediğinizden emin misiniz?' : 'Are you sure you want to unlink your X (Twitter) account?',
+            confirmText: AppState.lang === 'tr' ? 'Bağlantıyı Kes' : 'Unlink',
+            cancelText: AppState.lang === 'tr' ? 'Vazgeç' : 'Cancel'
+          });
+          if (!ok) return;
+
+          xLinkBtn.disabled = true;
+          if (connectedStatus) connectedStatus.classList.add('hidden');
+
           await unlink(auth.currentUser, 'twitter.com');
           if (connectedStatus) {
             connectedStatus.textContent = AppState.lang === 'tr' ? 'X hesabı kaldırıldı.' : 'X account unlinked.';
