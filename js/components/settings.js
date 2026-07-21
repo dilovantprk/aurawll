@@ -580,15 +580,6 @@ export function updateSettingsView() {
   const profileEmailInput = document.getElementById('profileEmailInput');
   if (profileEmailInput) profileEmailInput.value = AppState.user?.email || '';
 
-  const providerBadge = document.getElementById('profileProviderBadge');
-  if (providerBadge) {
-    const providerId = AppState.user?.providerData?.[0]?.providerId || 'password';
-    if (providerId.includes('google')) providerBadge.textContent = 'GOOGLE';
-    else if (providerId.includes('twitter')) providerBadge.textContent = 'TWITTER';
-    else if (isGuest) providerBadge.textContent = 'GUEST';
-    else providerBadge.textContent = 'EMAIL';
-  }
-
   const guestNoticeRow = document.getElementById('profileGuestNoticeRow');
   if (guestNoticeRow) guestNoticeRow.classList.toggle('hidden', !isGuest);
 
