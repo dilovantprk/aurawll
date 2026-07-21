@@ -1,17 +1,34 @@
 import { elements } from '../core/dom.js';
 import { AppState } from '../core/state.js';
-import { getMessaging, getToken } from '../../firebase.js';
+
+let schedulerInterval = null;
 
 export const NotificationService = {
+  swReg: null,
+
   async init() {
     if (!('Notification' in window)) return;
     
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      try {
+        this.swReg = await navigator.serviceWorker.register('/sw.js');
+      } catch (err) {
+        console.warn('[Aura] ServiceWorker registration failed:', err);
+      }
+    }
+
     // Bind Modal Buttons
     if (elements.notifAcceptBtn) {
       elements.notifAcceptBtn.onclick = () => this.requestPermission();
     }
     if (elements.notifDenyBtn) {
       elements.notifDenyBtn.onclick = () => this.hideModal();
+    }
+
+    // Start Daily Nudges Scheduler if enabled
+    if (localStorage.getItem('aura_notif') === 'true') {
+      this.startScheduler();
     }
   },
 
@@ -28,6 +45,7 @@ export const NotificationService = {
     if (elements.nudgeTimeContainer) {
       elements.nudgeTimeContainer.classList.add('hidden');
     }
+    this.stopScheduler();
   },
 
   async requestPermission() {
@@ -35,11 +53,21 @@ export const NotificationService = {
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        // console.log('[Aura] Notification permission granted.');
-        await this.registerToken();
+        localStorage.setItem('aura_notif', 'true');
+        if (elements.notifToggleCheckbox) {
+          elements.notifToggleCheckbox.checked = true;
+        }
+        if (elements.nudgeTimeContainer) {
+          elements.nudgeTimeContainer.classList.remove('hidden');
+        }
+        this.startScheduler();
+
+        // Send confirmation test notification
+        setTimeout(() => {
+          this.sendTestNotification();
+        }, 500);
         return true;
       } else {
-        // Permission denied/default -> Turn off checkbox and hide time picker
         if (elements.notifToggleCheckbox) {
           elements.notifToggleCheckbox.checked = false;
         }
@@ -47,6 +75,7 @@ export const NotificationService = {
         if (elements.nudgeTimeContainer) {
           elements.nudgeTimeContainer.classList.add('hidden');
         }
+        this.stopScheduler();
       }
     } catch (err) {
       console.error('[Aura] Error requesting permission', err);
@@ -54,25 +83,94 @@ export const NotificationService = {
     return false;
   },
 
-  async registerToken() {
-    try {
-      const messaging = getMessaging();
-      const currentToken = await getToken(messaging, {
-        vapidKey: 'BMYtY_V4GfU-J6v2S2VqP8G0Y6H9S6H9S6H9S6H9S6H9S6H9' // Placeholder, usually from config
-      });
+  async sendNotification(title, body = '', options = {}) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') {
+      return false;
+    }
 
-      if (currentToken) {
-        // console.log('[Aura] FCM Token obtained:', currentToken);
-        localStorage.setItem('aura_fcm_token', currentToken);
-        
-        // If user is logged in, sync to Firestore
-        if (AppState.user && AppState.user.uid) {
-          // This would typically go to a 'users' collection
-          // console.log('[Aura] Syncing token to user profile:', AppState.user.uid);
-        }
+    const notifOptions = {
+      body: body || '',
+      icon: '/icon.svg',
+      badge: '/icon.svg',
+      vibrate: [100, 50, 100],
+      data: { url: '/', ...options.data },
+      ...options
+    };
+
+    try {
+      if (this.swReg && this.swReg.showNotification) {
+        await this.swReg.showNotification(title, notifOptions);
+        return true;
+      } else if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+        const reg = await navigator.serviceWorker.ready;
+        await reg.showNotification(title, notifOptions);
+        return true;
+      } else {
+        new Notification(title, notifOptions);
+        return true;
       }
     } catch (err) {
-      console.warn('[Aura] Failed to get FCM token', err);
+      console.error('[Aura] Error sending notification:', err);
+      try {
+        new Notification(title, notifOptions);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+  },
+
+  sendTestNotification() {
+    const title = AppState.lang === 'tr' ? 'Aura • Bildirimler Aktif' : 'Aura • Notifications Active';
+    const body = AppState.lang === 'tr'
+      ? 'Günlük iyi oluş hatırlatıcılarınız ve duyusal uyarılar aktif edildi.'
+      : 'Your daily wellness reminders and sensory prompts are now active.';
+    this.sendNotification(title, body);
+  },
+
+  startScheduler() {
+    this.stopScheduler();
+    
+    // Check every 30 seconds
+    schedulerInterval = setInterval(() => {
+      this.checkAndTriggerNudge();
+    }, 30000);
+    
+    // Initial immediate check
+    this.checkAndTriggerNudge();
+  },
+
+  stopScheduler() {
+    if (schedulerInterval) {
+      clearInterval(schedulerInterval);
+      schedulerInterval = null;
+    }
+  },
+
+  checkAndTriggerNudge() {
+    const isEnabled = localStorage.getItem('aura_notif') === 'true';
+    if (!isEnabled || !('Notification' in window) || Notification.permission !== 'granted') {
+      return;
+    }
+
+    const targetTime = localStorage.getItem('aura_notif_time') || '21:00';
+    const now = new Date();
+    const currentHours = now.getHours().toString().padStart(2, '0');
+    const currentMinutes = now.getMinutes().toString().padStart(2, '0');
+    const currentTimeStr = `${currentHours}:${currentMinutes}`;
+    const todayStr = now.toDateString();
+
+    const lastTriggeredDate = localStorage.getItem('aura_last_nudge_date');
+
+    if (currentTimeStr === targetTime && lastTriggeredDate !== todayStr) {
+      localStorage.setItem('aura_last_nudge_date', todayStr);
+      
+      const title = AppState.lang === 'tr' ? 'Aura • Günlük Check-in' : 'Aura • Daily Check-in';
+      const body = AppState.lang === 'tr'
+        ? 'Bugünkü sinir sistemi durumunuzu kaydetme zamanı geldi. Bedeninizi dinlemeye hazır mısınız?'
+        : 'Time for your daily nervous system check-in. Ready to listen to your body?';
+
+      this.sendNotification(title, body, { tag: 'daily-nudge' });
     }
   }
 };
