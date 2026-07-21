@@ -656,7 +656,11 @@ function initProfileEdit() {
           nameStatus.textContent = AppState.lang === 'tr' ? 'İsim boş olamaz.' : 'Name cannot be empty.';
           nameStatus.style.color = '#ff6b6b';
           nameStatus.classList.remove('hidden');
-         saveNameBtn.disabled = true;
+        }
+        return;
+      }
+
+      saveNameBtn.disabled = true;
       setBtnSpanText(saveNameBtn, AppState.lang === 'tr' ? 'Kaydediliyor...' : 'Saving...');
       if (nameStatus) nameStatus.classList.add('hidden');
 
