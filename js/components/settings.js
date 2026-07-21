@@ -581,6 +581,9 @@ export function updateSettingsView() {
   const guestNoticeRow = document.getElementById('profileGuestNoticeRow');
   if (guestNoticeRow) guestNoticeRow.classList.toggle('hidden', !isGuest);
 
+  const profileDeleteRow = document.getElementById('profileDeleteAccountRow');
+  if (profileDeleteRow) profileDeleteRow.classList.toggle('hidden', isGuest);
+
   // Update Connected Accounts (Google & X) Statuses
   const googleStatus = document.getElementById('googleAccountStatus');
   const googleBtn = document.getElementById('profileLinkGoogleBtn');
@@ -894,15 +897,20 @@ function initProfileEdit() {
             connectedStatus.textContent = AppState.lang === 'tr'
               ? 'Tek giriş yönteminiz bu hesap.'
               : 'Cannot unlink your only sign-in method.';
-          } else {
-            connectedStatus.textContent = AppState.lang === 'tr' ? 'İşlem başarısız.' : 'Operation failed.';
-          }
-          connectedStatus.style.color = '#ff6b6b';
-          connectedStatus.classList.remove('hidden');
         }
       } finally {
         xLinkBtn.disabled = false;
       }
+    });
+  }
+
+  // 7. Delete Account Row
+  const profileDeleteRow = document.getElementById('profileDeleteAccountRow');
+  if (profileDeleteRow && !profileDeleteRow.dataset.init) {
+    profileDeleteRow.dataset.init = '1';
+    profileDeleteRow.addEventListener('click', (e) => {
+      e.preventDefault();
+      elements.deleteAccountBtn?.click();
     });
   }
 }
