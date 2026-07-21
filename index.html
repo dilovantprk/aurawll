@@ -1019,18 +1019,16 @@
           </div>
           <div class="settings-panel">
 
-            <!-- Display Name Row -->
-            <div class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="settings-label">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  <span class="settings-text" data-i18n="profile_name_title">Görünen Ad</span>
-                </div>
+            <!-- Display Name Card -->
+            <div class="profile-card">
+              <div class="settings-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span class="settings-text" data-i18n="profile_name_title">Görünen Ad</span>
               </div>
-              <div style="display: flex; gap: 0.5rem; width: 100%;">
+              <div class="input-btn-group">
                 <input id="profileNameInput" class="settings-input-text" type="text" maxlength="32" autocomplete="name" placeholder="Adınız" data-i18n-prop="placeholder:profile_name_placeholder">
                 <button id="profileSaveNameBtn" class="glass-btn" style="font-size: 0.8rem; padding: 0.45rem 1rem;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -1040,9 +1038,9 @@
               <p id="profileNameStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
             </div>
 
-            <!-- Email Address Row -->
-            <div id="profileEmailRow" class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Email Address Card -->
+            <div id="profileEmailRow" class="profile-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <div class="settings-label">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -1052,7 +1050,7 @@
                 </div>
                 <span id="profileProviderBadge" class="vagal-status-chip" style="margin: 0; font-size: 9px;">EMAIL</span>
               </div>
-              <div style="display: flex; gap: 0.5rem; width: 100%;">
+              <div class="input-btn-group">
                 <input id="profileEmailInput" class="settings-input-text" type="email" autocomplete="email" placeholder="E-posta adresi" data-i18n-prop="placeholder:profile_email_placeholder">
                 <button id="profileSaveEmailBtn" class="glass-btn" style="font-size: 0.8rem; padding: 0.45rem 1rem;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"></path><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
@@ -1062,16 +1060,14 @@
               <p id="profileEmailStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
             </div>
 
-            <!-- Connected Accounts (Bağlı Hesaplar) Row -->
-            <div id="profileConnectedAccountsRow" class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="settings-label">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                  </svg>
-                  <span class="settings-text" data-i18n="profile_connected_accounts_title">Bağlı Hesaplar</span>
-                </div>
+            <!-- Connected Accounts (Bağlı Hesaplar) Card -->
+            <div id="profileConnectedAccountsRow" class="profile-card">
+              <div class="settings-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span class="settings-text" data-i18n="profile_connected_accounts_title">Bağlı Hesaplar</span>
               </div>
 
               <!-- Provider List -->
@@ -1116,16 +1112,14 @@
               <p id="profileConnectedStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
             </div>
 
-            <!-- Password & Security Row -->
-            <div id="profilePasswordRow" class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="settings-label">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                  <span class="settings-text" data-i18n="profile_password_title">Şifre & Güvenlik</span>
-                </div>
+            <!-- Password & Security Card -->
+            <div id="profilePasswordRow" class="profile-card">
+              <div class="settings-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span class="settings-text" data-i18n="profile_password_title">Şifre & Güvenlik</span>
               </div>
               <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 0.8rem 1rem;">
                 <span style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);" data-i18n="profile_reset_pass_desc">Şifre sıfırlama e-postası gönder</span>
@@ -1137,17 +1131,15 @@
               <p id="profilePasswordStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
             </div>
 
-            <!-- Guest Session Notice Row -->
-            <div id="profileGuestNoticeRow" class="settings-row hidden" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="settings-label">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                  <span class="settings-text" data-i18n="profile_guest_title">Misafir Oturumu</span>
-                </div>
+            <!-- Guest Session Notice Card -->
+            <div id="profileGuestNoticeRow" class="profile-card hidden">
+              <div class="settings-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span class="settings-text" data-i18n="profile_guest_title">Misafir Oturumu</span>
               </div>
               <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
                 <span style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.4;" data-i18n="profile_guest_desc">Verileriniz geçici olarak bu cihazda saklanıyor. Tüm cihazlarınızdan erişmek için hesabınızı bağlayabilirsiniz.</span>
@@ -1158,8 +1150,8 @@
               </div>
             </div>
 
-            <!-- Delete Account Row -->
-            <div id="profileDeleteAccountRow" class="settings-row data-danger-row hidden" style="cursor:pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; border-top: 1px solid rgba(244, 63, 94, 0.12); padding-top: 1.2rem;">
+            <!-- Delete Account Card -->
+            <div id="profileDeleteAccountRow" class="profile-card data-danger-row hidden" style="cursor:pointer; flex-direction: row; justify-content: space-between; align-items: center; border-color: rgba(244, 63, 94, 0.15); background: rgba(244, 63, 94, 0.03);">
               <div class="settings-label" style="display: flex; align-items: center; gap: 0.8rem;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M3 6h18"></path>

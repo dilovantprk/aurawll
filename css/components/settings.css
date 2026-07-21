@@ -1310,3 +1310,36 @@
   transform: none;
 }
 
+.profile-card {
+  padding: 1.1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.25s ease;
+}
+
+.profile-card:hover {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.input-btn-group {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  align-items: center;
+}
+
+.input-btn-group .settings-input-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-btn-group .glass-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
