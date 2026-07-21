@@ -1088,7 +1088,7 @@
                 </svg>
                 <div style="display: flex; flex-direction: column;">
                   <span class="settings-text" style="font-size: 0.9rem;">Google</span>
-                  <span id="googleAccountStatus" style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);" data-i18n="profile_not_linked">Bağlı değil</span>
+                  <span id="googleAccountStatus" style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">Bağlı değil</span>
                 </div>
               </div>
               <button id="profileLinkGoogleBtn" class="glass-icon-btn" title="Bağla" aria-label="Bağla">
@@ -1104,7 +1104,7 @@
                 </svg>
                 <div style="display: flex; flex-direction: column;">
                   <span class="settings-text" style="font-size: 0.9rem;">X (Twitter)</span>
-                  <span id="xAccountStatus" style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);" data-i18n="profile_not_linked">Bağlı değil</span>
+                  <span id="xAccountStatus" style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">Bağlı değil</span>
                 </div>
               </div>
               <button id="profileLinkXBtn" class="glass-icon-btn" title="Bağla" aria-label="Bağla">
@@ -1131,26 +1131,41 @@
               <p id="profilePasswordStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
             </div>
 
-            <!-- 5. Export Data Rows (JSON & TXT) -->
-            <div class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.6rem;">
+            <!-- Export JSON Row -->
+            <div id="exportJsonRow" class="settings-row" style="justify-content: space-between; align-items: center; cursor: pointer;">
               <div class="settings-label">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="7 10 12 15 17 10"></polyline>
                   <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                <span class="settings-text">Veri Dışa Aktarma</span>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="settings-text" style="font-size: 0.9rem;">JSON Olarak İndir</span>
+                  <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);" data-i18n="prof_export">Geçmişi Yedekle (JSON)</span>
+                </div>
               </div>
-              <div style="display: flex; gap: 0.6rem; align-items: center;">
-                <button id="exportJsonBtn" class="glass-btn" style="flex: 1; font-size: 0.8rem; padding: 0.5rem; justify-content: center; gap: 0.4rem;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  JSON İndir
-                </button>
-                <button id="exportTxtBtn" class="glass-btn" style="flex: 1; font-size: 0.8rem; padding: 0.5rem; justify-content: center; gap: 0.4rem;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                  TXT İndir
-                </button>
+              <button id="exportJsonBtn" class="glass-icon-btn" title="JSON İndir" aria-label="JSON İndir">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              </button>
+            </div>
+
+            <!-- Export TXT Row -->
+            <div id="exportTxtRow" class="settings-row" style="justify-content: space-between; align-items: center; cursor: pointer;">
+              <div class="settings-label">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="settings-text" style="font-size: 0.9rem;">TXT Olarak İndir</span>
+                  <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);" data-i18n="prof_export_report">İyi Oluş Raporu (.txt)</span>
+                </div>
               </div>
+              <button id="exportTxtBtn" class="glass-icon-btn" title="TXT İndir" aria-label="TXT İndir">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              </button>
             </div>
 
             <!-- 6. Reset Memory Row -->

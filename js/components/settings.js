@@ -210,12 +210,12 @@ export function initSettings(config) {
     document.body.removeChild(a); URL.revokeObjectURL(url);
   };
 
-  elements.exportJsonBtn?.addEventListener('click', () => {
+  const triggerExportJson = () => {
     const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
     downloadFile('aura-wellness-data.json', JSON.stringify(data, null, 2), 'application/json');
-  });
+  };
 
-  elements.exportTxtBtn?.addEventListener('click', () => {
+  const triggerExportTxt = () => {
     const data = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : AppState.mockHistory;
     let txt = "Aura Wellness Report\n====================\n\n";
     data.forEach(item => {
@@ -229,7 +229,13 @@ export function initSettings(config) {
       txt += "--------------------\n";
     });
     downloadFile('aura-wellness-report.txt', txt, 'text/plain');
-  });
+  };
+
+  elements.exportJsonBtn?.addEventListener('click', (e) => { e.stopPropagation(); triggerExportJson(); });
+  document.getElementById('exportJsonRow')?.addEventListener('click', triggerExportJson);
+
+  elements.exportTxtBtn?.addEventListener('click', (e) => { e.stopPropagation(); triggerExportTxt(); });
+  document.getElementById('exportTxtRow')?.addEventListener('click', triggerExportTxt);
 
   // Delete all data (local + Firebase)
   elements.resetMemoryBtn?.addEventListener('click', async () => {
