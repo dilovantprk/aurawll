@@ -1018,17 +1018,80 @@
             </button>
           </div>
           <div class="settings-panel">
-            <div class="profile-edit-form" style="padding: 1.2rem; display: flex; flex-direction: column; gap: 1rem;">
-              <div class="profile-edit-field">
-                <label class="profile-edit-label" data-i18n="profile_edit_name_label">Görünen Ad</label>
-                <input id="profileNameInput" class="profile-edit-input" type="text" maxlength="32" autocomplete="name" placeholder="Adın" data-i18n-prop="placeholder:profile_edit_name_placeholder">
-                <span class="profile-edit-hint" data-i18n="profile_edit_name_hint">En fazla 32 karakter.</span>
+
+            <!-- Display Name Row -->
+            <div class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-label">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span class="settings-text" data-i18n="profile_name_title">Görünen Ad</span>
+                </div>
               </div>
-              <div class="profile-edit-actions" style="margin-top: 0.5rem;">
-                <button id="profileEditSaveBtn" class="profile-edit-save-btn" data-i18n="profile_edit_save" style="width: 100%;">Kaydet</button>
+              <div style="display: flex; gap: 0.5rem; width: 100%;">
+                <input id="profileNameInput" class="settings-input-text" type="text" maxlength="32" autocomplete="name" placeholder="Adınız" data-i18n-prop="placeholder:profile_name_placeholder">
+                <button id="profileSaveNameBtn" class="glass-btn-accent" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 600;" data-i18n="profile_edit_save">Kaydet</button>
               </div>
-              <p id="profileEditError" class="profile-edit-error hidden"></p>
+              <p id="profileNameStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
             </div>
+
+            <!-- Email Address Row -->
+            <div id="profileEmailRow" class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-label">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  <span class="settings-text" data-i18n="profile_email_title">E-posta Adresi</span>
+                </div>
+                <span id="profileProviderBadge" class="vagal-status-chip" style="margin: 0; font-size: 9px;">EMAIL</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; width: 100%;">
+                <input id="profileEmailInput" class="settings-input-text" type="email" autocomplete="email" placeholder="E-posta adresi" data-i18n-prop="placeholder:profile_email_placeholder">
+                <button id="profileSaveEmailBtn" class="glass-btn-accent" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 600;" data-i18n="profile_email_update">Güncelle</button>
+              </div>
+              <p id="profileEmailStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
+            </div>
+
+            <!-- Password & Security Row -->
+            <div id="profilePasswordRow" class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-label">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span class="settings-text" data-i18n="profile_password_title">Şifre & Güvenlik</span>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 0.8rem 1rem;">
+                <span style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);" data-i18n="profile_reset_pass_desc">Şifre sıfırlama e-postası gönder</span>
+                <button id="profileResetPasswordBtn" class="glass-btn" style="font-size: 0.8rem; padding: 0.4rem 1rem;" data-i18n="profile_send_reset_btn">E-posta Gönder</button>
+              </div>
+              <p id="profilePasswordStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
+            </div>
+
+            <!-- Guest Session Notice Row -->
+            <div id="profileGuestNoticeRow" class="settings-row hidden" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="settings-label">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <span class="settings-text" data-i18n="profile_guest_title">Misafir Oturumu</span>
+                </div>
+              </div>
+              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                <span style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.4;" data-i18n="profile_guest_desc">Verileriniz geçici olarak bu cihazda saklanıyor. Tüm cihazlarınızdan erişmek için hesabınızı bağlayabilirsiniz.</span>
+                <button id="profileConnectAccountBtn" class="glass-btn-accent" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 600; text-align: center;" data-i18n="guest_cta_title">Hesabını Bağla / Giriş Yap</button>
+              </div>
+            </div>
+
           </div>
         </div>
 

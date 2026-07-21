@@ -564,11 +564,36 @@ export function updateSettingsView() {
     settingsProfileRow.classList.toggle('hidden', isGuest);
   }
 
-  // Pre-fill profile name input in subpage
+  // Populate Profile & Account subpage fields
   const profileNameInput = document.getElementById('profileNameInput');
   if (profileNameInput) {
     profileNameInput.value = AppState.user?.displayName || localStorage.getItem('aura_guest_name') || '';
   }
+
+  const profileEmailInput = document.getElementById('profileEmailInput');
+  if (profileEmailInput) {
+    profileEmailInput.value = AppState.user?.email || '';
+  }
+
+  const providerBadge = document.getElementById('profileProviderBadge');
+  if (providerBadge) {
+    const providerId = AppState.user?.providerData?.[0]?.providerId || 'password';
+    if (providerId.includes('google')) providerBadge.textContent = 'GOOGLE';
+    else if (providerId.includes('twitter')) providerBadge.textContent = 'TWITTER';
+    else if (isGuest) providerBadge.textContent = 'GUEST';
+    else providerBadge.textContent = 'EMAIL';
+  }
+
+  const emailRow = document.getElementById('profileEmailRow');
+  const passwordRow = document.getElementById('profilePasswordRow');
+  const guestNoticeRow = document.getElementById('profileGuestNoticeRow');
+
+  if (emailRow) emailRow.classList.toggle('hidden', isGuest);
+  if (passwordRow) {
+    const isPasswordProvider = AppState.user?.providerData?.[0]?.providerId === 'password';
+    passwordRow.classList.toggle('hidden', isGuest || !isPasswordProvider);
+  }
+  if (guestNoticeRow) guestNoticeRow.classList.toggle('hidden', !isGuest);
 
   // Handle volume visibility on view load
   const volContainer = document.getElementById('volumeContainer');
@@ -579,61 +604,178 @@ export function updateSettingsView() {
 }
 
 function initProfileEdit() {
-  const saveBtn = document.getElementById('profileEditSaveBtn');
-  const input = document.getElementById('profileNameInput');
-  const errorEl = document.getElementById('profileEditError');
-  const profileSubpage = document.getElementById('settings-subpage-profile');
+  const saveNameBtn = document.getElementById('profileSaveNameBtn');
+  const nameInput = document.getElementById('profileNameInput');
+  const nameStatus = document.getElementById('profileNameStatus');
 
-  if (!saveBtn || !input) return;
-  if (saveBtn.dataset.profileEditInit) return;
-  saveBtn.dataset.profileEditInit = '1';
+  const saveEmailBtn = document.getElementById('profileSaveEmailBtn');
+  const emailInput = document.getElementById('profileEmailInput');
+  const emailStatus = document.getElementById('profileEmailStatus');
 
-  saveBtn.addEventListener('click', async () => {
-    const newName = input.value.trim();
-    if (!newName) {
-      if (errorEl) {
-        errorEl.textContent = AppState.lang === 'tr' ? 'İsim boş olamaz.' : 'Name cannot be empty.';
-        errorEl.classList.remove('hidden');
+  const resetPasswordBtn = document.getElementById('profileResetPasswordBtn');
+  const passwordStatus = document.getElementById('profilePasswordStatus');
+
+  const connectAccountBtn = document.getElementById('profileConnectAccountBtn');
+
+  // 1. Save Display Name
+  if (saveNameBtn && nameInput && !saveNameBtn.dataset.init) {
+    saveNameBtn.dataset.init = '1';
+    saveNameBtn.addEventListener('click', async () => {
+      const newName = nameInput.value.trim();
+      if (!newName) {
+        if (nameStatus) {
+          nameStatus.textContent = AppState.lang === 'tr' ? 'İsim boş olamaz.' : 'Name cannot be empty.';
+          nameStatus.style.color = '#ff6b6b';
+          nameStatus.classList.remove('hidden');
+        }
+        return;
       }
-      return;
-    }
 
-    saveBtn.disabled = true;
-    saveBtn.textContent = AppState.lang === 'tr' ? 'Kaydediliyor...' : 'Saving...';
-    if (errorEl) errorEl.classList.add('hidden');
+      saveNameBtn.disabled = true;
+      saveNameBtn.textContent = AppState.lang === 'tr' ? 'Kaydediliyor...' : 'Saving...';
+      if (nameStatus) nameStatus.classList.add('hidden');
 
-    try {
-      const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
+      try {
+        const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
 
-      if (!isGuest && AppState.user) {
-        const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
+        if (!isGuest && AppState.user) {
+          const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
+          const { auth } = await import('../../firebase.js');
+          await updateProfile(auth.currentUser, { displayName: newName });
+          if (AppState.user) AppState.user.displayName = newName;
+        } else {
+          localStorage.setItem('aura_guest_name', newName);
+        }
+
+        const nameEl = document.getElementById('user-display-name');
+        if (nameEl) nameEl.textContent = newName;
+
+        if (nameStatus) {
+          nameStatus.textContent = AppState.lang === 'tr' ? 'İsim başarıyla güncellendi.' : 'Name updated successfully.';
+          nameStatus.style.color = '#64E49F';
+          nameStatus.classList.remove('hidden');
+          setTimeout(() => nameStatus.classList.add('hidden'), 3000);
+        }
+      } catch (err) {
+        console.error('Name update error:', err);
+        if (nameStatus) {
+          nameStatus.textContent = AppState.lang === 'tr' ? 'Güncelleme başarısız.' : 'Update failed.';
+          nameStatus.style.color = '#ff6b6b';
+          nameStatus.classList.remove('hidden');
+        }
+      } finally {
+        saveNameBtn.disabled = false;
+        saveNameBtn.textContent = AppState.lang === 'tr' ? 'Kaydet' : 'Save';
+      }
+    });
+  }
+
+  // 2. Update Email Address
+  if (saveEmailBtn && emailInput && !saveEmailBtn.dataset.init) {
+    saveEmailBtn.dataset.init = '1';
+    saveEmailBtn.addEventListener('click', async () => {
+      const newEmail = emailInput.value.trim();
+      if (!newEmail || !newEmail.includes('@')) {
+        if (emailStatus) {
+          emailStatus.textContent = AppState.lang === 'tr' ? 'Geçerli bir e-posta girin.' : 'Enter a valid email.';
+          emailStatus.style.color = '#ff6b6b';
+          emailStatus.classList.remove('hidden');
+        }
+        return;
+      }
+
+      saveEmailBtn.disabled = true;
+      saveEmailBtn.textContent = AppState.lang === 'tr' ? 'Güncelleniyor...' : 'Updating...';
+      if (emailStatus) emailStatus.classList.add('hidden');
+
+      try {
+        const { verifyBeforeUpdateEmail, updateEmail } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
         const { auth } = await import('../../firebase.js');
-        await updateProfile(auth.currentUser, { displayName: newName });
-        if (AppState.user) AppState.user.displayName = newName;
-      } else {
-        localStorage.setItem('aura_guest_name', newName);
-      }
 
-      // Reflect immediately in the card
-      const nameEl = document.getElementById('user-display-name');
-      if (nameEl) nameEl.textContent = newName;
-
-      // Click back button in subpage to return to main settings menu
-      const backBtn = profileSubpage?.querySelector('.settings-back-btn');
-      if (backBtn) backBtn.click();
-    } catch (err) {
-      console.error('Profile update error:', err);
-      if (errorEl) {
-        errorEl.textContent = AppState.lang === 'tr' 
-          ? 'Bir hata oluştu. Tekrar dene.' 
-          : 'An error occurred. Please try again.';
-        errorEl.classList.remove('hidden');
+        if (auth.currentUser) {
+          if (typeof verifyBeforeUpdateEmail === 'function') {
+            await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
+            if (emailStatus) {
+              emailStatus.textContent = AppState.lang === 'tr' 
+                ? 'Yeni e-postaya doğrulama bağlantısı gönderildi.' 
+                : 'Verification link sent to new email.';
+              emailStatus.style.color = '#64E49F';
+              emailStatus.classList.remove('hidden');
+            }
+          } else {
+            await updateEmail(auth.currentUser, newEmail);
+            if (emailStatus) {
+              emailStatus.textContent = AppState.lang === 'tr' ? 'E-posta güncellendi.' : 'Email updated.';
+              emailStatus.style.color = '#64E49F';
+              emailStatus.classList.remove('hidden');
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Email update error:', err);
+        if (emailStatus) {
+          if (err.code === 'auth/requires-recent-login') {
+            emailStatus.textContent = AppState.lang === 'tr'
+              ? 'Güvenlik gereği yeniden giriş yapmalısınız.'
+              : 'Please re-authenticate and try again.';
+          } else {
+            emailStatus.textContent = AppState.lang === 'tr' ? 'E-posta güncellenemedi.' : 'Failed to update email.';
+          }
+          emailStatus.style.color = '#ff6b6b';
+          emailStatus.classList.remove('hidden');
+        }
+      } finally {
+        saveEmailBtn.disabled = false;
+        saveEmailBtn.textContent = AppState.lang === 'tr' ? 'Güncelle' : 'Update';
       }
-    } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = AppState.lang === 'tr' ? 'Kaydet' : 'Save';
-    }
-  });
+    });
+  }
+
+  // 3. Reset Password Email
+  if (resetPasswordBtn && !resetPasswordBtn.dataset.init) {
+    resetPasswordBtn.dataset.init = '1';
+    resetPasswordBtn.addEventListener('click', async () => {
+      const email = AppState.user?.email || emailInput?.value?.trim();
+      if (!email) return;
+
+      resetPasswordBtn.disabled = true;
+      resetPasswordBtn.textContent = AppState.lang === 'tr' ? 'Gönderiliyor...' : 'Sending...';
+      if (passwordStatus) passwordStatus.classList.add('hidden');
+
+      try {
+        const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
+        const { auth } = await import('../../firebase.js');
+
+        await sendPasswordResetEmail(auth, email);
+
+        if (passwordStatus) {
+          passwordStatus.textContent = AppState.lang === 'tr' 
+            ? 'Şifre sıfırlama e-postası gönderildi.' 
+            : 'Password reset email sent.';
+          passwordStatus.style.color = '#64E49F';
+          passwordStatus.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Password reset error:', err);
+        if (passwordStatus) {
+          passwordStatus.textContent = AppState.lang === 'tr' ? 'E-posta gönderilemedi.' : 'Failed to send email.';
+          passwordStatus.style.color = '#ff6b6b';
+          passwordStatus.classList.remove('hidden');
+        }
+      } finally {
+        resetPasswordBtn.disabled = false;
+        resetPasswordBtn.textContent = AppState.lang === 'tr' ? 'E-posta Gönder' : 'Send Email';
+      }
+    });
+  }
+
+  // 4. Connect Account for Guests
+  if (connectAccountBtn && !connectAccountBtn.dataset.init) {
+    connectAccountBtn.dataset.init = '1';
+    connectAccountBtn.addEventListener('click', () => {
+      openAuthSheet();
+    });
+  }
 }
 
 export function syncNavVisibility() {
