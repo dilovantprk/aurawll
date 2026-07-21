@@ -1247,29 +1247,47 @@ export function renderModuleMarket() {
   ];
 
   marketGrid.innerHTML = modules.map(mod => `
-    <div class="market-list-item info-trigger" data-info="${mod.id}">
-      <div class="market-item-icon">${mod.icon}</div>
-      <div class="market-item-title-row">
-        <span class="market-item-title">${mod.title}</span>
-        <span class="market-item-status ${mod.isInstalled ? 'installed' : ''}">
-          ${mod.isInstalled ? (mod.isActive ? t('market_status_active') : t('market_status_inactive')) : t('market_status_locked')}
-        </span>
+    <div class="settings-row info-trigger" data-info="${mod.id}" style="justify-content: space-between; align-items: center; cursor: pointer;">
+      <div class="settings-label" style="gap: 0.75rem; align-items: center;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; color: rgba(255, 255, 255, 0.85);">
+          ${mod.icon}
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="settings-text" style="font-size: 0.9rem;">${mod.title}</span>
+            <span style="font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: ${mod.isInstalled ? (mod.isActive ? '#64E49F' : 'rgba(255, 255, 255, 0.45)') : 'rgba(244, 63, 94, 0.7)'};">
+              ${mod.isInstalled ? (mod.isActive ? t('market_status_active') : t('market_status_inactive')) : t('market_status_locked')}
+            </span>
+          </div>
+          <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45); line-height: 1.3;">${mod.desc}</span>
+        </div>
       </div>
-      <p class="market-item-desc">${mod.desc}</p>
-      <div class="market-item-right">
-        <button class="market-btn ${mod.isInstalled ? (mod.isActive ? 'market-btn-active' : 'market-btn-inactive') : 'market-btn-install'}" 
-                data-mod="${mod.id}">
-          ${mod.isInstalled ? (mod.isActive ? t('market_btn_disable') : t('market_btn_enable')) : t('market_btn_install')}
-        </button>
-      </div>
+      <button class="glass-icon-btn market-btn ${mod.isInstalled ? (mod.isActive ? 'market-btn-active' : 'market-btn-inactive') : 'market-btn-install'}" 
+              data-mod="${mod.id}"
+              title="${mod.isInstalled ? (mod.isActive ? t('market_btn_disable') : t('market_btn_enable')) : t('market_btn_install')}"
+              aria-label="${mod.title}"
+              style="${mod.isInstalled && mod.isActive ? 'color: #64E49F; border-color: rgba(100, 228, 159, 0.35); background: rgba(100, 228, 159, 0.08);' : ''}">
+        ${mod.isInstalled 
+          ? (mod.isActive 
+              ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64E49F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' 
+              : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>') 
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>'}
+      </button>
     </div>
   `).join('');
+
+  marketGrid.querySelectorAll('.settings-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      const modId = e.currentTarget.getAttribute('data-info');
+      if (modId) handleModuleAction(modId);
+    });
+  });
 
   marketGrid.querySelectorAll('.market-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const modId = e.currentTarget.getAttribute('data-mod');
-      handleModuleAction(modId);
+      if (modId) handleModuleAction(modId);
     });
   });
 }
