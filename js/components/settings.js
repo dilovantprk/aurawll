@@ -897,6 +897,11 @@ function initProfileEdit() {
             connectedStatus.textContent = AppState.lang === 'tr'
               ? 'Tek giriş yönteminiz bu hesap.'
               : 'Cannot unlink your only sign-in method.';
+          } else {
+            connectedStatus.textContent = AppState.lang === 'tr' ? 'İşlem başarısız.' : 'Operation failed.';
+          }
+          connectedStatus.style.color = '#ff6b6b';
+          connectedStatus.classList.remove('hidden');
         }
       } finally {
         xLinkBtn.disabled = false;
