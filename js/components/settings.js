@@ -585,15 +585,50 @@ export function updateSettingsView() {
   }
 
   const emailRow = document.getElementById('profileEmailRow');
+  const connectedRow = document.getElementById('profileConnectedAccountsRow');
   const passwordRow = document.getElementById('profilePasswordRow');
   const guestNoticeRow = document.getElementById('profileGuestNoticeRow');
 
   if (emailRow) emailRow.classList.toggle('hidden', isGuest);
+  if (connectedRow) connectedRow.classList.toggle('hidden', isGuest);
   if (passwordRow) {
-    const isPasswordProvider = AppState.user?.providerData?.[0]?.providerId === 'password';
+    const isPasswordProvider = AppState.user?.providerData?.some(p => p.providerId === 'password');
     passwordRow.classList.toggle('hidden', isGuest || !isPasswordProvider);
   }
   if (guestNoticeRow) guestNoticeRow.classList.toggle('hidden', !isGuest);
+
+  // Update Connected Accounts (Google & X) Statuses
+  const googleStatus = document.getElementById('googleAccountStatus');
+  const googleBtn = document.getElementById('profileLinkGoogleBtn');
+  const googleData = AppState.user?.providerData?.find(p => p.providerId === 'google.com');
+
+  if (googleStatus && googleBtn) {
+    if (googleData) {
+      googleStatus.textContent = `${t('profile_linked')}: ${googleData.email || googleData.displayName || ''}`;
+      googleStatus.style.color = '#64E49F';
+      googleBtn.textContent = t('profile_unlink_btn');
+    } else {
+      googleStatus.textContent = t('profile_not_linked');
+      googleStatus.style.color = 'rgba(255, 255, 255, 0.4)';
+      googleBtn.textContent = t('profile_link_btn');
+    }
+  }
+
+  const xStatus = document.getElementById('xAccountStatus');
+  const xBtn = document.getElementById('profileLinkXBtn');
+  const xData = AppState.user?.providerData?.find(p => p.providerId === 'twitter.com');
+
+  if (xStatus && xBtn) {
+    if (xData) {
+      xStatus.textContent = `${t('profile_linked')}: ${xData.displayName || xData.email || ''}`;
+      xStatus.style.color = '#64E49F';
+      xBtn.textContent = t('profile_unlink_btn');
+    } else {
+      xStatus.textContent = t('profile_not_linked');
+      xStatus.style.color = 'rgba(255, 255, 255, 0.4)';
+      xBtn.textContent = t('profile_link_btn');
+    }
+  }
 
   // Handle volume visibility on view load
   const volContainer = document.getElementById('volumeContainer');
@@ -774,6 +809,116 @@ function initProfileEdit() {
     connectAccountBtn.dataset.init = '1';
     connectAccountBtn.addEventListener('click', () => {
       openAuthSheet();
+    });
+  }
+
+  // 5. Google Provider Link / Unlink
+  const googleLinkBtn = document.getElementById('profileLinkGoogleBtn');
+  const connectedStatus = document.getElementById('profileConnectedStatus');
+
+  if (googleLinkBtn && !googleLinkBtn.dataset.init) {
+    googleLinkBtn.dataset.init = '1';
+    googleLinkBtn.addEventListener('click', async () => {
+      if (!AppState.user) return;
+      googleLinkBtn.disabled = true;
+      if (connectedStatus) connectedStatus.classList.add('hidden');
+
+      try {
+        const { linkWithPopup, unlink, GoogleAuthProvider } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
+        const { auth } = await import('../../firebase.js');
+
+        const isLinked = AppState.user.providerData?.some(p => p.providerId === 'google.com');
+
+        if (isLinked) {
+          if (AppState.user.providerData.length <= 1) {
+            throw new Error('ONLY_PROVIDER');
+          }
+          await unlink(auth.currentUser, 'google.com');
+          if (connectedStatus) {
+            connectedStatus.textContent = AppState.lang === 'tr' ? 'Google hesabı kaldırıldı.' : 'Google account unlinked.';
+            connectedStatus.style.color = '#64E49F';
+            connectedStatus.classList.remove('hidden');
+          }
+        } else {
+          const provider = new GoogleAuthProvider();
+          await linkWithPopup(auth.currentUser, provider);
+          if (connectedStatus) {
+            connectedStatus.textContent = AppState.lang === 'tr' ? 'Google hesabı bağlandı.' : 'Google account linked.';
+            connectedStatus.style.color = '#64E49F';
+            connectedStatus.classList.remove('hidden');
+          }
+        }
+        updateSettingsView();
+      } catch (err) {
+        console.error('Google link/unlink error:', err);
+        if (connectedStatus) {
+          if (err.message === 'ONLY_PROVIDER') {
+            connectedStatus.textContent = AppState.lang === 'tr'
+              ? 'Tek giriş yönteminiz bu hesap. Önce e-posta/şifre veya başka hesap ekleyin.'
+              : 'Cannot unlink your only sign-in method.';
+          } else {
+            connectedStatus.textContent = AppState.lang === 'tr' ? 'İşlem başarısız.' : 'Operation failed.';
+          }
+          connectedStatus.style.color = '#ff6b6b';
+          connectedStatus.classList.remove('hidden');
+        }
+      } finally {
+        googleLinkBtn.disabled = false;
+      }
+    });
+  }
+
+  // 6. X (Twitter) Provider Link / Unlink
+  const xLinkBtn = document.getElementById('profileLinkXBtn');
+  if (xLinkBtn && !xLinkBtn.dataset.init) {
+    xLinkBtn.dataset.init = '1';
+    xLinkBtn.addEventListener('click', async () => {
+      if (!AppState.user) return;
+      xLinkBtn.disabled = true;
+      if (connectedStatus) connectedStatus.classList.add('hidden');
+
+      try {
+        const { linkWithPopup, unlink, TwitterAuthProvider } = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js");
+        const { auth } = await import('../../firebase.js');
+
+        const isLinked = AppState.user.providerData?.some(p => p.providerId === 'twitter.com');
+
+        if (isLinked) {
+          if (AppState.user.providerData.length <= 1) {
+            throw new Error('ONLY_PROVIDER');
+          }
+          await unlink(auth.currentUser, 'twitter.com');
+          if (connectedStatus) {
+            connectedStatus.textContent = AppState.lang === 'tr' ? 'X hesabı kaldırıldı.' : 'X account unlinked.';
+            connectedStatus.style.color = '#64E49F';
+            connectedStatus.classList.remove('hidden');
+          }
+        } else {
+          const provider = new TwitterAuthProvider();
+          await linkWithPopup(auth.currentUser, provider);
+          if (connectedStatus) {
+            connectedStatus.textContent = AppState.lang === 'tr' ? 'X hesabı bağlandı.' : 'X account linked.';
+            connectedStatus.style.color = '#64E49F';
+            connectedStatus.classList.remove('hidden');
+          }
+        }
+        updateSettingsView();
+      } catch (err) {
+        console.error('X link/unlink error:', err);
+        if (connectedStatus) {
+          if (err.message === 'ONLY_PROVIDER') {
+            connectedStatus.textContent = AppState.lang === 'tr'
+              ? 'Tek giriş yönteminiz bu hesap.'
+              : 'Cannot unlink your only sign-in method.';
+          } else {
+            connectedStatus.textContent = AppState.lang === 'tr' ? 'İşlem başarısız.' : 'Operation failed.';
+          }
+          connectedStatus.style.color = '#ff6b6b';
+          connectedStatus.classList.remove('hidden');
+        }
+      } finally {
+        xLinkBtn.disabled = false;
+      }
     });
   }
 }
