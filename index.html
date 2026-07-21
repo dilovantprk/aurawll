@@ -1258,14 +1258,17 @@
           </div>
           <div class="settings-panel">
             <!-- Haptic -->
-            <div class="settings-row">
-              <div class="settings-label">
+            <div class="settings-row" style="justify-content: space-between; align-items: center;">
+              <div class="settings-label" style="gap: 0.75rem; align-items: center;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                   stroke-linecap="round" stroke-linejoin="round">
                   <path d="m2 8 2 2 4-4 4 4 4-4 4 4 2-2"></path>
                   <path d="m2 16 2 2 4-4 4 4 4-4 4 4 2-2"></path>
                 </svg>
-                <span class="settings-text" data-i18n="prof_haptic">Haptic Feedback</span>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="settings-text" style="font-size: 0.9rem;" data-i18n="prof_haptic">Haptic Feedback</span>
+                  <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);" data-i18n="prof_haptic_desc">Etkileşimler için dokunsal geribildirimler</span>
+                </div>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="hapticToggle">
@@ -1274,15 +1277,18 @@
             </div>
 
             <!-- Drone -->
-            <div class="settings-row">
-              <div class="settings-label">
+            <div class="settings-row" style="justify-content: space-between; align-items: center;">
+              <div class="settings-label" style="gap: 0.75rem; align-items: center;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                   stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                   <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                   <line x1="12" y1="19" x2="12" y2="22"></line>
                 </svg>
-                <span class="settings-text" data-i18n="prof_drone">Bio-Acoustic Drone</span>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="settings-text" style="font-size: 0.9rem;" data-i18n="prof_drone">Bio-Acoustic Drone</span>
+                  <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);" data-i18n="prof_drone_desc">Akustik sinir sistemi fon sesleri</span>
+                </div>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="droneToggle">
@@ -1294,7 +1300,7 @@
             <div id="volumeContainer" class="settings-row hidden"
               style="flex-direction: column; align-items: stretch; gap: 0.8rem; padding-left: 2.2rem; border-top: none; margin-top: -0.5rem; margin-bottom: 0.5rem;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="settings-label">
+                <div class="settings-label" style="gap: 0.75rem; align-items: center;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;">
                     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -1309,14 +1315,17 @@
             </div>
 
             <!-- UI Sounds -->
-            <div class="settings-row">
-              <div class="settings-label">
+            <div class="settings-row" style="justify-content: space-between; align-items: center;">
+              <div class="settings-label" style="gap: 0.75rem; align-items: center;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                   stroke-linecap="round" stroke-linejoin="round">
                   <path d="M2 10v4h4l5 5V5L6 10H2z"></path>
                   <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                 </svg>
-                <span class="settings-text" data-i18n="prof_ui_sounds">UI Sounds</span>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="settings-text" style="font-size: 0.9rem;" data-i18n="prof_ui_sounds">UI Sounds</span>
+                  <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);" data-i18n="prof_ui_sounds_desc">Arayüz etkileşim ses efektleri</span>
+                </div>
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="uiSoundsToggle">
@@ -1347,15 +1356,18 @@
           </div>
           <div class="settings-panel">
             <!-- Language -->
-            <div class="settings-row">
-              <div class="settings-label">
+            <div class="settings-row" style="justify-content: space-between; align-items: center;">
+              <div class="settings-label" style="gap: 0.75rem; align-items: center;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                   stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="2" y1="12" x2="22" y2="12"></line>
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                 </svg>
-                <span class="settings-text" data-i18n="settings_lang">Dil / Language</span>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="settings-text" style="font-size: 0.9rem;" data-i18n="settings_lang">Dil / Language</span>
+                  <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);" data-i18n="prof_lang_desc">Uygulama dili seçimi (TR / EN)</span>
+                </div>
               </div>
               <div class="lang-dropdown-container">
                 <button id="langToggleBtn" class="glass-btn"
@@ -1370,13 +1382,16 @@
             <!-- Nudges -->
             <div class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="settings-label">
+                <div class="settings-label" style="gap: 0.75rem; align-items: center;">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
                   </svg>
-                  <span class="settings-text" data-i18n="dash_daily_nudges">Daily Nudges</span>
+                  <div style="display: flex; flex-direction: column;">
+                    <span class="settings-text" style="font-size: 0.9rem;" data-i18n="dash_daily_nudges">Daily Nudges</span>
+                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);" data-i18n="prof_nudges_desc">Düzenli check-in bildirim saatleri</span>
+                  </div>
                 </div>
                 <label class="toggle-switch">
                   <input type="checkbox" id="notifToggleCheckbox">
