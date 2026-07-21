@@ -13,6 +13,13 @@ import { deleteUserAccount } from '../services/auth.js';
 
 let configProps = {};
 
+function setBtnSpanText(btn, text) {
+  if (!btn) return;
+  const span = btn.querySelector('span');
+  if (span) span.textContent = text;
+  else btn.textContent = text;
+}
+
 export function initSettings(config) {
   Object.assign(configProps, config);
   
@@ -583,13 +590,6 @@ export function updateSettingsView() {
 
   const profileDeleteRow = document.getElementById('profileDeleteAccountRow');
   if (profileDeleteRow) profileDeleteRow.classList.toggle('hidden', isGuest);
-
-function setBtnSpanText(btn, text) {
-  if (!btn) return;
-  const span = btn.querySelector('span');
-  if (span) span.textContent = text;
-  else btn.textContent = text;
-}
 
   // Update Connected Accounts (Google & X) Statuses
   const googleStatus = document.getElementById('googleAccountStatus');
