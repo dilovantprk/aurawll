@@ -480,6 +480,103 @@
   .hero-btn { max-width: 600px; margin: 0 auto; }
 }
 
+.hero-btn {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  text-align: left;
+  margin-top: 1rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.8rem 1.6rem;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+}
+
+.hero-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.hero-btn .cockpit-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.hero-btn:hover .cockpit-icon {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.hero-btn .cockpit-label {
+  color: var(--vagal-accent, #7d917b);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+}
+
+.hero-btn .cockpit-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.hero-btn p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* Sleek Minimalist Circular Chevron Button */
+.hero-chevron-btn {
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.hero-btn:hover .hero-chevron-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
 /* === QUICK ACTIONS & DAILY BITE (PREMIUM V2) === */
 .dash-quick-actions {
   display: flex;
@@ -506,10 +603,10 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 1.25rem 1.3rem;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 1.35rem 1.4rem;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   cursor: pointer;
@@ -518,7 +615,7 @@
   text-align: left;
   position: relative;
   overflow: hidden;
-  min-height: 110px;
+  min-height: 115px;
   height: 100%;
   box-sizing: border-box;
 }
@@ -526,14 +623,14 @@
 .quick-action-card:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.14);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .quick-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -551,15 +648,15 @@
 }
 
 .quick-title {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: #ffffff;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   display: block;
 }
 
 .quick-desc {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.45);
   display: block;
   line-height: 1.4;
@@ -567,10 +664,10 @@
 
 /* Daily Bite Card (Sinir Sistemi Notu) */
 .daily-bite-card {
-  padding: 1.3rem 1.5rem;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 1.5rem 1.6rem;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   width: 100%;
@@ -580,8 +677,8 @@
 }
 
 .daily-bite-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .bite-header {
