@@ -210,12 +210,14 @@ function renderTinderDeck(container) {
   }).join('');
 
   const nextCardHtml = nextKey ? `<div class="somatic-next-card"></div>` : '';
-  const finishBtnHtml = selectedCount > 0 ? `
-    <button id="swipeFinishBtn" class="tinder-finish-btn" title="İlerle" aria-label="İlerle">
-      <span>İlerle (${selectedCount})</span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </button>
-  ` : '';
+  const finishBtnHtml = `
+    <div class="somatic-finish-slot">
+      <button id="swipeFinishBtn" class="tinder-finish-btn ${selectedCount > 0 ? '' : 'hidden'}" title="İlerle" aria-label="İlerle">
+        <span>İlerle (${selectedCount})</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>
+  `;
 
   container.innerHTML = `
     <div class="somatic-tinder-wrapper">

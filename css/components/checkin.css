@@ -273,9 +273,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.4rem;
   width: 100%;
+  height: 60px;
   margin-bottom: 1.2rem;
+  box-sizing: border-box;
 }
 
 .somatic-count-badge {
@@ -287,6 +289,7 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  flex-shrink: 0;
 }
 
 .count-accent {
@@ -298,9 +301,21 @@
 .somatic-selected-tags {
   display: flex;
   gap: 0.4rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
+  width: 100%;
+  height: 32px;
+  align-items: center;
   justify-content: center;
-  min-height: 28px;
+  padding: 0 0.2rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex-shrink: 0;
+}
+
+.somatic-selected-tags::-webkit-scrollbar {
+  display: none;
 }
 
 .selected-tag-pill {
@@ -311,6 +326,8 @@
   border: 1px solid rgba(184, 169, 217, 0.3);
   color: #fff;
   font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .selected-tag-pill.ventral { background: rgba(100, 228, 159, 0.15); border-color: rgba(100, 228, 159, 0.4); color: #64E49F; }
@@ -515,8 +532,18 @@
   transform: translateY(-2px) scale(1.05);
 }
 
+.somatic-finish-slot {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.6rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .tinder-finish-btn {
-  margin-top: 1.2rem;
+  margin: 0;
   padding: 0.6rem 1.4rem;
   border-radius: 100px;
   background: rgba(184, 169, 217, 0.15);
