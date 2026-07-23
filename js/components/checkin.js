@@ -201,6 +201,7 @@ function renderTinderDeck(container) {
   const currentKey = deckState.keys[deckState.currentIndex];
   const nextKey = deckState.keys[deckState.currentIndex + 1];
   const item = SOMATIC_MAP[currentKey];
+  const stateClass = item ? getAutonomicClass(item.state) : 'ventral';
   const promptIcon = SOMATIC_ICONS[currentKey] || DEFAULT_SOMATIC_ICON;
 
   const tagsHtml = AppState.currentCheckIn.somatic_selections.map(k => {
@@ -209,7 +210,9 @@ function renderTinderDeck(container) {
     return `<span class="selected-tag-pill ${cls}" data-key="${k}" title="İptal et">${t(k)} <span class="tag-remove-icon">&times;</span></span>`;
   }).join('');
 
-  const nextCardHtml = nextKey ? `<div class="somatic-next-card"></div>` : '';
+  const nextItem = SOMATIC_MAP[nextKey];
+  const nextStateClass = nextItem ? getAutonomicClass(nextItem.state) : '';
+  const nextCardHtml = nextKey ? `<div class="somatic-next-card state-${nextStateClass}"></div>` : '';
   const finishBtnHtml = `
     <div class="somatic-finish-slot">
       <button id="swipeFinishBtn" class="tinder-finish-btn ${selectedCount > 0 ? '' : 'hidden'}" title="İlerle" aria-label="İlerle">
@@ -218,6 +221,12 @@ function renderTinderDeck(container) {
       </button>
     </div>
   `;
+
+  const stateLabelText = item ? (
+    item.state === 'coherence' ? 'VENTRAL • GÜVEN VE UYUM' :
+    item.state === 'mobilization' ? 'SİMPATİK • MOBİLİZASYON' :
+    'DORSAL • İMMOBİLİZASYON'
+  ) : '';
 
   container.innerHTML = `
     <div class="somatic-tinder-wrapper">
@@ -231,16 +240,22 @@ function renderTinderDeck(container) {
 
       <div class="somatic-card-stack">
         ${nextCardHtml}
-        <div id="activeSomaticCard" class="somatic-swipe-card liquid-glass">
+        <div id="activeSomaticCard" class="somatic-swipe-card state-${stateClass} liquid-glass">
           <div class="swipe-badge badge-pass">PAS</div>
           <div class="swipe-badge badge-select">HİSSET</div>
 
+          <div class="somatic-card-state-indicator ${stateClass}">
+            <span class="indicator-dot"></span>
+            <span class="indicator-text">${stateLabelText}</span>
+          </div>
+
           <div class="card-somatic-body">
-            <div class="somatic-icon-badge">
+            <div class="somatic-icon-badge ${stateClass}">
               ${promptIcon}
             </div>
             <h3 class="somatic-card-text">${t(currentKey)}</h3>
           </div>
+          <div style="height: 12px;"></div>
         </div>
       </div>
 
