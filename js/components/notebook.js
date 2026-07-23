@@ -18,6 +18,42 @@ let isArticleMode = false;
 let editingEntryTimestamp = null;
 let activeDetailEntry = null;
 
+const AURA_SAMPLE_ARTICLES = [
+  {
+    timestamp: 1784738400000,
+    authorName: 'Aura',
+    customEmotionTR: 'Polyvagal Teori ve Beden Haritanız',
+    customEmotionEN: 'Polyvagal Theory and Your Somatic Map',
+    savoringTextTR: `Nervöz sistemimiz, hayatta kalma mücadelemizi ve huzur anlarımızı yöneten görünmez bir orkestradır. Dr. Stephen Porges tarafından geliştirilen Polyvagal Teori, bu orkestranın üç temel durumunu açıklar:\n\n## 1. Ventral Vagal (Güvenlik & Bağlantı)\nSosyal katılım, sakinlik ve huzur durumudur. Kalp atış hızı dengelidir, nefes derindir ve kendimizi güvende hissederiz.\n\n## 2. Sempatik Aktivasyon (Savaş veya Kaç)\nTehdit hissettiğimizde devreye giren aktif mücadele durumudur. Kalp hızlanır, kaslar gerilir, kaygı ve öfke duyumları baş gösterir.\n\n## 3. Dorsal Vagal (Donma & Çöküş)\nAşırı stres veya çaresizlik anlarında sistemin kendini kapatma modudur. Uyuşma, yorgunluk, boşluk hissi ve depresif duyumlar hakimdir.\n\n> Önemli olan bu durumlara hiç girmemek değil, durumların farkına varıp Ventral vagal duruma geri dönebilme esnekliğidir (Vagal Esneklik). Kendi sisteminizi haritalandırmak için gün içinde bedeninizdeki duyumları izleyin.`,
+    savoringTextEN: `Our nervous system is an invisible orchestra directing our survival struggles and moments of peace. Polyvagal Theory, developed by Dr. Stephen Porges, explains the three core states of this orchestra:\n\n## 1. Ventral Vagal (Safety & Connection)\nThe state of social engagement, calmness, and peace. Heart rate is balanced, breathing is deep, and we feel safe.\n\n## 2. Sympathetic Activation (Fight or Flight)\nThe active mobilization state triggered by perceived threats. Heart rate accelerates, muscles tense, and feelings of anxiety or anger arise.\n\n## 3. Dorsal Vagal (Freeze & Collapse)\nThe system's shutdown mode during extreme stress or helplessness. Numbness, fatigue, empty feelings, and depressive sensations dominate.\n\n> The goal is not to avoid these states entirely, but to develop the flexibility to recognize them and return to the Ventral Vagal state (Vagal Resilience). Observe your bodily sensations throughout the day to map your own system.`,
+    isPublic: true,
+    regulation_state: 'ventral',
+    uid: 'system_aura'
+  },
+  {
+    timestamp: 1784734800000,
+    authorName: 'Aura',
+    customEmotionTR: 'Diyafram Nefesinin Vagus Sinirine Etkisi',
+    customEmotionEN: 'The Magic of Diaphragmatic Breathing',
+    savoringTextTR: `Vagus siniri, parasempatik sinir sisteminin otobanıdır ve beynimiz ile iç organlarımız arasındaki iletişimi sağlar. Bu siniri uyarmanın en hızlı yolu derin diyafram nefesidir.\n\nNefes alırken diyafram aşağı doğru hareket eder, akciğer hacmi genişler ve kalbe dönen kan miktarı geçici olarak azalır. Kalp bu durumu dengelemek için hızlanır.\n\nAncak, nefes verirken diyafram yükselir, vagus siniri uyarılır ve kalbe yavaşlama sinyali gönderilir.\n\n## Uygulama Önerisi\n- **4-6 Nefesi:** 4 saniye nefes alıp 6 saniye nefes vermek vagal tonu anında artırır.\n- **Fizyolojik İç Çekme:** Üst üste iki hızlı nefes alıp ağızdan yavaşça bırakmak akciğer alveollerini genişletip sisteminizi sakinleştirir.\n\nBedeninize güvenlik sinyali göndermek işte bu kadar basittir.`,
+    savoringTextEN: `The vagus nerve is the highway of the parasympathetic nervous system, facilitating communication between our brain and internal organs. The fastest way to stimulate this nerve is deep diaphragmatic breathing.\n\nWhen inhaling, the diaphragm moves downward, lung volume expands, and blood return to the heart temporarily decreases. The heart accelerates to balance this.\n\nHowever, when exhaling, the diaphragm rises, the vagus nerve is stimulated, and a deceleration signal is sent to the heart.\n\n## Practice Recommendations\n- **4-6 Breathing:** Inhaling for 4 seconds and exhaling for 6 seconds instantly increases vagal tone.\n- **Physiological Sighing:** Taking two quick inhales in a row and slowly releasing through the mouth re-inflates lung alveoli and calms the system.\n\nSending a safety signal to your body is that simple.`,
+    isPublic: true,
+    regulation_state: 'coherence',
+    uid: 'system_aura'
+  },
+  {
+    timestamp: 1784731200000,
+    authorName: 'Aura',
+    customEmotionTR: 'Somatik Savoring ve Güvenlik Hissi',
+    customEmotionEN: 'Somatic Savoring and the Feeling of Safety',
+    savoringTextTR: `Zihnimiz olumsuz deneyimleri kaydetmeye meyillidir (negatiflik sapması). Ancak sinir sistemini iyileştirmek için olumlu duyumları bedenimizde bilinçli olarak hissetmeli ve \"marine\" etmeliyiz. Buna **Somatik Savoring** denir.\n\nBir fincan kahvenin sıcaklığını elinizde hissettiğinizde, rüzgarın teninize dokunuşunu fark ettiğinizde veya sevdiğiniz bir sesi duyduğunuzda, sadece \"güzel\" deyip geçmeyin.\n\n> O duyumun bedende yarattığı hafifliği, gevşemeyi veya sıcaklığı en az 20 saniye boyunca hücrelerinizde hissedin.\n\nBu pratik, beyninizde yeni nöral yollar inşa ederek sinir sisteminizin güvenlik kapasitesini kalıcı olarak artırır.`,
+    savoringTextEN: `Our minds are wired to record negative experiences (negativity bias). However, to heal the nervous system, we must consciously feel and "marinate" positive sensations in our body. This is called **Somatic Savoring**.\n\nWhen you feel the warmth of a cup of coffee in your hand, notice the wind touching your skin, or hear a sound you love, don't just say "nice" and move on.\n\n> Feel the lightness, relaxation, or warmth that sensation creates in your body for at least 20 seconds at a cellular level.\n\nThis practice builds new neural pathways in your brain, permanently increasing your nervous system's capacity for safety.`,
+    isPublic: true,
+    regulation_state: 'dorsal',
+    uid: 'system_aura'
+  }
+];
+
 export function initNotebook(config) {
   Object.assign(configProps, config);
   
@@ -837,6 +873,17 @@ async function loadPublicFeed() {
     }
   }
 
+  // 3. Inject and localize system guide articles from Aura
+  AURA_SAMPLE_ARTICLES.forEach(sample => {
+    if (!feedItems.some(x => x.timestamp === sample.timestamp)) {
+      feedItems.push({
+        ...sample,
+        customEmotion: AppState.lang === 'tr' ? sample.customEmotionTR : sample.customEmotionEN,
+        savoringText: AppState.lang === 'tr' ? sample.savoringTextTR : sample.savoringTextEN
+      });
+    }
+  });
+
   feedItems.sort((a, b) => b.timestamp - a.timestamp);
 
   if (feedItems.length === 0) {
@@ -852,13 +899,16 @@ async function loadPublicFeed() {
 
     return `
       <div class="feed-article-card glow-card" data-ts="${item.timestamp}" style="cursor: pointer; margin-bottom: 1.2rem; padding: 1.6rem; position: relative;">
-        <div class="feed-card-header" style="display: flex; justify-content: space-between; font-size: 0.8rem; opacity: 0.5; margin-bottom: 0.8rem;">
-          <span class="feed-card-author">${author}</span>
+        <div class="feed-card-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; opacity: 0.6; margin-bottom: 0.8rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div class="aura-orb ${getAutonomicClass(item.regulation_state || item.state || 'coherence')}" style="width: 10px; height: 10px;"></div>
+            <span class="feed-card-author" style="font-weight: 500; letter-spacing: 0.5px;">${author}</span>
+          </div>
           <span class="feed-card-date">${dateStr}</span>
         </div>
         <h4 class="feed-card-title" style="font-size: 1.15rem; font-weight: 600; margin-bottom: 0.6rem; color: #fff;">${title}</h4>
         <p class="feed-card-preview" style="font-size: 0.95rem; line-height: 1.5; opacity: 0.8; font-weight: 300; margin-bottom: 1rem;">${bodyPreview}</p>
-        <button class="feed-read-btn" data-ts="${item.timestamp}" style="background: none; border: none; padding: 0; color: var(--vagal-ventral); font-size: 0.9rem; font-weight: 500; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;">${AppState.lang === 'tr' ? 'Okumaya Başla →' : 'Read Article →'}</button>
+        <button class="feed-read-btn" data-ts="${item.timestamp}" style="background: none; border: none; padding: 0; color: var(--vagal-${getAutonomicClass(item.regulation_state || item.state || 'coherence')}); font-size: 0.9rem; font-weight: 500; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;">${AppState.lang === 'tr' ? 'Okumaya Başla →' : 'Read Article →'}</button>
       </div>
     `;
   }).join('');

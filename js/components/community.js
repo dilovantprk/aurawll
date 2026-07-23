@@ -93,19 +93,12 @@ export async function renderSocialTab() {
   const AppState = state.AppState || window.AppState;
   if (!AppState) return;
 
-  const isGuest = isGuestUser(AppState.user);
-
-  if (isGuest) {
-    if (elements.socialGuestWarning) elements.socialGuestWarning.classList.remove('hidden');
-    if (elements.socialMainUi) elements.socialMainUi.classList.add('hidden');
-    return;
-  }
-
+  // Always show main social UI so guests can experience Demo Mode
   if (elements.socialGuestWarning) elements.socialGuestWarning.classList.add('hidden');
   if (elements.socialMainUi) elements.socialMainUi.classList.remove('hidden');
 
   try {
-    const uid = AppState.user.uid;
+    const uid = AppState.user ? AppState.user.uid : 'mock-guest-demo';
     const [friends, incoming, outgoing] = await Promise.all([
       communityService.getFriends(uid),
       communityService.getIncomingRequests(uid),
@@ -134,9 +127,13 @@ export async function renderSocialTab() {
           return `
             <div class="social-user-card">
               <div class="social-user-info">
-                <div class="social-avatar state-neutral">${initials}</div>
+                <div class="social-avatar state-sympathetic">${initials}</div>
                 <div class="social-user-details">
                   <span class="social-user-name">${req.senderName}</span>
+                  <span class="social-user-state">
+                    <span class="state-dot sympathetic"></span>
+                    Rezonans Ağı İsteği
+                  </span>
                 </div>
               </div>
               <div class="social-actions">
@@ -207,7 +204,6 @@ export async function renderSocialTab() {
                 </div>
               </div>
               <div class="social-actions">
-                <!-- Keep actions expandable if we want messaging/sharing later -->
               </div>
             </div>
           `;
