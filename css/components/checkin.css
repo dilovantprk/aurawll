@@ -657,87 +657,104 @@
 .neural-node-dot.sympathetic { background: rgba(244, 166, 136, 0.5); border-color: #F4A688; }
 .neural-node-dot.dorsal { background: rgba(140, 148, 164, 0.5); border-color: #8C94A4; }
 
-/* Pure Organic Somatic Signal (Pill shapes completely removed) */
+/* Premium Glassmorphic Chip Concept */
 .rhizome-chip {
   width: fit-content !important;
   max-width: calc(100% - 10px) !important;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 0.35rem 0.5rem !important;
-  color: rgba(255, 255, 255, 0.72) !important;
-  font-size: 0.98rem !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.2px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 0.7rem 1.4rem !important;
+  border-radius: 100px !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  font-size: 0.94rem !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.1px !important;
   cursor: pointer !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  text-align: left !important;
+  text-align: center !important;
   min-height: auto !important;
   line-height: 1.35 !important;
   white-space: nowrap !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
   position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .rhizome-chip:hover {
-  background: transparent !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
   color: #fff !important;
-  transform: translateX(5px) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* SELECTION HIGHLIGHT - PURE TEXT GLOW & NEURAL NODE PULSE */
-.neural-node-wrapper:has(.rhizome-chip.selected) .neural-node-dot {
-  width: 14px;
-  height: 14px;
-  left: -22px;
+/* Polivagal state dynamic colors for the chips */
+.rhizome-chip.ventral {
+  background: rgba(100, 228, 159, 0.06) !important;
+  border: 1px solid rgba(100, 228, 159, 0.18) !important;
+  color: #64E49F !important;
+}
+.rhizome-chip.ventral:hover {
+  background: rgba(100, 228, 159, 0.15) !important;
+  border-color: rgba(100, 228, 159, 0.3) !important;
+  box-shadow: 0 0 20px rgba(100, 228, 159, 0.15) !important;
+}
+
+.rhizome-chip.sympathetic {
+  background: rgba(244, 166, 136, 0.06) !important;
+  border: 1px solid rgba(244, 166, 136, 0.18) !important;
+  color: #F4A688 !important;
+}
+.rhizome-chip.sympathetic:hover {
+  background: rgba(244, 166, 136, 0.15) !important;
+  border-color: rgba(244, 166, 136, 0.3) !important;
+  box-shadow: 0 0 20px rgba(244, 166, 136, 0.15) !important;
+}
+
+.rhizome-chip.dorsal {
+  background: rgba(140, 148, 164, 0.06) !important;
+  border: 1px solid rgba(140, 148, 164, 0.18) !important;
+  color: #8C94A4 !important;
+}
+.rhizome-chip.dorsal:hover {
+  background: rgba(140, 148, 164, 0.15) !important;
+  border-color: rgba(140, 148, 164, 0.3) !important;
+  box-shadow: 0 0 20px rgba(140, 148, 164, 0.15) !important;
+}
+
+/* Selected state highlights */
+.rhizome-chip.selected {
   background: #fff !important;
   border-color: #fff !important;
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.8), 0 0 30px var(--accent-primary, #B8A9D9) !important;
-}
-
-.neural-node-wrapper:has(.rhizome-chip.selected.ventral) .neural-node-dot {
-  background: #64E49F !important;
-  border-color: #64E49F !important;
-  box-shadow: 0 0 18px #64E49F, 0 0 32px rgba(100, 228, 159, 0.6) !important;
-}
-
-.neural-node-wrapper:has(.rhizome-chip.selected.sympathetic) .neural-node-dot {
-  background: #F4A688 !important;
-  border-color: #F4A688 !important;
-  box-shadow: 0 0 18px #F4A688, 0 0 32px rgba(244, 166, 136, 0.6) !important;
-}
-
-.neural-node-wrapper:has(.rhizome-chip.selected.dorsal) .neural-node-dot {
-  background: #8C94A4 !important;
-  border-color: #8C94A4 !important;
-  box-shadow: 0 0 18px #8C94A4, 0 0 32px rgba(140, 148, 164, 0.6) !important;
-}
-
-.rhizome-chip.selected {
-  background: transparent !important;
-  border: none !important;
-  color: #fff !important;
+  color: #0d1117 !important;
   font-weight: 600 !important;
-  transform: translateX(6px) !important;
-  box-shadow: none !important;
-  text-shadow: 0 0 14px rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.35) !important;
 }
 
 .rhizome-chip.selected.ventral {
-  color: #64E49F !important;
-  text-shadow: 0 0 16px rgba(100, 228, 159, 0.6) !important;
+  background: #64E49F !important;
+  border-color: #64E49F !important;
+  color: #0d1117 !important;
+  box-shadow: 0 0 25px rgba(100, 228, 159, 0.5) !important;
 }
 
 .rhizome-chip.selected.sympathetic {
-  color: #F4A688 !important;
-  text-shadow: 0 0 16px rgba(244, 166, 136, 0.6) !important;
+  background: #F4A688 !important;
+  border-color: #F4A688 !important;
+  color: #0d1117 !important;
+  box-shadow: 0 0 25px rgba(244, 166, 136, 0.5) !important;
 }
 
 .rhizome-chip.selected.dorsal {
-  color: #B8A9D9 !important;
-  text-shadow: 0 0 16px rgba(184, 169, 217, 0.6) !important;
+  background: #8C94A4 !important;
+  border-color: #8C94A4 !important;
+  color: #0d1117 !important;
+  box-shadow: 0 0 25px rgba(140, 148, 164, 0.5) !important;
 }
 
 .rhizome-chip.highlighted {
@@ -1945,6 +1962,53 @@
     height: 220px;
     top: 8%;
   }
+}
+
+/* Keyboard Active Adjustments for Mobile Layouts */
+body.keyboard-open .center-content {
+  padding-top: 1.5vh !important;
+  padding-bottom: 1.5rem !important;
+  min-height: auto !important;
+  justify-content: flex-start !important;
+}
+
+body.keyboard-open .step-header {
+  min-height: auto !important;
+  margin-bottom: 0.5rem !important;
+}
+
+body.keyboard-open .step-header h2 {
+  font-size: 1.25rem !important;
+  margin-bottom: 0.1rem !important;
+}
+
+body.keyboard-open .step-indicator,
+body.keyboard-open .step-subtitle,
+body.keyboard-open .step-header p {
+  display: none !important;
+}
+
+body.keyboard-open #marPhase3 #savoringNote {
+  min-height: 80px !important;
+  height: 85px !important;
+  padding: 1rem !important;
+  font-size: 0.95rem !important;
+  margin-top: 0.5rem !important;
+  border-radius: 16px !important;
+}
+
+body.keyboard-open .auth-form {
+  margin-top: 1rem !important;
+}
+
+body.keyboard-open .input-group {
+  margin-bottom: 0.5rem !important;
+}
+
+body.keyboard-open .primary-btn {
+  margin-top: 1rem !important;
+  height: 40px !important;
+  min-height: 40px !important;
 }
 
 

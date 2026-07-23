@@ -823,6 +823,21 @@ function initGlobalHeaderBackBtn() {
   
   // Initial check
   syncBackBtnVisibility();
+
+  // Handle keyboard open state on mobile for layout adjustments
+  const handleFocusChange = () => {
+    const activeEl = document.activeElement;
+    const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+    if (isInput && window.innerWidth <= 768) {
+      document.body.classList.add('keyboard-open');
+    } else {
+      document.body.classList.remove('keyboard-open');
+    }
+  };
+  window.addEventListener('focusin', handleFocusChange);
+  window.addEventListener('focusout', () => {
+    setTimeout(handleFocusChange, 50);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', initAppBootstrap);
