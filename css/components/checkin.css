@@ -109,6 +109,7 @@
 .nebula-cluster {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
+  align-content: center !important; /* Pack grid rows tightly and center them */
   gap: 0.8rem !important;
   max-width: 360px; /* Symmetrical double row/column alignment */
   margin: 1.8rem auto 0 auto;
