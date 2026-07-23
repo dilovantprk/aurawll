@@ -150,7 +150,8 @@ export function renderSomaticEntry() {
 function renderTinderDeck(container) {
   const selectedCount = AppState.currentCheckIn.somatic_selections.length;
   
-  if (selectedCount >= 3 || deckState.currentIndex >= deckState.keys.length) {
+  // Finish deck if out of cards
+  if (deckState.currentIndex >= deckState.keys.length) {
     if (selectedCount > 0) {
       CheckinAudio.playStepTransition();
       renderAffectGrid();
@@ -170,13 +171,19 @@ function renderTinderDeck(container) {
   }).join('');
 
   const nextCardHtml = nextKey ? `<div class="somatic-next-card"></div>` : '';
+  const finishBtnHtml = selectedCount > 0 ? `
+    <button id="swipeFinishBtn" class="tinder-finish-btn" title="İlerle" aria-label="İlerle">
+      <span>İlerle (${selectedCount})</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  ` : '';
 
   container.innerHTML = `
     <div class="somatic-tinder-wrapper">
       <div class="somatic-tinder-header">
         <div class="somatic-count-badge">
-          <span>HİSLER:</span>
-          <span id="somaticCountNum" class="count-accent">${selectedCount} / 3</span>
+          <span>SEÇİLEN HİSLER:</span>
+          <span id="somaticCountNum" class="count-accent">${selectedCount}</span>
         </div>
         <div class="somatic-selected-tags">${tagsHtml}</div>
       </div>
@@ -210,8 +217,18 @@ function renderTinderDeck(container) {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </button>
       </div>
+      ${finishBtnHtml}
     </div>
   `;
+
+  if (selectedCount > 0) {
+    setHUD('arrow', () => {
+      CheckinAudio.playStepTransition();
+      renderAffectGrid();
+    });
+  } else {
+    setHUD(null);
+  }
 
   bindTinderEvents(container, currentKey);
 }
@@ -223,6 +240,7 @@ function bindTinderEvents(container, currentKey) {
   const passBtn = container.querySelector('#swipePassBtn');
   const selectBtn = container.querySelector('#swipeSelectBtn');
   const undoBtn = container.querySelector('#swipeUndoBtn');
+  const finishBtn = container.querySelector('#swipeFinishBtn');
 
   if (!card) return;
 
@@ -320,6 +338,14 @@ function bindTinderEvents(container, currentKey) {
   selectBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     triggerSwipe('right');
+  });
+
+  finishBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (AppState.currentCheckIn.somatic_selections.length > 0) {
+      CheckinAudio.playStepTransition();
+      renderAffectGrid();
+    }
   });
 
   undoBtn?.addEventListener('click', (e) => {
