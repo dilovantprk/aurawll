@@ -3,6 +3,7 @@ import { t } from '../core/i18n.js';
 import { PROTOCOL_META, BADGES, protocols } from '../core/constants.js';
 import { AppState } from '../core/state.js';
 import { vibrate, calculateEarnedBadges, getRegulationStateLabel, getRegulationColor, normalizeEntry } from '../core/utils.js';
+import { renderSocialTab } from './community.js';
 import { calculateRegulationCapacity } from '../core/vagal-engine.js';
 import { SensoryEngine } from '../services/sensory.js';
 
@@ -104,8 +105,9 @@ export function initCommunityModal() {
         }
       });
 
-      if (tab === 'topluluk') startGalaxy();
-      else stopGalaxy();
+      if (tab === 'topluluk') {
+        renderSocialTab();
+      }
 
       updateTabIndicator();
     };

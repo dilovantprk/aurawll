@@ -843,6 +843,17 @@
             <!-- Glass Writing Container -->
             <div class="article-body-container" style="padding: 1.5rem; width: 100%;">
               <input type="text" id="notebookArticleTitle" class="notebook-article-title-input hidden" placeholder="Makale Başlığı..." data-i18n-placeholder="journal_title_placeholder">
+              
+              <!-- Markdown Toolbar -->
+              <div id="notebookMarkdownToolbar" class="notebook-markdown-toolbar hidden">
+                <button type="button" class="md-bar-btn" data-prefix="**" data-suffix="**" title="Bold (Kalın)">B</button>
+                <button type="button" class="md-bar-btn" data-prefix="*" data-suffix="*" title="Italic (İtalik)">I</button>
+                <button type="button" class="md-bar-btn" data-prefix="## " data-suffix="" title="Heading (Başlık)">H</button>
+                <button type="button" class="md-bar-btn" data-prefix="> " data-suffix="" title="Quote (Alıntı)">“</button>
+                <button type="button" class="md-bar-btn" data-prefix="- " data-suffix="" title="List (Liste)">•</button>
+                <button type="button" class="md-bar-btn" data-prefix="[" data-suffix="](url)" title="Link">🔗</button>
+              </div>
+
               <textarea id="notebookWriteInput" class="notebook-write-textarea" placeholder="Şu an nasıl hissettiğini yaz..." data-i18n-placeholder="journal_placeholder"></textarea>
               <div style="text-align: right; font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); margin-top: 0.5rem;" id="notebookWriteCharCount">0 / 1000</div>
               

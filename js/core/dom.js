@@ -221,6 +221,20 @@ export const elements = {
   exportJsonBtnModal: document.getElementById('exportJsonBtnModal'),
   exportTxtBtnModal: document.getElementById('exportTxtBtnModal'),
   resetMemoryBtnModal: document.getElementById('resetMemoryBtnModal'),
+  
+  // Social Redesign elements
+  socialGuestWarning: document.getElementById('socialGuestWarning'),
+  socialMainUi: document.getElementById('socialMainUi'),
+  socialSearchInput: document.getElementById('socialSearchInput'),
+  socialSearchBtn: document.getElementById('socialSearchBtn'),
+  socialSearchResults: document.getElementById('socialSearchResults'),
+  socialRequestsSection: document.getElementById('socialRequestsSection'),
+  socialRequestsList: document.getElementById('socialRequestsList'),
+  socialRequestsBadge: document.getElementById('socialRequestsBadge'),
+  socialFriendsSection: document.getElementById('socialFriendsSection'),
+  socialFriendsList: document.getElementById('socialFriendsList'),
+  socialSentSection: document.getElementById('socialSentSection'),
+  socialSentList: document.getElementById('socialSentList'),
 
   // Meditations View
   meditationsList: document.getElementById('meditationsList'),
@@ -254,6 +268,7 @@ export const elements = {
   notebookFormatShortBtn: document.getElementById('notebookFormatShortBtn'),
   notebookFormatLongBtn: document.getElementById('notebookFormatLongBtn'),
   notebookArticleTitle: document.getElementById('notebookArticleTitle'),
+  notebookMarkdownToolbar: document.getElementById('notebookMarkdownToolbar'),
   notebookPublicShareCheckbox: document.getElementById('notebookPublicShareCheckbox'),
   notebookPublicShareContainer: document.getElementById('notebookPublicShareContainer')
 };

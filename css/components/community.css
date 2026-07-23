@@ -252,3 +252,298 @@
   color: rgba(255, 255, 255, 0.4);
   cursor: default;
 }
+
+/* --- Social tab redesign --- */
+.social-container {
+  padding: 0.5rem 0 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.social-guest-warning {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  backdrop-filter: blur(10px);
+}
+
+/* Search Area */
+.social-search-bar {
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  padding: 0.35rem 0.5rem 0.35rem 1.2rem;
+  align-items: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-search-bar:focus-within {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.06);
+}
+
+.social-search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.social-search-bar button {
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.social-search-bar button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Search Results */
+.social-search-results {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 0.75rem;
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  backdrop-filter: blur(10px);
+}
+
+/* Social Sections */
+.social-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.social-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.social-section-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.social-badge {
+  background: #64E49F;
+  color: #0c1015;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  min-width: 20px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(100, 228, 159, 0.3);
+}
+
+/* Lists and Cards */
+.social-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.social-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 18px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.social-user-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.social-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Dynamic avatar with states */
+.social-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+
+.state-ventral {
+  background: linear-gradient(135deg, #64E49F 0%, #2b8053 100%);
+  box-shadow: 0 0 15px rgba(100, 228, 159, 0.15);
+}
+
+.state-sympathetic {
+  background: linear-gradient(135deg, #ff9f43 0%, #d35400 100%);
+  box-shadow: 0 0 15px rgba(255, 159, 67, 0.15);
+}
+
+.state-dorsal {
+  background: linear-gradient(135deg, #54a0ff 0%, #2980b9 100%);
+  box-shadow: 0 0 15px rgba(84, 160, 255, 0.15);
+}
+
+.state-neutral {
+  background: linear-gradient(135deg, #8395a7 0%, #2c3e50 100%);
+}
+
+.social-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.social-user-name {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+
+.social-user-state {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.state-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.state-dot.ventral { background-color: #64E49F; }
+.state-dot.sympathetic { background-color: #ff9f43; }
+.state-dot.dorsal { background-color: #54a0ff; }
+.state-dot.neutral { background-color: #8395a7; }
+
+/* Buttons & Interactions */
+.social-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.social-btn {
+  padding: 0.4rem 0.9rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.social-btn-primary {
+  background: #64E49F;
+  color: #0c1015;
+}
+
+.social-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(100, 228, 159, 0.35);
+  background: #75ecae;
+}
+
+.social-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.8rem;
+}
+
+.social-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.social-btn-danger {
+  background: rgba(238, 82, 83, 0.12);
+  color: #ff6b6b;
+  border: 1px solid rgba(238, 82, 83, 0.2);
+  padding: 0.35rem 0.8rem;
+}
+
+.social-btn-danger:hover {
+  background: rgba(238, 82, 83, 0.22);
+  color: #ff4757;
+  transform: translateY(-1px);
+}
+
+.social-btn-text {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 400;
+  cursor: default;
+  padding: 0.4rem 0.5rem;
+}
+
+.social-empty {
+  text-align: center;
+  padding: 1.8rem 1rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.85rem;
+  font-style: italic;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+}

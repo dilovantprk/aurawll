@@ -133,6 +133,7 @@ export function initNotebook(config) {
     elements.notebookFormatShortBtn.classList.add('active');
     elements.notebookFormatLongBtn.classList.remove('active');
     elements.notebookArticleTitle?.classList.add('hidden');
+    elements.notebookMarkdownToolbar?.classList.add('hidden');
     elements.notebookPublicShareContainer?.classList.add('hidden');
     
     // Reset inputs & values
@@ -149,12 +150,26 @@ export function initNotebook(config) {
     elements.notebookFormatLongBtn.classList.add('active');
     elements.notebookFormatShortBtn.classList.remove('active');
     elements.notebookArticleTitle?.classList.remove('hidden');
+    elements.notebookMarkdownToolbar?.classList.remove('hidden');
     elements.notebookPublicShareContainer?.classList.remove('hidden');
     
     elements.notebookWriteInput.placeholder = AppState.lang === 'tr' ? 'Düşüncelerini derinlemesine kaleme al...' : 'Write your thoughts in depth...';
     
     const len = elements.notebookWriteInput.value.length;
     elements.notebookWriteCharCount.textContent = `${len} / 10000`;
+  });
+
+  // Toolbar formatting click handler
+  elements.notebookMarkdownToolbar?.querySelectorAll('.md-bar-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      vibrate('light');
+      const prefix = btn.getAttribute('data-prefix') || '';
+      const suffix = btn.getAttribute('data-suffix') || '';
+      if (elements.notebookWriteInput) {
+        insertFormatting(elements.notebookWriteInput, prefix, suffix);
+      }
+    };
   });
 
   // Input Character Count Handler + HUD integration
@@ -250,6 +265,49 @@ export function initNotebook(config) {
   window.addEventListener('aura-history-updated', loadNotebook);
 }
 
+function insertFormatting(textarea, prefix, suffix = '') {
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = textarea.value;
+  const selectedText = text.substring(start, end);
+  const replacement = prefix + selectedText + suffix;
+  textarea.value = text.substring(0, start) + replacement + text.substring(end);
+  textarea.focus();
+  textarea.selectionStart = start + prefix.length;
+  textarea.selectionEnd = start + prefix.length + selectedText.length;
+  textarea.dispatchEvent(new Event('input'));
+}
+
+function parseMarkdown(text) {
+  if (!text) return '';
+  // Basic HTML escaping
+  let html = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Headings
+  html = html.replace(/^##\s+(.+)$/gm, '<h3 class="article-md-h3" style="font-size:1.25rem; font-weight:600; margin: 1.5rem 0 0.8rem 0; color:#fff;">$1</h3>');
+  html = html.replace(/^#\s+(.+)$/gm, '<h2 class="article-md-h2" style="font-size:1.5rem; font-weight:700; margin: 1.8rem 0 1rem 0; color:#fff;">$1</h2>');
+
+  // Bold
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight:600; color:#fff;">$1</strong>');
+
+  // Italic
+  html = html.replace(/\*(.*?)\*/g, '<em style="font-style:italic;">$1</em>');
+
+  // Blockquotes
+  html = html.replace(/^&gt;\s+(.+)$/gm, '<blockquote class="article-md-blockquote" style="border-left: 3px solid var(--vagal-ventral); padding-left: 1rem; margin: 1rem 0; font-style: italic; opacity: 0.85;">$1</blockquote>');
+
+  // Unordered lists
+  html = html.replace(/^- (.*)$/gm, '<li class="article-md-li" style="margin-left: 1.2rem; list-style-type: disc; margin-bottom: 0.4rem;">$1</li>');
+
+  // Line breaks to <br>
+  html = html.replace(/\n/g, '<br>');
+
+  return html;
+}
+
 function openArticleSubpage(entry) {
   if (!elements.notebookSubpageDetail || !elements.notebookMainMenu) return;
 
@@ -289,7 +347,7 @@ function openArticleSubpage(entry) {
     }
   }
 
-  if (elements.articleBody) elements.articleBody.textContent = entry.savoringText || '...';
+  if (elements.articleBody) elements.articleBody.innerHTML = parseMarkdown(entry.savoringText || '...');
 
   // Toggle visibility with transition class
   elements.notebookMainMenu.classList.add('hidden');

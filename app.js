@@ -24,7 +24,9 @@ import { startOnboardingFlow } from './js/components/onboarding.js';
 import { updateInsightView } from './js/components/insight.js';
 import { initWelcomeScreen } from './js/components/welcome.js';
 import { initAuth, initAuthSheet } from './js/components/auth.js';
-import { handleRedirectResult } from './js/services/auth.js';
+import { handleRedirectResult, isGuestUser } from './js/services/auth.js';
+import { initCommunity } from './js/components/community.js';
+import { communityService } from './js/services/community.js';
 import { initFocus, exitImmersion } from './js/components/focus.js';
 import { initAmbient } from './js/components/ambient.js';
 import { initSleep } from './js/components/sleep.js';
@@ -430,6 +432,9 @@ function startAppFlow(user) {
     AppState.user = user; 
     migrateGuestData(user.uid); 
     document.body.classList.add('is-authenticated');
+    if (!isGuestUser(user)) {
+      communityService.syncUserProfile(user);
+    }
   } else {
     document.body.classList.remove('is-authenticated');
   }
@@ -548,6 +553,7 @@ async function initAppBootstrap() {
     onAuthenticated: (user) => startAppFlow(user)
   });
   initFocus();
+  initCommunity({ navigateTo, AppState });
   initAmbient({ navigateTo });
   initSwipeBreathing({ navigateTo, triggerPortalTransition });
   initSwipeAmbient({ navigateTo });
