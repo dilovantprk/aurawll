@@ -320,7 +320,7 @@
 
 .selected-tag-pill {
   font-size: 0.72rem;
-  padding: 0.25rem 0.75rem;
+  padding: 0.25rem 0.65rem 0.25rem 0.85rem;
   border-radius: 100px;
   background: rgba(184, 169, 217, 0.15);
   border: 1px solid rgba(184, 169, 217, 0.3);
@@ -328,6 +328,29 @@
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.25s ease;
+}
+
+.selected-tag-pill:hover {
+  transform: scale(1.05);
+  background: rgba(229, 115, 115, 0.25) !important;
+  border-color: rgba(229, 115, 115, 0.5) !important;
+  color: #fff !important;
+}
+
+.tag-remove-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.selected-tag-pill:hover .tag-remove-icon {
+  opacity: 1;
 }
 
 .selected-tag-pill.ventral { background: rgba(100, 228, 159, 0.15); border-color: rgba(100, 228, 159, 0.4); color: #64E49F; }

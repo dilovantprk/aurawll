@@ -206,7 +206,7 @@ function renderTinderDeck(container) {
   const tagsHtml = AppState.currentCheckIn.somatic_selections.map(k => {
     const s = SOMATIC_MAP[k]?.state;
     const cls = s ? getAutonomicClass(s) : 'ventral';
-    return `<span class="selected-tag-pill ${cls}">${t(k)}</span>`;
+    return `<span class="selected-tag-pill ${cls}" data-key="${k}" title="İptal et">${t(k)} <span class="tag-remove-icon">&times;</span></span>`;
   }).join('');
 
   const nextCardHtml = nextKey ? `<div class="somatic-next-card"></div>` : '';
@@ -367,6 +367,22 @@ function bindTinderEvents(container, currentKey) {
   card.addEventListener('touchstart', onStart, { passive: true });
   window.addEventListener('touchmove', onMove, { passive: true });
   window.addEventListener('touchend', onEnd);
+
+  const tagPills = container.querySelectorAll('.selected-tag-pill');
+  tagPills.forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      vibrate('light');
+      const key = pill.getAttribute('data-key');
+      const idx = AppState.currentCheckIn.somatic_selections.indexOf(key);
+      if (idx !== -1) {
+        AppState.currentCheckIn.somatic_selections.splice(idx, 1);
+        CheckinAudio.playChipDeselect();
+        updatePrediction();
+        renderTinderDeck(container);
+      }
+    });
+  });
 
   passBtn?.addEventListener('click', (e) => {
     e.preventDefault();
