@@ -1,6 +1,6 @@
 import { elements } from '../core/dom.js';
 import { t } from '../core/i18n.js';
-import { AppState, safeSetItem } from '../core/state.js';
+import { AppState, safeSetItem, safeGetItem } from '../core/state.js';
 import { getWeightsFromState, calculateVagalState } from '../core/vagal-engine.js';
 import { BADGES } from '../core/constants.js';
 import { calculateEarnedBadges, vibrate, normalizeEntry, getRegulationColor } from '../core/utils.js';
@@ -343,6 +343,15 @@ export function initSettings(config) {
     }
   });
 
+  document.getElementById('guestRegisterBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (window.innerWidth < 1024) {
+      openAuthSheet();
+    } else {
+      if (configProps.navigateTo) configProps.navigateTo('view-auth');
+    }
+  });
+
   // Render modules market
   renderModuleMarket();
 
@@ -485,6 +494,23 @@ export function initSettings(config) {
   initProfileEdit();
 }
 
+export function getUserHandle() {
+  let username = safeGetItem('aura_username');
+  if (!username) {
+    const name = AppState.user?.displayName || localStorage.getItem('aura_guest_name');
+    if (name && name !== 'Misafir' && name !== 'Guest') {
+      username = '@' + name.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+    } else if (AppState.user?.email) {
+      username = '@' + AppState.user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
+    } else {
+      username = '@kasif_' + Math.floor(100 + Math.random() * 899);
+    }
+    safeSetItem('aura_username', username);
+  }
+  if (!username.startsWith('@')) username = '@' + username;
+  return username;
+}
+
 export function updateSettingsView() {
   const localHistory = AppState.mockHistory || [];
   const name = AppState.user?.displayName || localStorage.getItem('aura_guest_name');
@@ -500,10 +526,39 @@ export function updateSettingsView() {
   const finalName = name || (AppState.lang === 'tr' ? 'Misafir' : 'Guest');
   if (elements.userDisplayName) elements.userDisplayName.textContent = finalName;
   
-  if (elements.identityRank) {
-    elements.identityRank.textContent = displayTitle;
-  }
+  const handle = getUserHandle();
+  const handleEl = document.getElementById('user-handle-name');
+  if (handleEl) handleEl.textContent = handle;
+  const usernameValEl = document.getElementById('profileUsernameValue');
+  if (usernameValEl) usernameValEl.textContent = handle;
   
+  const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
+
+  const usernameRow = document.getElementById('profileUsernameRow');
+  const emailRow = document.getElementById('profileEmailRow');
+  const googleRow = document.getElementById('profileGoogleRow');
+  const xRow = document.getElementById('profileXRow');
+  const passwordRow = document.getElementById('profilePasswordRow');
+  const guestNoticeRow = document.getElementById('profileGuestNoticeRow');
+
+  if (isGuest) {
+    if (usernameRow) usernameRow.classList.add('hidden');
+    if (emailRow) emailRow.classList.add('hidden');
+    if (googleRow) googleRow.classList.add('hidden');
+    if (xRow) xRow.classList.add('hidden');
+    if (passwordRow) passwordRow.classList.add('hidden');
+    if (guestNoticeRow) guestNoticeRow.classList.remove('hidden');
+    if (handleEl) handleEl.classList.add('hidden');
+  } else {
+    if (usernameRow) usernameRow.classList.remove('hidden');
+    if (emailRow) emailRow.classList.remove('hidden');
+    if (googleRow) googleRow.classList.remove('hidden');
+    if (xRow) xRow.classList.remove('hidden');
+    if (passwordRow) passwordRow.classList.remove('hidden');
+    if (guestNoticeRow) guestNoticeRow.classList.add('hidden');
+    if (handleEl) handleEl.classList.remove('hidden');
+  }
+
   if (elements.uniqueDaysStats) {
     const uniqueDays = new Set(localHistory.map(h => new Date(h.timestamp).toDateString())).size || 0;
     elements.uniqueDaysStats.textContent = t('prof_active_days').replace('{count}', uniqueDays);
@@ -570,7 +625,6 @@ export function updateSettingsView() {
   }
 
   // Show/hide logout vs login button based on guest status
-  const isGuest = !AppState.user || AppState.user.isAnonymous || AppState.user.guest;
   if (elements.logoutBtn) elements.logoutBtn.style.display = isGuest ? 'none' : '';
   if (elements.deleteAccountBtn) {
     elements.deleteAccountBtn.style.display = isGuest ? 'none' : 'block';
@@ -605,7 +659,6 @@ export function updateSettingsView() {
   const profileEmailInput = document.getElementById('profileEmailInput');
   if (profileEmailInput) profileEmailInput.value = AppState.user?.email || '';
 
-  const guestNoticeRow = document.getElementById('profileGuestNoticeRow');
   if (guestNoticeRow) guestNoticeRow.classList.toggle('hidden', !isGuest);
 
   const profileDeleteRow = document.getElementById('profileDeleteAccountRow');
@@ -729,6 +782,68 @@ function initProfileEdit() {
       if (emailEditGroup) emailEditGroup.classList.add('hidden');
       if (emailDisplayGroup) emailDisplayGroup.classList.remove('hidden');
       if (emailStatus) emailStatus.classList.add('hidden');
+    });
+  }
+
+  // 1.5. Username Edit Handlers (@handle)
+  const editUsernameToggleBtn = document.getElementById('profileEditUsernameToggleBtn');
+  const cancelUsernameBtn = document.getElementById('profileCancelUsernameBtn');
+  const usernameDisplayGroup = document.getElementById('profileUsernameDisplayGroup');
+  const usernameEditGroup = document.getElementById('profileUsernameEditGroup');
+  const profileUsernameValue = document.getElementById('profileUsernameValue');
+  const usernameInput = document.getElementById('profileUsernameInput');
+  const saveUsernameBtn = document.getElementById('profileSaveUsernameBtn');
+  const usernameStatus = document.getElementById('profileUsernameStatus');
+
+  if (editUsernameToggleBtn && !editUsernameToggleBtn.dataset.init) {
+    editUsernameToggleBtn.dataset.init = '1';
+    editUsernameToggleBtn.addEventListener('click', () => {
+      if (usernameDisplayGroup) usernameDisplayGroup.classList.add('hidden');
+      if (usernameEditGroup) usernameEditGroup.classList.remove('hidden');
+      if (usernameInput) {
+        usernameInput.value = getUserHandle();
+        usernameInput.focus();
+      }
+    });
+  }
+
+  if (cancelUsernameBtn && !cancelUsernameBtn.dataset.init) {
+    cancelUsernameBtn.dataset.init = '1';
+    cancelUsernameBtn.addEventListener('click', () => {
+      if (usernameEditGroup) usernameEditGroup.classList.add('hidden');
+      if (usernameDisplayGroup) usernameDisplayGroup.classList.remove('hidden');
+      if (usernameStatus) usernameStatus.classList.add('hidden');
+    });
+  }
+
+  if (saveUsernameBtn && usernameInput && !saveUsernameBtn.dataset.init) {
+    saveUsernameBtn.dataset.init = '1';
+    saveUsernameBtn.addEventListener('click', () => {
+      let newUsername = usernameInput.value.trim().toLowerCase();
+      if (!newUsername) {
+        if (usernameStatus) {
+          usernameStatus.textContent = AppState.lang === 'tr' ? 'Kullanıcı adı boş olamaz.' : 'Username cannot be empty.';
+          usernameStatus.style.color = '#ff6b6b';
+          usernameStatus.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (!newUsername.startsWith('@')) newUsername = '@' + newUsername;
+      newUsername = '@' + newUsername.slice(1).replace(/[^a-z0-9_]/g, '');
+
+      safeSetItem('aura_username', newUsername);
+      updateSettingsView();
+
+      if (usernameEditGroup) usernameEditGroup.classList.add('hidden');
+      if (usernameDisplayGroup) usernameDisplayGroup.classList.remove('hidden');
+
+      if (usernameStatus) {
+        usernameStatus.textContent = AppState.lang === 'tr' ? 'Kullanıcı adı güncellendi.' : 'Username updated.';
+        usernameStatus.style.color = '#64E49F';
+        usernameStatus.classList.remove('hidden');
+        setTimeout(() => usernameStatus.classList.add('hidden'), 3000);
+      }
     });
   }
 

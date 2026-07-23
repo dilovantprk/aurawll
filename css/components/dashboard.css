@@ -10,20 +10,40 @@
   width: 100%;
 }
 
+.welcome-box {
+  text-align: center;
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+.welcome-box h1, #greetingText {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 500;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+  background: none;
+  -webkit-text-fill-color: initial;
+}
+
+.welcome-box p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
 /* History Section */
 .history-section h3 { font-size: 1.3rem; margin-bottom: 2rem; color: var(--text-muted); padding-left: 0.5rem; }
 .history-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
 
 /* === COCKPIT CARDS === */
 .cockpit-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 24px;
   padding: 1.5rem 1.8rem;
-  transition: all 0.5s var(--spring-easing);
-  box-shadow: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -33,9 +53,10 @@
 }
 
 .cockpit-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .cockpit-card .cockpit-content {
@@ -55,22 +76,58 @@
 
 .cockpit-card .cockpit-icon {
   flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
 }
 
 .cockpit-card-mini {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 24px;
   padding: 1.2rem 1.5rem;
-  transition: all 0.4s var(--spring-easing);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   display: flex;
   align-items: center;
   gap: 1.2rem;
   width: 100%;
-  box-shadow: none;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.cockpit-card-mini:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Unique Soft Pastel Accent Badges */
+.cockpit-card-mini[onclick*="exercise"] .cockpit-icon,
+.cockpit-card-mini:has([data-i18n*="breathe"]) .cockpit-icon {
+  background: rgba(122, 155, 118, 0.12);
+  border: 1px solid rgba(122, 155, 118, 0.25);
+  color: var(--accent-nature);
+}
+
+.cockpit-card-mini[onclick*="intention"] .cockpit-icon {
+  background: rgba(184, 169, 217, 0.12);
+  border: 1px solid rgba(184, 169, 217, 0.25);
+  color: var(--accent-primary);
+}
+
+.cockpit-card-mini[onclick*="notebook"] .cockpit-icon {
+  background: rgba(244, 166, 136, 0.12);
+  border: 1px solid rgba(244, 166, 136, 0.25);
+  color: var(--accent-warm);
 }
 
 .cockpit-grid {
@@ -83,21 +140,21 @@
 }
 
 .aura-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 24px;
   padding: 1.4rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  box-shadow: none;
-  transition: all 0.4s var(--spring-easing);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .aura-card:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.055);
   border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
 }
@@ -112,7 +169,7 @@
 }
 
 .heatmap-container-mini {
-  background: rgba(255, 255, 255, 0.02) !important;
+  background: rgba(0, 0, 0, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -122,14 +179,14 @@
   background: #fff;
   border-radius: 50%;
   filter: blur(2px);
-  box-shadow: 0 0 15px #fff, 0 0 30px var(--vagal-accent, #64E49F);
+  box-shadow: 0 0 15px #fff, 0 0 30px var(--vagal-accent, #B8A9D9);
 }
 
 .card-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.2rem; }
 .aura-orb { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
-.aura-orb.ventral { background: #64E49F; color: #64E49F; }
-.aura-orb.sympathetic { background: #FBA044; color: #FBA044; }
-.aura-orb.dorsal { background: #62A4FF; color: #62A4FF; }
+.aura-orb.ventral { background: #7D917B; color: #7D917B; }
+.aura-orb.sympathetic { background: #C48B71; color: #C48B71; }
+.aura-orb.dorsal { background: #6D7F94; color: #6D7F94; }
 
 .time-meta { font-size: 0.85rem; color: var(--text-muted); flex: 1; }
 .state-label { font-size: 0.85rem; font-weight: 500; color: #fff; opacity: 0.9; }
@@ -141,15 +198,16 @@
 .somatic-tag { 
   font-size: 0.75rem; 
   padding: 0.3rem 0.7rem; 
-  background: rgba(255, 255, 255, 0.05); 
+  background: rgba(255, 255, 255, 0.04); 
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 100px; 
   color: var(--text-muted); 
 }
 
-/* === HERO BTN (NESTED COCKPIT) === */
+/* === HERO BTN (PRIMARY CTA CARD) === */
 .hero-btn {
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(184, 169, 217, 0.18);
   cursor: pointer;
   text-align: left;
   margin-top: 1rem;
@@ -157,22 +215,22 @@
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  padding: 1.8rem 1.6rem;
+  padding: 1.6rem;
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  background: linear-gradient(135deg, rgba(184, 169, 217, 0.08) 0%, rgba(244, 166, 136, 0.05) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, rgba(184, 169, 217, 0.14) 0%, rgba(244, 166, 136, 0.09) 100%);
+  border-color: rgba(184, 169, 217, 0.3);
   transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
 }
 
 .hero-btn:active {
@@ -182,26 +240,26 @@
 .hero-btn .cockpit-icon {
   width: 48px;
   height: 48px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(184, 169, 217, 0.12);
+  border: 1px solid rgba(184, 169, 217, 0.25);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--accent-primary);
   flex-shrink: 0;
   transition: all 0.3s ease;
 }
 
 .hero-btn:hover .cockpit-icon {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(184, 169, 217, 0.2);
+  border-color: rgba(184, 169, 217, 0.4);
   color: #fff;
 }
 
 .hero-btn .cockpit-label {
-  color: var(--vagal-accent, #7d917b);
-  font-size: 0.7rem;
+  color: var(--accent-primary);
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -209,16 +267,16 @@
 }
 
 .hero-btn .cockpit-title {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--text-main);
   margin-top: 2px;
   margin-bottom: 2px;
 }
 
 .hero-btn p {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.88rem;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -226,13 +284,13 @@
 .hero-chevron-btn {
   width: 36px;
   height: 36px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-muted);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
 }
@@ -240,7 +298,7 @@
 .hero-btn:hover .hero-chevron-btn {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: var(--text-main);
   transform: translateX(3px);
 }
 

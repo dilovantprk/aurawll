@@ -905,15 +905,18 @@
                 <span id="neural-id-serial" class="arc-h-serial">AUR-000-000-X</span>
               </div>
               <div class="arc-h-name-row">
-                <h2 id="user-display-name" class="arc-h-name">Explorer</h2>
-                <button id="cardLoginBtn" class="arc-card-login-btn hidden" data-i18n="btn_login">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                    <polyline points="10 17 15 12 10 7"></polyline>
-                    <line x1="15" y1="12" x2="3" y2="12"></line>
-                  </svg>
-                  <span data-i18n="btn_login">Giriş Yap</span>
-                </button>
+                <div class="arc-h-title-box">
+                  <h2 id="user-display-name" class="arc-h-name">Explorer</h2>
+                  <button id="cardLoginBtn" class="arc-card-login-btn hidden" data-i18n="btn_login">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                      <polyline points="10 17 15 12 10 7"></polyline>
+                      <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    <span data-i18n="btn_login">Giriş Yap</span>
+                  </button>
+                </div>
+                <span id="user-handle-name" class="arc-h-handle">@explorer</span>
               </div>
 
               <!-- Vagal Biometric Signature -->
@@ -1050,6 +1053,47 @@
               </div>
               <p id="profileNameStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
             </div>
+
+            <!-- 1.5. Username Row (@handle) -->
+            <div id="profileUsernameRow" class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.6rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div class="settings-label" style="gap: 0.75rem; align-items: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path>
+                  </svg>
+                  <div style="display: flex; flex-direction: column;">
+                    <span class="settings-text" style="font-size: 0.9rem;" data-i18n="profile_username_title">Kullanıcı Adı</span>
+                    <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);">Benzersiz topluluk kimliğiniz</span>
+                  </div>
+                </div>
+                
+                <!-- Read-Only View Mode (Default) -->
+                <div id="profileUsernameDisplayGroup" style="display: flex; align-items: center; gap: 0.6rem;">
+                  <span id="profileUsernameValue" style="font-size: 0.88rem; color: var(--accent-primary, #B8A9D9); font-family: monospace; font-weight: 500;">@explorer</span>
+                  <button id="profileEditUsernameToggleBtn" class="glass-icon-btn" title="Düzenle" aria-label="Düzenle">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Inline Edit Mode (Hidden by default) -->
+              <div id="profileUsernameEditGroup" class="hidden" style="display: flex; gap: 0.5rem; width: 100%; align-items: center; margin-top: 0.3rem;">
+                <input id="profileUsernameInput" class="settings-input-text" type="text" maxlength="24" placeholder="@kullanici_adi" style="flex: 1; min-width: 0; padding: 0.45rem 1rem; font-family: monospace;">
+                <button id="profileSaveUsernameBtn" class="glass-icon-btn" title="Kaydet" aria-label="Kaydet" style="color: #64E49F; border-color: rgba(100, 228, 159, 0.3);">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+                <button id="profileCancelUsernameBtn" class="glass-icon-btn" title="Vazgeç" aria-label="Vazgeç">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+              <p id="profileUsernameStatus" class="status-text hidden" style="margin: 0; font-size: 0.75rem;"></p>
+            </div>
+
+
 
             <!-- 2. Email Address Row -->
             <div id="profileEmailRow" class="settings-row" style="flex-direction: column; align-items: stretch; gap: 0.6rem;">
@@ -1196,22 +1240,20 @@
             </div>
 
             <!-- 9. Guest Session Notice Row -->
-            <div id="profileGuestNoticeRow" class="settings-row hidden" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
-              <div class="settings-label" style="gap: 0.75rem; align-items: center;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            <div id="profileGuestNoticeRow" class="settings-row hidden" style="justify-content: space-between; align-items: center;">
+              <div class="settings-label" style="gap: 0.75rem; align-items: center; min-width: 0; flex: 1; margin-right: 1rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: var(--accent-primary, #B8A9D9);">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <span class="settings-text" data-i18n="profile_guest_title">Misafir Oturumu</span>
+                <div style="display: flex; flex-direction: column; gap: 0.15rem; min-width: 0;">
+                  <span class="settings-text" style="font-size: 0.9rem; font-weight: 500;" data-i18n="profile_guest_title">Misafir Oturumu</span>
+                  <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.45); line-height: 1.35;" data-i18n="profile_guest_desc">Verilerinizi buluta aktarmak için hesabınızı bağlayın</span>
+                </div>
               </div>
-              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
-                <span style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.4;" data-i18n="profile_guest_desc">Verileriniz geçici olarak bu cihazda saklanıyor. Tüm cihazlarınızdan erişmek için hesabınızı bağlayabilirsiniz.</span>
-                <button id="profileConnectAccountBtn" class="glass-btn" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; font-weight: 600; text-align: center;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                  <span data-i18n="guest_cta_title">Hesabını Bağla / Giriş Yap</span>
-                </button>
-              </div>
+              <button id="profileConnectAccountBtn" class="glass-btn-accent" style="padding: 0.5rem 1.1rem; font-size: 0.82rem; font-weight: 600; flex-shrink: 0; white-space: nowrap; background: rgba(184, 169, 217, 0.12); border: 1px solid rgba(184, 169, 217, 0.25); color: #fff; border-radius: 100px; transition: all 0.3s ease;">
+                <span data-i18n="btn_save_journey">Yolculuğunu Kaydet</span>
+              </button>
             </div>
 
             <!-- 10. Logout Row -->
@@ -1496,12 +1538,17 @@
                     
                     <div id="ambientWheel" class="ambient-wheel" style="display: flex; gap: 0; overflow-x: scroll; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 100%; padding: 0 calc(50% - 50px);">
                       <div class="wheel-item active" data-value="none" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;">Hiçbiri</div>
-                      <div class="wheel-item" data-value="rain" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M8 19v1"></path><path d="M8 14v1"></path><path d="M16 19v1"></path><path d="M16 14v1"></path><path d="M12 21v1"></path><path d="M12 16v1"></path></svg>Yağmur</div>
-                      <div class="wheel-item" data-value="night" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>Gece Yarısı</div>
-                      <div class="wheel-item" data-value="nature" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M12 22v-6"></path><path d="M12 16A4 4 0 0 0 8 12a4 4 0 0 1 4-4a4 4 0 0 1 4 4a4 4 0 0 0-4 4Z"></path></svg>Orman</div>
-                      <div class="wheel-item" data-value="space" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 3.86-8.86c.41-.44 1.1-.48 1.52-.08t.08 1.52c-1.16 2.73-1.46 5.8-1.46 8.42z"></path><path d="m9 12 3 3a22 22 0 0 0 8.86-3.86c.44-.41.48-1.1.08-1.52t-1.52-.08c-2.73 1.16-5.8 1.46-8.42 1.46z"></path></svg>Uzay</div>
-                      <div class="wheel-item" data-value="focus" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>Odak</div>
-                      <div class="wheel-item" data-value="relax" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>Rahatla</div>
+                      <div class="wheel-item" data-value="rain" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4M12 18v4M16 16v4"/></svg>Yağmur</div>
+                      <div class="wheel-item" data-value="waves" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>Okyanus</div>
+                      <div class="wheel-item" data-value="forest_birds" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M16 7c-1.5 0-3-1-4.5-1S8.5 7 7 7c-1.5 0-3-.5-4-1 .5 2 1.5 4 3 5 1.5 1 3 1 4.5 1s3 0 4.5-1c1.5-1 2.5-3 3-5-1 .5-2.5 1-4 1z"/><path d="M12 12v5m-4-3v3m8-3v3"/></svg>Kuşlar</div>
+                      <div class="wheel-item" data-value="jungle" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Tropik</div>
+                      <div class="wheel-item" data-value="stream" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2"/></svg>Dere</div>
+                      <div class="wheel-item" data-value="whale" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M2 16c5 0 7-4 10-4s5 4 10 4"/></svg>Balina</div>
+                      <div class="wheel-item" data-value="spaceship" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M2 12h2l2-9 4 18 4-18 4 18 2-9h2"/></svg>Uzay</div>
+                      <div class="wheel-item" data-value="pink_noise" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M2 12h2l2-9 4 18 4-18 4 18 2-9h2"/></svg>Pembe</div>
+                      <div class="wheel-item" data-value="brown_noise" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M2 12h2l2-9 4 18 4-18 4 18 2-9h2"/></svg>Kahverengi</div>
+                      <div class="wheel-item" data-value="bin_focus" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>Odak Frekansı</div>
+                      <div class="wheel-item" data-value="bin_relax" style="flex: 0 0 100px; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); transition: all 0.3s ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; opacity: 0.8;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Gevşeme</div>
                     </div>
                   </div>
                 </div>
@@ -2028,9 +2075,8 @@
             <!-- Left Side: Cover Art & Text Info (Clickable to restore Fullscreen) -->
             <div class="mini-player-info" id="miniPlayerOpenBtn">
               <div class="mini-player-artwork-wrapper">
-                <img id="miniPlayerArtwork" src="assets/images/ambient/rain.png" alt="Artwork" class="mini-player-img">
-                <div class="mini-player-wave-vis">
-                  <span></span><span></span><span></span>
+                <div id="miniPlayerIcon" class="mini-player-svg-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4M12 18v4M16 16v4"/></svg>
                 </div>
               </div>
               <div class="mini-player-text">

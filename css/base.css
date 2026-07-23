@@ -8,46 +8,55 @@
 
 :root {
   color-scheme: dark;
-  /* High-Fidelity Neural Cockpit v5.0 Palette */
-  --bg-primary: #090a0d;
-  --bg-secondary: #0e1013;
-  --bg-tertiary: #14171c;
+  /* Aura Ultra-Clean Low-Arousal Design Tokens */
+  --bg-primary: #0D0F14;          /* Kadife koyu gece zemini */
+  --bg-secondary: #141720;        /* Yumuşak yüzey */
+  --bg-tertiary: #1B202D;         /* Yükseltilmiş kartlar */
 
-  --text-main: #E2E8F0;
-  --text-muted: #707A8A;
+  --text-main: #F2EDE4;           /* Ilık bej/krem metin (Yüksek okunabilirlik) */
+  --text-muted: #8C94A4;          /* Sis grisi metin */
 
-  --accent-wired: #c48b71;
-  --accent-foggy: #6d7f94;
-  --accent-okay: #7d917b;
-  --accent-primary: #86899c;
-  --accent-primary-hover: #9ca0b5;
+  /* Theme Accents */
+  --accent-primary: #B8A9D9;      /* Yumuşak lavanta */
+  --accent-primary-hover: #C9BCED;
+  --accent-warm: #F4A688;         /* Şafak somonu */
+  --accent-nature: #7A9B76;       /* Yosun yeşili */
 
-  --error: #FF6B6B;
+  /* Polyvagal State Indicators (Kanonik Teori Renkleri) */
+  --accent-okay: #7D917B;         /* Ventral Vagal (Güven / Dengede) */
+  --accent-wired: #C48B71;        /* Sympathetic (Mobilizasyon) */
+  --accent-foggy: #6D7F94;        /* Dorsal Vagal (Sisli-Çöküş) */
 
-  --glass-bg: rgba(13, 15, 22, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.07);
+  --error: #E57373;
+
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.06);
 
   --vagal-ventral-rgb: 125, 145, 123;
   --vagal-symp-rgb: 196, 139, 113;
   --vagal-dorsal-rgb: 109, 127, 148;
-  --vagal-accent-rgb: 134, 137, 156;
+  --vagal-accent-rgb: 184, 169, 217;
 
   --spring-easing: cubic-bezier(0.16, 1, 0.3, 1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-  --glass-blur: blur(45px) saturate(160%);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --glass-blur: blur(24px) saturate(140%);
 
-  /* Typography - Fluid */
+  /* Typography - Apple HIG System Scale */
   --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --typography-h1: clamp(1.8rem, 6vw, 2.5rem);
-  --typography-h2: clamp(1.2rem, 4.5vw, 1.6rem);
-  --typography-body: clamp(0.9rem, 3.5vw, 1.05rem);
+  --apple-large-title: clamp(1.75rem, 6.5vw, 2.125rem); /* 34px HIG Large Title */
+  --apple-title-1: clamp(1.5rem, 5.5vw, 1.75rem);       /* 28px HIG Title 1 */
+  --apple-title-2: clamp(1.25rem, 4.5vw, 1.375rem);     /* 22px HIG Title 2 */
+  --apple-title-3: 1.25rem;                             /* 20px HIG Title 3 */
+  --apple-headline: 1.0625rem;                          /* 17px HIG Headline */
+  --apple-body: 1.0625rem;                              /* 17px HIG Body */
+  --apple-callout: 1rem;                                /* 16px HIG Callout */
+  --apple-subhead: 0.9375rem;                           /* 15px HIG Subhead */
+  --apple-footnote: 0.8125rem;                          /* 13px HIG Footnote */
+  --apple-caption: 0.75rem;                             /* 12px HIG Caption */
 
-  /* Antigravity Motion (v2) - Performance Optimized */
-  --vagal-transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1.2s ease;
-  --transition-fast: transform 0.2s ease, opacity 0.2s ease;
-  --transition-smooth: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
-  --transition-spring: transform 0.5s var(--spring-easing), opacity 0.5s ease;
-  --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --typography-h1: var(--apple-large-title);
+  --typography-h2: var(--apple-title-2);
+  --typography-body: var(--apple-body);
 
   /* Dynamic Parameters */
   --bg-brightness: 1;
@@ -56,6 +65,24 @@
   /* Safe Areas */
   --safe-top: env(safe-area-inset-top, 20px);
   --safe-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+/* Light Mode (Gündüz / Odaklanma Modu) */
+[data-theme="light"] {
+  color-scheme: light;
+  --bg-primary: #EDE4D3;
+  --bg-secondary: #E3DAC9;
+  --bg-tertiary: #D8CEBB;
+
+  --text-main: #12151C;
+  --text-muted: #5A6270;
+
+  --accent-primary: #7A69A0;
+  --accent-warm: #E07D5A;
+  --accent-nature: #5A7B56;
+
+  --glass-bg: rgba(237, 228, 211, 0.65);
+  --glass-border: rgba(18, 21, 28, 0.08);
 }
 
 * {
@@ -72,12 +99,10 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   overflow-y: hidden;
-  /* Prevent body scroll entirely, app-container handles it */
   height: 100vh;
   height: 100dvh;
   width: 100vw;
   position: fixed;
-  /* Lock body in place */
   display: flex;
   flex-direction: column;
 }
@@ -97,23 +122,14 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  /* Neural Cockpit v6.0 Triple-Layer Dynamic Bio-Gradient */
+  background-color: var(--bg-primary);
   background-image:
-    radial-gradient(circle at var(--vagal-x, 50%) var(--vagal-y, 40%),
-      rgba(var(--vagal-color-rgb, var(--vagal-accent-rgb)), calc(var(--bg-brightness, 1) * 0.22)) 0%,
-      transparent 90%),
-    radial-gradient(circle at 85% 15%,
-      rgba(var(--vagal-ventral-rgb), 0.08) 0%,
-      transparent 60%),
-    radial-gradient(circle at 15% 85%,
-      rgba(var(--vagal-dorsal-rgb), 0.08) 0%,
-      transparent 60%);
+    radial-gradient(circle at 50% 0%, rgba(27, 42, 74, 0.45) 0%, transparent 65%),
+    radial-gradient(circle at 85% 15%, rgba(184, 169, 217, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 15% 85%, rgba(244, 166, 136, 0.05) 0%, transparent 45%);
   background-attachment: fixed;
-  transition: background 3.5s cubic-bezier(0.16, 1, 0.3, 1),
-    --bg-brightness var(--breath-duration, 2.5s) ease-in-out,
-    transform var(--breath-duration, 2.5s) cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 3.5s cubic-bezier(0.16, 1, 0.3, 1);
   transform: scale(var(--breath-scale, 1.02));
-  /* Subtle default swell */
   will-change: transform, background;
 }
 
@@ -545,5 +561,70 @@ textarea.glass-input {
 @media (max-width: 600px) {
   .view {
     padding: 0;
+  }
+}
+
+/* ─── APPLE APP STORE HIG MOBILE DEVELOPER STANDARDS ──────── */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Touch targets and HIG input zoom prevention on Mobile Viewports */
+@media (max-width: 768px) {
+  /* Prevent iOS Safari 300ms click delay & enforce 44pt touch targets */
+  button,
+  .primary-btn,
+  .secondary-btn,
+  .glass-btn,
+  .glass-btn-accent,
+  .glass-icon-btn,
+  .nav-item,
+  .hud-btn-v3,
+  .hud-btn-v2 {
+    touch-action: manipulation;
+    min-height: 44px; /* Apple HIG 44pt Touch Target Standard */
+    min-width: 44px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Apple HIG iOS Input Standard: 16px min size prevents Safari auto-zoom */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important; /* iOS Safari minimum non-zoom font size */
+    line-height: 1.4;
+  }
+
+  /* HIG Typography hierarchy scaling */
+  h1, .page-title, .logo-large {
+    font-size: var(--apple-large-title) !important;
+    letter-spacing: -0.41px;
+  }
+
+  h2, .view-title {
+    font-size: var(--apple-title-2) !important;
+    letter-spacing: -0.35px;
+  }
+
+  h3, .card-title {
+    font-size: var(--apple-title-3) !important;
+    letter-spacing: -0.38px;
+  }
+
+  p, body, .body-text {
+    font-size: 16px;
+    line-height: 1.45;
+    letter-spacing: -0.32px;
+  }
+
+  .caption-text, .status-text, .footnote {
+    font-size: var(--apple-footnote) !important;
+    letter-spacing: -0.08px;
   }
 }

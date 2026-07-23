@@ -375,16 +375,16 @@ body.has-nav .dashboard-content {
   pointer-events: auto;
   width: calc(100% - 1.2rem);
   height: calc(64px + var(--mini-player-height) + env(safe-area-inset-bottom, 20px));
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
-  backdrop-filter: blur(15px) saturate(180%);
-  -webkit-backdrop-filter: blur(15px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 32px 32px 0 0;
   display: flex;
   flex-direction: column;
   padding: 0 0.4rem env(safe-area-inset-bottom, 20px) 0.4rem;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3), inset 0 -1px 2px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
   transition: transform 0.5s var(--spring-easing), height 0.5s var(--spring-easing), opacity 0.4s ease, bottom 0.5s ease;
@@ -393,10 +393,10 @@ body.has-nav .dashboard-content {
 
 .mobile-nav-container.is-expanded {
   height: calc(145px + var(--mini-player-height) + env(safe-area-inset-bottom, 20px));
-  border-radius: 32px;
-  bottom: 1rem;
+  border-radius: 32px 32px 0 0;
+  bottom: 0;
   width: calc(100% - 1.2rem);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .mobile-nav-container.has-mini-player {
@@ -434,8 +434,8 @@ body.has-nav .dashboard-content {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  margin-bottom: 5px;
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 
@@ -456,34 +456,32 @@ body.has-nav .dashboard-content {
 /* Sliding Liquid Pill Indicator */
 .nav-indicator {
   position: absolute;
-  bottom: 12px; /* Positioned below icons */
+  bottom: 8px; /* Positioned below icons */
   left: 0;
-  height: 2px; /* Thin indicator line */
+  height: 3px; /* Thin subtle pill indicator line */
   width: var(--nav-width, 0);
   display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), width 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease;
   transform: translateX(var(--nav-left, 0));
   z-index: 0;
 }
 
 .nav-indicator::after {
   content: '';
-  width: 40%; /* Shorter than the item width for a sleek look */
+  width: 16px; /* Sleek minimal pill */
   height: 100%;
-  background: var(--vagal-accent, #fff);
-  border-radius: 2px;
-  box-shadow: 
-    0 0 12px var(--vagal-accent, #fff),
-    0 0 4px rgba(255, 255, 255, 0.8);
-  transition: transform 0.4s var(--spring-bounce);
+  background: var(--text-main, #F2EDE4);
+  border-radius: 100px;
+  box-shadow: none;
+  filter: none;
 }
 
 .nav-pill-stretch::after {
-  transform: scaleX(1.8); /* Elegant stretch instead of blur */
-  opacity: 0.8;
+  transform: scaleX(1.4);
+  opacity: 0.9;
 }
 
 .nav-item {
@@ -494,28 +492,28 @@ body.has-nav .dashboard-content {
   flex: 1;
   height: 64px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.55); /* Increased from 0.35 for better visibility */
-  transition: all 0.4s var(--spring-easing);
+  color: rgba(255, 255, 255, 0.45);
+  transition: color 0.25s ease, opacity 0.25s ease;
   position: relative;
   gap: 2px;
   z-index: 1;
 }
 
 .nav-item.active {
-  color: #fff;
-  transform: translateY(-2px);
+  color: var(--text-main, #F2EDE4);
+  transform: none;
 }
 
 .nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.4s var(--spring-bounce), filter 0.3s ease;
+  transition: transform 0.25s ease;
 }
 
 .nav-item.active .nav-icon {
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6)); /* Premium Neon Glow */
+  transform: scale(1.05);
+  filter: none;
 }
 
 .nav-label {
