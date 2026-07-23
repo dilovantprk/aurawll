@@ -564,11 +564,21 @@ textarea.glass-input {
   }
 }
 
-/* ─── APPLE APP STORE HIG MOBILE DEVELOPER STANDARDS ──────── */
+/* ─── APPLE & ANDROID MOBILE DEVELOPER STANDARDS ────────── */
 html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Fix Android Chrome / WebView SVG distortion & flex shrink bugs */
+svg {
+  flex-shrink: 0;
+  vertical-align: middle;
+  transform: translateZ(0);
 }
 
 /* Touch targets and HIG input zoom prevention on Mobile Viewports */
