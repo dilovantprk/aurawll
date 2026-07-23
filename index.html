@@ -801,6 +801,22 @@
             <div class="article-body-container">
               <p id="articleBody" class="article-sheet-body"></p>
             </div>
+
+            <!-- Action buttons for user's own articles -->
+            <div id="articleActionButtons" class="article-action-buttons hidden">
+              <button id="articleEditBtn" class="glass-action-btn edit-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.4rem;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span>Düzenle</span>
+              </button>
+              <button id="articleShareToggleBtn" class="glass-action-btn share-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.4rem;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                <span id="articleShareToggleText">Paylaş</span>
+              </button>
+              <button id="articleDeleteBtn" class="glass-action-btn delete-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.4rem;"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                <span>Sil</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -857,13 +873,15 @@
               <textarea id="notebookWriteInput" class="notebook-write-textarea" placeholder="Şu an nasıl hissettiğini yaz..." data-i18n-placeholder="journal_placeholder"></textarea>
               <div style="text-align: right; font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); margin-top: 0.5rem;" id="notebookWriteCharCount">0 / 1000</div>
               
-              <!-- Public Share Toggle for Articles -->
-              <div id="notebookPublicShareContainer" class="notebook-public-share-container hidden" style="margin-top: 1rem; text-align: left;">
-                <label class="checkbox-container">
-                  <input type="checkbox" id="notebookPublicShareCheckbox">
-                  <span class="checkmark"></span>
-                  <span class="legal-label" style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);" data-i18n="journal_share_publicly">Beden Günlüğünde Herkese Açık Paylaş</span>
-                </label>
+              <!-- Public Share Switch for Articles -->
+              <div id="notebookPublicShareContainer" class="notebook-public-share-container hidden" style="margin-top: 1.5rem; text-align: left;">
+                <div class="premium-switch-wrapper">
+                  <span class="switch-label" style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.85); font-weight: 300;" data-i18n="journal_share_publicly">Beden Günlüğünde Herkese Açık Paylaş</span>
+                  <label class="premium-switch">
+                    <input type="checkbox" id="notebookPublicShareCheckbox">
+                    <span class="premium-slider"></span>
+                  </label>
+                </div>
               </div>
             </div>
             

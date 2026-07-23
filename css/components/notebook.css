@@ -1055,3 +1055,185 @@
 .md-bar-btn:active {
   transform: translateY(0);
 }
+
+/* Premium Sliding Switch Toggle */
+.premium-switch-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  padding: 1rem 1.2rem;
+  box-sizing: border-box;
+}
+
+.premium-switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.premium-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.premium-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 34px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-switch input:checked + .premium-slider {
+  background-color: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.premium-switch input:checked + .premium-slider:before {
+  transform: translateX(22px);
+  background-color: var(--vagal-ventral);
+  box-shadow: 0 0 12px var(--vagal-ventral);
+}
+
+/* Premium Save Button styling */
+#notebookSaveNoteBtn.primary-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  font-weight: 500 !important;
+  font-size: 1.1rem !important;
+  letter-spacing: 1px !important;
+  padding: 1.1rem !important;
+  border-radius: 100px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+#notebookSaveNoteBtn.primary-btn:hover {
+  background: rgba(var(--vagal-accent-rgb), 0.12) !important;
+  border-color: rgba(var(--vagal-accent-rgb), 0.35) !important;
+  box-shadow: 
+    0 12px 35px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(var(--vagal-accent-rgb), 0.15) !important;
+  transform: translateY(-2px) !important;
+}
+
+#notebookSaveNoteBtn.primary-btn:active {
+  transform: translateY(1px) scale(0.98) !important;
+}
+
+/* Article Action Buttons in Details Page */
+.article-action-buttons {
+  display: flex !important;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 1.8rem;
+  box-sizing: border-box;
+}
+
+.glass-action-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 100px !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  padding: 0.75rem 1rem !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.glass-action-btn svg {
+  margin-right: 0.4rem;
+  transition: transform 0.3s ease;
+}
+
+.glass-action-btn:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+}
+
+.glass-action-btn.edit-btn {
+  flex: 1;
+}
+
+.glass-action-btn.edit-btn:hover {
+  background: rgba(133, 141, 255, 0.08) !important;
+  border-color: rgba(133, 141, 255, 0.35) !important;
+  color: #a5b4fc !important;
+  box-shadow: 0 0 15px rgba(133, 141, 255, 0.1);
+}
+
+.glass-action-btn.edit-btn:hover svg {
+  transform: rotate(15deg) scale(1.1);
+}
+
+.glass-action-btn.share-btn {
+  flex: 1.5;
+}
+
+.glass-action-btn.share-btn:hover {
+  background: rgba(34, 197, 94, 0.08) !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+  color: var(--vagal-ventral) !important;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.1);
+}
+
+.glass-action-btn.share-btn.is-public {
+  background: rgba(239, 68, 68, 0.06) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  color: #fca5a5 !important;
+}
+
+.glass-action-btn.share-btn.is-public:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+  color: #f87171 !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.12);
+}
+
+.glass-action-btn.delete-btn {
+  flex: 1;
+}
+
+.glass-action-btn.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  color: var(--vagal-sympathetic) !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+}
+
+.glass-action-btn.delete-btn:hover svg {
+  transform: scale(1.1);
+}

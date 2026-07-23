@@ -31,30 +31,32 @@ const MOCK_USERS = [
 // Helper to initialize mock local storage social state if missing
 function initMockSocialData(currentUid) {
   if (!currentUid) return;
-  if (!localStorage.getItem('aura_mock_friends')) {
-    const initialFriends = [
-      {
-        id: `mock-user-3_${currentUid}`,
-        users: ['mock-user-3', currentUid],
-        names: { 'mock-user-3': 'Melis A.', [currentUid]: 'Ben' },
-        timestamp: Date.now()
-      }
-    ];
-    localStorage.setItem('aura_mock_friends', JSON.stringify(initialFriends));
+
+  const friendsStr = localStorage.getItem('aura_mock_friends');
+  let friends = friendsStr ? JSON.parse(friendsStr) : [];
+  if (!friends.some(f => f.users && f.users.includes(currentUid))) {
+    friends.push({
+      id: `mock-user-3_${currentUid}`,
+      users: ['mock-user-3', currentUid],
+      names: { 'mock-user-3': 'Melis A.', [currentUid]: 'Ben' },
+      timestamp: Date.now()
+    });
+    localStorage.setItem('aura_mock_friends', JSON.stringify(friends));
   }
-  if (!localStorage.getItem('aura_mock_friend_requests')) {
-    const initialRequests = [
-      {
-        id: `mock-user-2_${currentUid}`,
-        senderUid: 'mock-user-2',
-        senderName: 'Can Y.',
-        receiverUid: currentUid,
-        receiverName: 'Ben',
-        status: 'pending',
-        timestamp: Date.now() - 3600000
-      }
-    ];
-    localStorage.setItem('aura_mock_friend_requests', JSON.stringify(initialRequests));
+
+  const reqStr = localStorage.getItem('aura_mock_friend_requests');
+  let reqs = reqStr ? JSON.parse(reqStr) : [];
+  if (!reqs.some(r => r.receiverUid === currentUid)) {
+    reqs.push({
+      id: `mock-user-2_${currentUid}`,
+      senderUid: 'mock-user-2',
+      senderName: 'Can Y.',
+      receiverUid: currentUid,
+      receiverName: 'Ben',
+      status: 'pending',
+      timestamp: Date.now() - 3600000
+    });
+    localStorage.setItem('aura_mock_friend_requests', JSON.stringify(reqs));
   }
 }
 

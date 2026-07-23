@@ -15,6 +15,8 @@ let configProps = {
 let loadedEntries = [];
 let openOrigin = null; // 'dashboard' or 'notebook'
 let isArticleMode = false;
+let editingEntryTimestamp = null;
+let activeDetailEntry = null;
 
 export function initNotebook(config) {
   Object.assign(configProps, config);
@@ -86,6 +88,171 @@ export function initNotebook(config) {
   // Writing Subpage Back Button
   elements.notebookWriteBackBtn?.addEventListener('click', () => {
     closeWriteSubpage();
+  });
+
+  // Edit Article Button
+  elements.articleEditBtn?.addEventListener('click', () => {
+    if (!activeDetailEntry) return;
+    vibrate('light');
+    const entry = activeDetailEntry;
+    
+    // Close detail subpage
+    elements.notebookSubpageDetail?.classList.remove('active');
+    elements.notebookSubpageDetail?.classList.add('hidden');
+
+    // Open write subpage in edit mode
+    openWriteSubpage(openOrigin || 'notebook');
+    editingEntryTimestamp = entry.timestamp;
+
+    // Fill inputs
+    if (elements.notebookWriteInput) {
+      elements.notebookWriteInput.value = entry.savoringText || '';
+    }
+    
+    // Determine if it was written as a long note
+    const isLong = entry.savoringText && entry.savoringText.length > 120;
+    if (isLong || entry.customEmotion) {
+      // Open in Makale format
+      elements.notebookFormatLongBtn?.click();
+      if (elements.notebookArticleTitle) {
+        elements.notebookArticleTitle.value = entry.customEmotion || '';
+      }
+      if (elements.notebookPublicShareCheckbox) {
+        elements.notebookPublicShareCheckbox.checked = entry.isPublic || false;
+      }
+    } else {
+      // Open in Kısa Not format
+      elements.notebookFormatShortBtn?.click();
+    }
+    
+    // Trigger input event to update char counter
+    elements.notebookWriteInput?.dispatchEvent(new Event('input'));
+  });
+
+  // Share Toggle Button
+  elements.articleShareToggleBtn?.addEventListener('click', async () => {
+    if (!activeDetailEntry) return;
+    vibrate('medium');
+    const entry = activeDetailEntry;
+    const fb = configProps.fb;
+
+    // Toggle status
+    entry.isPublic = !entry.isPublic;
+    const authorName = AppState.user ? (AppState.user.displayName || 'Explorer') : 'Explorer';
+    entry.authorName = authorName;
+
+    // 1. Update personal local storage
+    if (AppState.mockHistory) {
+      const idx = AppState.mockHistory.findIndex(h => h.timestamp === entry.timestamp);
+      if (idx > -1) {
+        AppState.mockHistory[idx].isPublic = entry.isPublic;
+        AppState.mockHistory[idx].authorName = authorName;
+        localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+      }
+    }
+
+    // 2. Update public local feed list
+    let localPub = localStorage.getItem('aura_public_history') ? JSON.parse(localStorage.getItem('aura_public_history')) : [];
+    if (entry.isPublic) {
+      if (!localPub.some(x => x.timestamp === entry.timestamp)) {
+        localPub.unshift(entry);
+      }
+    } else {
+      localPub = localPub.filter(x => x.timestamp !== entry.timestamp);
+    }
+    localStorage.setItem('aura_public_history', JSON.stringify(localPub));
+
+    // 3. Sync to Cloud
+    if (fb && fb.isInitialized) {
+      try {
+        // Find doc in checkins and update
+        if (AppState.user && !AppState.user.guest) {
+          const q = fb.query(fb.collection(fb.db, "checkins"), fb.where("uid", "==", AppState.user.uid), fb.where("timestamp", "==", entry.timestamp));
+          const snap = await fb.getDocs(q);
+          snap.forEach(async (d) => {
+            await fb.updateDoc(fb.doc(fb.db, "checkins", d.id), { isPublic: entry.isPublic, authorName: authorName });
+          });
+        }
+
+        // Add or delete from public_checkins feed
+        if (entry.isPublic) {
+          await fb.addDoc(fb.collection(fb.db, "public_checkins"), { ...entry, uid: AppState.user ? AppState.user.uid : 'guest' });
+        } else {
+          const q = fb.query(fb.collection(fb.db, "public_checkins"), fb.where("timestamp", "==", entry.timestamp));
+          const snap = await fb.getDocs(q);
+          snap.forEach(async (d) => {
+            await fb.deleteDoc(fb.doc(fb.db, "public_checkins", d.id));
+          });
+        }
+      } catch (err) {
+        console.warn("Cloud share sync failed", err);
+      }
+    }
+
+    // Refresh UI
+    window.dispatchEvent(new CustomEvent('aura-history-updated'));
+    
+    // Update button visual/text
+    updateShareButtonState(entry.isPublic);
+  });
+
+  // Delete Button inside detail view
+  elements.articleDeleteBtn?.addEventListener('click', async () => {
+    if (!activeDetailEntry) return;
+    
+    const timestamp = activeDetailEntry.timestamp;
+    
+    const ok = await showConfirm({
+      title: t('warn_title') || 'Uyarı',
+      message: t('notebook_delete_confirm') || 'Bu günlüğü silmek istediğinizden emin misiniz?',
+      confirmText: t('btn_delete') || 'Sil',
+      cancelText: t('btn_cancel') || 'Vazgeçtim'
+    });
+    if (ok) {
+      try {
+        elements.articleDeleteBtn.disabled = true;
+        elements.articleDeleteBtn.style.opacity = '0.3';
+
+        // 1. Delete from Personal Cloud if authenticated
+        if (AppState.user && !AppState.user.guest) {
+          await deleteSingleCheckin(timestamp);
+        }
+        
+        // 2. Delete from Public Feed Cloud (if it was public)
+        const fb = configProps.fb;
+        if (fb && fb.isInitialized) {
+          try {
+            const q = fb.query(fb.collection(fb.db, "public_checkins"), fb.where("timestamp", "==", timestamp));
+            const snap = await fb.getDocs(q);
+            snap.forEach(async (d) => {
+              await fb.deleteDoc(fb.doc(fb.db, "public_checkins", d.id));
+            });
+          } catch(e) {
+            console.warn("Cloud public delete failed", e);
+          }
+        }
+
+        // 3. Delete from Local personal and public lists
+        if (AppState.mockHistory) {
+          AppState.mockHistory = AppState.mockHistory.filter(h => h.timestamp !== timestamp);
+          localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+        }
+        let localPub = localStorage.getItem('aura_public_history') ? JSON.parse(localStorage.getItem('aura_public_history')) : [];
+        localPub = localPub.filter(x => x.timestamp !== timestamp);
+        localStorage.setItem('aura_public_history', JSON.stringify(localPub));
+
+        // 4. Refresh UI globally
+        window.dispatchEvent(new CustomEvent('aura-history-updated'));
+        vibrate('light');
+
+        // Close subpage
+        closeArticleSubpage();
+      } catch (err) {
+        console.error("Delete failed:", err);
+        elements.articleDeleteBtn.disabled = false;
+        elements.articleDeleteBtn.style.opacity = '1';
+      }
+    }
   });
 
   // MutationObserver to reset notebook view back to list when navigating away
@@ -199,47 +366,126 @@ export function initNotebook(config) {
       const isPublic = isArticleMode && elements.notebookPublicShareCheckbox?.checked;
       const titleVal = isArticleMode ? (elements.notebookArticleTitle?.value.trim() || (AppState.lang === 'tr' ? 'Başlıksız Makale' : 'Untitled Article')) : (AppState.lang === 'tr' ? 'Hızlı Günlük' : 'Quick Journal');
       const authorName = AppState.user ? (AppState.user.displayName || 'Explorer') : 'Explorer';
-
-      const entry = {
-        state: 'okay', 
-        regulation_state: 'coherence',
-        pre_arousal: 5,
-        pre_valence: 5,
-        somatic_selections: [],
-        selected_emotions: [],
-        subEmotion: 'se_neutral', 
-        customEmotion: titleVal, 
-        sensations: [],
-        savoringText: text,
-        timestamp: Date.now(),
-        isPublic: isPublic,
-        authorName: authorName
-      };
-      
-      // Save locally to personal history
-      if (!AppState.mockHistory) AppState.mockHistory = [];
-      AppState.mockHistory.unshift(entry);
-      localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
-
-      // Save locally to public feed if shared publicly
-      if (isPublic) {
-        let localPub = localStorage.getItem('aura_public_history') ? JSON.parse(localStorage.getItem('aura_public_history')) : [];
-        localPub.unshift(entry);
-        localStorage.setItem('aura_public_history', JSON.stringify(localPub));
-      }
-
-      // Save to cloud in background if authenticated
       const fb = configProps.fb;
-      if (fb && fb.isInitialized) {
-        try {
-          if (AppState.user && !AppState.user.guest) {
-            await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...entry });
+
+      if (editingEntryTimestamp) {
+        // --- EDITING MODE ---
+        // 1. Update personal history locally
+        if (AppState.mockHistory) {
+          const idx = AppState.mockHistory.findIndex(h => h.timestamp === editingEntryTimestamp);
+          if (idx > -1) {
+            const wasPublic = AppState.mockHistory[idx].isPublic;
+            AppState.mockHistory[idx].customEmotion = titleVal;
+            AppState.mockHistory[idx].savoringText = text;
+            AppState.mockHistory[idx].isPublic = isPublic;
+            AppState.mockHistory[idx].authorName = authorName;
+            localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+
+            // Sync personal change to Cloud
+            if (fb && fb.isInitialized && AppState.user && !AppState.user.guest) {
+              try {
+                const q = fb.query(fb.collection(fb.db, "checkins"), fb.where("uid", "==", AppState.user.uid), fb.where("timestamp", "==", editingEntryTimestamp));
+                const snap = await fb.getDocs(q);
+                snap.forEach(async (d) => {
+                  await fb.updateDoc(fb.doc(fb.db, "checkins", d.id), { customEmotion: titleVal, savoringText: text, isPublic: isPublic, authorName: authorName });
+                });
+              } catch(e) {
+                console.warn("Could not sync edited checkin to cloud", e);
+              }
+            }
+
+            // Sync public checkin
+            let localPub = localStorage.getItem('aura_public_history') ? JSON.parse(localStorage.getItem('aura_public_history')) : [];
+            const entryCopy = { ...AppState.mockHistory[idx] };
+
+            if (isPublic) {
+              // Add/Update public local feed list
+              const pubIdx = localPub.findIndex(x => x.timestamp === editingEntryTimestamp);
+              if (pubIdx > -1) {
+                localPub[pubIdx] = entryCopy;
+              } else {
+                localPub.unshift(entryCopy);
+              }
+
+              // Update Firestore public feed
+              if (fb && fb.isInitialized) {
+                try {
+                  const q = fb.query(fb.collection(fb.db, "public_checkins"), fb.where("timestamp", "==", editingEntryTimestamp));
+                  const snap = await fb.getDocs(q);
+                  if (snap.size > 0) {
+                    snap.forEach(async (d) => {
+                      await fb.updateDoc(fb.doc(fb.db, "public_checkins", d.id), { customEmotion: titleVal, savoringText: text, isPublic: isPublic, authorName: authorName });
+                    });
+                  } else {
+                    await fb.addDoc(fb.collection(fb.db, "public_checkins"), { ...entryCopy, uid: AppState.user ? AppState.user.uid : 'guest' });
+                  }
+                } catch(e) {
+                  console.warn("Could not sync edited public checkin to cloud", e);
+                }
+              }
+            } else {
+              // Remove from public local feed
+              localPub = localPub.filter(x => x.timestamp !== editingEntryTimestamp);
+
+              // Delete from Firestore public feed if it was previously public
+              if (fb && fb.isInitialized && wasPublic) {
+                try {
+                  const q = fb.query(fb.collection(fb.db, "public_checkins"), fb.where("timestamp", "==", editingEntryTimestamp));
+                  const snap = await fb.getDocs(q);
+                  snap.forEach(async (d) => {
+                    await fb.deleteDoc(fb.doc(fb.db, "public_checkins", d.id));
+                  });
+                } catch(e) {
+                  console.warn("Could not delete unshared public checkin from cloud", e);
+                }
+              }
+            }
+            localStorage.setItem('aura_public_history', JSON.stringify(localPub));
           }
-          if (isPublic) {
-            await fb.addDoc(fb.collection(fb.db, "public_checkins"), { ...entry, uid: AppState.user ? AppState.user.uid : 'guest' });
+        }
+        editingEntryTimestamp = null;
+      } else {
+        // --- CREATING MODE ---
+        const entry = {
+          state: 'okay', 
+          regulation_state: 'coherence',
+          pre_arousal: 5,
+          pre_valence: 5,
+          somatic_selections: [],
+          selected_emotions: [],
+          subEmotion: 'se_neutral', 
+          customEmotion: titleVal, 
+          sensations: [],
+          savoringText: text,
+          timestamp: Date.now(),
+          isPublic: isPublic,
+          authorName: authorName
+        };
+        
+        // Save locally to personal history
+        if (!AppState.mockHistory) AppState.mockHistory = [];
+        AppState.mockHistory.unshift(entry);
+        localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
+
+        // Save locally to public feed if shared publicly
+        if (isPublic) {
+          let localPub = localStorage.getItem('aura_public_history') ? JSON.parse(localStorage.getItem('aura_public_history')) : [];
+          localPub.unshift(entry);
+          localStorage.setItem('aura_public_history', JSON.stringify(localPub));
+        }
+
+        // Save to cloud in background if authenticated
+        if (fb && fb.isInitialized) {
+          try {
+            if (AppState.user && !AppState.user.guest) {
+              await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...entry });
+            }
+            if (isPublic) {
+              await fb.addDoc(fb.collection(fb.db, "public_checkins"), { ...entry, uid: AppState.user ? AppState.user.uid : 'guest' });
+            }
+          } catch(e) {
+            console.warn("Quick journal cloud save failed", e);
           }
-        } catch(e) {
-          console.warn("Quick journal cloud save failed", e);
         }
       }
       
@@ -312,6 +558,24 @@ function openArticleSubpage(entry) {
   if (!elements.notebookSubpageDetail || !elements.notebookMainMenu) return;
 
   vibrate('light');
+  activeDetailEntry = entry;
+
+  // Reset delete button states
+  if (elements.articleDeleteBtn) {
+    elements.articleDeleteBtn.disabled = false;
+    elements.articleDeleteBtn.style.opacity = '1';
+  }
+
+  // Determine if it's the user's own note
+  const isOwnNote = !entry.uid || entry.uid === 'guest' || (AppState.user && entry.uid === AppState.user.uid);
+  if (elements.articleActionButtons) {
+    if (isOwnNote) {
+      elements.articleActionButtons.classList.remove('hidden');
+      updateShareButtonState(entry.isPublic);
+    } else {
+      elements.articleActionButtons.classList.add('hidden');
+    }
+  }
 
   // Populate subpage elements
   const normalized = normalizeEntry(entry);
@@ -410,6 +674,7 @@ function closeWriteSubpage() {
       elements.notebookMainMenu.classList.remove('hidden');
     }
     openOrigin = null;
+    editingEntryTimestamp = null;
   }, 350); // Match transition duration (0.35s)
 }
 
@@ -623,4 +888,19 @@ async function loadPublicFeed() {
       }
     });
   });
+}
+
+function updateShareButtonState(isPublic) {
+  if (!elements.articleShareToggleBtn || !elements.articleShareToggleText) return;
+  if (isPublic) {
+    elements.articleShareToggleBtn.classList.add('is-public');
+    elements.articleShareToggleText.innerHTML = AppState.lang === 'tr' 
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.4rem;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Paylaşımı Kaldır</span>' 
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.4rem;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Unshare</span>';
+  } else {
+    elements.articleShareToggleBtn.classList.remove('is-public');
+    elements.articleShareToggleText.innerHTML = AppState.lang === 'tr' 
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.4rem;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Paylaş</span>' 
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.4rem;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span>';
+  }
 }

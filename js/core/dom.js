@@ -253,6 +253,11 @@ export const elements = {
   articleState: document.getElementById('articleState'),
   articleSomaticTags: document.getElementById('articleSomaticTags'),
   articleBody: document.getElementById('articleBody'),
+  articleActionButtons: document.getElementById('articleActionButtons'),
+  articleEditBtn: document.getElementById('articleEditBtn'),
+  articleShareToggleBtn: document.getElementById('articleShareToggleBtn'),
+  articleShareToggleText: document.getElementById('articleShareToggleText'),
+  articleDeleteBtn: document.getElementById('articleDeleteBtn'),
 
   // Notebook Write Subpage Elements
   notebookSubpageWrite: document.getElementById('notebook-subpage-write'),
