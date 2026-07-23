@@ -259,14 +259,7 @@ function renderTinderDeck(container) {
     </div>
   `;
 
-  if (selectedCount > 0) {
-    setHUD('arrow', () => {
-      CheckinAudio.playStepTransition();
-      renderAffectGrid();
-    });
-  } else {
-    setHUD(null);
-  }
+  setHUD(null);
 
   bindTinderEvents(container, currentKey);
 }
