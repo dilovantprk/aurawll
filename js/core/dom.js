@@ -162,7 +162,6 @@ export const elements = {
   // Cockpit / Profile
   auraCoreSphere: document.getElementById('aura-core-sphere'),
   userDisplayName: document.getElementById('user-display-name'),
-  identityRank: document.getElementById('identity-rank'),
   uniqueDaysStats: document.getElementById('unique-days-stats'),
   identityBadges: document.getElementById('identity-badges'),
   guestCtaBox: document.getElementById('guest-cta-box'),
@@ -246,5 +245,15 @@ export const elements = {
   notebookWriteBackBtn: document.getElementById('notebookWriteBackBtn'),
   notebookWriteInput: document.getElementById('notebookWriteInput'),
   notebookSaveNoteBtn: document.getElementById('notebookSaveNoteBtn'),
-  notebookWriteCharCount: document.getElementById('notebookWriteCharCount')
+  notebookWriteCharCount: document.getElementById('notebookWriteCharCount'),
+  
+  // New switches, inputs and feed elements
+  notebookSubpageFeed: document.getElementById('notebook-subpage-feed'),
+  notebookFeedBackBtn: document.getElementById('notebookFeedBackBtn'),
+  notebookFeedEntries: document.getElementById('notebookFeedEntries'),
+  notebookFormatShortBtn: document.getElementById('notebookFormatShortBtn'),
+  notebookFormatLongBtn: document.getElementById('notebookFormatLongBtn'),
+  notebookArticleTitle: document.getElementById('notebookArticleTitle'),
+  notebookPublicShareCheckbox: document.getElementById('notebookPublicShareCheckbox'),
+  notebookPublicShareContainer: document.getElementById('notebookPublicShareContainer')
 };

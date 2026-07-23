@@ -14,6 +14,7 @@ let configProps = {
 
 let loadedEntries = [];
 let openOrigin = null; // 'dashboard' or 'notebook'
+let isArticleMode = false;
 
 export function initNotebook(config) {
   Object.assign(configProps, config);
@@ -98,6 +99,8 @@ export function initNotebook(config) {
           elements.notebookSubpageDetail?.classList.add('hidden');
           elements.notebookSubpageWrite?.classList.remove('active');
           elements.notebookSubpageWrite?.classList.add('hidden');
+          elements.notebookSubpageFeed?.classList.remove('active');
+          elements.notebookSubpageFeed?.classList.add('hidden');
           elements.notebookMainMenu?.classList.remove('hidden');
         }
       });
@@ -113,19 +116,53 @@ export function initNotebook(config) {
     });
   }
 
-  const articleBtn = document.getElementById('notebookArticleBtn');
-  if (articleBtn) {
-    articleBtn.addEventListener('click', () => {
-      vibrate('light');
-      showInfoModal('notebook');
-    });
-  }
+  // Beden Günlüğü (Feed) Card Button
+  elements.notebookArticleBtn?.addEventListener('click', () => {
+    openFeedSubpage();
+  });
+
+  // Feed Back Button
+  elements.notebookFeedBackBtn?.addEventListener('click', () => {
+    closeFeedSubpage();
+  });
+
+  // Format Switchers logic
+  elements.notebookFormatShortBtn?.addEventListener('click', () => {
+    isArticleMode = false;
+    vibrate('light');
+    elements.notebookFormatShortBtn.classList.add('active');
+    elements.notebookFormatLongBtn.classList.remove('active');
+    elements.notebookArticleTitle?.classList.add('hidden');
+    elements.notebookPublicShareContainer?.classList.add('hidden');
+    
+    // Reset inputs & values
+    if (elements.notebookArticleTitle) elements.notebookArticleTitle.value = '';
+    elements.notebookWriteInput.placeholder = AppState.lang === 'tr' ? 'Şu an nasıl hissettiğini yaz...' : 'Write how you feel right now...';
+    
+    const len = elements.notebookWriteInput.value.length;
+    elements.notebookWriteCharCount.textContent = `${len} / 1000`;
+  });
+
+  elements.notebookFormatLongBtn?.addEventListener('click', () => {
+    isArticleMode = true;
+    vibrate('light');
+    elements.notebookFormatLongBtn.classList.add('active');
+    elements.notebookFormatShortBtn.classList.remove('active');
+    elements.notebookArticleTitle?.classList.remove('hidden');
+    elements.notebookPublicShareContainer?.classList.remove('hidden');
+    
+    elements.notebookWriteInput.placeholder = AppState.lang === 'tr' ? 'Düşüncelerini derinlemesine kaleme al...' : 'Write your thoughts in depth...';
+    
+    const len = elements.notebookWriteInput.value.length;
+    elements.notebookWriteCharCount.textContent = `${len} / 10000`;
+  });
 
   // Input Character Count Handler + HUD integration
   elements.notebookWriteInput?.addEventListener('input', () => {
     const len = elements.notebookWriteInput.value.length;
+    const limit = isArticleMode ? 10000 : 1000;
     if (elements.notebookWriteCharCount) {
-      elements.notebookWriteCharCount.textContent = `${len} / 1000`;
+      elements.notebookWriteCharCount.textContent = `${len} / ${limit}`;
     }
     // HUD save button logic
     if (configProps.setHUD) {
@@ -144,6 +181,10 @@ export function initNotebook(config) {
   elements.notebookSaveNoteBtn?.addEventListener('click', async () => {
     const text = elements.notebookWriteInput?.value.trim() || '';
     if (text) {
+      const isPublic = isArticleMode && elements.notebookPublicShareCheckbox?.checked;
+      const titleVal = isArticleMode ? (elements.notebookArticleTitle?.value.trim() || (AppState.lang === 'tr' ? 'Başlıksız Makale' : 'Untitled Article')) : (AppState.lang === 'tr' ? 'Hızlı Günlük' : 'Quick Journal');
+      const authorName = AppState.user ? (AppState.user.displayName || 'Explorer') : 'Explorer';
+
       const entry = {
         state: 'okay', 
         regulation_state: 'coherence',
@@ -152,30 +193,45 @@ export function initNotebook(config) {
         somatic_selections: [],
         selected_emotions: [],
         subEmotion: 'se_neutral', 
-        customEmotion: AppState.lang === 'tr' ? 'Hızlı Günlük' : 'Quick Journal', 
+        customEmotion: titleVal, 
         sensations: [],
         savoringText: text,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        isPublic: isPublic,
+        authorName: authorName
       };
       
-      // Save locally
+      // Save locally to personal history
       if (!AppState.mockHistory) AppState.mockHistory = [];
       AppState.mockHistory.unshift(entry);
       localStorage.setItem('aura_history', JSON.stringify(AppState.mockHistory));
 
+      // Save locally to public feed if shared publicly
+      if (isPublic) {
+        let localPub = localStorage.getItem('aura_public_history') ? JSON.parse(localStorage.getItem('aura_public_history')) : [];
+        localPub.unshift(entry);
+        localStorage.setItem('aura_public_history', JSON.stringify(localPub));
+      }
+
       // Save to cloud in background if authenticated
       const fb = configProps.fb;
-      if (fb && fb.isInitialized && AppState.user && !AppState.user.guest) {
+      if (fb && fb.isInitialized) {
         try {
-          await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...entry });
+          if (AppState.user && !AppState.user.guest) {
+            await fb.addDoc(fb.collection(fb.db, "checkins"), { uid: AppState.user.uid, ...entry });
+          }
+          if (isPublic) {
+            await fb.addDoc(fb.collection(fb.db, "public_checkins"), { ...entry, uid: AppState.user ? AppState.user.uid : 'guest' });
+          }
         } catch(e) {
           console.warn("Quick journal cloud save failed", e);
         }
       }
       
-      if (elements.notebookWriteInput) {
-        elements.notebookWriteInput.value = '';
-      }
+      // Reset inputs
+      if (elements.notebookWriteInput) elements.notebookWriteInput.value = '';
+      if (elements.notebookArticleTitle) elements.notebookArticleTitle.value = '';
+      if (elements.notebookPublicShareCheckbox) elements.notebookPublicShareCheckbox.checked = false;
       
       vibrate('medium');
       // Reload history globally
@@ -394,4 +450,119 @@ export function renderNotebook(providedEntries) {
     });
   }
   elements.notebookEntries.innerHTML = html;
+}
+
+function openFeedSubpage() {
+  if (!elements.notebookSubpageFeed || !elements.notebookMainMenu) return;
+  vibrate('light');
+  elements.notebookMainMenu.classList.add('hidden');
+  elements.notebookSubpageFeed.classList.remove('hidden');
+  setTimeout(() => {
+    elements.notebookSubpageFeed.classList.add('active');
+    loadPublicFeed();
+  }, 50);
+}
+
+function closeFeedSubpage() {
+  if (!elements.notebookSubpageFeed || !elements.notebookMainMenu) return;
+  vibrate('light');
+  elements.notebookSubpageFeed.classList.remove('active');
+  setTimeout(() => {
+    elements.notebookSubpageFeed.classList.add('hidden');
+    elements.notebookMainMenu.classList.remove('hidden');
+  }, 350);
+}
+
+async function loadPublicFeed() {
+  const container = elements.notebookFeedEntries;
+  if (!container) return;
+  
+  container.innerHTML = `<div class="feed-loading">${AppState.lang === 'tr' ? 'Yükleniyor...' : 'Loading...'}</div>`;
+
+  let feedItems = [];
+
+  // 1. Load from Firestore if online/auth
+  const fb = configProps.fb;
+  if (fb && fb.isInitialized) {
+    try {
+      const q = fb.query(
+        fb.collection(fb.db, "public_checkins"),
+        fb.orderBy("timestamp", "desc"),
+        fb.limit(20)
+      );
+      const snapshot = await fb.getDocs(q);
+      snapshot.forEach(doc => {
+        feedItems.push(doc.data());
+      });
+    } catch (err) {
+      console.warn("Could not load public checkins from cloud feed", err);
+    }
+  }
+
+  // 2. Load and merge local public history (so offline/guest posts show up too)
+  const localPub = localStorage.getItem('aura_public_history');
+  if (localPub) {
+    try {
+      const parsed = JSON.parse(localPub);
+      parsed.forEach(item => {
+        if (!feedItems.some(x => x.timestamp === item.timestamp)) {
+          feedItems.push(item);
+        }
+      });
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  feedItems.sort((a, b) => b.timestamp - a.timestamp);
+
+  if (feedItems.length === 0) {
+    container.innerHTML = `<div class="feed-empty" style="text-align:center; padding:3rem 1.5rem; opacity:0.5; font-size:0.95rem;">${AppState.lang === 'tr' ? 'Henüz paylaşılmış makale bulunmuyor.' : 'No public articles shared yet.'}</div>`;
+    return;
+  }
+
+  container.innerHTML = feedItems.map(item => {
+    const title = item.customEmotion || (AppState.lang === 'tr' ? 'Başlıksız Makale' : 'Untitled Article');
+    const author = item.authorName || 'Explorer';
+    const dateStr = getHumanizedTime(item.timestamp);
+    const bodyPreview = item.savoringText ? (item.savoringText.substring(0, 140) + (item.savoringText.length > 140 ? '...' : '')) : '';
+
+    return `
+      <div class="feed-article-card glow-card" data-ts="${item.timestamp}" style="cursor: pointer; margin-bottom: 1.2rem; padding: 1.6rem; position: relative;">
+        <div class="feed-card-header" style="display: flex; justify-content: space-between; font-size: 0.8rem; opacity: 0.5; margin-bottom: 0.8rem;">
+          <span class="feed-card-author">${author}</span>
+          <span class="feed-card-date">${dateStr}</span>
+        </div>
+        <h4 class="feed-card-title" style="font-size: 1.15rem; font-weight: 600; margin-bottom: 0.6rem; color: #fff;">${title}</h4>
+        <p class="feed-card-preview" style="font-size: 0.95rem; line-height: 1.5; opacity: 0.8; font-weight: 300; margin-bottom: 1rem;">${bodyPreview}</p>
+        <button class="feed-read-btn" data-ts="${item.timestamp}" style="background: none; border: none; padding: 0; color: var(--vagal-ventral); font-size: 0.9rem; font-weight: 500; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;">${AppState.lang === 'tr' ? 'Okumaya Başla →' : 'Read Article →'}</button>
+      </div>
+    `;
+  }).join('');
+
+  // Bind click handlers to cards/read buttons to open detail page
+  container.querySelectorAll('.feed-read-btn, .feed-article-card').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const ts = parseInt(el.getAttribute('data-ts'));
+      const item = feedItems.find(x => x.timestamp === ts);
+      if (item) {
+        // Ensure details subpage can find it in loadedEntries
+        if (!loadedEntries.some(x => x.timestamp === item.timestamp)) {
+          loadedEntries.push(item);
+        }
+        openArticleSubpage(item);
+        
+        // Temporarily override the details back button to return to feed instead of personal notes
+        const origBackHandler = () => {
+          closeArticleSubpage();
+          elements.notebookMainMenu.classList.add('hidden');
+          elements.notebookSubpageFeed.classList.remove('hidden');
+          elements.notebookSubpageFeed.classList.add('active');
+          elements.notebookBackBtn.removeEventListener('click', origBackHandler);
+        };
+        elements.notebookBackBtn.addEventListener('click', origBackHandler);
+      }
+    });
+  });
 }

@@ -804,6 +804,24 @@
           </div>
         </div>
 
+        <!-- SUBPAGE: BEDEN GÜNLÜĞÜ (PUBLIC FEED) -->
+        <div id="notebook-subpage-feed" class="notebook-subpage hidden">
+          <!-- Back button and title aligned inline -->
+          <div class="notebook-subpage-header">
+            <button id="notebookFeedBackBtn" class="back-circle-btn" aria-label="Back">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h3 class="notebook-subpage-title" data-i18n="journal_article">Beden Günlüğü</h3>
+          </div>
+          
+          <div class="article-view-content">
+            <div id="notebookFeedEntries" class="notebook-feed-entries">
+              <!-- Public Article Cards Rendered by JS -->
+              <div class="feed-loading">Yükleniyor...</div>
+            </div>
+          </div>
+        </div>
+
         <!-- SUBPAGE: WRITE QUICK NOTE -->
         <div id="notebook-subpage-write" class="notebook-subpage hidden">
           <!-- Back button and title aligned inline -->
@@ -815,10 +833,28 @@
           </div>
           
           <div class="article-view-content">
+            <!-- Format Switcher -->
+            <div class="note-format-switch-container">
+              <div class="note-format-switch">
+                <button id="notebookFormatShortBtn" class="format-switch-btn active" data-i18n="note_format_short">Kısa Not</button>
+                <button id="notebookFormatLongBtn" class="format-switch-btn" data-i18n="note_format_long">Makale</button>
+              </div>
+            </div>
+
             <!-- Glass Writing Container -->
             <div class="article-body-container" style="padding: 1.5rem; width: 100%;">
+              <input type="text" id="notebookArticleTitle" class="notebook-article-title-input hidden" placeholder="Makale Başlığı..." data-i18n-placeholder="journal_title_placeholder">
               <textarea id="notebookWriteInput" class="notebook-write-textarea" placeholder="Şu an nasıl hissettiğini yaz..." data-i18n-placeholder="journal_placeholder"></textarea>
               <div style="text-align: right; font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); margin-top: 0.5rem;" id="notebookWriteCharCount">0 / 1000</div>
+              
+              <!-- Public Share Toggle for Articles -->
+              <div id="notebookPublicShareContainer" class="notebook-public-share-container hidden" style="margin-top: 1rem; text-align: left;">
+                <label class="checkbox-container">
+                  <input type="checkbox" id="notebookPublicShareCheckbox">
+                  <span class="checkmark"></span>
+                  <span class="legal-label" style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);" data-i18n="journal_share_publicly">Beden Günlüğünde Herkese Açık Paylaş</span>
+                </label>
+              </div>
             </div>
             
             <button id="notebookSaveNoteBtn" class="primary-btn mt-8 w-full" data-i18n="btn_complete">Kaydet</button>
@@ -893,7 +929,6 @@
             <div class="aura-blob-wave">
               <div id="aura-core-sphere" class="aura-core-v2"></div>
             </div>
-            <div class="vagal-status-chip" id="identity-rank">VAGAL MASTER</div>
           </div>
 
           <!-- Right Side: Data -->
