@@ -236,13 +236,13 @@ function renderTinderDeck(container) {
             <div class="indicator-badge-circle pass">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </div>
-            <span class="indicator-overlay-text">PAS</span>
+            <span class="indicator-overlay-text">HAYIR</span>
           </div>
           <div class="swipe-overlay-indicator select-overlay">
             <div class="indicator-badge-circle select">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <span class="indicator-overlay-text">HİSSET</span>
+            <span class="indicator-overlay-text">EVET</span>
           </div>
 
           <div class="card-somatic-body">
@@ -252,13 +252,13 @@ function renderTinderDeck(container) {
       </div>
 
       <div class="somatic-tinder-controls">
-        <button id="swipePassBtn" class="tinder-btn pass-btn" title="Pas (Sola Kaydır)" aria-label="Pas">
+        <button id="swipePassBtn" class="tinder-btn pass-btn" title="Hayır (Sola Kaydır)" aria-label="Hayır">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
         <button id="swipeUndoBtn" class="tinder-btn undo-btn" title="Geri Al" aria-label="Geri Al">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 14L4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg>
         </button>
-        <button id="swipeSelectBtn" class="tinder-btn select-btn" title="Hisset (Sağa Kaydır)" aria-label="Hisset">
+        <button id="swipeSelectBtn" class="tinder-btn select-btn" title="Evet (Sağa Kaydır)" aria-label="Evet">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </button>
       </div>

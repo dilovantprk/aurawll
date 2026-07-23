@@ -2002,8 +2002,14 @@
 }
 
 /* Keyboard Active Adjustments for Mobile Layouts */
+body.keyboard-open #mobile-header {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
 body.keyboard-open .center-content {
-  padding-top: 1.5vh !important;
+  padding-top: 2.2rem !important;
   padding-bottom: 1.5rem !important;
   min-height: auto !important;
   justify-content: flex-start !important;
