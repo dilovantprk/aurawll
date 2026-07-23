@@ -149,32 +149,101 @@
 /* === HERO BTN (NESTED COCKPIT) === */
 .hero-btn {
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid var(--vagal-accent, #7d917b);
   cursor: pointer;
   text-align: left;
   margin-top: 1rem;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 2rem;
-  padding: 3.2rem 2.2rem;
+  gap: 1.5rem;
+  padding: 2.2rem 2rem;
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(125, 145, 123, 0.08) 100%);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border-radius: 24px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35), 0 0 25px rgba(125, 145, 123, 0.08);
+  transition: all 0.4s var(--spring-easing);
 }
+
+.hero-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(125, 145, 123, 0.15) 100%);
+  border-color: rgba(255, 255, 255, 0.22);
+  border-left-color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(125, 145, 123, 0.15);
+}
+
+.hero-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
 .hero-btn .cockpit-icon {
-  width: 56px; height: 56px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
+  width: 54px;
+  height: 54px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.4s var(--spring-bounce), background 0.3s ease;
 }
-.hero-btn .cockpit-label { color: var(--vagal-accent, #6ee7c7); font-weight: 700; }
-.hero-btn .cockpit-title { font-size: 1.4rem; margin-top: 2px; }
-.hero-btn h3 { font-size: 1.6rem; color: var(--text-main); margin-bottom: 0.6rem; text-align: left; }
-.hero-btn p { font-size: 1.05rem; opacity: 0.8; text-align: left; }
+
+.hero-btn:hover .cockpit-icon {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.hero-btn .cockpit-label {
+  color: var(--vagal-accent, #7d917b);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-btn .cockpit-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.hero-btn p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* Explicit Right CTA Badge */
+.hero-action-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.35s var(--spring-easing);
+  flex-shrink: 0;
+}
+
+.hero-btn:hover .hero-action-badge {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateX(4px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+}
 
 /* === STATE PICKER & EMOTIONS === */
 .state-options { display: flex; flex-direction: column; gap: 1rem; }
