@@ -210,9 +210,6 @@ function renderTinderDeck(container) {
     return `<span class="selected-tag-pill ${cls}" data-key="${k}" title="İptal et">${t(k)} <span class="tag-remove-icon">&times;</span></span>`;
   }).join('');
 
-  const nextItem = SOMATIC_MAP[nextKey];
-  const nextStateClass = nextItem ? getAutonomicClass(nextItem.state) : '';
-  const nextCardHtml = nextKey ? `<div class="somatic-next-card state-${nextStateClass}"></div>` : '';
   const finishBtnHtml = `
     <div class="somatic-finish-slot">
       <button id="swipeFinishBtn" class="tinder-finish-btn ${selectedCount > 0 ? '' : 'hidden'}" title="İlerle" aria-label="İlerle">
@@ -221,12 +218,6 @@ function renderTinderDeck(container) {
       </button>
     </div>
   `;
-
-  const stateLabelText = item ? (
-    item.state === 'coherence' ? 'VENTRAL • GÜVEN VE UYUM' :
-    item.state === 'mobilization' ? 'SİMPATİK • MOBİLİZASYON' :
-    'DORSAL • İMMOBİLİZASYON'
-  ) : '';
 
   container.innerHTML = `
     <div class="somatic-tinder-wrapper">
@@ -239,23 +230,13 @@ function renderTinderDeck(container) {
       </div>
 
       <div class="somatic-card-stack">
-        ${nextCardHtml}
         <div id="activeSomaticCard" class="somatic-swipe-card state-${stateClass} liquid-glass">
-          <div class="swipe-badge badge-pass">PAS</div>
-          <div class="swipe-badge badge-select">HİSSET</div>
-
-          <div class="somatic-card-state-indicator ${stateClass}">
-            <span class="indicator-dot"></span>
-            <span class="indicator-text">${stateLabelText}</span>
-          </div>
-
           <div class="card-somatic-body">
             <div class="somatic-icon-badge ${stateClass}">
               ${promptIcon}
             </div>
             <h3 class="somatic-card-text">${t(currentKey)}</h3>
           </div>
-          <div style="height: 12px;"></div>
         </div>
       </div>
 
@@ -281,8 +262,6 @@ function renderTinderDeck(container) {
 
 function bindTinderEvents(container, currentKey) {
   const card = container.querySelector('#activeSomaticCard');
-  const passBadge = container.querySelector('.badge-pass');
-  const selectBadge = container.querySelector('.badge-select');
   const passBtn = container.querySelector('#swipePassBtn');
   const selectBtn = container.querySelector('#swipeSelectBtn');
   const undoBtn = container.querySelector('#swipeUndoBtn');
@@ -310,17 +289,6 @@ function bindTinderEvents(container, currentKey) {
 
     const rotate = currentX * 0.08;
     card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rotate}deg)`;
-
-    if (currentX < -20) {
-      if (passBadge) passBadge.style.opacity = Math.min(Math.abs(currentX) / 80, 1);
-      if (selectBadge) selectBadge.style.opacity = '0';
-    } else if (currentX > 20) {
-      if (selectBadge) selectBadge.style.opacity = Math.min(currentX / 80, 1);
-      if (passBadge) passBadge.style.opacity = '0';
-    } else {
-      if (passBadge) passBadge.style.opacity = '0';
-      if (selectBadge) selectBadge.style.opacity = '0';
-    }
   };
 
   const onEnd = () => {
@@ -335,8 +303,6 @@ function bindTinderEvents(container, currentKey) {
     } else {
       card.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
       card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
-      if (passBadge) passBadge.style.opacity = '0';
-      if (selectBadge) selectBadge.style.opacity = '0';
     }
   };
 
