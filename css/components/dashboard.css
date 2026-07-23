@@ -215,7 +215,7 @@
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  padding: 1.6rem;
+  padding: 2.6rem 1.8rem;
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, rgba(184, 169, 217, 0.08) 0%, rgba(244, 166, 136, 0.05) 100%);
@@ -548,7 +548,7 @@
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  padding: 1.8rem 1.6rem;
+  padding: 2.6rem 1.8rem;
   position: relative;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.04);
@@ -870,6 +870,10 @@
 
   .welcome-box h1, #greetingText {
     font-size: clamp(1.6rem, 5vw, 2.2rem) !important;
+  }
+
+  .hero-btn {
+    padding: 2.5rem 1.4rem !important;
   }
 }
 
