@@ -130,10 +130,19 @@ export function renderSomaticEntry() {
   const container = elements.somaticContainer;
   if (!container) return;
   const shuffledKeys = Object.keys(SOMATIC_MAP).sort(() => Math.random() - 0.5);
-  container.innerHTML = shuffledKeys.map((key) => {
+  let html = `<div class="neural-spine-line"></div><div class="neural-flow-list">`;
+  html += shuffledKeys.map((key, idx) => {
     const cssClass = getAutonomicClass(SOMATIC_MAP[key].state);
-    return `<button class="rhizome-chip ${cssClass}" data-key="${key}" data-state="${SOMATIC_MAP[key].state}">${t(key)}</button>`;
+    const offsetClass = `offset-${(idx % 4) + 1}`;
+    return `
+      <div class="neural-node-wrapper ${offsetClass}">
+        <div class="neural-node-dot ${cssClass}"></div>
+        <button class="rhizome-chip ${cssClass}" data-key="${key}" data-state="${SOMATIC_MAP[key].state}">${t(key)}</button>
+      </div>
+    `;
   }).join('');
+  html += `</div>`;
+  container.innerHTML = html;
   const chips = container.querySelectorAll('.rhizome-chip');
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
@@ -192,7 +201,10 @@ function applyDynamicFilter(chips, container) {
   container.classList.remove('has-selection', 'selected-category-ventral', 'selected-category-sympathetic', 'selected-category-dorsal');
   
   // Reset orders
-  chips.forEach(c => c.style.order = "0");
+  chips.forEach(c => {
+    const wrapper = c.closest('.neural-node-wrapper');
+    if (wrapper) wrapper.style.order = "0";
+  });
 
   if (selectedKeys.length > 0) {
     container.classList.add('has-selection');
@@ -203,13 +215,15 @@ function applyDynamicFilter(chips, container) {
     chips.forEach(chip => {
       const chipState = chip.getAttribute('data-state');
       const isSelected = chip.classList.contains('selected');
+      const wrapper = chip.closest('.neural-node-wrapper');
+      const target = wrapper || chip;
       
       if (isSelected) {
-        chip.style.order = "-2"; // Absolute top for selected
+        target.style.order = "-2"; // Absolute top for selected
       } else if (activeStates.includes(chipState)) {
-        chip.style.order = "-1"; // Near top for related
+        target.style.order = "-1"; // Near top for related
       } else {
-        chip.style.order = "1"; // Push to back
+        target.style.order = "1"; // Push to back
       }
     });
 
