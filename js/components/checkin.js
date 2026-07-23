@@ -231,6 +231,20 @@ function renderTinderDeck(container) {
 
       <div class="somatic-card-stack">
         <div id="activeSomaticCard" class="somatic-swipe-card state-${stateClass} liquid-glass">
+          <!-- Full-Card Overlay Indicators for Tinder Drag -->
+          <div class="swipe-overlay-indicator pass-overlay">
+            <div class="indicator-badge-circle pass">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+            <span class="indicator-overlay-text">PAS</span>
+          </div>
+          <div class="swipe-overlay-indicator select-overlay">
+            <div class="indicator-badge-circle select">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span class="indicator-overlay-text">HİSSET</span>
+          </div>
+
           <div class="card-somatic-body">
             <div class="somatic-icon-badge ${stateClass}">
               ${promptIcon}
@@ -269,6 +283,9 @@ function bindTinderEvents(container, currentKey) {
 
   if (!card) return;
 
+  const passOverlay = card.querySelector('.pass-overlay');
+  const selectOverlay = card.querySelector('.select-overlay');
+
   let isDragging = false;
   let startX = 0, startY = 0;
   let currentX = 0, currentY = 0;
@@ -278,6 +295,14 @@ function bindTinderEvents(container, currentKey) {
     startX = e.clientX || e.touches?.[0]?.clientX || 0;
     startY = e.clientY || e.touches?.[0]?.clientY || 0;
     card.style.transition = 'none';
+    if (passOverlay) {
+      passOverlay.style.transition = 'none';
+      passOverlay.style.opacity = 0;
+    }
+    if (selectOverlay) {
+      selectOverlay.style.transition = 'none';
+      selectOverlay.style.opacity = 0;
+    }
   };
 
   const onMove = (e) => {
@@ -289,6 +314,14 @@ function bindTinderEvents(container, currentKey) {
 
     const rotate = currentX * 0.08;
     card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rotate}deg)`;
+
+    if (currentX < 0) {
+      if (passOverlay) passOverlay.style.opacity = Math.min(Math.abs(currentX) / 100, 0.95);
+      if (selectOverlay) selectOverlay.style.opacity = 0;
+    } else {
+      if (selectOverlay) selectOverlay.style.opacity = Math.min(currentX / 100, 0.95);
+      if (passOverlay) passOverlay.style.opacity = 0;
+    }
   };
 
   const onEnd = () => {
@@ -303,6 +336,14 @@ function bindTinderEvents(container, currentKey) {
     } else {
       card.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
       card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+      if (passOverlay) {
+        passOverlay.style.transition = 'opacity 0.3s ease';
+        passOverlay.style.opacity = 0;
+      }
+      if (selectOverlay) {
+        selectOverlay.style.transition = 'opacity 0.3s ease';
+        selectOverlay.style.opacity = 0;
+      }
     }
   };
 

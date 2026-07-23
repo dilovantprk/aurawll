@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aura-v70';
+const CACHE_NAME = 'aura-v72';
 const ASSETS = [
   '/',
   '/index.html',
