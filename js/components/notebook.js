@@ -17,6 +17,7 @@ let openOrigin = null; // 'dashboard' or 'notebook'
 let isArticleMode = false;
 let editingEntryTimestamp = null;
 let activeDetailEntry = null;
+let activeDetailOrigin = null;
 
 const AURA_SAMPLE_ARTICLES = [
   {
@@ -590,11 +591,12 @@ function parseMarkdown(text) {
   return html;
 }
 
-function openArticleSubpage(entry) {
+function openArticleSubpage(entry, origin = 'notebook') {
   if (!elements.notebookSubpageDetail || !elements.notebookMainMenu) return;
 
   vibrate('light');
   activeDetailEntry = entry;
+  activeDetailOrigin = origin;
 
   // Reset delete button states
   if (elements.articleDeleteBtn) {
@@ -650,7 +652,13 @@ function openArticleSubpage(entry) {
   if (elements.articleBody) elements.articleBody.innerHTML = parseMarkdown(entry.savoringText || '...');
 
   // Toggle visibility with transition class
-  elements.notebookMainMenu.classList.add('hidden');
+  // Toggle visibility with transition class
+  if (activeDetailOrigin === 'feed') {
+    elements.notebookSubpageFeed?.classList.remove('active');
+    elements.notebookSubpageFeed?.classList.add('hidden');
+  } else {
+    elements.notebookMainMenu.classList.add('hidden');
+  }
   elements.notebookSubpageDetail.classList.remove('hidden');
   setTimeout(() => {
     elements.notebookSubpageDetail.classList.add('active');
@@ -658,14 +666,24 @@ function openArticleSubpage(entry) {
 }
 
 function closeArticleSubpage() {
-  if (!elements.notebookSubpageDetail || !elements.notebookMainMenu) return;
+  if (!elements.notebookSubpageDetail) return;
 
   vibrate('light');
 
   elements.notebookSubpageDetail.classList.remove('active');
   setTimeout(() => {
     elements.notebookSubpageDetail.classList.add('hidden');
-    elements.notebookMainMenu.classList.remove('hidden');
+    if (activeDetailOrigin === 'feed') {
+      if (elements.notebookSubpageFeed) {
+        elements.notebookSubpageFeed.classList.remove('hidden');
+        elements.notebookSubpageFeed.classList.add('active');
+      }
+    } else {
+      if (elements.notebookMainMenu) {
+        elements.notebookMainMenu.classList.remove('hidden');
+      }
+    }
+    activeDetailOrigin = null;
   }, 350); // Match transition duration (0.35s)
 }
 
@@ -913,10 +931,9 @@ async function loadPublicFeed() {
     `;
   }).join('');
 
-  // Bind click handlers to cards/read buttons to open detail page
-  container.querySelectorAll('.feed-read-btn, .feed-article-card').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
+  // Bind click handlers to cards to open detail page from the feed
+  container.querySelectorAll('.feed-article-card').forEach(el => {
+    el.addEventListener('click', () => {
       const ts = parseInt(el.getAttribute('data-ts'));
       const item = feedItems.find(x => x.timestamp === ts);
       if (item) {
@@ -924,17 +941,7 @@ async function loadPublicFeed() {
         if (!loadedEntries.some(x => x.timestamp === item.timestamp)) {
           loadedEntries.push(item);
         }
-        openArticleSubpage(item);
-        
-        // Temporarily override the details back button to return to feed instead of personal notes
-        const origBackHandler = () => {
-          closeArticleSubpage();
-          elements.notebookMainMenu.classList.add('hidden');
-          elements.notebookSubpageFeed.classList.remove('hidden');
-          elements.notebookSubpageFeed.classList.add('active');
-          elements.notebookBackBtn.removeEventListener('click', origBackHandler);
-        };
-        elements.notebookBackBtn.addEventListener('click', origBackHandler);
+        openArticleSubpage(item, 'feed');
       }
     });
   });
