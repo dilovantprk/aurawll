@@ -185,41 +185,19 @@ export function vibrate(type = 'light') {
 }
 
 /**
- * Synchronizes the global application theme (background gradient)
- * based on the user's most recent autonomic regulation state.
+ * Synchronizes the global application theme (background gradient & accents).
+ * Pinned to Aura's fixed, high-fidelity dark obsidian & muted slate aesthetic.
  */
 export function syncGlobalTheme() {
-  const history = AppState.userHistory && AppState.userHistory.length > 0 ? AppState.userHistory : (AppState.mockHistory || []);
-  if (!history || history.length === 0) return;
-  
-  const latest = normalizeEntry({ ...history[0] });
-  const state = latest.regulation_state || latest.state;
-  
-  // High-fidelity color mapping
-  const colors = {
-    okay: { rgb: '125, 145, 123', hex: '#7d917b' },
-    ventral: { rgb: '125, 145, 123', hex: '#7d917b' },
-    coherence: { rgb: '125, 145, 123', hex: '#7d917b' },
-    wired: { rgb: '196, 139, 113', hex: '#c48b71' },
-    sympathetic: { rgb: '196, 139, 113', hex: '#c48b71' },
-    mobilization: { rgb: '196, 139, 113', hex: '#c48b71' },
-    foggy: { rgb: '109, 127, 148', hex: '#6d7f94' },
-    dorsal: { rgb: '109, 127, 148', hex: '#6d7f94' },
-    immobilization: { rgb: '109, 127, 148', hex: '#6d7f94' }
-  };
-  
-  const theme = colors[state] || { rgb: '133, 141, 255', hex: '#858DFF' };
+  // Fixed calm obsidian & neutral slate accent palette matching user preference
+  const theme = { rgb: '134, 137, 156', hex: '#86899c' };
   
   const root = document.documentElement;
   root.style.setProperty('--vagal-color-rgb', theme.rgb);
   root.style.setProperty('--accent-primary', theme.hex);
   root.style.setProperty('--vagal-accent', theme.hex);
-  
-  // Also update a slightly brighter version for hover if needed (automated)
-  root.style.setProperty('--accent-primary-hover', theme.hex); 
+  root.style.setProperty('--accent-primary-hover', theme.hex);
 
   // Dispatch custom event for WebGL or other listeners to update without layout thrashing
   window.dispatchEvent(new CustomEvent('aura-theme-updated', { detail: { rgb: theme.rgb } }));
-
-  // console.log(`[Aura Theme] Syncing background & accents to state: ${state}`);
 }
