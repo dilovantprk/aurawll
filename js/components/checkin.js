@@ -230,7 +230,7 @@ function renderTinderDeck(container) {
       </div>
 
       <div class="somatic-card-stack">
-        <div id="activeSomaticCard" class="somatic-swipe-card state-${stateClass} liquid-glass">
+        <div id="activeSomaticCard" class="somatic-swipe-card liquid-glass">
           <!-- Full-Card Overlay Indicators for Tinder Drag -->
           <div class="swipe-overlay-indicator pass-overlay">
             <div class="indicator-badge-circle pass">
@@ -246,9 +246,6 @@ function renderTinderDeck(container) {
           </div>
 
           <div class="card-somatic-body">
-            <div class="somatic-icon-badge ${stateClass}">
-              ${promptIcon}
-            </div>
             <h3 class="somatic-card-text">${t(currentKey)}</h3>
           </div>
         </div>

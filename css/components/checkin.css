@@ -449,24 +449,7 @@
   text-transform: uppercase;
 }
 
-/* Polivagal state dynamic card skins (Subtle color glow inside borders, very clean) */
-.somatic-swipe-card.state-ventral {
-  background: linear-gradient(135deg, rgba(100, 228, 159, 0.04) 0%, rgba(34, 197, 94, 0.01) 100%);
-  border: 1px solid rgba(100, 228, 159, 0.15);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
-}
 
-.somatic-swipe-card.state-sympathetic {
-  background: linear-gradient(135deg, rgba(244, 166, 136, 0.04) 0%, rgba(239, 68, 68, 0.01) 100%);
-  border: 1px solid rgba(244, 166, 136, 0.15);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
-}
-
-.somatic-swipe-card.state-dorsal {
-  background: linear-gradient(135deg, rgba(140, 148, 164, 0.06) 0%, rgba(184, 169, 217, 0.01) 100%);
-  border: 1px solid rgba(140, 148, 164, 0.15);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
-}
 
 /* Background Card in Stack disabled to keep layout clean and minimal */
 .somatic-next-card {
