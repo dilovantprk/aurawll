@@ -1119,6 +1119,41 @@
   }
 }
 
+/* ── Mobile Settings Card & List Typography Refinement (Ambient Match) ── */
+@media (max-width: 768px) {
+  .settings-section-title {
+    font-size: 0.68rem !important;
+    letter-spacing: 2px !important;
+    font-weight: 700 !important;
+    opacity: 0.45 !important;
+    text-transform: uppercase !important;
+    margin-bottom: 0.8rem !important;
+  }
+
+  .settings-text {
+    font-size: 0.98rem !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.2px !important;
+    color: #ffffff !important;
+  }
+
+  .settings-row span:not(.settings-text) {
+    font-size: 0.76rem !important;
+    color: rgba(255, 255, 255, 0.45) !important;
+    line-height: 1.35 !important;
+  }
+
+  .arc-h-name {
+    font-size: 1.3rem !important;
+    font-weight: 400 !important;
+  }
+
+  .arc-h-serial {
+    font-size: 0.68rem !important;
+    letter-spacing: 1px !important;
+  }
+}
+
 /* ─── Profile Edit Button ───────────────────────────────── */
 .profile-edit-btn {
   display: flex;

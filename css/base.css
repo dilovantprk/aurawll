@@ -611,30 +611,16 @@ svg {
     line-height: 1.4;
   }
 
-  /* HIG Typography hierarchy scaling */
-  h1, .page-title, .logo-large {
-    font-size: var(--apple-large-title) !important;
+  /* HIG Typography hierarchy default rules */
+  .page-title, .logo-large {
     letter-spacing: -0.41px;
   }
 
-  h2, .view-title {
-    font-size: var(--apple-title-2) !important;
+  .view-title {
     letter-spacing: -0.35px;
   }
 
-  h3, .card-title {
-    font-size: var(--apple-title-3) !important;
+  .card-title {
     letter-spacing: -0.38px;
-  }
-
-  p, body, .body-text {
-    font-size: 16px;
-    line-height: 1.45;
-    letter-spacing: -0.32px;
-  }
-
-  .caption-text, .status-text, .footnote {
-    font-size: var(--apple-footnote) !important;
-    letter-spacing: -0.08px;
   }
 }
