@@ -124,61 +124,218 @@ function renderMorningCheckin() {
   setHUD(null);
 }
 
+let deckState = {
+  keys: [],
+  currentIndex: 0,
+  historyStack: []
+};
+
 export function renderSomaticEntry() {
   if (configProps.navigateTo) configProps.navigateTo('view-somatic-entry');
   CheckinAudio.playSomaticOpen();
   const container = elements.somaticContainer;
   if (!container) return;
+
   const shuffledKeys = Object.keys(SOMATIC_MAP).sort(() => Math.random() - 0.5);
-  let html = `<div class="neural-spine-line"></div><div class="neural-flow-list">`;
-  html += shuffledKeys.map((key, idx) => {
-    const cssClass = getAutonomicClass(SOMATIC_MAP[key].state);
-    const offsetClass = `offset-${(idx % 4) + 1}`;
-    return `
-      <div class="neural-node-wrapper ${offsetClass}">
-        <div class="neural-node-dot ${cssClass}"></div>
-        <button class="rhizome-chip ${cssClass}" data-key="${key}" data-state="${SOMATIC_MAP[key].state}">${t(key)}</button>
-      </div>
-    `;
-  }).join('');
-  html += `</div>`;
-  container.innerHTML = html;
-  const chips = container.querySelectorAll('.rhizome-chip');
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      vibrate('light');
-      const key = chip.getAttribute('data-key');
-      const chipState = chip.getAttribute('data-state');
-      const idx = AppState.currentCheckIn.somatic_selections.indexOf(key);
-      if (idx === -1) {
-        if (AppState.currentCheckIn.somatic_selections.length < 3) {
-          AppState.currentCheckIn.somatic_selections.push(key);
-          chip.classList.add('selected');
-          CheckinAudio.playChipSelect(chipState);
-          // 3 chip dolunca saturation chord
-          if (AppState.currentCheckIn.somatic_selections.length === 3) {
-            setTimeout(() => CheckinAudio.playChipSaturation(), 250);
-          }
-        }
-      } else {
-        AppState.currentCheckIn.somatic_selections.splice(idx, 1);
-        chip.classList.remove('selected');
-        CheckinAudio.playChipDeselect();
-      }
-      applyDynamicFilter(chips, container);
-      updatePrediction();
-      if (AppState.currentCheckIn.somatic_selections.length > 0) {
-        setHUD('arrow', () => {
-          CheckinAudio.playStepTransition();
-          renderAffectGrid();
-        });
-      } else {
-        setHUD(null);
-      }
-    });
-  });
-  if (elements.somaticNextBtn) elements.somaticNextBtn.onclick = () => renderAffectGrid();
+  deckState = {
+    keys: shuffledKeys,
+    currentIndex: 0,
+    historyStack: []
+  };
+
+  renderTinderDeck(container);
   setHUD(null);
+}
+
+function renderTinderDeck(container) {
+  const selectedCount = AppState.currentCheckIn.somatic_selections.length;
+  
+  if (selectedCount >= 3 || deckState.currentIndex >= deckState.keys.length) {
+    if (selectedCount > 0) {
+      CheckinAudio.playStepTransition();
+      renderAffectGrid();
+      return;
+    }
+  }
+
+  const currentKey = deckState.keys[deckState.currentIndex];
+  const nextKey = deckState.keys[deckState.currentIndex + 1];
+  const item = SOMATIC_MAP[currentKey];
+  const stateClass = item ? getAutonomicClass(item.state) : 'ventral';
+
+  const tagsHtml = AppState.currentCheckIn.somatic_selections.map(k => {
+    const s = SOMATIC_MAP[k]?.state;
+    const cls = s ? getAutonomicClass(s) : 'ventral';
+    return `<span class="selected-tag-pill ${cls}">${t(k)}</span>`;
+  }).join('');
+
+  const nextCardHtml = nextKey ? `<div class="somatic-next-card"></div>` : '';
+
+  container.innerHTML = `
+    <div class="somatic-tinder-wrapper">
+      <div class="somatic-tinder-header">
+        <div class="somatic-count-badge">
+          <span>HİSLER:</span>
+          <span id="somaticCountNum" class="count-accent">${selectedCount} / 3</span>
+        </div>
+        <div class="somatic-selected-tags">${tagsHtml}</div>
+      </div>
+
+      <div class="somatic-card-stack">
+        ${nextCardHtml}
+        <div id="activeSomaticCard" class="somatic-swipe-card liquid-glass">
+          <div class="swipe-badge badge-pass">PAS</div>
+          <div class="swipe-badge badge-select">HİSSET</div>
+
+          <div class="card-somatic-body">
+            <div class="somatic-icon-badge">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5"></path>
+              </svg>
+            </div>
+            <h3 class="somatic-card-text">${t(currentKey)}</h3>
+            <span class="somatic-state-chip ${stateClass}">${item?.state || 'ventral'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="somatic-tinder-controls">
+        <button id="swipePassBtn" class="tinder-btn pass-btn" title="Pas (Sola Kaydır)" aria-label="Pas">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <button id="swipeUndoBtn" class="tinder-btn undo-btn" title="Geri Al" aria-label="Geri Al">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 14L4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg>
+        </button>
+        <button id="swipeSelectBtn" class="tinder-btn select-btn" title="Hisset (Sağa Kaydır)" aria-label="Hisset">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  `;
+
+  bindTinderEvents(container, currentKey);
+}
+
+function bindTinderEvents(container, currentKey) {
+  const card = container.querySelector('#activeSomaticCard');
+  const passBadge = container.querySelector('.badge-pass');
+  const selectBadge = container.querySelector('.badge-select');
+  const passBtn = container.querySelector('#swipePassBtn');
+  const selectBtn = container.querySelector('#swipeSelectBtn');
+  const undoBtn = container.querySelector('#swipeUndoBtn');
+
+  if (!card) return;
+
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let currentX = 0, currentY = 0;
+
+  const onStart = (e) => {
+    isDragging = true;
+    startX = e.clientX || e.touches?.[0]?.clientX || 0;
+    startY = e.clientY || e.touches?.[0]?.clientY || 0;
+    card.style.transition = 'none';
+  };
+
+  const onMove = (e) => {
+    if (!isDragging) return;
+    const x = e.clientX || e.touches?.[0]?.clientX || 0;
+    const y = e.clientY || e.touches?.[0]?.clientY || 0;
+    currentX = x - startX;
+    currentY = y - startY;
+
+    const rotate = currentX * 0.08;
+    card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rotate}deg)`;
+
+    if (currentX < -20) {
+      if (passBadge) passBadge.style.opacity = Math.min(Math.abs(currentX) / 80, 1);
+      if (selectBadge) selectBadge.style.opacity = '0';
+    } else if (currentX > 20) {
+      if (selectBadge) selectBadge.style.opacity = Math.min(currentX / 80, 1);
+      if (passBadge) passBadge.style.opacity = '0';
+    } else {
+      if (passBadge) passBadge.style.opacity = '0';
+      if (selectBadge) selectBadge.style.opacity = '0';
+    }
+  };
+
+  const onEnd = () => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    const threshold = 90;
+    if (currentX > threshold) {
+      triggerSwipe('right');
+    } else if (currentX < -threshold) {
+      triggerSwipe('left');
+    } else {
+      card.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+      card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+      if (passBadge) passBadge.style.opacity = '0';
+      if (selectBadge) selectBadge.style.opacity = '0';
+    }
+  };
+
+  const triggerSwipe = (direction) => {
+    card.style.transition = 'transform 0.4s ease, opacity 0.3s ease';
+    vibrate('light');
+
+    if (direction === 'right') {
+      card.style.transform = 'translate3d(400px, 0, 0) rotate(30deg)';
+      card.style.opacity = '0';
+      
+      const item = SOMATIC_MAP[currentKey];
+      AppState.currentCheckIn.somatic_selections.push(currentKey);
+      CheckinAudio.playChipSelect(item?.state || 'ventral');
+      deckState.historyStack.push({ key: currentKey, action: 'selected' });
+    } else {
+      card.style.transform = 'translate3d(-400px, 0, 0) rotate(-30deg)';
+      card.style.opacity = '0';
+      
+      CheckinAudio.playChipDeselect();
+      deckState.historyStack.push({ key: currentKey, action: 'passed' });
+    }
+
+    deckState.currentIndex++;
+    updatePrediction();
+
+    setTimeout(() => {
+      renderTinderDeck(container);
+    }, 250);
+  };
+
+  card.addEventListener('mousedown', onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onEnd);
+
+  card.addEventListener('touchstart', onStart, { passive: true });
+  window.addEventListener('touchmove', onMove, { passive: true });
+  window.addEventListener('touchend', onEnd);
+
+  passBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    triggerSwipe('left');
+  });
+
+  selectBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    triggerSwipe('right');
+  });
+
+  undoBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (deckState.historyStack.length > 0 && deckState.currentIndex > 0) {
+      vibrate('medium');
+      const last = deckState.historyStack.pop();
+      deckState.currentIndex--;
+      if (last.action === 'selected') {
+        const idx = AppState.currentCheckIn.somatic_selections.indexOf(last.key);
+        if (idx !== -1) AppState.currentCheckIn.somatic_selections.splice(idx, 1);
+      }
+      updatePrediction();
+      renderTinderDeck(container);
+    }
+  });
 }
 
 function updatePrediction() {

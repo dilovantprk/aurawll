@@ -246,17 +246,273 @@
 }
 
 
-/* --- ORGANIC NEURAL FLOW LIST (Step 1 Somatic Flow) --- */
+/* --- SOMATIC STEP 1: TINDER CARD DECK (Sola Pas / Sağa Hisset) --- */
 .rhizome-container {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
-  max-width: 440px;
-  margin: 1.5rem auto 3rem auto;
-  padding: 0 1rem 0 2rem;
+  max-width: 380px;
+  margin: 1rem auto 3rem auto;
+  padding: 0 1rem;
   box-sizing: border-box;
+}
+
+.somatic-tinder-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.somatic-tinder-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.somatic-count-badge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.count-accent {
+  color: var(--accent-primary, #B8A9D9);
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.somatic-selected-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 28px;
+}
+
+.selected-tag-pill {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+  background: rgba(184, 169, 217, 0.15);
+  border: 1px solid rgba(184, 169, 217, 0.3);
+  color: #fff;
+  font-weight: 500;
+}
+
+.selected-tag-pill.ventral { background: rgba(100, 228, 159, 0.15); border-color: rgba(100, 228, 159, 0.4); color: #64E49F; }
+.selected-tag-pill.sympathetic { background: rgba(244, 166, 136, 0.15); border-color: rgba(244, 166, 136, 0.4); color: #F4A688; }
+.selected-tag-pill.dorsal { background: rgba(140, 148, 164, 0.15); border-color: rgba(140, 148, 164, 0.4); color: #8C94A4; }
+
+/* Tinder Card Stack */
+.somatic-card-stack {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+/* Active Drag Card */
+.somatic-swipe-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px;
+  padding: 2rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  cursor: grab;
+  touch-action: none;
+  will-change: transform, opacity;
+  z-index: 5;
+}
+
+.somatic-swipe-card:active {
+  cursor: grabbing;
+}
+
+/* Background Card in Stack */
+.somatic-next-card {
+  position: absolute;
+  width: 92%;
+  height: 92%;
+  top: 4%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.6;
+  transform: scale(0.95) translateY(12px);
+}
+
+/* Swipe Badges (PAS vs HİSSET) */
+.swipe-badge {
+  position: absolute;
+  top: 1.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.badge-pass {
+  left: 1.5rem;
+  color: #E57373;
+  border: 2px solid #E57373;
+  background: rgba(229, 115, 115, 0.1);
+  transform: rotate(-12deg);
+}
+
+.badge-select {
+  right: 1.5rem;
+  color: #64E49F;
+  border: 2px solid #64E49F;
+  background: rgba(100, 228, 159, 0.1);
+  transform: rotate(12deg);
+}
+
+/* Card Body */
+.card-somatic-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin: auto 0;
+}
+
+.somatic-icon-badge {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary, #B8A9D9);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.somatic-card-text {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.somatic-state-chip {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.somatic-state-chip.ventral { color: #64E49F; border-color: rgba(100, 228, 159, 0.3); background: rgba(100, 228, 159, 0.08); }
+.somatic-state-chip.sympathetic { color: #F4A688; border-color: rgba(244, 166, 136, 0.3); background: rgba(244, 166, 136, 0.08); }
+.somatic-state-chip.dorsal { color: #8C94A4; border-color: rgba(140, 148, 164, 0.3); background: rgba(140, 148, 164, 0.08); }
+
+/* Swipe Controls Below Card */
+.somatic-tinder-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.6rem;
+  width: 100%;
+}
+
+.tinder-btn {
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  touch-action: manipulation;
+}
+
+.tinder-btn:active {
+  transform: scale(0.9);
+}
+
+.tinder-btn.pass-btn {
+  width: 56px;
+  height: 56px;
+  background: rgba(229, 115, 115, 0.12);
+  border: 1px solid rgba(229, 115, 115, 0.3);
+  color: #E57373;
+}
+.tinder-btn.pass-btn:hover {
+  background: rgba(229, 115, 115, 0.25);
+  box-shadow: 0 0 25px rgba(229, 115, 115, 0.3);
+  transform: translateY(-2px);
+}
+
+.tinder-btn.undo-btn {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+}
+.tinder-btn.undo-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.tinder-btn.select-btn {
+  width: 64px;
+  height: 64px;
+  background: rgba(100, 228, 159, 0.15);
+  border: 1.5px solid rgba(100, 228, 159, 0.4);
+  color: #64E49F;
+}
+.tinder-btn.select-btn:hover {
+  background: rgba(100, 228, 159, 0.3);
+  box-shadow: 0 0 30px rgba(100, 228, 159, 0.4);
+  transform: translateY(-2px) scale(1.05);
 }
 
 /* Vertical Neural Spine Track Line */
