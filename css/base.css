@@ -583,19 +583,15 @@ svg {
 
 /* Touch targets and HIG input zoom prevention on Mobile Viewports */
 @media (max-width: 768px) {
-  /* Prevent iOS Safari 300ms click delay & enforce 44pt touch targets */
+  /* Prevent iOS Safari 300ms click delay & text selection on controls */
   button,
   .primary-btn,
   .secondary-btn,
   .glass-btn,
   .glass-btn-accent,
   .glass-icon-btn,
-  .nav-item,
-  .hud-btn-v3,
-  .hud-btn-v2 {
+  .nav-item {
     touch-action: manipulation;
-    min-height: 44px; /* Apple HIG 44pt Touch Target Standard */
-    min-width: 44px;
     -webkit-user-select: none;
     user-select: none;
   }
